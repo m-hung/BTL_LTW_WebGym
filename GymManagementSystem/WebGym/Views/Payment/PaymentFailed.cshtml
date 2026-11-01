@@ -1,0 +1,20 @@
+@{
+    ViewData["Title"] = "Thanh Toán Không Thành Công";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6 text-center">
+        <div class="card border-0 shadow rounded-4 p-5">
+            <div class="text-danger mb-3">
+                <i class="bi bi-x-circle-fill" style="font-size: 5rem;"></i>
+            </div>
+            <h2 class="fw-bold text-danger mb-3">Giao Dịch Bị Hủy Hoặc Thất Bại</h2>
+            <p class="text-muted">Đã có lỗi xảy ra hoặc bạn đã hủy giao dịch trên cổng thanh toán. Tài khoản của bạn chưa bị trừ tiền.</p>
+
+            <div class="mt-4">
+                <a asp-controller="Home" asp-action="Packages" class="btn btn-warning px-4 py-2 me-2">Thử Lại</a>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary px-4 py-2">Về Trang Chủ</a>
+            </div>
+        </div>
+    </div>
+</div>

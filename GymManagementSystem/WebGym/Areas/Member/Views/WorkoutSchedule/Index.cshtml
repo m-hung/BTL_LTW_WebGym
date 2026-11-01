@@ -1,0 +1,88 @@
+@model IEnumerable<WebGym.Models.Entities.Progress>
+@{
+    ViewData["Title"] = "Tiến Trình Thể Hình Của Bạn";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold"><i class="bi bi-graph-up-arrow text-success me-2"></i> Lịch Sử Tiến Trình Thể Hình & Chỉ Số InBody</h3>
+</div>
+
+@if (Model.Any())
+{
+    var latest = Model.Last();
+    var first = Model.First();
+    var weightDiff = latest.Weight - first.Weight;
+    var fatDiff = (latest.BodyFatPercentage ?? 0) - (first.BodyFatPercentage ?? 0);
+    var waistDiff = (latest.Waist ?? 0) - (first.Waist ?? 0);
+
+    <!-- Summary Stats -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white text-center">
+                <span class="text-muted small">Cân Nặng Ban Đầu vs Hiện Tại</span>
+                <h4 class="fw-bold my-1 text-primary">@first.Weight kg <i class="bi bi-arrow-right"></i> @latest.Weight kg</h4>
+                <span class="badge @(weightDiff <= 0 ? "bg-success" : "bg-warning text-dark")">
+                    @(weightDiff <= 0 ? $"Giảm {Math.Abs(weightDiff):F1} kg" : $"Tăng {weightDiff:F1} kg")
+                </span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white text-center">
+                <span class="text-muted small">Tỷ Lệ Mỡ Cơ Thể (%)</span>
+                <h4 class="fw-bold my-1 text-danger">@first.BodyFatPercentage% <i class="bi bi-arrow-right"></i> @latest.BodyFatPercentage%</h4>
+                <span class="badge bg-success">
+                    Giảm @Math.Abs(fatDiff):F1 % mỡ
+                </span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white text-center">
+                <span class="text-muted small">Vòng Eo (Waist)</span>
+                <h4 class="fw-bold my-1 text-info">@first.Waist cm <i class="bi bi-arrow-right"></i> @latest.Waist cm</h4>
+                <span class="badge bg-success">
+                    Thu nhỏ @Math.Abs(waistDiff):F1 cm
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Table -->
+    <div class="card border-0 shadow-sm rounded-4 bg-white p-4">
+        <h5 class="fw-bold mb-3"><i class="bi bi-clock-history text-primary me-2"></i> Chi Tiết Các Lần Đo Định Kỳ</h5>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Ngày Đo</th>
+                        <th>Cân Nặng</th>
+                        <th>% Mỡ</th>
+                        <th>Khối Lượng Cơ</th>
+                        <th>Ngực - Eo - Hông</th>
+                        <th>Ghi Chú HLV</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in Model)
+                    {
+                        <tr>
+                            <td class="fw-bold">@p.RecordedDate.ToString("dd/MM/yyyy")</td>
+                            <td class="text-primary fw-semibold">@p.Weight kg</td>
+                            <td class="text-danger">@(p.BodyFatPercentage?.ToString("F1") ?? "-")%</td>
+                            <td class="text-success">@(p.MuscleMass?.ToString("F1") ?? "-") kg</td>
+                            <td>@(p.Chest ?? 0) - @(p.Waist ?? 0) - @(p.Hips ?? 0) cm</td>
+                            <td><small class="text-muted">@(p.Notes ?? "-")</small></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+else
+{
+    <div class="card border-0 shadow-sm rounded-4 bg-white p-5 text-center">
+        <i class="bi bi-graph-up text-muted" style="font-size: 4rem;"></i>
+        <h5 class="fw-bold mt-3">Chưa có bản ghi tiến trình InBody</h5>
+        <p class="text-muted">Huấn luyện viên của bạn sẽ cập nhật các chỉ số sau mỗi buổi kiểm tra định kỳ.</p>
+    </div>
+}

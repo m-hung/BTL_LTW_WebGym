@@ -1,0 +1,115 @@
+@model WebGym.Models.DTOs.Member.MemberProfileDto
+@{
+    ViewData["Title"] = "Hồ Sơ Hội Viên & Chỉ Số Thể Hình";
+    var progressList = ViewBag.ProgressList as List<WebGym.Models.Entities.Progress>;
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card border-0 shadow-sm rounded-4 bg-white p-4 mb-4">
+            <div class="d-flex align-items-center mb-4">
+                <i class="bi bi-person-badge-fill text-info fs-1 me-3"></i>
+                <div>
+                    <h3 class="fw-bold mb-0">Hồ Sơ Cá Nhân & Chỉ Số Thể Hình (InBody)</h3>
+                    <small class="text-muted">Quản lý số đo cơ thể, chỉ số chuyển hóa cơ bản (BMR) và tiến trình tập luyện</small>
+                </div>
+            </div>
+
+            <div class="card bg-light border-0 p-3 mb-4 rounded-3">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <span class="text-muted small">Gói tập đang kích hoạt:</span>
+                        <h5 class="fw-bold text-primary mb-0">@(Model.CurrentPackageName ?? "Chưa đăng ký gói nào")</h5>
+                    </div>
+                    <div class="col-md-6 text-md-end mt-2 mt-md-0">
+                        @if (Model.IsMembershipActive)
+                        {
+                            <span class="badge bg-success p-2">Còn hạn đến: @Model.MembershipEndDate?.ToString("dd/MM/yyyy")</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary p-2">Chưa kích hoạt / Hết hạn</span>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <form asp-action="Update" method="post">
+                @Html.AntiForgeryToken()
+                
+                <h5 class="fw-bold text-secondary mb-3"><i class="bi bi-person-fill me-1"></i> Thông Tin Chung</h5>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <label asp-for="FullName" class="form-label fw-bold">Họ và tên</label>
+                        <input asp-for="FullName" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Email" class="form-label fw-bold">Email (Đăng nhập)</label>
+                        <input asp-for="Email" class="form-control" readonly />
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="PhoneNumber" class="form-label fw-bold">Số điện thoại</label>
+                        <input asp-for="PhoneNumber" class="form-control" />
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Gender" class="form-label fw-bold">Giới tính</label>
+                        <select asp-for="Gender" class="form-select">
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                            <option value="Khác">Khác</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="DateOfBirth" class="form-label fw-bold">Ngày sinh</label>
+                        <input asp-for="DateOfBirth" type="date" class="form-control" value="@(Model.DateOfBirth?.ToString("yyyy-MM-dd"))" />
+                    </div>
+                </div>
+
+                <h5 class="fw-bold text-primary mb-3"><i class="bi bi-heart-pulse-fill me-1"></i> Chỉ Số InBody Hiện Tại</h5>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <label asp-for="Height" class="form-label fw-bold">Chiều cao (cm)</label>
+                        <input asp-for="Height" class="form-control" type="number" step="0.1" />
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="Weight" class="form-label fw-bold">Cân nặng (kg)</label>
+                        <input asp-for="Weight" class="form-control" type="number" step="0.1" />
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="BMR" class="form-label fw-bold">BMR (kcal/ngày)</label>
+                        <input asp-for="BMR" class="form-control" type="number" step="1" />
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="BodyFatPercentage" class="form-label fw-bold">% Mỡ (Body Fat)</label>
+                        <input asp-for="BodyFatPercentage" class="form-control" type="number" step="0.1" />
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="MuscleMass" class="form-label fw-bold">Khối lượng cơ (kg)</label>
+                        <input asp-for="MuscleMass" class="form-control" type="number" step="0.1" />
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="Chest" class="form-label fw-bold">Vòng ngực (cm)</label>
+                        <input asp-for="Chest" class="form-control" type="number" step="0.1" />
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="Waist" class="form-label fw-bold">Vòng eo (cm)</label>
+                        <input asp-for="Waist" class="form-control" type="number" step="0.1" />
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="Hips" class="form-label fw-bold">Vòng hông (cm)</label>
+                        <input asp-for="Hips" class="form-control" type="number" step="0.1" />
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary px-4 fw-bold">
+                        <i class="bi bi-save me-1"></i> Lưu Thay Đổi
+                    </button>
+                    <a asp-action="Index" asp-controller="WorkoutSchedule" class="btn btn-outline-success ms-2">
+                        <i class="bi bi-graph-up me-1"></i> Xem Biểu Đồ Lịch Sử Tiến Trình
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

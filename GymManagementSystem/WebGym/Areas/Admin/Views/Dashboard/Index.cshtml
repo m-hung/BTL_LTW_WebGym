@@ -1,0 +1,100 @@
+@model WebGym.Models.DTOs.Admin.DashboardStatsDto
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold"><i class="bi bi-speedometer2 text-danger"></i> Tổng Quan Hệ Thống</h2>
+    <span class="text-muted"><i class="bi bi-clock"></i> Cập nhật: @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</span>
+</div>
+
+<!-- Stat Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted small">Tổng Số Hội Viên</span>
+                    <h3 class="fw-bold my-1 text-primary">@Model.TotalMembers</h3>
+                </div>
+                <div class="fs-1 text-primary"><i class="bi bi-people-fill"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted small">Huấn Luyện Viên (PT)</span>
+                    <h3 class="fw-bold my-1 text-success">@Model.TotalTrainers</h3>
+                </div>
+                <div class="fs-1 text-success"><i class="bi bi-person-badge-fill"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted small">Lịch Tập Đang Chạy</span>
+                    <h3 class="fw-bold my-1 text-warning">@Model.TotalActiveBookings</h3>
+                </div>
+                <div class="fs-1 text-warning"><i class="bi bi-calendar2-check-fill"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted small">Doanh Thu Tháng Này</span>
+                    <h3 class="fw-bold my-1 text-danger">@Model.TotalRevenueThisMonth.ToString("N0") đ</h3>
+                </div>
+                <div class="fs-1 text-danger"><i class="bi bi-cash-stack"></i></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Bookings Table -->
+<div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+    <h5 class="fw-bold mb-3"><i class="bi bi-list-check me-2"></i> Lịch Đặt Huấn Luyện Viên Gần Nhất</h5>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Mã</th>
+                    <th>Hội Viên</th>
+                    <th>HLV Phụ Trách</th>
+                    <th>Ngày Tập</th>
+                    <th>Trạng Thái</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.RecentBookings.Any())
+                {
+                    @foreach (var item in Model.RecentBookings)
+                    {
+                        <tr>
+                            <td>#@item.BookingId</td>
+                            <td class="fw-semibold">@item.MemberName</td>
+                            <td>@item.TrainerName</td>
+                            <td>@item.BookingDate.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                <span class="badge @(item.Status == "Approved" ? "bg-success" : (item.Status == "Pending" ? "bg-warning text-dark" : "bg-secondary"))">
+                                    @item.Status
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-3">Chưa có lịch đặt nào gần đây.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,35 @@
+@model IEnumerable<WebGym.Models.Entities.GymPackage>
+@{
+    ViewData["Title"] = "Danh Sách Gói Tập";
+}
+
+<div class="text-center mb-5">
+    <h1 class="fw-bold">Bảng Giá Các Gói Tập Tại WebGym</h1>
+    <p class="text-muted">Chọn gói tập phù hợp với nhu cầu và mục tiêu thể hình của bạn</p>
+</div>
+
+<div class="row g-4 justify-content-center">
+    @foreach (var item in Model)
+    {
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100 border-0 shadow-sm rounded-4">
+                <div class="card-header bg-dark text-white text-center py-3">
+                    <h5 class="fw-bold mb-0">@item.PackageName</h5>
+                </div>
+                <div class="card-body p-4 d-flex flex-column text-center">
+                    <h3 class="text-primary fw-bold mb-3">@item.Price.ToString("N0") VNĐ</h3>
+                    <p class="text-muted small flex-grow-1">@item.Description</p>
+                    <div class="text-start mb-4 small">
+                        <p class="mb-2"><i class="bi bi-calendar-check text-primary me-2"></i> Thời hạn: <strong>@item.DurationDays ngày</strong></p>
+                        <p class="mb-2"><i class="bi bi-person-badge text-primary me-2"></i> HLV cá nhân (PT): <strong>@(item.IncludesPT ? "Kèm 1:1 không giới hạn" : "Tự tập")</strong></p>
+                        <p class="mb-2"><i class="bi bi-check2-circle text-primary me-2"></i> Miễn phí tủ đồ thông minh</p>
+                        <p class="mb-2"><i class="bi bi-check2-circle text-primary me-2"></i> Xông hơi & tắm nước nóng</p>
+                    </div>
+                    <a asp-controller="Payment" asp-action="Checkout" asp-route-packageId="@item.PackageId" class="btn btn-warning fw-bold py-2 mt-auto">
+                        Đăng Ký & Thanh Toán Ngay
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

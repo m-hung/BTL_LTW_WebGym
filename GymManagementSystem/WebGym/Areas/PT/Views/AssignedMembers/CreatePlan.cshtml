@@ -1,0 +1,56 @@
+@model WebGym.Models.DTOs.Trainer.WorkoutPlanDto
+@{
+    ViewData["Title"] = "Lên Kế Hoạch Tập Luyện";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4 bg-white p-4">
+            <h4 class="fw-bold mb-3"><i class="bi bi-file-earmark-medical text-primary me-2"></i> Lên Lộ Trình Cho Học Viên: @Model.MemberName</h4>
+
+            <form asp-action="CreatePlan" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="MemberId" />
+                <input type="hidden" asp-for="MemberName" />
+
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label fw-bold">Tiêu đề lộ trình</label>
+                    <input asp-for="Title" class="form-control" placeholder="Ví dụ: Lộ trình Giảm mỡ Tăng cơ 4 tuần cho người mới" />
+                    <span asp-validation-for="Title" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Goal" class="form-label fw-bold">Mục tiêu thể chất</label>
+                    <input asp-for="Goal" class="form-control" placeholder="Ví dụ: Giảm 3kg mỡ, tăng vòng ngực và thể lực chung" />
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="StartDate" class="form-label fw-bold">Ngày bắt đầu</label>
+                        <input asp-for="StartDate" type="date" class="form-control" />
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="EndDate" class="form-label fw-bold">Ngày kết thúc</label>
+                        <input asp-for="EndDate" type="date" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="RoutineDetails" class="form-label fw-bold">Chi tiết bài tập theo tuần</label>
+                    <textarea asp-for="RoutineDetails" class="form-control" rows="5" placeholder="Thứ 2: Ngực + Tay sau (Bench Press 4x10, Tricep pushdown 3x12)&#10;Thứ 4: Lưng + Tay trước..."></textarea>
+                    <span asp-validation-for="RoutineDetails" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="NutritionAdvice" class="form-label fw-bold">Chế độ dinh dưỡng khuyến nghị</label>
+                    <textarea asp-for="NutritionAdvice" class="form-control" rows="3" placeholder="Bổ sung ức gà, trứng, cá hồi; uống đủ 2.5 lít nước mỗi ngày..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-warning px-4 fw-bold">
+                    <i class="bi bi-check-circle-fill me-1"></i> Lưu & Gửi Cho Học Viên
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary ms-2">Quay Lại</a>
+            </form>
+        </div>
+    </div>
+</div>

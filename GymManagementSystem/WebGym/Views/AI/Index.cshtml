@@ -1,0 +1,132 @@
+@{
+    ViewData["Title"] = "Trợ Lý AI Thể Hình & Dinh Dưỡng";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow rounded-4 overflow-hidden">
+            <div class="card-header bg-dark text-white p-3 d-flex align-items-center">
+                <div class="me-3 fs-2 text-warning"><i class="bi bi-robot"></i></div>
+                <div>
+                    <h5 class="mb-0 fw-bold">WebGym AI Fitness Assistant</h5>
+                    <small class="text-white-50">Tư vấn bài tập, thực đơn dinh dưỡng và tính toán chỉ số cơ thể</small>
+                </div>
+            </div>
+
+            <!-- Parameters accordion -->
+            <div class="p-3 bg-light border-bottom">
+                <div class="row g-2">
+                    <div class="col-md-3">
+                        <input type="number" id="heightInput" class="form-control form-control-sm" placeholder="Chiều cao (cm)" />
+                    </div>
+                    <div class="col-md-3">
+                        <input type="number" id="weightInput" class="form-control form-control-sm" placeholder="Cân nặng (kg)" />
+                    </div>
+                    <div class="col-md-6">
+                        <select id="goalSelect" class="form-select form-select-sm">
+                            <option value="Giảm mỡ toàn thân">Mục tiêu: Giảm mỡ toàn thân</option>
+                            <option value="Tăng cơ nạc (Lean Muscle)">Mục tiêu: Tăng cơ nạc (Lean Muscle)</option>
+                            <option value="Tăng thể lực & sức bền">Mục tiêu: Tăng thể lực & sức bền</option>
+                            <option value="Dinh dưỡng Eat Clean">Mục tiêu: Thực đơn dinh dưỡng Eat Clean</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat box message list -->
+            <div id="chatMessages" class="p-4" style="height: 380px; overflow-y: auto; background-color: #f8f9fa;">
+                <div class="d-flex mb-3">
+                    <div class="bg-white p-3 rounded-4 shadow-sm border" style="max-width: 80%;">
+                        <strong class="text-primary"><i class="bi bi-robot"></i> WebGym AI:</strong>
+                        <p class="mb-0 mt-1">Xin chào! Tôi là trợ lý thể hình WebGym. Bạn muốn tôi gợi ý bài tập hay lên thực đơn dinh dưỡng hôm nay?</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input area -->
+            <div class="card-footer bg-white p-3">
+                <div class="input-group">
+                    <input type="text" id="userInput" class="form-control" placeholder="Nhập câu hỏi của bạn (ví dụ: Gợi ý bài tập ngực cho người mới bắt đầu)..." />
+                    <button class="btn btn-warning px-4 fw-bold" id="sendBtn" type="button">
+                        <i class="bi bi-send-fill me-1"></i> Gửi
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    const chatMessages = document.getElementById('chatMessages');
+    const userInput = document.getElementById('userInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const heightInput = document.getElementById('heightInput');
+    const weightInput = document.getElementById('weightInput');
+    const goalSelect = document.getElementById('goalSelect');
+
+    function appendMessage(sender, text, isUser) {
+        const wrapper = document.createElement('div');
+        wrapper.className = `d-flex mb-3 ${isUser ? 'justify-content-end' : ''}`;
+
+        const bubble = document.createElement('div');
+        bubble.className = `p-3 rounded-4 shadow-sm ${isUser ? 'bg-primary text-white' : 'bg-white border text-dark'}`;
+        bubble.style.maxWidth = '80%';
+        bubble.style.whiteSpace = 'pre-wrap';
+
+        bubble.innerHTML = `<strong>${sender}:</strong><p class="mb-0 mt-1">${text}</p>`;
+        wrapper.appendChild(bubble);
+        chatMessages.appendChild(wrapper);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    async function sendMessage() {
+        const msg = userInput.value.trim();
+        if (!msg) return;
+
+        appendMessage('Bạn', msg, true);
+        userInput.value = '';
+
+        const typingIndicator = document.createElement('div');
+        typingIndicator.id = 'typingIndicator';
+        typingIndicator.className = 'text-muted small mb-2 ms-2';
+        typingIndicator.innerText = 'Trợ lý AI đang suy nghĩ...';
+        chatMessages.appendChild(typingIndicator);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        try {
+            const res = await fetch('/AI/AskAssistant', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: msg,
+                    heightCm: heightInput.value ? parseFloat(heightInput.value) : null,
+                    weightKg: weightInput.value ? parseFloat(weightInput.value) : null,
+                    goal: goalSelect.value
+                })
+            });
+
+            const data = await res.json();
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) indicator.remove();
+
+            if (data.success) {
+                appendMessage('WebGym AI', data.reply, false);
+            } else {
+                appendMessage('WebGym AI', data.reply || data.errorMessage || 'Lỗi kết nối.', false);
+            }
+        } catch (err) {
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) indicator.remove();
+            appendMessage('Hệ thống', 'Không thể kết nối đến máy chủ AI.', false);
+        }
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    userInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+</script>
+}

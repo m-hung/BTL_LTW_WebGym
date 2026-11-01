@@ -1,0 +1,83 @@
+@{
+    ViewData["Title"] = "Trang Chủ";
+    var packages = ViewBag.FeaturedPackages as List<WebGym.Models.Entities.GymPackage>;
+}
+
+<!-- Hero Section -->
+<div class="p-5 mb-5 rounded-4 text-white shadow-lg" style="background: linear-gradient(135deg, #1f1c2c, #928dab);">
+    <div class="row align-items-center">
+        <div class="col-lg-8">
+            <span class="badge bg-warning text-dark px-3 py-2 mb-3 fw-bold">CHÀO MỪNG ĐẾN VỚI WEBGYM</span>
+            <h1 class="display-4 fw-bold">Đánh Thức Năng Lượng & Kiến Tạo Thể Hình Đỉnh Cao</h1>
+            <p class="lead mt-3 text-light">Không gian rèn luyện đẳng cấp, trang thiết bị tân tiến, đội ngũ Huấn Luyện Viên cá nhân (PT) chuyên nghiệp và theo dõi chỉ số InBody thông minh.</p>
+            <div class="mt-4">
+                <a asp-action="Packages" class="btn btn-warning btn-lg fw-bold px-4 me-3">Khám Phá Gói Tập</a>
+                <a asp-controller="AI" asp-action="Index" class="btn btn-outline-light btn-lg px-4"><i class="bi bi-robot"></i> Trải Nghiệm AI Fitness</a>
+            </div>
+        </div>
+        <div class="col-lg-4 text-center d-none d-lg-block">
+            <i class="bi bi-fire text-warning" style="font-size: 8rem;"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="row text-center mb-5 g-4">
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm p-4 rounded-4">
+            <div class="text-warning mb-3"><i class="bi bi-activity fs-1"></i></div>
+            <h5 class="fw-bold">Thiết Bị Đẳng Cấp</h5>
+            <p class="text-muted">Nhập khẩu 100% từ các thương hiệu hàng đầu thế giới, đảm bảo an toàn và tối ưu hiệu suất rèn luyện.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm p-4 rounded-4">
+            <div class="text-warning mb-3"><i class="bi bi-award-fill fs-1"></i></div>
+            <h5 class="fw-bold">HLV Cá Nhân (PT) Kèm 1:1</h5>
+            <p class="text-muted">Kèm sát kỹ thuật, đo đạc chỉ số cơ mỡ định kỳ và cam kết kết quả giảm cân, tăng cơ rõ rệt.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm p-4 rounded-4">
+            <div class="text-warning mb-3"><i class="bi bi-graph-up-arrow fs-1"></i></div>
+            <h5 class="fw-bold">Theo Dõi Tiến Trình InBody</h5>
+            <p class="text-muted">Hệ thống lưu trữ lịch sử số đo (Cân nặng, % Mỡ, Vòng eo) với biểu đồ trực quan sinh động.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Packages -->
+<div class="mb-5">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">Các Gói Tập Nổi Bật Tại WebGym</h2>
+        <p class="text-muted">Lựa chọn gói tập phù hợp để bắt đầu hành trình chuyển đổi vóc dáng của bạn ngay hôm nay</p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+        @if (packages != null)
+        {
+            foreach (var item in packages)
+            {
+                <div class="col-lg-3 col-md-6">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                        <div class="card-header bg-dark text-white text-center py-3">
+                            <h5 class="card-title mb-0 fw-bold">@item.PackageName</h5>
+                        </div>
+                        <div class="card-body p-4 text-center d-flex flex-column">
+                            <h3 class="text-primary fw-bold my-3">@item.Price.ToString("N0") <span class="fs-6 text-muted">đ</span></h3>
+                            <p class="text-muted small flex-grow-1">@item.Description</p>
+                            <ul class="list-unstyled text-start my-3 small">
+                                <li class="mb-2"><i class="bi bi-calendar-check text-success me-2"></i> Thời hạn: <strong>@item.DurationDays ngày</strong></li>
+                                <li class="mb-2"><i class="bi bi-person-badge text-success me-2"></i> Huấn luyện viên (PT): <strong>@(item.IncludesPT ? "Kèm 1:1 không giới hạn" : "Tự tập")</strong></li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Đo InBody & tư vấn dinh dưỡng</li>
+                            </ul>
+                            <a asp-controller="Payment" asp-action="Checkout" asp-route-packageId="@item.PackageId" class="btn btn-warning w-100 fw-bold py-2 mt-auto">
+                                <i class="bi bi-credit-card me-1"></i> Đăng Ký Ngay
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

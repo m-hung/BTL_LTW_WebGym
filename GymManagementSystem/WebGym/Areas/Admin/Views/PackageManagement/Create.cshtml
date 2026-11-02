@@ -1,0 +1,81 @@
+@model WebGym.Models.DTOs.Admin.GymPackageFormViewModel
+@{
+    ViewData["Title"] = "Thêm Gói Tập Mới";
+}
+
+<div class="mb-4">
+    <a asp-action="Index" class="text-decoration-none text-muted small fw-semibold">
+        <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách gói tập
+    </a>
+    <h3 class="fw-bold text-dark mt-2">Thêm Gói Tập Gym Mới</h3>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card border-0 rounded-4 bg-white shadow-sm p-4">
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <div class="mb-3">
+                    <label asp-for="PackageName" class="form-label fw-bold small text-muted"></label>
+                    <input asp-for="PackageName" class="form-control rounded-3 py-2" placeholder="Ví dụ: Gói VIP 6 Tháng Kèm PT" />
+                    <span asp-validation-for="PackageName" class="text-danger small"></span>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Price" class="form-label fw-bold small text-muted"></label>
+                        <div class="input-group">
+                            <input asp-for="Price" type="number" step="10000" class="form-control rounded-start-3 py-2" placeholder="500000" />
+                            <span class="input-group-text bg-light text-muted">VNĐ</span>
+                        </div>
+                        <span asp-validation-for="Price" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="DurationDays" class="form-label fw-bold small text-muted"></label>
+                        <div class="input-group">
+                            <input asp-for="DurationDays" type="number" class="form-control rounded-start-3 py-2" placeholder="30" />
+                            <span class="input-group-text bg-light text-muted">Ngày</span>
+                        </div>
+                        <span asp-validation-for="DurationDays" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3 form-check form-switch p-3 bg-light rounded-3 ms-0">
+                    <input class="form-check-input ms-0 me-3" type="checkbox" asp-for="IncludesPT" id="ptSwitch" style="transform: scale(1.3);">
+                    <label class="form-check-label fw-bold" for="ptSwitch">
+                        Gói tập này bao gồm Huấn luyện viên cá nhân (PT)
+                    </label>
+                    <div class="text-muted small">Hội viên khi mua gói này sẽ được đặt lịch tập riêng 1:1 với PT của phòng gym.</div>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Description" class="form-label fw-bold small text-muted"></label>
+                    <textarea asp-for="Description" class="form-control rounded-3" rows="4" 
+                              placeholder="Mô tả các quyền lợi, máy móc được sử dụng, giờ vào tập..."></textarea>
+                    <span asp-validation-for="Description" class="text-danger small"></span>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary px-4 py-2 rounded-3 fw-bold shadow-sm">
+                        <i class="bi bi-check2-circle me-1"></i> Lưu Gói Tập Mới
+                    </button>
+                    <a asp-action="Index" class="btn btn-light px-4 py-2 rounded-3 border">Hủy bỏ</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-lg-4 mt-4 mt-lg-0">
+        <div class="card border-0 rounded-4 bg-light p-4 shadow-sm">
+            <h6 class="fw-bold text-dark mb-3"><i class="bi bi-info-circle text-primary me-2"></i>Lưu ý cấu hình gói</h6>
+            <ul class="text-muted small ps-3 mb-0" style="line-height: 1.8;">
+                <li><strong>Thời hạn:</strong> Nhập số ngày hiệu lực tính từ lúc hội viên thanh toán thành công (Ví dụ: 1 tháng = 30 ngày, 1 năm = 365 ngày).</li>
+                <li><strong>Quyền lợi PT:</strong> Nếu bật tính năng này, hệ thống sẽ mở quyền cho phép hội viên vào trang đặt lịch hẹn PT.</li>
+                <li><strong>Giá tiền:</strong> Đơn vị tính là Đồng (VNĐ). Sẽ được tự động tích hợp sang cổng thanh toán VNPay.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+

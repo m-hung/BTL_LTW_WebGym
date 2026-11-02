@@ -3,51 +3,170 @@
     ViewData["Title"] = "Quản Lý Hội Viên";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="fw-bold"><i class="bi bi-people-fill text-primary"></i> Danh Sách Hội Viên</h2>
+<!-- Page Header -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold text-dark mb-1">
+            <i class="bi bi-people-fill text-primary me-2"></i>Danh Sách Hội Viên
+        </h3>
+        <p class="text-muted small mb-0">Quản lý hồ sơ hội viên, gói tập đang hoạt động và theo dõi chỉ số thể chất.</p>
+    </div>
+    <div>
+        <a asp-action="Create" class="btn btn-primary d-flex align-items-center gap-2 px-3 py-2 rounded-3 shadow-sm">
+            <i class="bi bi-person-plus-fill"></i>
+            <span class="fw-semibold">Thêm Hội Viên Mới</span>
+        </a>
+    </div>
 </div>
 
-<!-- Search box -->
-<form method="get" class="mb-4">
-    <div class="input-group" style="max-width: 450px;">
-        <input type="text" name="searchKeyword" class="form-control" placeholder="Tìm theo tên, email hoặc số điện thoại..." value="@ViewBag.SearchKeyword" />
-        <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i> Tìm</button>
-    </div>
-</form>
+<!-- Search & Filter Card -->
+<div class="card border-0 bg-white p-3 mb-4 rounded-4 shadow-sm">
+    <form method="get" class="row g-2 align-items-center">
+        <div class="col-md-5">
+            <div class="input-group">
+                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                <input type="text" name="searchKeyword" class="form-control bg-light border-start-0" 
+                       placeholder="Tìm theo họ tên, email hoặc số điện thoại..." value="@ViewBag.SearchKeyword" />
+            </div>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-dark w-100 rounded-3">
+                <i class="bi bi-funnel me-1"></i> Tìm kiếm
+            </button>
+        </div>
+        @if (!string.IsNullOrWhiteSpace(ViewBag.SearchKeyword as string))
+        {
+            <div class="col-md-2">
+                <a asp-action="Index" class="btn btn-outline-secondary w-100 rounded-3">Xóa lọc</a>
+            </div>
+        }
+    </form>
+</div>
 
-<div class="card border-0 shadow-sm rounded-4 bg-white p-3">
+<!-- Table Members -->
+<div class="card border-0 rounded-4 bg-white shadow-sm p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-list-ul me-2 text-secondary"></i>Danh Sách Đăng Ký</h5>
+        <span class="badge bg-primary rounded-pill">Tổng: @Model.Count() hội viên</span>
+    </div>
+
     <div class="table-responsive">
-        <table class="table table-hover align-middle">
-            <thead class="table-light">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
                 <tr>
-                    <th>Họ và Tên</th>
-                    <th>Email</th>
-                    <th>Số Điện Thoại</th>
+                    <th>Hội Viên</th>
+                    <th>Liên Hệ</th>
                     <th>Chỉ Số InBody</th>
                     <th>Gói Tập Hiện Tại</th>
                     <th>Hạn Gói</th>
                     <th>Trạng Thái</th>
+                    <th class="text-end">Thao Tác</th>
                 </tr>
             </thead>
             <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">Không tìm thấy hội viên nào.</td>
+                    </tr>
+                }
                 @foreach (var m in Model)
                 {
                     var activeSub = m.Subscriptions.OrderByDescending(s => s.StartDate).FirstOrDefault(s => s.Status == "Active");
+                    var isExpired = activeSub != null && activeSub.EndDate < DateTime.UtcNow;
+
                     <tr>
-                        <td class="fw-bold">@m.User.FullName</td>
-                        <td>@m.User.Email</td>
-                        <td>@(m.User.PhoneNumber ?? "Chưa cập nhật")</td>
                         <td>
-                            <small class="text-muted">
-                                @(m.Weight.HasValue ? $"{m.Weight}kg" : "-") / @(m.BodyFatPercentage.HasValue ? $"{m.BodyFatPercentage}% mỡ" : "-") / BMR: @(m.BMR ?? 0)
-                            </small>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="avatar bg-light text-primary border rounded-circle d-flex align-items-center justify-content-center fw-bold" 
+                                     style="width: 42px; height: 42px; font-size: 1.1rem;">
+                                    @(m.User.FullName?.Substring(0, 1).ToUpper() ?? "M")
+                                </div>
+                                <div>
+                                    <a asp-action="Details" asp-route-id="@m.MemberId" class="fw-bold text-dark text-decoration-none">
+                                        @m.User.FullName
+                                    </a>
+                                    <div class="small text-muted">
+                                        @(m.Gender ?? "Chưa rõ") @(m.DateOfBirth.HasValue ? $"• {DateTime.UtcNow.Year - m.DateOfBirth.Value.Year} tuổi" : "")
+                                    </div>
+                                </div>
+                            </div>
                         </td>
                         <td>
-                            <span class="badge bg-info text-dark">@(activeSub?.Package.PackageName ?? "Chưa đăng ký")</span>
+                            <div class="small text-dark fw-semibold">@m.User.Email</div>
+                            <small class="text-muted">@(m.User.PhoneNumber ?? "Chưa cập nhật SĐT")</small>
                         </td>
-                        <td>@(activeSub != null ? activeSub.EndDate.ToString("dd/MM/yyyy") : "-")</td>
                         <td>
-                            <span class="badge bg-success">Hoạt động</span>
+                            @if (m.Weight.HasValue || m.Height.HasValue)
+                            {
+                                <span class="badge bg-light text-dark border">
+                                    @(m.Height.HasValue ? $"{m.Height}cm" : "-") / @(m.Weight.HasValue ? $"{m.Weight}kg" : "-")
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="text-muted small">Chưa đo</span>
+                            }
+                        </td>
+                        <td>
+                            @if (activeSub != null)
+                            {
+                                <span class="badge badge-soft-primary fw-semibold">
+                                    @activeSub.Package.PackageName
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-soft-secondary">Chưa đăng ký</span>
+                            }
+                        </td>
+                        <td>
+                            @if (activeSub != null)
+                            {
+                                if (isExpired)
+                                {
+                                    <span class="text-danger small fw-semibold">Hết hạn: @activeSub.EndDate.ToString("dd/MM/yyyy")</span>
+                                }
+                                else
+                                {
+                                    <span class="text-dark small">@activeSub.EndDate.ToString("dd/MM/yyyy")</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-muted small">-</span>
+                            }
+                        </td>
+                        <td>
+                            @if (activeSub != null && !isExpired)
+                            {
+                                <span class="badge badge-soft-success">Đang hoạt động</span>
+                            }
+                            else if (isExpired)
+                            {
+                                <span class="badge badge-soft-warning">Hết hạn gói</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-soft-secondary">Mới tham gia</span>
+                            }
+                        </td>
+                        <td class="text-end">
+                            <div class="d-inline-flex gap-1">
+                                <a asp-action="Details" asp-route-id="@m.MemberId" class="btn btn-light btn-sm rounded-3 border" title="Xem chi tiết">
+                                    <i class="bi bi-eye text-primary"></i>
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@m.MemberId" class="btn btn-light btn-sm rounded-3 border" title="Chỉnh sửa">
+                                    <i class="bi bi-pencil text-secondary"></i>
+                                </a>
+                                <form asp-action="Delete" asp-route-id="@m.MemberId" method="post" id="deleteMember-@m.MemberId" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="button" class="btn btn-light btn-sm rounded-3 border" title="Hủy gói / Xóa"
+                                            onclick="confirmAction('deleteMember-@m.MemberId', 'Bạn có chắc chắn muốn hủy gói tập hoặc xóa hội viên \'@m.User.FullName\'?')">
+                                        <i class="bi bi-person-x text-danger"></i>
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 }

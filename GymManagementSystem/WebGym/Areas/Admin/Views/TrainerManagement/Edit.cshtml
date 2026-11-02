@@ -1,0 +1,81 @@
+@model WebGym.Models.DTOs.Admin.TrainerEditViewModel
+@{
+    ViewData["Title"] = "Chỉnh Sửa Huấn Luyện Viên";
+}
+
+<div class="mb-4">
+    <a asp-action="Details" asp-route-id="@Model.TrainerId" class="text-decoration-none text-muted small fw-semibold">
+        <i class="bi bi-arrow-left me-1"></i> Quay lại chi tiết HLV
+    </a>
+    <h3 class="fw-bold text-dark mt-2">Cập Nhật Thông Tin HLV</h3>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card border-0 rounded-4 bg-white shadow-sm p-4">
+            <form asp-action="Edit" asp-route-id="@Model.TrainerId" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="TrainerId" />
+                <input type="hidden" asp-for="UserId" />
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <h6 class="fw-bold text-primary mb-3"><i class="bi bi-person-badge me-2"></i>1. Thông Tin Cá Nhân</h6>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label asp-for="FullName" class="form-label fw-bold small text-muted"></label>
+                        <input asp-for="FullName" class="form-control rounded-3 py-2" />
+                        <span asp-validation-for="FullName" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Email" class="form-label fw-bold small text-muted"></label>
+                        <input asp-for="Email" type="email" class="form-control rounded-3 py-2" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="PhoneNumber" class="form-label fw-bold small text-muted"></label>
+                        <input asp-for="PhoneNumber" class="form-control rounded-3 py-2" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <hr class="text-muted opacity-25 mb-4">
+
+                <h6 class="fw-bold text-success mb-3"><i class="bi bi-award me-2"></i>2. Chuyên Môn & Hồ Sơ</h6>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-12">
+                        <label asp-for="Specialization" class="form-label fw-bold small text-muted"></label>
+                        <input asp-for="Specialization" class="form-control rounded-3 py-2" />
+                        <span asp-validation-for="Specialization" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-12">
+                        <label asp-for="AvatarUrl" class="form-label fw-bold small text-muted"></label>
+                        <input asp-for="AvatarUrl" class="form-control rounded-3 py-2" />
+                        <span asp-validation-for="AvatarUrl" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-12">
+                        <label asp-for="Bio" class="form-label fw-bold small text-muted"></label>
+                        <textarea asp-for="Bio" class="form-control rounded-3" rows="4"></textarea>
+                        <span asp-validation-for="Bio" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <hr class="text-muted opacity-25 mb-4">
+
+                <h6 class="fw-bold text-danger mb-3"><i class="bi bi-shield-lock me-2"></i>3. Cấp Lại Mật Khẩu</h6>
+                <div class="mb-4">
+                    <label asp-for="NewPassword" class="form-label fw-bold small text-muted"></label>
+                    <input asp-for="NewPassword" type="password" class="form-control rounded-3 py-2" placeholder="Để trống nếu không đổi mật khẩu" />
+                    <span asp-validation-for="NewPassword" class="text-danger small"></span>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary px-4 py-2 rounded-3 fw-bold shadow-sm">
+                        <i class="bi bi-save me-1"></i> Lưu Cập Nhật
+                    </button>
+                    <a asp-action="Details" asp-route-id="@Model.TrainerId" class="btn btn-light px-4 py-2 rounded-3 border">Hủy bỏ</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

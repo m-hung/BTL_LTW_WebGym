@@ -1,0 +1,70 @@
+@model WebGym.Models.DTOs.Admin.GymPackageFormViewModel
+@{
+    ViewData["Title"] = "Chỉnh Sửa Gói Tập";
+}
+
+<div class="mb-4">
+    <a asp-action="Index" class="text-decoration-none text-muted small fw-semibold">
+        <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách gói tập
+    </a>
+    <h3 class="fw-bold text-dark mt-2">Cập Nhật Gói Tập Gym #@Model.PackageId</h3>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card border-0 rounded-4 bg-white shadow-sm p-4">
+            <form asp-action="Edit" asp-route-id="@Model.PackageId" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="PackageId" />
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <div class="mb-3">
+                    <label asp-for="PackageName" class="form-label fw-bold small text-muted"></label>
+                    <input asp-for="PackageName" class="form-control rounded-3 py-2" />
+                    <span asp-validation-for="PackageName" class="text-danger small"></span>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Price" class="form-label fw-bold small text-muted"></label>
+                        <div class="input-group">
+                            <input asp-for="Price" type="number" step="10000" class="form-control rounded-start-3 py-2" />
+                            <span class="input-group-text bg-light text-muted">VNĐ</span>
+                        </div>
+                        <span asp-validation-for="Price" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="DurationDays" class="form-label fw-bold small text-muted"></label>
+                        <div class="input-group">
+                            <input asp-for="DurationDays" type="number" class="form-control rounded-start-3 py-2" />
+                            <span class="input-group-text bg-light text-muted">Ngày</span>
+                        </div>
+                        <span asp-validation-for="DurationDays" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3 form-check form-switch p-3 bg-light rounded-3 ms-0">
+                    <input class="form-check-input ms-0 me-3" type="checkbox" asp-for="IncludesPT" id="ptSwitch" style="transform: scale(1.3);">
+                    <label class="form-check-label fw-bold" for="ptSwitch">
+                        Gói tập này bao gồm Huấn luyện viên cá nhân (PT)
+                    </label>
+                    <div class="text-muted small">Hội viên khi mua gói này sẽ được đặt lịch tập riêng 1:1 với PT của phòng gym.</div>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Description" class="form-label fw-bold small text-muted"></label>
+                    <textarea asp-for="Description" class="form-control rounded-3" rows="4"></textarea>
+                    <span asp-validation-for="Description" class="text-danger small"></span>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary px-4 py-2 rounded-3 fw-bold shadow-sm">
+                        <i class="bi bi-save me-1"></i> Cập Nhật Gói Tập
+                    </button>
+                    <a asp-action="Index" class="btn btn-light px-4 py-2 rounded-3 border">Hủy bỏ</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

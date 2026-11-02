@@ -1,0 +1,154 @@
+@model IEnumerable<WebGym.Models.Entities.GymPackage>
+@{
+    ViewData["Title"] = "Quản Lý Gói Tập";
+}
+
+<!-- Page Header -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold text-dark mb-1">
+            <i class="bi bi-box-seam-fill text-primary me-2"></i>Quản Lý Gói Tập Gym
+        </h3>
+        <p class="text-muted small mb-0">Quản lý các gói tập, mức giá niêm yết, thời hạn sử dụng và quyền lợi kèm PT.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="Create" class="btn btn-primary d-flex align-items-center gap-2 px-3 py-2 rounded-3 shadow-sm">
+            <i class="bi bi-plus-circle-fill"></i>
+            <span class="fw-semibold">Thêm Gói Tập Mới</span>
+        </a>
+    </div>
+</div>
+
+<!-- Search & Filter Card -->
+<div class="card border-0 bg-white p-3 mb-4 rounded-4 shadow-sm">
+    <form method="get" class="row g-2 align-items-center">
+        <div class="col-md-5">
+            <div class="input-group">
+                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                <input type="text" name="searchKeyword" class="form-control bg-light border-start-0" 
+                       placeholder="Tìm kiếm theo tên gói tập hoặc mô tả..." value="@ViewBag.SearchKeyword" />
+            </div>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-dark w-100 rounded-3">
+                <i class="bi bi-funnel me-1"></i> Lọc dữ liệu
+            </button>
+        </div>
+        @if (!string.IsNullOrWhiteSpace(ViewBag.SearchKeyword as string))
+        {
+            <div class="col-md-2">
+                <a asp-action="Index" class="btn btn-outline-secondary w-100 rounded-3">Xóa lọc</a>
+            </div>
+        }
+    </form>
+</div>
+
+<!-- Packages Grid & Table -->
+<div class="row g-4 mb-4">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-6 col-xl-3">
+            <div class="card h-100 border-0 rounded-4 shadow-sm position-relative overflow-hidden">
+                <div class="card-body p-4 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="fw-bold text-dark mb-0">@item.PackageName</h5>
+                            @if (item.IncludesPT)
+                            {
+                                <span class="badge bg-danger rounded-pill px-2 py-1 small">
+                                    <i class="bi bi-person-fill-check me-1"></i> Kèm PT
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary rounded-pill px-2 py-1 small">Tự tập</span>
+                            }
+                        </div>
+                        <div class="text-primary fw-bold fs-3 mb-2">
+                            @item.Price.ToString("N0") <small class="fs-6 text-muted">VNĐ</small>
+                        </div>
+                        <div class="d-flex align-items-center text-muted small mb-3">
+                            <i class="bi bi-clock-history me-2 text-warning"></i>
+                            Thời hạn: <strong class="text-dark ms-1">@item.DurationDays ngày</strong>
+                        </div>
+                        <p class="text-muted small mb-4 text-truncate-3" style="min-height: 40px;">
+                            @(item.Description ?? "Gói tập tiêu chuẩn tại WebGym với đầy đủ trang thiết bị hiện đại.")
+                        </p>
+                    </div>
+
+                    <div class="border-top pt-3 mt-auto">
+                        <div class="d-flex justify-content-between align-items-center mb-3 small text-muted">
+                            <span>Lượt đăng ký:</span>
+                            <span class="badge bg-light text-dark border fw-bold">@item.Subscriptions.Count lượt</span>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a asp-action="Edit" asp-route-id="@item.PackageId" class="btn btn-light btn-sm w-100 rounded-3 border fw-semibold">
+                                <i class="bi bi-pencil-square text-primary me-1"></i> Sửa
+                            </a>
+                            <form asp-action="Delete" asp-route-id="@item.PackageId" method="post" id="deleteForm-@item.PackageId" class="w-100">
+                                @Html.AntiForgeryToken()
+                                <button type="button" class="btn btn-outline-danger btn-sm w-100 rounded-3 fw-semibold" 
+                                        onclick="confirmAction('deleteForm-@item.PackageId', 'Bạn có chắc chắn muốn xóa gói \'@item.PackageName\'?')">
+                                    <i class="bi bi-trash3 me-1"></i> Xóa
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Detailed Table View -->
+<div class="card border-0 rounded-4 bg-white shadow-sm p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-table me-2 text-secondary"></i>Bảng Tổng Hợp Chi Tiết</h5>
+        <span class="badge bg-primary rounded-pill">Tổng cộng: @Model.Count() gói</span>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Mã Gói</th>
+                    <th>Tên Gói</th>
+                    <th>Thời Hạn</th>
+                    <th>Giá Niêm Yết</th>
+                    <th>Dịch Vụ Kèm PT</th>
+                    <th>Số Khách Đăng Ký</th>
+                    <th class="text-end">Hành Động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model)
+                {
+                    <tr>
+                        <td class="text-muted fw-bold">#PKG-@p.PackageId</td>
+                        <td class="fw-bold text-dark">@p.PackageName</td>
+                        <td><span class="badge bg-light text-dark border">@p.DurationDays ngày</span></td>
+                        <td class="fw-bold text-success">@p.Price.ToString("N0") VNĐ</td>
+                        <td>
+                            @if (p.IncludesPT)
+                            {
+                                <span class="badge badge-soft-danger"><i class="bi bi-check-circle-fill me-1"></i>Có HLV riêng</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-soft-secondary">Không có PT</span>
+                            }
+                        </td>
+                        <td>
+                            <span class="badge badge-soft-primary">@p.Subscriptions.Count hội viên</span>
+                        </td>
+                        <td class="text-end">
+                            <a asp-action="Edit" asp-route-id="@p.PackageId" class="btn btn-outline-primary btn-sm rounded-3 me-1" title="Chỉnh sửa">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

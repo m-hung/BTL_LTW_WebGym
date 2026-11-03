@@ -33,5 +33,17 @@ namespace WebGym.Models.Entities
 
         [NotMapped]
         public string Name => PackageName;
+
+        [NotMapped]
+        public decimal MonthlyPrice => DurationDays > 0 ? Math.Round((Price / DurationDays) * 30) : Price;
+
+        [NotMapped]
+        public long PriceInThousands => (long)Math.Round(MonthlyPrice / 1000m);
+
+        [NotMapped]
+        public bool IsPopular => PackageName.Contains("Vàng", StringComparison.OrdinalIgnoreCase)
+                                 || PackageName.Contains("VIP", StringComparison.OrdinalIgnoreCase)
+                                 || PackageName.Contains("Pro", StringComparison.OrdinalIgnoreCase)
+                                 || PackageId == 2 || PackageId == 3;
     }
 }

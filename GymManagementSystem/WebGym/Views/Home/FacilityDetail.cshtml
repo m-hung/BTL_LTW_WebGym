@@ -1,0 +1,159 @@
+@model WebGym.Models.FacilityInfo
+@using WebGym.Models
+@{
+    Layout = null;
+    ViewData["Title"] = Model.FullName + " - Pulse Gym";
+    var labels = new[] { "", "Vắng", "Vừa phải", "Đông" };
+    var coaches = (ViewBag.Coaches as List<TrainerInfo>) ?? TrainerData.All.Where(t => t.AreaSlugs.Contains(Model.Slug)).ToList();
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/pulse.css" asp-append-version="true" />
+</head>
+<body>
+    <partial name="_PulseHeader" />
+
+    <main>
+        <!-- HERO -->
+        <section class="pg-hero">
+            <img src="~/images/@Model.Image" asp-append-version="true" alt="" />
+            <div class="pg-hero-in">
+                <nav class="crumbs" aria-label="Đường dẫn"><a href="~/">Trang chủ</a><span>/</span><a href="~/#khu-vuc">Khu vực tập</a><span>/</span><b>@Model.FullName</b></nav>
+                <p class="eyebrow">@Model.Tag</p>
+                <h1 class="display">@Model.Name<em class="outline">@Model.Title2</em></h1>
+                <p class="lead">@Model.Tagline</p>
+                <div class="hero-cta">
+                    <a href="~/#bang-gia" class="btn">Xem bảng giá <b>→</b></a>
+                    <a href="#thiet-bi" class="link-ul">Xem thiết bị</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- THÔNG SỐ -->
+        <section class="pg-facts">
+            <div><small>Diện tích</small><strong>@Model.Area</strong></div>
+            <div><small>Sức chứa</small><strong>@Model.Capacity</strong></div>
+            <div><small>Giờ mở cửa</small><strong>@Model.Hours</strong></div>
+            <div><small>Vị trí</small><strong>@Model.Location</strong></div>
+        </section>
+
+        <!-- GIỚI THIỆU -->
+        <section class="section pg-about">
+            <div>
+                <p class="eyebrow">Về khu vực</p>
+                <h2 class="display">Không gian<em class="outline">dành cho bạn</em></h2>
+                <p class="lead">@Model.Intro</p>
+                <h3 class="pg-sub">Phù hợp với</h3>
+                <ul class="check">
+                    @foreach (var a in Model.Audience) { <li>@a</li> }
+                </ul>
+            </div>
+            <div class="pg-benefits">
+                @foreach (var h in Model.Highlights)
+                {
+                    <article><h3>@h.Title</h3><p>@h.Text</p></article>
+                }
+            </div>
+        </section>
+
+        <!-- THIẾT BỊ -->
+        <section id="thiet-bi" class="section section-alt">
+            <div class="head">
+                <div>
+                    <p class="eyebrow">Trang thiết bị</p>
+                    <h2 class="display">Có gì<em class="outline">ở đây?</em></h2>
+                </div>
+                <p class="head-note">Thiết bị được bảo trì thường xuyên và đủ số lượng để bạn không phải chờ lâu.</p>
+            </div>
+            <div class="pg-benefits cols3">
+                @foreach (var e in Model.Equipments)
+                {
+                    <article><h3>@e.Name</h3><p>@e.Detail</p></article>
+                }
+            </div>
+        </section>
+
+        <!-- GIỜ ĐÔNG + QUY ĐỊNH -->
+        <section class="section pg-faq">
+            <div>
+                <p class="eyebrow">Chọn giờ đẹp</p>
+                <h2 class="display">Giờ vắng<em class="outline">giờ đông</em></h2>
+                <ul class="pg-crowd">
+                    @foreach (var c in Model.Crowd)
+                    {
+                        <li><span>@c.Time</span><span class="bar"><i style="width:@(c.Level * 100 / 3)%"></i></span><b>@labels[c.Level]</b></li>
+                    }
+                </ul>
+            </div>
+            <div>
+                <h3 class="pg-sub">Quy định khu vực</h3>
+                <ul class="check">
+                    @foreach (var r in Model.Rules) { <li>@r</li> }
+                </ul>
+            </div>
+        </section>
+
+        @if (coaches.Any())
+        {
+            <!-- HLV -->
+            <section class="section section-alt">
+                <div class="head">
+                    <div>
+                        <p class="eyebrow">Hỗ trợ tại khu vực</p>
+                        <h2 class="display">Huấn luyện viên<em class="outline">tại đây</em></h2>
+                    </div>
+                </div>
+                <div class="trainers">
+                    @foreach (var t in coaches)
+                    {
+                        var coachImg = t.Image.StartsWith("http") ? t.Image : Url.Content("~/images/" + t.Image);
+                        <a asp-controller="Home" asp-action="TrainerDetail" asp-route-id="@t.Slug" class="trainer">
+                            <div class="photo"><img src="@coachImg" asp-append-version="true" alt="@t.FullName" /><span class="tag">@t.Badge</span></div>
+                            <div class="trainer-info"><div><h3>@t.FullName</h3><small>@t.Role</small></div><span class="arrow-circle">↗</span></div>
+                        </a>
+                    }
+                </div>
+            </section>
+        }
+
+        <!-- KHU VỰC KHÁC -->
+        <section class="section">
+            <div class="head">
+                <div>
+                    <p class="eyebrow">Khám phá thêm</p>
+                    <h2 class="display">Khu vực<em class="outline">khác</em></h2>
+                </div>
+            </div>
+            <div class="pg-others">
+                @foreach (var o in FacilityData.All.Where(f => f.Slug != Model.Slug).Take(3))
+                {
+                    <a asp-controller="Home" asp-action="FacilityDetail" asp-route-id="@o.Slug" class="program">
+                        <img src="~/images/@o.Image" asp-append-version="true" alt="" />
+                        <div><small>@o.Tag</small><h3>@o.Name</h3></div>
+                        <span class="arrow-circle">↗</span>
+                    </a>
+                }
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="cta">
+            <div>
+                <p class="eyebrow dark">Sẵn sàng chưa?</p>
+                <h2 class="display">Đến và<em class="outline dark">trải nghiệm.</em></h2>
+            </div>
+            <a href="~/#bang-gia" class="btn btn-dark">Nhận 7 ngày miễn phí <b>→</b></a>
+            <span class="cta-watermark" aria-hidden="true">PULSE</span>
+        </section>
+    </main>
+
+    <partial name="_PulseFooter" />
+</body>
+</html>

@@ -1,0 +1,164 @@
+@model WebGym.Models.CheckoutViewModel
+@using WebGym.Models
+@{
+    Layout = null;
+    var plan = Model.Plan!;
+    ViewData["Title"] = "Thanh toán gói " + plan.Name + " - Pulse Gym";
+    var today = DateTime.Today.ToString("yyyy-MM-dd");
+    var allPackages = ViewBag.AllPackages as List<WebGym.Models.Entities.GymPackage> ?? new List<WebGym.Models.Entities.GymPackage>();
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/pulse.css" asp-append-version="true" />
+</head>
+<body>
+    <partial name="_PulseHeader" />
+
+    <main class="co">
+        <div class="co-head">
+            <nav class="crumbs" aria-label="Đường dẫn"><a href="~/">Trang chủ</a><span>/</span><a href="~/#bang-gia">Bảng giá</a><span>/</span><b>Thanh toán</b></nav>
+            <p class="eyebrow">Bước cuối cùng</p>
+            <h1 class="display">Hoàn tất<em class="outline">đăng ký</em></h1>
+        </div>
+
+        <form asp-controller="Checkout" asp-action="Submit" asp-route-slug="@plan.PackageId" method="post" class="co-grid" novalidate>
+            <input type="hidden" asp-for="PackageId" value="@plan.PackageId" />
+            <div class="co-main">
+                <!-- 1. Thông tin -->
+                <section class="co-card">
+                    <h2><span>01</span>Thông tin của bạn</h2>
+                    <div class="co-fields">
+                        <label class="co-f wide">Họ và tên
+                            <input asp-for="FullName" required autocomplete="name" placeholder="Nguyễn Văn A" />
+                            <span asp-validation-for="FullName" class="err"></span>
+                        </label>
+                        <label class="co-f">Email
+                            <input asp-for="Email" type="email" required autocomplete="email" placeholder="ban@email.com" />
+                            <span asp-validation-for="Email" class="err"></span>
+                        </label>
+                        <label class="co-f">Số điện thoại
+                            <input asp-for="Phone" type="tel" required autocomplete="tel" placeholder="09xx xxx xxx" />
+                            <span asp-validation-for="Phone" class="err"></span>
+                        </label>
+                    </div>
+                </section>
+
+                <!-- 2. Tập luyện -->
+                <section class="co-card">
+                    <h2><span>02</span>Kế hoạch tập luyện</h2>
+                    <div class="co-fields">
+                        <label class="co-f">Ngày bắt đầu
+                            <input asp-for="StartDate" type="date" min="@today" required />
+                            <span asp-validation-for="StartDate" class="err"></span>
+                        </label>
+                        <label class="co-f">Khu vực quan tâm (không bắt buộc)
+                            <select asp-for="AreaSlug">
+                                <option value="">Chưa chọn</option>
+                                @foreach (var f in FacilityData.All)
+                                {
+                                    <option value="@f.Slug" selected="@(Model.AreaSlug == f.Slug)">@f.FullName</option>
+                                }
+                            </select>
+                        </label>
+                        <label class="co-f wide">Huấn luyện viên mong muốn (không bắt buộc)
+                            <select asp-for="TrainerSlug">
+                                <option value="">Để Pulse sắp xếp giúp tôi</option>
+                                @if (ViewBag.AllTrainers != null)
+                                {
+                                    foreach (var t in (List<WebGym.Models.TrainerInfo>)ViewBag.AllTrainers)
+                                    {
+                                        <option value="@t.Slug" selected="@(Model.TrainerSlug == t.Slug)">@t.FullName — @t.Role</option>
+                                    }
+                                }
+                            </select>
+                        </label>
+                    </div>
+                </section>
+
+                <!-- 3. Thanh toán -->
+                <section class="co-card">
+                    <h2><span>03</span>Hình thức thanh toán</h2>
+                    <div class="co-methods">
+                        <input type="radio" name="PaymentMethod" id="pm-vnpay" value="vnpay" checked="@(Model.PaymentMethod == "vnpay")" />
+                        <label for="pm-vnpay"><b>VNPay</b><small>Thẻ ATM, Visa, QR ngân hàng</small></label>
+                        <input type="radio" name="PaymentMethod" id="pm-bank" value="bank" checked="@(Model.PaymentMethod == "bank")" />
+                        <label for="pm-bank"><b>Chuyển khoản</b><small>Chuyển thủ công theo hướng dẫn</small></label>
+                        <input type="radio" name="PaymentMethod" id="pm-counter" value="counter" checked="@(Model.PaymentMethod == "counter")" />
+                        <label for="pm-counter"><b>Tại quầy</b><small>Thanh toán khi đến phòng tập</small></label>
+                    </div>
+                    <span asp-validation-for="PaymentMethod" class="err"></span>
+                </section>
+
+                <label class="co-terms">
+                    <input type="checkbox" asp-for="AgreeTerms" />
+                    <span>Tôi đồng ý với <a href="#">Điều khoản sử dụng</a> và <a href="#">Chính sách quyền riêng tư</a> của Pulse Gym.</span>
+                </label>
+                <span asp-validation-for="AgreeTerms" class="err"></span>
+            </div>
+
+            <!-- Tóm tắt đơn -->
+            <aside class="co-sum" id="coSum" data-monthly="@((long)plan.MonthlyPrice)">
+                <div style="margin-bottom: 16px;">
+                    <p class="co-label" style="margin-bottom: 8px;">Gói tập đã chọn @(plan.Popular ? "• Phổ biến nhất" : "")</p>
+                    @if (allPackages.Count > 1)
+                    {
+                        <div style="margin-bottom: 10px;">
+                            <label for="packageSwitch" style="font-size:12px; color:var(--muted); display:block; margin-bottom:4px;">Chuyển nhanh sang gói khác:</label>
+                            <select id="packageSwitch" 
+                                    style="background:#141712; color:#fff; border:1px solid var(--lime); padding:10px 12px; width:100%; border-radius:4px; font-weight:600; font-size:13px; cursor:pointer;"
+                                    onchange="window.location.href='/thanh-toan/' + this.value + '?cycle=' + (document.getElementById('cy-year').checked ? 'year' : 'month');">
+                                @foreach (var p in allPackages)
+                                {
+                                    <option value="@p.PackageId" selected="@(p.PackageId == plan.PackageId)">
+                                        @p.PackageName — @p.Price.ToString("N0")đ (@p.DurationDays ngày)
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                    }
+                </div>
+                <h2 class="co-plan">@plan.Name</h2>
+                <p class="co-desc">@plan.Description</p>
+                <div style="font-size:13px; color:var(--lime); margin-bottom:12px; font-weight:600;">
+                    <span>Thời hạn: @plan.DurationDays ngày</span> • <span>HLV cá nhân: @(plan.IncludesPT ? "Có PT kèm 1:1" : "Tự tập")</span>
+                </div>
+                <ul class="check">
+                    @foreach (var f in plan.Features) { <li>@f</li> }
+                </ul>
+
+                <div class="co-cycle">
+                    <input type="radio" name="Cycle" id="cy-month" value="month" checked="@(!Model.IsYearly)" />
+                    <label for="cy-month">Hàng tháng</label>
+                    <input type="radio" name="Cycle" id="cy-year" value="year" checked="@Model.IsYearly" />
+                    <label for="cy-year">Hàng năm <b>-20%</b></label>
+                </div>
+
+                <div class="co-lines">
+                    <div class="co-line"><span>Gói @plan.Name × <b id="coMonths">@Model.Months</b> tháng</span><span id="coBase">@CheckoutViewModel.Vnd(Model.BaseTotal)</span></div>
+                    <div class="co-line co-disc" id="coDisc" hidden="@(!Model.IsYearly)"><span>Ưu đãi thanh toán năm</span><span>-<b id="coDiscAmt">@CheckoutViewModel.Vnd(Model.Discount)</b></span></div>
+                    <div class="co-line co-total"><span>Tổng thanh toán</span><strong id="coTotal">@CheckoutViewModel.Vnd(Model.Total)</strong></div>
+                </div>
+                <p class="co-note" id="coNote">@(Model.IsYearly ? "Thanh toán một lần cho 12 tháng." : "Thanh toán theo từng tháng.")</p>
+
+                <button type="submit" class="btn">Thanh toán <span id="coBtn">@CheckoutViewModel.Vnd(Model.Total)</span></button>
+                <ul class="co-trust">
+                    <li>Không phí ẩn</li>
+                    <li>Hủy bất cứ lúc nào</li>
+                    <li>Trải nghiệm 7 ngày miễn phí</li>
+                </ul>
+                <a href="~/#bang-gia" class="link-ul co-back">← Đổi gói khác</a>
+            </aside>
+        </form>
+    </main>
+
+    <partial name="_PulseFooter" />
+    <script src="~/js/checkout.js" asp-append-version="true"></script>
+</body>
+</html>

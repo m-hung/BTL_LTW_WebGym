@@ -1,83 +1,189 @@
 @{
-    ViewData["Title"] = "Trang Chủ";
-    var packages = ViewBag.FeaturedPackages as List<WebGym.Models.Entities.GymPackage>;
+    Layout = null;
+    ViewData["Title"] = "Pulse Gym - Bứt phá giới hạn";
 }
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/pulse.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="nav">
+        <a href="#top" class="logo"><i class="logo-bars"></i>PULSE <span>GYM</span></a>
+        <nav class="nav-links">
+            <a href="#chuong-trinh">Chương trình</a>
+            <a href="#lich-tap">Lịch tập</a>
+            <a href="#huan-luyen-vien">Huấn luyện viên</a>
+            <a href="#bang-gia">Bảng giá</a>
+        </nav>
+        <a href="#bang-gia" class="btn btn-sm">Đăng ký tập thử <b>→</b></a>
+    </header>
 
-<!-- Hero Section -->
-<div class="p-5 mb-5 rounded-4 text-white shadow-lg" style="background: linear-gradient(135deg, #1f1c2c, #928dab);">
-    <div class="row align-items-center">
-        <div class="col-lg-8">
-            <span class="badge bg-warning text-dark px-3 py-2 mb-3 fw-bold">CHÀO MỪNG ĐẾN VỚI WEBGYM</span>
-            <h1 class="display-4 fw-bold">Đánh Thức Năng Lượng & Kiến Tạo Thể Hình Đỉnh Cao</h1>
-            <p class="lead mt-3 text-light">Không gian rèn luyện đẳng cấp, trang thiết bị tân tiến, đội ngũ Huấn Luyện Viên cá nhân (PT) chuyên nghiệp và theo dõi chỉ số InBody thông minh.</p>
-            <div class="mt-4">
-                <a asp-action="Packages" class="btn btn-warning btn-lg fw-bold px-4 me-3">Khám Phá Gói Tập</a>
-                <a asp-controller="AI" asp-action="Index" class="btn btn-outline-light btn-lg px-4"><i class="bi bi-robot"></i> Trải Nghiệm AI Fitness</a>
+    <main id="top">
+        <!-- HERO -->
+        <section class="hero">
+            <div class="hero-text">
+                <p class="eyebrow">Không viện cớ. Chỉ kết quả.</p>
+                <h1 class="display">Bứt phá<em class="outline">giới hạn</em></h1>
+                <p class="lead">Đánh thức phiên bản mạnh mẽ nhất của bạn với không gian tập luyện chuẩn quốc tế và đội ngũ huấn luyện viên tận tâm.</p>
+                <div class="hero-cta">
+                    <a href="#bang-gia" class="btn">Bắt đầu ngay <b>→</b></a>
+                    <button type="button" class="play" id="playIntro" aria-haspopup="dialog"><span>▶</span>Khám phá Pulse</button>
+                </div>
+                <ul class="stats">
+                    <li><strong>2.5K<sup>+</sup></strong><span>Hội viên đang tập luyện</span></li>
+                    <li><strong>25<sup>+</sup></strong><span>Huấn luyện viên chuyên nghiệp</span></li>
+                    <li><strong>12</strong><span>Năm đồng hành cùng thể hình Việt</span></li>
+                </ul>
+            </div>
+            <div class="hero-media">
+                <img src="~/images/hero.jpg" alt="Hội viên Pulse Gym đang tập luyện" />
+                <div class="chip chip-open"><small><i class="dot"></i>Mở cửa hôm nay</small><strong>05:00 — 23:00</strong></div>
+                <div class="chip chip-sat"><span class="arrow-box">↗</span><div><strong>98%</strong><small>Hội viên hài lòng</small></div></div>
+            </div>
+        </section>
+
+        <!-- MARQUEE -->
+        <div class="marquee" aria-hidden="true">
+            <div class="marquee-track">
+                <span>Train hard</span><i>✦</i><span>Stay strong</span><i>✦</i><span>No excuses</span><i>✦</i><span>Go beyond</span><i>✦</i>
+                <span>Train hard</span><i>✦</i><span>Stay strong</span><i>✦</i><span>No excuses</span><i>✦</i><span>Go beyond</span><i>✦</i>
+                <span>Train hard</span><i>✦</i><span>Stay strong</span><i>✦</i><span>No excuses</span><i>✦</i><span>Go beyond</span><i>✦</i>
             </div>
         </div>
-        <div class="col-lg-4 text-center d-none d-lg-block">
-            <i class="bi bi-fire text-warning" style="font-size: 8rem;"></i>
-        </div>
-    </div>
-</div>
 
-<!-- Features Section -->
-<div class="row text-center mb-5 g-4">
-    <div class="col-md-4">
-        <div class="card h-100 border-0 shadow-sm p-4 rounded-4">
-            <div class="text-warning mb-3"><i class="bi bi-activity fs-1"></i></div>
-            <h5 class="fw-bold">Thiết Bị Đẳng Cấp</h5>
-            <p class="text-muted">Nhập khẩu 100% từ các thương hiệu hàng đầu thế giới, đảm bảo an toàn và tối ưu hiệu suất rèn luyện.</p>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card h-100 border-0 shadow-sm p-4 rounded-4">
-            <div class="text-warning mb-3"><i class="bi bi-award-fill fs-1"></i></div>
-            <h5 class="fw-bold">HLV Cá Nhân (PT) Kèm 1:1</h5>
-            <p class="text-muted">Kèm sát kỹ thuật, đo đạc chỉ số cơ mỡ định kỳ và cam kết kết quả giảm cân, tăng cơ rõ rệt.</p>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card h-100 border-0 shadow-sm p-4 rounded-4">
-            <div class="text-warning mb-3"><i class="bi bi-graph-up-arrow fs-1"></i></div>
-            <h5 class="fw-bold">Theo Dõi Tiến Trình InBody</h5>
-            <p class="text-muted">Hệ thống lưu trữ lịch sử số đo (Cân nặng, % Mỡ, Vòng eo) với biểu đồ trực quan sinh động.</p>
-        </div>
-    </div>
-</div>
-
-<!-- Featured Packages -->
-<div class="mb-5">
-    <div class="text-center mb-4">
-        <h2 class="fw-bold">Các Gói Tập Nổi Bật Tại WebGym</h2>
-        <p class="text-muted">Lựa chọn gói tập phù hợp để bắt đầu hành trình chuyển đổi vóc dáng của bạn ngay hôm nay</p>
-    </div>
-
-    <div class="row g-4 justify-content-center">
-        @if (packages != null)
-        {
-            foreach (var item in packages)
-            {
-                <div class="col-lg-3 col-md-6">
-                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
-                        <div class="card-header bg-dark text-white text-center py-3">
-                            <h5 class="card-title mb-0 fw-bold">@item.PackageName</h5>
-                        </div>
-                        <div class="card-body p-4 text-center d-flex flex-column">
-                            <h3 class="text-primary fw-bold my-3">@item.Price.ToString("N0") <span class="fs-6 text-muted">đ</span></h3>
-                            <p class="text-muted small flex-grow-1">@item.Description</p>
-                            <ul class="list-unstyled text-start my-3 small">
-                                <li class="mb-2"><i class="bi bi-calendar-check text-success me-2"></i> Thời hạn: <strong>@item.DurationDays ngày</strong></li>
-                                <li class="mb-2"><i class="bi bi-person-badge text-success me-2"></i> Huấn luyện viên (PT): <strong>@(item.IncludesPT ? "Kèm 1:1 không giới hạn" : "Tự tập")</strong></li>
-                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Đo InBody & tư vấn dinh dưỡng</li>
-                            </ul>
-                            <a asp-controller="Payment" asp-action="Checkout" asp-route-packageId="@item.PackageId" class="btn btn-warning w-100 fw-bold py-2 mt-auto">
-                                <i class="bi bi-credit-card me-1"></i> Đăng Ký Ngay
-                            </a>
-                        </div>
-                    </div>
+        <!-- PROGRAMS -->
+        <section id="chuong-trinh" class="section">
+            <div class="head">
+                <div>
+                    <p class="eyebrow">Chọn thử thách của bạn</p>
+                    <h2 class="display">Tập luyện theo<em class="outline">cách của bạn</em></h2>
                 </div>
-            }
-        }
+                <p class="head-note">Từ sức mạnh đến sự linh hoạt, mỗi chương trình đều được thiết kế để đưa bạn tiến gần hơn đến mục tiêu.</p>
+            </div>
+            <div class="programs">
+                <a asp-controller="Home" asp-action="ProgramDetail" asp-route-id="gym" class="program"><img src="~/images/gym.jpg" alt="" /><span class="num">01</span><div><small>Sức mạnh • Hình thể</small><h3>Gym</h3></div><span class="arrow-circle">↗</span></a>
+                <a asp-controller="Home" asp-action="ProgramDetail" asp-route-id="hiit" class="program"><img src="~/images/hiit.jpg" alt="" /><span class="num">02</span><div><small>Đốt mỡ • Sức bền</small><h3>HIIT</h3></div><span class="arrow-circle">↗</span></a>
+                <a asp-controller="Home" asp-action="ProgramDetail" asp-route-id="boxing" class="program"><img src="~/images/boxing.jpg" alt="" /><span class="num">03</span><div><small>Phản xạ • Bùng nổ</small><h3>Boxing</h3></div><span class="arrow-circle">↗</span></a>
+                <a asp-controller="Home" asp-action="ProgramDetail" asp-route-id="yoga" class="program"><img src="~/images/yoga.jpg" alt="" /><span class="num">04</span><div><small>Cân bằng • Linh hoạt</small><h3>Yoga</h3></div><span class="arrow-circle">↗</span></a>
+            </div>
+        </section>
+
+        <!-- SCHEDULE -->
+        <section id="lich-tap" class="section">
+            <div class="head">
+                <div>
+                    <p class="eyebrow">Lịch tập tuần này</p>
+                    <h2 class="display">Sắp xếp thời gian<em class="outline">nâng tầm bản thân.</em></h2>
+                </div>
+                <a href="#" class="link-ul">Xem lịch đầy đủ →</a>
+            </div>
+            <div class="schedule">
+                <div class="tabs" id="tabs"></div>
+                <div id="classes"></div>
+            </div>
+        </section>
+
+        <!-- TRAINERS -->
+        <section id="huan-luyen-vien" class="section section-alt">
+            <div class="head">
+                <div>
+                    <p class="eyebrow">Đội ngũ chuyên gia</p>
+                    <h2 class="display">Người dẫn lối<em class="outline">đến thành công</em></h2>
+                </div>
+                <p class="head-note">Không chỉ là huấn luyện viên. Họ là những người truyền cảm hứng, đồng hành và giúp bạn vượt qua mọi giới hạn.</p>
+            </div>
+            <div class="trainers">
+                <a asp-controller="Home" asp-action="TrainerDetail" asp-route-id="alex-tokuda" class="trainer"><div class="photo"><img src="~/images/coach1.jpg" alt="Alex Tokuda" /><span class="tag">10+ năm kinh nghiệm</span></div><div class="trainer-info"><div><h3>Alex Tokuda</h3><small>Strength &amp; Conditioning</small></div><span class="arrow-circle">↗</span></div></a>
+                <a asp-controller="Home" asp-action="TrainerDetail" asp-route-id="mina-tran" class="trainer"><div class="photo"><img src="~/images/coach2.jpg" alt="Mina Tran" /><span class="tag">NASM Certified</span></div><div class="trainer-info"><div><h3>Mina Tran</h3><small>HIIT &amp; Functional</small></div><span class="arrow-circle">↗</span></div></a>
+                <a asp-controller="Home" asp-action="TrainerDetail" asp-route-id="lil-baby" class="trainer"><div class="photo"><img src="~/images/coach3.jpg" alt="Lil Baby" /><span class="tag">Vô địch toàn quốc</span></div><div class="trainer-info"><div><h3>Lil Baby</h3><small>Boxing Coach</small></div><span class="arrow-circle">↗</span></div></a>
+            </div>
+        </section>
+
+        <!-- PRICING -->
+        <section id="bang-gia" class="section pricing">
+            <p class="eyebrow center">Đầu tư cho chính bạn</p>
+            <h2 class="display center">Chọn gói.<em class="outline">Bắt đầu thay đổi.</em></h2>
+            <div class="billing" id="billing">
+                <button class="on" data-mode="month">Hàng tháng</button>
+                <button data-mode="year">Hàng năm <b>-20%</b></button>
+            </div>
+            <div class="plans">
+                <article class="plan">
+                    <h3>Starter</h3>
+                    <p class="price"><strong data-price="590">590</strong><span><b>Nghìn</b>/ tháng</span></p>
+                    <p class="plan-desc">Bắt đầu hành trình mạnh mẽ hơn.</p>
+                    <a asp-controller="Checkout" asp-action="Index" asp-route-slug="starter" data-plan-link class="btn btn-ghost">Chọn gói Starter <b>→</b></a>
+                    <ul><li>Tập không giới hạn</li><li>Phòng tắm &amp; tủ đồ</li><li>Đánh giá thể lực cơ bản</li></ul>
+                </article>
+                <article class="plan plan-hot">
+                    <span class="badge">Phổ biến nhất</span>
+                    <h3>Pro</h3>
+                    <p class="price"><strong data-price="990">990</strong><span><b>Nghìn</b>/ tháng</span></p>
+                    <p class="plan-desc">Lựa chọn tốt nhất để bứt phá.</p>
+                    <a asp-controller="Checkout" asp-action="Index" asp-route-slug="pro" data-plan-link class="btn">Chọn gói Pro <b>→</b></a>
+                    <ul><li>Tất cả quyền lợi Starter</li><li>Toàn bộ lớp nhóm</li><li>2 buổi PT mỗi tháng</li><li>Theo dõi chỉ số chuyên sâu</li></ul>
+                </article>
+                <article class="plan">
+                    <h3>Elite</h3>
+                    <p class="price"><strong data-price="1590">1.590</strong><span><b>Nghìn</b>/ tháng</span></p>
+                    <p class="plan-desc">Huấn luyện cá nhân không giới hạn.</p>
+                    <a asp-controller="Checkout" asp-action="Index" asp-route-slug="elite" data-plan-link class="btn btn-ghost">Chọn gói Elite <b>→</b></a>
+                    <ul><li>Tất cả quyền lợi Pro</li><li>8 buổi PT mỗi tháng</li><li>Giáo án dinh dưỡng</li><li>Khu vực phục hồi riêng</li></ul>
+                </article>
+            </div>
+            <p class="fine">Không phí ẩn • Hủy bất cứ lúc nào • Trải nghiệm 7 ngày miễn phí</p>
+        </section>
+
+        <!-- CTA -->
+        <section class="cta">
+            <div>
+                <p class="eyebrow dark">Sẵn sàng chưa?</p>
+                <h2 class="display">Hôm nay là ngày<em class="outline dark">để bắt đầu.</em></h2>
+            </div>
+            <a href="#" class="btn btn-dark">Nhận 7 ngày miễn phí <b>→</b></a>
+            <span class="cta-watermark" aria-hidden="true">PULSE</span>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-grid">
+            <div>
+                <a href="#top" class="logo"><i class="logo-bars"></i>PULSE <span>GYM</span></a>
+                <p class="foot-note">Tập mạnh hơn. Sống chất hơn.<br />Bứt phá giới hạn mỗi ngày.</p>
+                <div class="social"><a href="#">IG</a><a href="#">FB</a><a href="#">YT</a><a href="#">TK</a></div>
+            </div>
+            <div><h4>Khám phá</h4><a href="#chuong-trinh">Chương trình</a><a href="#lich-tap">Lịch tập</a><a href="#huan-luyen-vien">Huấn luyện viên</a><a href="#bang-gia">Bảng giá</a></div>
+            <div><h4>Hỗ trợ</h4><a href="#">Về chúng tôi</a><a href="#">Câu hỏi thường gặp</a><a href="#">Liên hệ</a><a href="#">Tuyển dụng</a></div>
+            <div>
+                <h4 class="news-title">Năng lượng mới<br />trong hộp thư.</h4>
+                <p class="foot-note">Nhận bí quyết tập luyện, dinh dưỡng và ưu đãi mới nhất.</p>
+                <form class="news" onsubmit="return false"><input type="email" placeholder="Email của bạn" aria-label="Email" /><button aria-label="Đăng ký">→</button></form>
+                <div class="stores"><a href="#"><small>Tải trên</small>App Store</a><a href="#"><small>Tải trên</small>Google Play</a></div>
+            </div>
+        </div>
+        <div class="footer-bottom"><span>© 2025 Pulse Gym. All rights reserved.</span><span><a href="#">Quyền riêng tư</a><a href="#">Điều khoản</a></span><span>Made for the strong</span></div>
+    </footer>
+
+    <!-- VIDEO GIỚI THIỆU -->
+    <div class="video-modal" id="videoModal" role="dialog" aria-modal="true" aria-label="Video giới thiệu Pulse Gym">
+        <div class="video-backdrop" data-close></div>
+        <div class="video-box">
+            <button type="button" class="video-close" data-close aria-label="Đóng video">✕</button>
+            <video id="introVideo" controls playsinline preload="none" poster="~/images/hero.jpg">
+                <source src="~/videos/intro.mp4" type="video/mp4" />
+                Trình duyệt của bạn không hỗ trợ phát video.
+            </video>
+            <p class="video-error" id="videoError">Chưa tìm thấy video. Hãy đặt file intro.mp4 vào wwwroot/videos/.</p>
+        </div>
     </div>
-</div>
+
+    <script src="~/js/pulse.js" asp-append-version="true"></script>
+</body>
+</html>

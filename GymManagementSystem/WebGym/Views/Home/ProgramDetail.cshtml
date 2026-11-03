@@ -1,0 +1,154 @@
+@model WebGym.Models.ProgramInfo
+@{
+    Layout = null;
+    ViewData["Title"] = Model.Name + " - Pulse Gym";
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/pulse.css" asp-append-version="true" />
+</head>
+<body>
+    <partial name="_PulseHeader" />
+
+    <main>
+        <!-- HERO -->
+        <section class="pg-hero">
+            <img src="~/images/@Model.Image" alt="" />
+            <div class="pg-hero-in">
+                <nav class="crumbs" aria-label="Đường dẫn"><a href="~/">Trang chủ</a><span>/</span><a href="~/#chuong-trinh">Chương trình</a><span>/</span><b>@Model.Name</b></nav>
+                <p class="eyebrow">@Model.Tag</p>
+                <h1 class="display">@Model.Name<em class="outline">@Model.Title2</em></h1>
+                <p class="lead">@Model.Tagline</p>
+                <div class="hero-cta">
+                    <a href="#lich-lop" class="btn">Đặt lớp tập thử <b>→</b></a>
+                    <a href="~/#bang-gia" class="link-ul">Xem bảng giá</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- THÔNG SỐ NHANH -->
+        <section class="pg-facts">
+            <div><small>Thời lượng</small><strong>@Model.Duration</strong></div>
+            <div><small>Trình độ</small><strong>@Model.Level</strong></div>
+            <div><small>Cường độ</small><strong>@Model.Intensity</strong></div>
+            <div><small>Sĩ số</small><strong>@Model.Capacity</strong></div>
+        </section>
+
+        <!-- GIỚI THIỆU + LỢI ÍCH -->
+        <section class="section pg-about">
+            <div>
+                <p class="eyebrow">Về chương trình</p>
+                <h2 class="display">Bạn sẽ<em class="outline">nhận được gì?</em></h2>
+                <p class="lead">@Model.Intro</p>
+                <h3 class="pg-sub">Phù hợp với</h3>
+                <ul class="check">
+                    @foreach (var a in Model.Audience) { <li>@a</li> }
+                </ul>
+            </div>
+            <div class="pg-benefits">
+                @foreach (var b in Model.Benefits)
+                {
+                    <article><h3>@b.Title</h3><p>@b.Text</p></article>
+                }
+            </div>
+        </section>
+
+        <!-- DIỄN BIẾN BUỔI TẬP -->
+        <section class="section section-alt">
+            <div class="head">
+                <div>
+                    <p class="eyebrow">Một buổi tập</p>
+                    <h2 class="display">Diễn ra<em class="outline">như thế nào</em></h2>
+                </div>
+                <p class="head-note">Mỗi buổi @Model.Duration.ToLower() được chia thành các phần rõ ràng để bạn biết mình đang làm gì.</p>
+            </div>
+            <ol class="pg-steps">
+                @foreach (var s in Model.Steps)
+                {
+                    <li><div><h3>@s.Title</h3><p>@s.Text</p></div><span class="dur">@s.Duration</span></li>
+                }
+            </ol>
+        </section>
+
+        <!-- LỊCH LỚP + HLV -->
+        <section id="lich-lop" class="section">
+            <div class="head">
+                <div>
+                    <p class="eyebrow">Lịch lớp tuần này</p>
+                    <h2 class="display">Chọn giờ<em class="outline">phù hợp</em></h2>
+                </div>
+                <div class="pg-coach"><small>Huấn luyện viên phụ trách</small><strong>@Model.Coach</strong><span>@Model.CoachRole</span></div>
+            </div>
+            <div class="schedule">
+                @foreach (var c in Model.Slots)
+                {
+                    <div class="pg-slot">
+                        <span class="day">@c.Day</span>
+                        <span class="time">@c.Time</span>
+                        <span class="who">Với HLV @c.Coach</span>
+                        <span class="slots">@c.Spots.ToString("00") chỗ</span>
+                        <a href="~/#bang-gia" class="btn btn-sm">Đặt chỗ <b>→</b></a>
+                    </div>
+                }
+            </div>
+        </section>
+
+        <!-- CHUẨN BỊ + FAQ -->
+        <section class="section section-alt pg-faq">
+            <div>
+                <p class="eyebrow">Trước khi đến</p>
+                <h2 class="display">Cần chuẩn bị<em class="outline">gì?</em></h2>
+                <ul class="check">
+                    @foreach (var b in Model.Bring) { <li>@b</li> }
+                </ul>
+            </div>
+            <div>
+                <h3 class="pg-sub">Câu hỏi thường gặp</h3>
+                @foreach (var f in Model.Faqs)
+                {
+                    <details><summary>@f.Question</summary><p>@f.Answer</p></details>
+                }
+            </div>
+        </section>
+
+        <!-- CHƯƠNG TRÌNH KHÁC -->
+        <section class="section">
+            <div class="head">
+                <div>
+                    <p class="eyebrow">Khám phá thêm</p>
+                    <h2 class="display">Chương trình<em class="outline">khác</em></h2>
+                </div>
+            </div>
+            <div class="pg-others">
+                @foreach (var o in WebGym.Models.ProgramData.All.Where(p => p.Slug != Model.Slug))
+                {
+                    <a asp-controller="Home" asp-action="ProgramDetail" asp-route-id="@o.Slug" class="program">
+                        <img src="~/images/@o.Image" alt="" />
+                        <div><small>@o.Tag</small><h3>@o.Name</h3></div>
+                        <span class="arrow-circle">↗</span>
+                    </a>
+                }
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="cta">
+            <div>
+                <p class="eyebrow dark">Sẵn sàng chưa?</p>
+                <h2 class="display">Thử @Model.Name<em class="outline dark">miễn phí 7 ngày.</em></h2>
+            </div>
+            <a href="~/#bang-gia" class="btn btn-dark">Nhận 7 ngày miễn phí <b>→</b></a>
+            <span class="cta-watermark" aria-hidden="true">PULSE</span>
+        </section>
+    </main>
+
+    <partial name="_PulseFooter" />
+</body>
+</html>

@@ -1,0 +1,151 @@
+@model WebGym.Models.TrainerInfo
+@{
+    Layout = null;
+    ViewData["Title"] = Model.FullName + " - Huấn luyện viên Pulse Gym";
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/pulse.css" asp-append-version="true" />
+</head>
+<body>
+    <partial name="_PulseHeader" />
+
+    <main>
+        <!-- HERO -->
+        <section class="hero tr-hero">
+            <div class="hero-text">
+                <nav class="crumbs" aria-label="Đường dẫn"><a href="~/">Trang chủ</a><span>/</span><a href="~/#huan-luyen-vien">Huấn luyện viên</a><span>/</span><b>@Model.FullName</b></nav>
+                <p class="eyebrow">@Model.Role</p>
+                <h1 class="display">@Model.FirstName<em class="outline">@Model.LastName</em></h1>
+                <p class="lead">@Model.Bio</p>
+                <div class="hero-cta">
+                    <a href="#lich-day" class="btn">Đặt lớp với @Model.FirstName <b>→</b></a>
+                    <a href="~/#bang-gia" class="link-ul">Xem bảng giá</a>
+                </div>
+                <ul class="stats">
+                    <li><strong>@Model.Years</strong><span>Năm kinh nghiệm</span></li>
+                    <li><strong>@Model.Clients</strong><span>Học viên đã kèm</span></li>
+                    <li><strong>@Model.ClassesPerWeek</strong><span>Lớp mỗi tuần</span></li>
+                </ul>
+            </div>
+            <div class="hero-media">
+                <img src="~/images/@Model.Image" alt="@Model.FullName" />
+                <div class="chip chip-open"><small><i class="dot"></i>Chứng nhận</small><strong>@Model.Badge</strong></div>
+            </div>
+        </section>
+
+        <!-- TRIẾT LÝ + CHUYÊN MÔN -->
+        <section class="section section-alt pg-about">
+            <div>
+                <p class="eyebrow">Triết lý huấn luyện</p>
+                <blockquote class="tr-quote">“@Model.Quote”</blockquote>
+                <p class="tr-sign">— @Model.FullName</p>
+            </div>
+            <div>
+                <h3 class="pg-sub" style="margin-top:0">Chuyên môn</h3>
+                <ul class="chips">
+                    @foreach (var s in Model.Specialties) { <li>@s</li> }
+                </ul>
+            </div>
+        </section>
+
+        <!-- THÀNH TÍCH -->
+        <section class="section">
+            <div class="head">
+                <div>
+                    <p class="eyebrow">Hồ sơ</p>
+                    <h2 class="display">Chứng chỉ<em class="outline">& thành tích</em></h2>
+                </div>
+            </div>
+            <ol class="pg-steps">
+                @foreach (var a in Model.Achievements)
+                {
+                    <li><div><h3>@a.Title</h3><p>@a.Detail</p></div></li>
+                }
+            </ol>
+        </section>
+
+        <!-- CHƯƠNG TRÌNH PHỤ TRÁCH -->
+        <section class="section section-alt">
+            <div class="head">
+                <div>
+                    <p class="eyebrow">Phụ trách</p>
+                    <h2 class="display">Chương trình<em class="outline">@Model.FirstName dạy</em></h2>
+                </div>
+            </div>
+            <div class="pg-others">
+                @foreach (var slug in Model.ProgramSlugs)
+                {
+                    var p = WebGym.Models.ProgramData.Find(slug);
+                    if (p == null) { continue; }
+                    <a asp-controller="Home" asp-action="ProgramDetail" asp-route-id="@p.Slug" class="program">
+                        <img src="~/images/@p.Image" alt="" />
+                        <div><small>@p.Tag</small><h3>@p.Name</h3></div>
+                        <span class="arrow-circle">↗</span>
+                    </a>
+                }
+            </div>
+        </section>
+
+        <!-- LỊCH DẠY -->
+        <section id="lich-day" class="section">
+            <div class="head">
+                <div>
+                    <p class="eyebrow">Lịch dạy tuần này</p>
+                    <h2 class="display">Tập cùng<em class="outline">@Model.FirstName</em></h2>
+                </div>
+            </div>
+            <div class="schedule">
+                @foreach (var s in Model.Slots)
+                {
+                    <div class="pg-slot">
+                        <span class="day">@s.Day</span>
+                        <span class="time">@s.Time</span>
+                        <span class="who">Lớp @s.ClassName</span>
+                        <span class="slots">@s.Spots.ToString("00") chỗ</span>
+                        <a href="~/#bang-gia" class="btn btn-sm">Đặt chỗ <b>→</b></a>
+                    </div>
+                }
+            </div>
+        </section>
+
+        <!-- HLV KHÁC -->
+        <section class="section section-alt">
+            <div class="head">
+                <div>
+                    <p class="eyebrow">Đội ngũ chuyên gia</p>
+                    <h2 class="display">Huấn luyện viên<em class="outline">khác</em></h2>
+                </div>
+            </div>
+            <div class="trainers">
+                @foreach (var t in WebGym.Models.TrainerData.All.Where(t => t.Slug != Model.Slug))
+                {
+                    <a asp-controller="Home" asp-action="TrainerDetail" asp-route-id="@t.Slug" class="trainer">
+                        <div class="photo"><img src="~/images/@t.Image" alt="@t.FullName" /><span class="tag">@t.Badge</span></div>
+                        <div class="trainer-info"><div><h3>@t.FullName</h3><small>@t.Role</small></div><span class="arrow-circle">↗</span></div>
+                    </a>
+                }
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="cta">
+            <div>
+                <p class="eyebrow dark">Sẵn sàng chưa?</p>
+                <h2 class="display">Gặp @Model.FirstName<em class="outline dark">buổi tập thử.</em></h2>
+            </div>
+            <a href="~/#bang-gia" class="btn btn-dark">Nhận 7 ngày miễn phí <b>→</b></a>
+            <span class="cta-watermark" aria-hidden="true">PULSE</span>
+        </section>
+    </main>
+
+    <partial name="_PulseFooter" />
+</body>
+</html>

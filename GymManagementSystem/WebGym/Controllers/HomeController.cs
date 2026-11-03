@@ -30,6 +30,24 @@ namespace WebGym.Controllers
             return View();
         }
 
+        // GET: /chuong-trinh/gym  (gym | hiit | boxing | yoga)
+        [Route("chuong-trinh/{id}")]
+        public IActionResult ProgramDetail(string id)
+        {
+            var program = ProgramData.Find(id);
+            if (program == null) return NotFound();
+            return View(program);
+        }
+
+        // GET: /huan-luyen-vien/alex-tokuda  (alex-tokuda | mina-tran | lil-baby)
+        [Route("huan-luyen-vien/{id}")]
+        public IActionResult TrainerDetail(string id)
+        {
+            var trainer = TrainerData.Find(id);
+            if (trainer == null) return NotFound();
+            return View(trainer);
+        }
+
         // GET: /Home/Packages
         public async Task<IActionResult> Packages()
         {

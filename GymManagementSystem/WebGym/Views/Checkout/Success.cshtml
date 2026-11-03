@@ -1,0 +1,39 @@
+@{
+    Layout = null;
+    ViewData["Title"] = "Đăng ký thành công - Pulse Gym";
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/pulse.css" asp-append-version="true" />
+</head>
+<body>
+    <partial name="_PulseHeader" />
+    <main class="co co-done">
+        <span class="arrow-box co-ok">✓</span>
+        <p class="eyebrow center">Đã nhận đăng ký</p>
+        <h1 class="display center">Chào mừng<em class="outline">đến Pulse</em></h1>
+        <p class="lead center">Cảm ơn @TempData["Name"]. Chúng tôi sẽ gửi thông tin xác nhận đến @TempData["Email"].</p>
+
+        <div class="co-card co-receipt">
+            <div class="co-line"><span>Gói tập</span><b>@TempData["Plan"]</b></div>
+            <div class="co-line"><span>Chu kỳ</span><b>@TempData["Cycle"]</b></div>
+            <div class="co-line"><span>Ngày bắt đầu</span><b>@TempData["Start"]</b></div>
+            <div class="co-line"><span>Hình thức thanh toán</span><b>@TempData["Method"]</b></div>
+            <div class="co-line co-total"><span>Tổng</span><strong>@TempData["Total"]</strong></div>
+        </div>
+
+        <div class="hero-cta" style="justify-content:center">
+            <a href="~/" class="btn">Về trang chủ <b>→</b></a>
+            <a href="~/#lich-tap" class="link-ul">Xem lịch tập</a>
+        </div>
+    </main>
+    <partial name="_PulseFooter" />
+</body>
+</html>

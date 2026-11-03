@@ -4,20 +4,31 @@
     var report = ViewBag.ReportData as WebGym.Models.DTOs.Admin.RevenueReportDto;
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="fw-bold"><i class="bi bi-bar-chart-line-fill text-danger"></i> Báo Cáo Doanh Thu</h2>
+<!-- Page Header -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold text-dark mb-1">
+            <i class="bi bi-pie-chart-fill text-primary me-2"></i>Báo Cáo Tài Chính & Doanh Thu
+        </h3>
+        <p class="text-muted small mb-0">Thống kê chi tiết các khoản thu từ hội viên qua VNPay, Momo, chuyển khoản và tiền mặt.</p>
+    </div>
+    <div class="d-flex gap-2 no-print">
+        <button type="button" class="btn btn-outline-dark px-3 py-2 rounded-3 shadow-sm" onclick="window.print()">
+            <i class="bi bi-printer me-1"></i> In Báo Cáo
+        </button>
+    </div>
 </div>
 
-<!-- Filter card -->
-<div class="card border-0 shadow-sm rounded-4 bg-white p-3 mb-4">
-    <form method="get" class="row g-3 align-items-end">
+<!-- Filter Card -->
+<div class="card border-0 bg-white p-3 mb-4 rounded-4 shadow-sm no-print">
+    <form method="get" class="row g-2 align-items-end">
         <div class="col-md-3">
-            <label class="form-label small fw-bold">Năm</label>
-            <input type="number" name="year" class="form-control" value="@(report?.Year ?? DateTime.Now.Year)" />
+            <label class="form-label small fw-bold text-muted">Năm thống kê</label>
+            <input type="number" name="year" class="form-control bg-light" value="@(report?.Year ?? DateTime.Now.Year)" />
         </div>
         <div class="col-md-3">
-            <label class="form-label small fw-bold">Tháng (Tùy chọn)</label>
-            <select name="month" class="form-select">
+            <label class="form-label small fw-bold text-muted">Tháng (Tùy chọn)</label>
+            <select name="month" class="form-select bg-light">
                 <option value="">-- Cả năm --</option>
                 @for (int i = 1; i <= 12; i++)
                 {
@@ -26,59 +37,217 @@
             </select>
         </div>
         <div class="col-md-3">
-            <button type="submit" class="btn btn-primary"><i class="bi bi-funnel"></i> Lọc Dữ Liệu</button>
+            <label class="form-label small fw-bold text-muted">Phương thức thanh toán</label>
+            <select name="paymentMethod" class="form-select bg-light">
+                <option value="">-- Tất cả phương thức --</option>
+                <option value="VNPay" selected="@(report?.PaymentMethod == "VNPay")">VNPay</option>
+                <option value="Momo" selected="@(report?.PaymentMethod == "Momo")">Momo</option>
+                <option value="BankTransfer" selected="@(report?.PaymentMethod == "BankTransfer")">Chuyển khoản</option>
+                <option value="DirectCash" selected="@(report?.PaymentMethod == "DirectCash")">Tiền mặt tại quầy</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary w-100 rounded-3">
+                <i class="bi bi-funnel me-1"></i> Lọc dữ liệu
+            </button>
         </div>
     </form>
 </div>
 
-<!-- Summary statistics -->
+<!-- 4 Key Financial Stat Cards -->
 <div class="row g-3 mb-4">
-    <div class="col-md-6">
-        <div class="card border-0 shadow-sm rounded-4 p-4 bg-primary text-white">
-            <span class="fs-6">Tổng Doanh Thu Ghi Nhận</span>
-            <h2 class="fw-bold my-2">@(report?.TotalRevenue.ToString("N0") ?? "0") VNĐ</h2>
-            <small>Dựa trên các giao dịch thanh toán thành công trong kỳ</small>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card border-0 rounded-4 bg-white shadow-sm p-3">
+            <span class="text-muted small fw-semibold">TỔNG DOANH THU KỲ NÀY</span>
+            <h3 class="fw-bold text-success my-2">@(report?.TotalRevenue.ToString("N0") ?? "0") <small class="fs-6 text-muted">VNĐ</small></h3>
+            <small class="text-muted"><i class="bi bi-calendar3 me-1"></i>Năm @(report?.Year) @(report?.Month.HasValue == true ? $"- Tháng {report.Month}" : "")</small>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="card border-0 shadow-sm rounded-4 p-4 bg-success text-white">
-            <span class="fs-6">Tổng Số Giao Dịch Thành Công</span>
-            <h2 class="fw-bold my-2">@(report?.TotalTransactions ?? 0)</h2>
-            <small>Bao gồm thanh toán qua VNPay, Momo và Chuyển khoản ngân hàng</small>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card border-0 rounded-4 bg-white shadow-sm p-3">
+            <span class="text-muted small fw-semibold">SỐ LƯỢT GIAO DỊCH</span>
+            <h3 class="fw-bold text-primary my-2">@(report?.TotalTransactions ?? 0) <small class="fs-6 text-muted">đơn</small></h3>
+            <small class="text-success"><i class="bi bi-check-all me-1"></i>Thanh toán thành công 100%</small>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card border-0 rounded-4 bg-white shadow-sm p-3">
+            <span class="text-muted small fw-semibold">GIÁ TRỊ ĐƠN TRUNG BÌNH (AOV)</span>
+            <h3 class="fw-bold text-dark my-2">@(report?.AverageOrderValue.ToString("N0") ?? "0") <small class="fs-6 text-muted">đ</small></h3>
+            <small class="text-muted">Doanh thu / số đơn hàng</small>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card border-0 rounded-4 bg-white shadow-sm p-3">
+            <span class="text-muted small fw-semibold">GÓI TẬP BÁN CHẠY NHẤT</span>
+            <h4 class="fw-bold text-warning my-2 text-truncate" title="@(report?.BestSellingPackage)">@(report?.BestSellingPackage)</h4>
+            <small class="text-muted">Theo số lượng người mua</small>
         </div>
     </div>
 </div>
 
-<!-- Transactions details table -->
-<div class="card border-0 shadow-sm rounded-4 bg-white p-3">
-    <h5 class="fw-bold mb-3">Chi Tiết Giao Dịch</h5>
+<!-- Charts Section -->
+<div class="row g-4 mb-4">
+    <!-- Monthly Breakdown Bar Chart -->
+    <div class="col-lg-8">
+        <div class="card border-0 rounded-4 bg-white shadow-sm p-4 h-100">
+            <h5 class="fw-bold text-dark mb-1">Doanh Thu 12 Tháng Trong Năm @(report?.Year)</h5>
+            <small class="text-muted mb-3 d-block">Biểu đồ đối sánh doanh số giữa các tháng</small>
+            <div style="position: relative; height: 280px;">
+                <canvas id="monthlyBarChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Method Breakdown Pie Chart -->
+    <div class="col-lg-4">
+        <div class="card border-0 rounded-4 bg-white shadow-sm p-4 h-100">
+            <h5 class="fw-bold text-dark mb-1">Cơ Cấu Phương Thức</h5>
+            <small class="text-muted mb-3 d-block">Tỷ trọng dòng tiền theo cổng thanh toán</small>
+            <div style="position: relative; height: 240px;" class="d-flex align-items-center justify-content-center">
+                <canvas id="methodPieChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Transactions Table -->
+<div class="card border-0 rounded-4 bg-white shadow-sm p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-receipt-cutoff me-2 text-secondary"></i>Chi Tiết Các Giao Dịch</h5>
+        <span class="badge bg-success rounded-pill">@(Model.Count()) giao dịch</span>
+    </div>
+
     <div class="table-responsive">
-        <table class="table table-hover align-middle">
-            <thead class="table-light">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
                 <tr>
-                    <th>Mã Giao Dịch</th>
+                    <th>Mã Đơn / GD</th>
                     <th>Hội Viên</th>
                     <th>Gói Tập</th>
-                    <th>Số Tiền</th>
-                    <th>Phương Thức</th>
                     <th>Thời Gian</th>
+                    <th>Cổng Thanh Toán</th>
+                    <th>Số Tiền</th>
+                    <th>Trạng Thái</th>
                 </tr>
             </thead>
             <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">Không tìm thấy giao dịch nào trong khoảng thời gian đã chọn.</td>
+                    </tr>
+                }
                 @foreach (var p in Model)
                 {
                     <tr>
-                        <td class="fw-semibold">
-                            <code>@p.TransactionCode</code>
+                        <td>
+                            <code class="text-dark fw-bold">@p.TransactionCode</code>
+                            <div class="small text-muted">ID: #@p.PaymentId</div>
                         </td>
-                        <td class="fw-semibold">@p.Member.User.FullName</td>
-                        <td>@p.Package.PackageName</td>
-                        <td class="text-success fw-bold">@p.Amount.ToString("N0") đ</td>
-                        <td><span class="badge bg-secondary">@p.PaymentMethod</span></td>
-                        <td>@p.PaymentDate.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>
+                            <div class="fw-bold text-dark">@p.Member.User.FullName</div>
+                            <small class="text-muted">@p.Member.User.Email</small>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark border">@p.Package.PackageName</span>
+                        </td>
+                        <td>
+                            <div>@p.PaymentDate.ToString("dd/MM/yyyy")</div>
+                            <small class="text-muted">@p.PaymentDate.ToString("HH:mm:ss")</small>
+                        </td>
+                        <td>
+                            <span class="badge badge-soft-info">@p.PaymentMethod</span>
+                        </td>
+                        <td class="fw-bold text-success fs-6">
+                            +@p.Amount.ToString("N0") VNĐ
+                        </td>
+                        <td>
+                            <span class="badge badge-soft-success">Thành công</span>
+                        </td>
                     </tr>
                 }
             </tbody>
         </table>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        // 1. Monthly Bar Chart
+        const months = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(report?.MonthlyBreakdown.Select(x => x.MonthLabel)));
+        const revenues = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(report?.MonthlyBreakdown.Select(x => x.Revenue)));
+
+        const ctxMonthly = document.getElementById('monthlyBarChart').getContext('2d');
+        new Chart(ctxMonthly, {
+            type: 'bar',
+            data: {
+                labels: months,
+                datasets: [{
+                    label: 'Doanh thu (VNĐ)',
+                    data: revenues,
+                    backgroundColor: '#3b82f6',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(context.raw);
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return (value / 1000000) + ' Tr';
+                            }
+                        },
+                        grid: { color: '#f1f5f9' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // 2. Payment Method Pie Chart
+        const methodLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(report?.MethodBreakdown.Keys));
+        const methodValues = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(report?.MethodBreakdown.Values));
+
+        const ctxPie = document.getElementById('methodPieChart').getContext('2d');
+        new Chart(ctxPie, {
+            type: 'pie',
+            data: {
+                labels: methodLabels,
+                datasets: [{
+                    data: methodValues,
+                    backgroundColor: ['#10b981', '#f59e0b', '#8b5cf6', '#3b82f6']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { boxWidth: 12, padding: 10 } },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(context.raw);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}

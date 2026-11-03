@@ -1,4 +1,4 @@
-using WebGym.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebGym.Data
 {
@@ -6,8 +6,16 @@ namespace WebGym.Data
     {
         public static void Initialize(ApplicationDbContext context)
         {
-            // Ensure database schema and model builder seeds are applied
-            context.Database.EnsureCreated();
+            // Tự động áp dụng Migration và Seed Data an toàn
+            try
+            {
+                context.Database.Migrate();
+            }
+            catch
+            {
+                // Nếu migrate lỗi (ví dụ chưa bật SQL Server), fallback sang EnsureCreated
+                context.Database.EnsureCreated();
+            }
         }
     }
 }

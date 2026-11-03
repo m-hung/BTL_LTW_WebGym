@@ -1,0 +1,242 @@
+@model WebGym.Models.Entities.Member
+@{
+    ViewData["Title"] = $"Hồ Sơ Hội Viên - {Model.User.FullName}";
+    var activeSub = Model.Subscriptions.OrderByDescending(s => s.StartDate).FirstOrDefault(s => s.Status == "Active");
+}
+
+<div class="mb-4">
+    <a asp-action="Index" class="text-decoration-none text-muted small fw-semibold">
+        <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách hội viên
+    </a>
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mt-2">
+        <h3 class="fw-bold text-dark mb-0">Hồ Sơ Chi Tiết Hội Viên</h3>
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.MemberId" class="btn btn-primary btn-sm px-3 py-2 rounded-3">
+                <i class="bi bi-pencil me-1"></i> Sửa thông tin
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Cột trái: Thông tin cá nhân & Gói tập -->
+    <div class="col-lg-4">
+        <!-- Profile Card -->
+        <div class="card border-0 rounded-4 bg-white shadow-sm p-4 text-center mb-4">
+            <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold mx-auto mb-3 shadow" 
+                 style="width: 80px; height: 80px; font-size: 2rem;">
+                @(Model.User.FullName?.Substring(0, 1).ToUpper() ?? "M")
+            </div>
+            <h5 class="fw-bold text-dark mb-1">@Model.User.FullName</h5>
+            <div class="text-muted small mb-3">Tài khoản: <code>@Model.User.Username</code></div>
+            
+            <div class="d-flex justify-content-center gap-2 mb-3">
+                <span class="badge badge-soft-primary">@Model.User.Role</span>
+                @if (activeSub != null && activeSub.EndDate >= DateTime.UtcNow)
+                {
+                    <span class="badge badge-soft-success">Gói đang hiệu lực</span>
+                }
+                else
+                {
+                    <span class="badge badge-soft-secondary">Chưa kích hoạt gói</span>
+                }
+            </div>
+
+            <ul class="list-group list-group-flush text-start small mt-2">
+                <li class="list-group-item d-flex justify-content-between px-0 py-2">
+                    <span class="text-muted"><i class="bi bi-envelope me-2"></i>Email</span>
+                    <span class="fw-semibold text-dark">@Model.User.Email</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between px-0 py-2">
+                    <span class="text-muted"><i class="bi bi-telephone me-2"></i>Số điện thoại</span>
+                    <span class="fw-semibold text-dark">@(Model.User.PhoneNumber ?? "Chưa có")</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between px-0 py-2">
+                    <span class="text-muted"><i class="bi bi-gender-ambiguous me-2"></i>Giới tính</span>
+                    <span class="fw-semibold text-dark">@(Model.Gender ?? "Chưa rõ")</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between px-0 py-2">
+                    <span class="text-muted"><i class="bi bi-calendar-event me-2"></i>Ngày sinh</span>
+                    <span class="fw-semibold text-dark">@(Model.DateOfBirth?.ToString("dd/MM/yyyy") ?? "-")</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between px-0 py-2">
+                    <span class="text-muted"><i class="bi bi-clock-history me-2"></i>Ngày tham gia</span>
+                    <span class="fw-semibold text-dark">@Model.User.CreatedAt.ToString("dd/MM/yyyy")</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- InBody Stats Card -->
+        <div class="card border-0 rounded-4 bg-white shadow-sm p-4">
+            <h6 class="fw-bold text-dark mb-3"><i class="bi bi-speedometer2 text-danger me-2"></i>Chỉ Số Thể Chất Gần Nhất</h6>
+            <div class="row g-2 text-center">
+                <div class="col-6">
+                    <div class="p-3 bg-light rounded-3">
+                        <small class="text-muted d-block">Chiều cao</small>
+                        <strong class="fs-5 text-dark">@(Model.Height?.ToString() ?? "-") cm</strong>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="p-3 bg-light rounded-3">
+                        <small class="text-muted d-block">Cân nặng</small>
+                        <strong class="fs-5 text-dark">@(Model.Weight?.ToString() ?? "-") kg</strong>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="p-3 bg-light rounded-3">
+                        <small class="text-muted d-block">Tỷ lệ mỡ</small>
+                        <strong class="fs-5 text-warning">@(Model.BodyFatPercentage?.ToString() ?? "-") %</strong>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="p-3 bg-light rounded-3">
+                        <small class="text-muted d-block">Chỉ số BMR</small>
+                        <strong class="fs-5 text-success">@(Model.BMR?.ToString("N0") ?? "-") kcal</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cột phải: Lịch sử gói tập, Lịch tập PT, và Tiến trình -->
+    <div class="col-lg-8">
+        <!-- 1. Gói tập đã đăng ký -->
+        <div class="card border-0 rounded-4 bg-white shadow-sm p-4 mb-4">
+            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-box-seam text-primary me-2"></i>Lịch Sử Gói Tập (Subscriptions)</h5>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Gói Tập</th>
+                            <th>Ngày Bắt Đầu</th>
+                            <th>Ngày Hết Hạn</th>
+                            <th>Đã Đóng</th>
+                            <th>Trạng Thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Subscriptions.Any())
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-3">Hội viên chưa đăng ký gói tập nào.</td>
+                            </tr>
+                        }
+                        @foreach (var sub in Model.Subscriptions.OrderByDescending(s => s.StartDate))
+                        {
+                            <tr>
+                                <td class="fw-bold text-dark">@sub.Package.PackageName</td>
+                                <td>@sub.StartDate.ToString("dd/MM/yyyy")</td>
+                                <td>@sub.EndDate.ToString("dd/MM/yyyy")</td>
+                                <td class="fw-bold text-success">@sub.PaidAmount.ToString("N0") đ</td>
+                                <td>
+                                    @if (sub.Status == "Active" && sub.EndDate >= DateTime.UtcNow)
+                                    {
+                                        <span class="badge badge-soft-success">Đang dùng</span>
+                                    }
+                                    else if (sub.Status == "Cancelled")
+                                    {
+                                        <span class="badge badge-soft-danger">Đã hủy</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-soft-secondary">Hết hạn</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 2. Lịch đặt PT -->
+        <div class="card border-0 rounded-4 bg-white shadow-sm p-4 mb-4">
+            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-calendar2-check text-warning me-2"></i>Lịch Đặt Huấn Luyện Viên (Bookings)</h5>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Huấn Luyện Viên</th>
+                            <th>Ngày Tập</th>
+                            <th>Khung Giờ</th>
+                            <th>Trạng Thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Bookings.Any())
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center text-muted py-3">Chưa có lịch đặt PT nào.</td>
+                            </tr>
+                        }
+                        @foreach (var b in Model.Bookings.OrderByDescending(x => x.BookingDate))
+                        {
+                            <tr>
+                                <td class="fw-semibold text-dark">@b.Trainer.User.FullName</td>
+                                <td>@b.BookingDate.ToString("dd/MM/yyyy")</td>
+                                <td><span class="badge bg-light text-dark border">@b.TimeSlot</span></td>
+                                <td>
+                                    @if (b.Status == "Approved")
+                                    {
+                                        <span class="badge badge-soft-success">Đã duyệt</span>
+                                    }
+                                    else if (b.Status == "Pending")
+                                    {
+                                        <span class="badge badge-soft-warning">Chờ duyệt</span>
+                                    }
+                                    else if (b.Status == "Completed")
+                                    {
+                                        <span class="badge badge-soft-primary">Hoàn thành</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-soft-secondary">Đã hủy</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 3. Lịch sử mốc đo InBody (Progress) -->
+        <div class="card border-0 rounded-4 bg-white shadow-sm p-4">
+            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-graph-up text-success me-2"></i>Tiến Trình Thay Đổi Thể Chất (InBody Logs)</h5>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Ngày Ghi Nhận</th>
+                            <th>Cân Nặng</th>
+                            <th>% Mỡ</th>
+                            <th>Khối Cơ</th>
+                            <th>Vòng Eo</th>
+                            <th>Ghi Chú</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.ProgressRecords.Any())
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-3">Chưa có mốc tiến trình InBody nào được ghi nhận.</td>
+                            </tr>
+                        }
+                        @foreach (var p in Model.ProgressRecords)
+                        {
+                            <tr>
+                                <td>@p.RecordedDate.ToString("dd/MM/yyyy")</td>
+                                <td class="fw-bold">@p.Weight kg</td>
+                                <td>@(p.BodyFatPercentage.HasValue ? $"{p.BodyFatPercentage}%" : "-")</td>
+                                <td>@(p.MuscleMass.HasValue ? $"{p.MuscleMass} kg" : "-")</td>
+                                <td>@(p.Waist.HasValue ? $"{p.Waist} cm" : "-")</td>
+                                <td><small class="text-muted">@(p.Notes ?? "-")</small></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+

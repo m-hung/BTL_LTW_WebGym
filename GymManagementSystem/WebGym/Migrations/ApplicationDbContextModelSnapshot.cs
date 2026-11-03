@@ -17,7 +17,7 @@ namespace WebGym.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.13")
+                .HasAnnotation("ProductVersion", "10.0.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -410,9 +410,9 @@ namespace WebGym.Migrations
                             MemberId = 3,
                             PackageId = 2,
                             PaymentDate = new DateTime(2026, 5, 10, 8, 45, 12, 0, DateTimeKind.Utc),
-                            PaymentMethod = "Momo",
+                            PaymentMethod = "Cash",
                             Status = "Success",
-                            TransactionCode = "MOM20260510084512"
+                            TransactionCode = "CSH20260510084512"
                         },
                         new
                         {
@@ -421,9 +421,9 @@ namespace WebGym.Migrations
                             MemberId = 2,
                             PackageId = 4,
                             PaymentDate = new DateTime(2026, 6, 15, 14, 30, 11, 0, DateTimeKind.Utc),
-                            PaymentMethod = "BankTransfer",
+                            PaymentMethod = "VNPay",
                             Status = "Success",
-                            TransactionCode = "MBB20260615143011"
+                            TransactionCode = "VNP20260615143011"
                         },
                         new
                         {
@@ -465,9 +465,9 @@ namespace WebGym.Migrations
                             MemberId = 5,
                             PackageId = 4,
                             PaymentDate = new DateTime(2026, 9, 1, 9, 11, 22, 0, DateTimeKind.Utc),
-                            PaymentMethod = "BankTransfer",
+                            PaymentMethod = "Cash",
                             Status = "Success",
-                            TransactionCode = "TCB20260901091122"
+                            TransactionCode = "CSH20260901091122"
                         },
                         new
                         {
@@ -476,9 +476,9 @@ namespace WebGym.Migrations
                             MemberId = 4,
                             PackageId = 1,
                             PaymentDate = new DateTime(2026, 9, 5, 16, 12, 9, 0, DateTimeKind.Utc),
-                            PaymentMethod = "Momo",
+                            PaymentMethod = "Cash",
                             Status = "Success",
-                            TransactionCode = "MOM20260905161209"
+                            TransactionCode = "CSH20260905161209"
                         },
                         new
                         {
@@ -487,9 +487,9 @@ namespace WebGym.Migrations
                             MemberId = 4,
                             PackageId = 2,
                             PaymentDate = new DateTime(2026, 10, 6, 11, 45, 30, 0, DateTimeKind.Utc),
-                            PaymentMethod = "BankTransfer",
+                            PaymentMethod = "VNPay",
                             Status = "Success",
-                            TransactionCode = "VCB20261006114530"
+                            TransactionCode = "VNP20261006114530"
                         },
                         new
                         {
@@ -498,9 +498,9 @@ namespace WebGym.Migrations
                             MemberId = 1,
                             PackageId = 1,
                             PaymentDate = new DateTime(2026, 10, 25, 19, 0, 11, 0, DateTimeKind.Utc),
-                            PaymentMethod = "Momo",
+                            PaymentMethod = "Cash",
                             Status = "Success",
-                            TransactionCode = "MOM20261025190011"
+                            TransactionCode = "CSH20261025190011"
                         },
                         new
                         {
@@ -520,9 +520,9 @@ namespace WebGym.Migrations
                             MemberId = 3,
                             PackageId = 3,
                             PaymentDate = new DateTime(2026, 10, 15, 11, 22, 33, 0, DateTimeKind.Utc),
-                            PaymentMethod = "Momo",
+                            PaymentMethod = "Cash",
                             Status = "Failed",
-                            TransactionCode = "MOM20261015112233"
+                            TransactionCode = "CSH20261015112233"
                         });
                 });
 

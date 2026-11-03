@@ -1,6 +1,9 @@
+@model IEnumerable<WebGym.Models.Entities.GymPackage>
 @{
     Layout = null;
     ViewData["Title"] = "Pulse Gym - Bứt phá giới hạn";
+    var packages = Model ?? (IEnumerable<WebGym.Models.Entities.GymPackage>?)ViewBag.FeaturedPackages ?? Enumerable.Empty<WebGym.Models.Entities.GymPackage>();
+    var trainers = (IEnumerable<WebGym.Models.Entities.Trainer>?)ViewBag.Trainers ?? Enumerable.Empty<WebGym.Models.Entities.Trainer>();
 }
 <!DOCTYPE html>
 <html lang="vi">
@@ -17,12 +20,12 @@
     <header class="nav">
         <a href="#top" class="logo"><i class="logo-bars"></i>PULSE <span>GYM</span></a>
         <nav class="nav-links">
-            <a href="#chuong-trinh">Chương trình</a>
+            <a href="#khu-vuc">Khu vực tập</a>
             <a href="#lich-tap">Lịch tập</a>
             <a href="#huan-luyen-vien">Huấn luyện viên</a>
             <a href="#bang-gia">Bảng giá</a>
         </nav>
-        <a href="#bang-gia" class="btn btn-sm">Đăng ký tập thử <b>→</b></a>
+        <div class="nav-actions"><a href="~/Auth/Login" class="btn btn-sm btn-ghost">Đăng nhập</a><a href="~/Auth/Register" class="btn btn-sm">Đăng ký</a></div>
     </header>
 
     <main id="top">
@@ -43,7 +46,7 @@
                 </ul>
             </div>
             <div class="hero-media">
-                <img src="~/images/hero.jpg" alt="Hội viên Pulse Gym đang tập luyện" />
+                <img src="~/images/hero.jpg" asp-append-version="true" alt="Hội viên Pulse Gym đang tập luyện" />
                 <div class="chip chip-open"><small><i class="dot"></i>Mở cửa hôm nay</small><strong>05:00 — 23:00</strong></div>
                 <div class="chip chip-sat"><span class="arrow-box">↗</span><div><strong>98%</strong><small>Hội viên hài lòng</small></div></div>
             </div>
@@ -58,20 +61,20 @@
             </div>
         </div>
 
-        <!-- PROGRAMS -->
-        <section id="chuong-trinh" class="section">
+        <!-- KHU VỰC TẬP LUYỆN -->
+        <section id="khu-vuc" class="section">
             <div class="head">
                 <div>
-                    <p class="eyebrow">Chọn thử thách của bạn</p>
-                    <h2 class="display">Tập luyện theo<em class="outline">cách của bạn</em></h2>
+                    <p class="eyebrow">Cơ sở vật chất</p>
+                    <h2 class="display">Không gian<em class="outline">của người mạnh</em></h2>
                 </div>
-                <p class="head-note">Từ sức mạnh đến sự linh hoạt, mỗi chương trình đều được thiết kế để đưa bạn tiến gần hơn đến mục tiêu.</p>
+                <p class="head-note">Mỗi khu vực được thiết kế riêng với trang thiết bị chuẩn quốc tế, để bạn tập luyện thoải mái và hiệu quả hơn.</p>
             </div>
             <div class="programs">
-                <a asp-controller="Home" asp-action="ProgramDetail" asp-route-id="gym" class="program"><img src="~/images/gym.jpg" alt="" /><span class="num">01</span><div><small>Sức mạnh • Hình thể</small><h3>Gym</h3></div><span class="arrow-circle">↗</span></a>
-                <a asp-controller="Home" asp-action="ProgramDetail" asp-route-id="hiit" class="program"><img src="~/images/hiit.jpg" alt="" /><span class="num">02</span><div><small>Đốt mỡ • Sức bền</small><h3>HIIT</h3></div><span class="arrow-circle">↗</span></a>
-                <a asp-controller="Home" asp-action="ProgramDetail" asp-route-id="boxing" class="program"><img src="~/images/boxing.jpg" alt="" /><span class="num">03</span><div><small>Phản xạ • Bùng nổ</small><h3>Boxing</h3></div><span class="arrow-circle">↗</span></a>
-                <a asp-controller="Home" asp-action="ProgramDetail" asp-route-id="yoga" class="program"><img src="~/images/yoga.jpg" alt="" /><span class="num">04</span><div><small>Cân bằng • Linh hoạt</small><h3>Yoga</h3></div><span class="arrow-circle">↗</span></a>
+                <a asp-controller="Home" asp-action="FacilityDetail" asp-route-id="khu-ta-tu-do" class="program"><img src="~/images/gym.jpg" asp-append-version="true" alt="" /><span class="num">01</span><div><small>Sức mạnh • Hình thể</small><h3>Tạ tự do</h3></div><span class="arrow-circle">↗</span></a>
+                <a asp-controller="Home" asp-action="FacilityDetail" asp-route-id="khu-cardio" class="program"><img src="~/images/hiit.jpg" asp-append-version="true" alt="" /><span class="num">02</span><div><small>Đốt mỡ • Sức bền</small><h3>Cardio</h3></div><span class="arrow-circle">↗</span></a>
+                <a asp-controller="Home" asp-action="FacilityDetail" asp-route-id="phong-boxing" class="program"><img src="~/images/boxing.jpg" asp-append-version="true" alt="" /><span class="num">03</span><div><small>Phản xạ • Bùng nổ</small><h3>Boxing</h3></div><span class="arrow-circle">↗</span></a>
+                <a asp-controller="Home" asp-action="FacilityDetail" asp-route-id="studio-yoga" class="program"><img src="~/images/yoga.jpg" asp-append-version="true" alt="" /><span class="num">04</span><div><small>Cân bằng • Linh hoạt</small><h3>Yoga</h3></div><span class="arrow-circle">↗</span></a>
             </div>
         </section>
 
@@ -99,10 +102,68 @@
                 </div>
                 <p class="head-note">Không chỉ là huấn luyện viên. Họ là những người truyền cảm hứng, đồng hành và giúp bạn vượt qua mọi giới hạn.</p>
             </div>
-            <div class="trainers">
-                <a asp-controller="Home" asp-action="TrainerDetail" asp-route-id="alex-tokuda" class="trainer"><div class="photo"><img src="~/images/coach1.jpg" alt="Alex Tokuda" /><span class="tag">10+ năm kinh nghiệm</span></div><div class="trainer-info"><div><h3>Alex Tokuda</h3><small>Strength &amp; Conditioning</small></div><span class="arrow-circle">↗</span></div></a>
-                <a asp-controller="Home" asp-action="TrainerDetail" asp-route-id="mina-tran" class="trainer"><div class="photo"><img src="~/images/coach2.jpg" alt="Mina Tran" /><span class="tag">NASM Certified</span></div><div class="trainer-info"><div><h3>Mina Tran</h3><small>HIIT &amp; Functional</small></div><span class="arrow-circle">↗</span></div></a>
-                <a asp-controller="Home" asp-action="TrainerDetail" asp-route-id="lil-baby" class="trainer"><div class="photo"><img src="~/images/coach3.jpg" alt="Lil Baby" /><span class="tag">Vô địch toàn quốc</span></div><div class="trainer-info"><div><h3>Lil Baby</h3><small>Boxing Coach</small></div><span class="arrow-circle">↗</span></div></a>
+            <!-- Toolbar: Tìm kiếm & Bộ lọc -->
+            <div class="tr-toolbar">
+                <div class="tr-search-box">
+                    <span class="tr-search-icon" aria-hidden="true">🔍</span>
+                    <input type="text" id="ptSearch" placeholder="Tìm theo tên HLV, chuyên môn (Gym, Boxing, Yoga, HIIT...)" aria-label="Tìm kiếm huấn luyện viên" />
+                    <button type="button" id="ptClearSearch" class="tr-search-clear" title="Xóa tìm kiếm" style="display:none;">✕</button>
+                </div>
+                <div class="tr-filters" id="ptFilters">
+                    <button type="button" class="tr-filter-btn active" data-filter="all">Tất cả</button>
+                    <button type="button" class="tr-filter-btn" data-filter="gym">Gym & Thể hình</button>
+                    <button type="button" class="tr-filter-btn" data-filter="hiit">Cardio & HIIT</button>
+                    <button type="button" class="tr-filter-btn" data-filter="boxing">Boxing & Võ thuật</button>
+                    <button type="button" class="tr-filter-btn" data-filter="yoga">Yoga & Phục hồi</button>
+                </div>
+            </div>
+
+            <!-- Slider Danh sách trượt -->
+            <div class="tr-slider-wrapper">
+                <button type="button" class="tr-arrow tr-prev" id="ptPrev" aria-label="Trượt sang trái">‹</button>
+                <div class="trainers-track" id="ptTrack">
+                    @if (trainers.Any())
+                    {
+                        foreach (var t in trainers)
+                        {
+                            var info = WebGym.Models.TrainerInfo.FromTrainer(t);
+                            var imgSrc = info.Image.StartsWith("http") ? info.Image : Url.Content("~/images/" + info.Image);
+                            var specText = (t.Specialization + " " + info.Role + " " + info.Bio).ToLower();
+                            var cats = new List<string> { "all" };
+                            if (specText.Contains("gym") || specText.Contains("bodybuilding") || specText.Contains("tăng cơ") || specText.Contains("thể hình") || specText.Contains("crossfit") || specText.Contains("powerlifting") || specText.Contains("cử tạ")) cats.Add("gym");
+                            if (specText.Contains("hiit") || specText.Contains("cardio") || specText.Contains("sức bền") || specText.Contains("calisthenics") || specText.Contains("đốt mỡ") || specText.Contains("giảm cân")) cats.Add("hiit");
+                            if (specText.Contains("boxing") || specText.Contains("võ") || specText.Contains("combat") || specText.Contains("đấm")) cats.Add("boxing");
+                            if (specText.Contains("yoga") || specText.Contains("pilates") || specText.Contains("phục hồi") || specText.Contains("cột sống") || specText.Contains("dẻo dai")) cats.Add("yoga");
+                            var catString = string.Join(" ", cats);
+                            var searchContent = $"{info.FullName} {info.Role} {t.Specialization} {info.Bio}".ToLower();
+
+                            <article class="trainer-slide" 
+                                     data-categories="@catString" 
+                                     data-search="@searchContent">
+                                <a asp-controller="Home" asp-action="TrainerDetail" asp-route-id="@t.TrainerId" class="trainer">
+                                    <div class="photo">
+                                        <img src="@imgSrc" asp-append-version="true" alt="@info.FullName" loading="lazy" />
+                                        <span class="tag">@info.Badge</span>
+                                    </div>
+                                    <div class="trainer-info">
+                                        <div>
+                                            <h3>@info.FullName</h3>
+                                            <small>@info.Role</small>
+                                        </div>
+                                        <span class="arrow-circle">↗</span>
+                                    </div>
+                                </a>
+                            </article>
+                        }
+                    }
+                </div>
+                <button type="button" class="tr-arrow tr-next" id="ptNext" aria-label="Trượt sang phải">›</button>
+            </div>
+
+            <!-- Trạng thái trống khi tìm không thấy -->
+            <div id="ptEmpty" class="tr-empty" style="display:none;">
+                <p>Không tìm thấy huấn luyện viên phù hợp với từ khóa hoặc bộ lọc đã chọn.</p>
+                <button type="button" class="btn btn-sm btn-ghost" onclick="resetPtSearch()">Xem tất cả HLV <b>→</b></button>
             </div>
         </section>
 
@@ -115,28 +176,30 @@
                 <button data-mode="year">Hàng năm <b>-20%</b></button>
             </div>
             <div class="plans">
-                <article class="plan">
-                    <h3>Starter</h3>
-                    <p class="price"><strong data-price="590">590</strong><span><b>Nghìn</b>/ tháng</span></p>
-                    <p class="plan-desc">Bắt đầu hành trình mạnh mẽ hơn.</p>
-                    <a asp-controller="Checkout" asp-action="Index" asp-route-slug="starter" data-plan-link class="btn btn-ghost">Chọn gói Starter <b>→</b></a>
-                    <ul><li>Tập không giới hạn</li><li>Phòng tắm &amp; tủ đồ</li><li>Đánh giá thể lực cơ bản</li></ul>
-                </article>
-                <article class="plan plan-hot">
-                    <span class="badge">Phổ biến nhất</span>
-                    <h3>Pro</h3>
-                    <p class="price"><strong data-price="990">990</strong><span><b>Nghìn</b>/ tháng</span></p>
-                    <p class="plan-desc">Lựa chọn tốt nhất để bứt phá.</p>
-                    <a asp-controller="Checkout" asp-action="Index" asp-route-slug="pro" data-plan-link class="btn">Chọn gói Pro <b>→</b></a>
-                    <ul><li>Tất cả quyền lợi Starter</li><li>Toàn bộ lớp nhóm</li><li>2 buổi PT mỗi tháng</li><li>Theo dõi chỉ số chuyên sâu</li></ul>
-                </article>
-                <article class="plan">
-                    <h3>Elite</h3>
-                    <p class="price"><strong data-price="1590">1.590</strong><span><b>Nghìn</b>/ tháng</span></p>
-                    <p class="plan-desc">Huấn luyện cá nhân không giới hạn.</p>
-                    <a asp-controller="Checkout" asp-action="Index" asp-route-slug="elite" data-plan-link class="btn btn-ghost">Chọn gói Elite <b>→</b></a>
-                    <ul><li>Tất cả quyền lợi Pro</li><li>8 buổi PT mỗi tháng</li><li>Giáo án dinh dưỡng</li><li>Khu vực phục hồi riêng</li></ul>
-                </article>
+                @if (packages.Any())
+                {
+                    foreach (var pkg in packages)
+                    {
+                        var plan = WebGym.Models.PlanInfo.FromGymPackage(pkg);
+                        var priceInK = (long)Math.Round(plan.MonthlyPrice / 1000m);
+                        <article class="plan @(plan.Popular ? "plan-hot" : "")">
+                            @if (plan.Popular)
+                            {
+                                <span class="badge">Phổ biến nhất</span>
+                            }
+                            <h3>@plan.Name</h3>
+                            <p class="price"><strong data-price="@priceInK">@priceInK.ToString("N0")</strong><span><b>Nghìn</b>/ tháng</span></p>
+                            <p class="plan-desc">@plan.Description</p>
+                            <a asp-controller="Checkout" asp-action="Index" asp-route-slug="@pkg.PackageId" data-plan-link class="btn @(plan.Popular ? "" : "btn-ghost")">Chọn gói @plan.Name <b>→</b></a>
+                            <ul>
+                                @foreach (var feat in plan.Features)
+                                {
+                                    <li>@feat</li>
+                                }
+                            </ul>
+                        </article>
+                    }
+                }
             </div>
             <p class="fine">Không phí ẩn • Hủy bất cứ lúc nào • Trải nghiệm 7 ngày miễn phí</p>
         </section>
@@ -159,7 +222,7 @@
                 <p class="foot-note">Tập mạnh hơn. Sống chất hơn.<br />Bứt phá giới hạn mỗi ngày.</p>
                 <div class="social"><a href="#">IG</a><a href="#">FB</a><a href="#">YT</a><a href="#">TK</a></div>
             </div>
-            <div><h4>Khám phá</h4><a href="#chuong-trinh">Chương trình</a><a href="#lich-tap">Lịch tập</a><a href="#huan-luyen-vien">Huấn luyện viên</a><a href="#bang-gia">Bảng giá</a></div>
+            <div><h4>Khám phá</h4><a href="#khu-vuc">Khu vực tập</a><a href="#lich-tap">Lịch tập</a><a href="#huan-luyen-vien">Huấn luyện viên</a><a href="#bang-gia">Bảng giá</a></div>
             <div><h4>Hỗ trợ</h4><a href="#">Về chúng tôi</a><a href="#">Câu hỏi thường gặp</a><a href="#">Liên hệ</a><a href="#">Tuyển dụng</a></div>
             <div>
                 <h4 class="news-title">Năng lượng mới<br />trong hộp thư.</h4>

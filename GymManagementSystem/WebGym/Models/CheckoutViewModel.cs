@@ -6,7 +6,10 @@ namespace WebGym.Models
 {
     public class CheckoutViewModel
     {
-        [BindNever] public PlanInfo? Plan { get; set; }
+        [BindNever] 
+        public PlanInfo? Plan { get; set; }
+
+        public int PackageId { get; set; }
 
         public string Cycle { get; set; } = "month";   // month | year
 
@@ -25,7 +28,7 @@ namespace WebGym.Models
         [Required(ErrorMessage = "Vui lòng chọn ngày bắt đầu")]
         public DateTime? StartDate { get; set; } = DateTime.Today;
 
-        public string? ProgramSlug { get; set; }
+        public string? AreaSlug { get; set; }
         public string? TrainerSlug { get; set; }
 
         [Required(ErrorMessage = "Vui lòng chọn hình thức thanh toán")]

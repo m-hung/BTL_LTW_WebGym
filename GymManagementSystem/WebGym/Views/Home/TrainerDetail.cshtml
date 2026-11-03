@@ -2,6 +2,7 @@
 @{
     Layout = null;
     ViewData["Title"] = Model.FullName + " - Huấn luyện viên Pulse Gym";
+    var imgSrc = Model.Image.StartsWith("http") ? Model.Image : Url.Content("~/images/" + Model.Image);
 }
 <!DOCTYPE html>
 <html lang="vi">
@@ -36,7 +37,7 @@
                 </ul>
             </div>
             <div class="hero-media">
-                <img src="~/images/@Model.Image" alt="@Model.FullName" />
+                <img src="@imgSrc" asp-append-version="true" alt="@Model.FullName" />
                 <div class="chip chip-open"><small><i class="dot"></i>Chứng nhận</small><strong>@Model.Badge</strong></div>
             </div>
         </section>
@@ -72,21 +73,21 @@
             </ol>
         </section>
 
-        <!-- CHƯƠNG TRÌNH PHỤ TRÁCH -->
+        <!-- KHU VỰC HƯỚNG DẪN -->
         <section class="section section-alt">
             <div class="head">
                 <div>
-                    <p class="eyebrow">Phụ trách</p>
-                    <h2 class="display">Chương trình<em class="outline">@Model.FirstName dạy</em></h2>
+                    <p class="eyebrow">Phụ trách khu vực</p>
+                    <h2 class="display">Khu vực<em class="outline">@Model.FirstName hướng dẫn</em></h2>
                 </div>
             </div>
             <div class="pg-others">
-                @foreach (var slug in Model.ProgramSlugs)
+                @foreach (var slug in Model.AreaSlugs)
                 {
-                    var p = WebGym.Models.ProgramData.Find(slug);
+                    var p = WebGym.Models.FacilityData.Find(slug);
                     if (p == null) { continue; }
-                    <a asp-controller="Home" asp-action="ProgramDetail" asp-route-id="@p.Slug" class="program">
-                        <img src="~/images/@p.Image" alt="" />
+                    <a asp-controller="Home" asp-action="FacilityDetail" asp-route-id="@p.Slug" class="program">
+                        <img src="~/images/@p.Image" asp-append-version="true" alt="" />
                         <div><small>@p.Tag</small><h3>@p.Name</h3></div>
                         <span class="arrow-circle">↗</span>
                     </a>
@@ -125,10 +126,17 @@
                 </div>
             </div>
             <div class="trainers">
-                @foreach (var t in WebGym.Models.TrainerData.All.Where(t => t.Slug != Model.Slug))
+                @{
+                    var allTrainers = ViewBag.AllTrainers as List<WebGym.Models.TrainerInfo>;
+                    var otherTrainers = allTrainers != null 
+                        ? allTrainers.Where(t => t.TrainerId != Model.TrainerId).ToList() 
+                        : WebGym.Models.TrainerData.All.Where(t => t.Slug != Model.Slug).ToList();
+                }
+                @foreach (var t in otherTrainers)
                 {
+                    var otherImg = t.Image.StartsWith("http") ? t.Image : Url.Content("~/images/" + t.Image);
                     <a asp-controller="Home" asp-action="TrainerDetail" asp-route-id="@t.Slug" class="trainer">
-                        <div class="photo"><img src="~/images/@t.Image" alt="@t.FullName" /><span class="tag">@t.Badge</span></div>
+                        <div class="photo"><img src="@otherImg" asp-append-version="true" alt="@t.FullName" /><span class="tag">@t.Badge</span></div>
                         <div class="trainer-info"><div><h3>@t.FullName</h3><small>@t.Role</small></div><span class="arrow-circle">↗</span></div>
                     </a>
                 }

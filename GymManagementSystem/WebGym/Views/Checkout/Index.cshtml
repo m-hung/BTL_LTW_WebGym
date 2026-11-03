@@ -5,6 +5,7 @@
     var plan = Model.Plan!;
     ViewData["Title"] = "Thanh toán gói " + plan.Name + " - Pulse Gym";
     var today = DateTime.Today.ToString("yyyy-MM-dd");
+    var allPackages = ViewBag.AllPackages as List<WebGym.Models.Entities.GymPackage> ?? new List<WebGym.Models.Entities.GymPackage>();
 }
 <!DOCTYPE html>
 <html lang="vi">
@@ -27,7 +28,8 @@
             <h1 class="display">Hoàn tất<em class="outline">đăng ký</em></h1>
         </div>
 
-        <form asp-controller="Checkout" asp-action="Submit" asp-route-slug="@plan.Slug" method="post" class="co-grid" novalidate>
+        <form asp-controller="Checkout" asp-action="Submit" asp-route-slug="@plan.PackageId" method="post" class="co-grid" novalidate>
+            <input type="hidden" asp-for="PackageId" value="@plan.PackageId" />
             <div class="co-main">
                 <!-- 1. Thông tin -->
                 <section class="co-card">
@@ -56,21 +58,24 @@
                             <input asp-for="StartDate" type="date" min="@today" required />
                             <span asp-validation-for="StartDate" class="err"></span>
                         </label>
-                        <label class="co-f">Chương trình quan tâm (không bắt buộc)
-                            <select asp-for="ProgramSlug">
+                        <label class="co-f">Khu vực quan tâm (không bắt buộc)
+                            <select asp-for="AreaSlug">
                                 <option value="">Chưa chọn</option>
-                                @foreach (var p in ProgramData.All)
+                                @foreach (var f in FacilityData.All)
                                 {
-                                    <option value="@p.Slug" selected="@(Model.ProgramSlug == p.Slug)">@p.Name</option>
+                                    <option value="@f.Slug" selected="@(Model.AreaSlug == f.Slug)">@f.FullName</option>
                                 }
                             </select>
                         </label>
                         <label class="co-f wide">Huấn luyện viên mong muốn (không bắt buộc)
                             <select asp-for="TrainerSlug">
                                 <option value="">Để Pulse sắp xếp giúp tôi</option>
-                                @foreach (var t in TrainerData.All)
+                                @if (ViewBag.AllTrainers != null)
                                 {
-                                    <option value="@t.Slug" selected="@(Model.TrainerSlug == t.Slug)">@t.FullName — @t.Role</option>
+                                    foreach (var t in (List<WebGym.Models.TrainerInfo>)ViewBag.AllTrainers)
+                                    {
+                                        <option value="@t.Slug" selected="@(Model.TrainerSlug == t.Slug)">@t.FullName — @t.Role</option>
+                                    }
                                 }
                             </select>
                         </label>
@@ -100,9 +105,30 @@
 
             <!-- Tóm tắt đơn -->
             <aside class="co-sum" id="coSum" data-monthly="@((long)plan.MonthlyPrice)">
-                <p class="co-label">Gói đã chọn @(plan.Popular ? "• Phổ biến nhất" : "")</p>
+                <div style="margin-bottom: 16px;">
+                    <p class="co-label" style="margin-bottom: 8px;">Gói tập đã chọn @(plan.Popular ? "• Phổ biến nhất" : "")</p>
+                    @if (allPackages.Count > 1)
+                    {
+                        <div style="margin-bottom: 10px;">
+                            <label for="packageSwitch" style="font-size:12px; color:var(--muted); display:block; margin-bottom:4px;">Chuyển nhanh sang gói khác:</label>
+                            <select id="packageSwitch" 
+                                    style="background:#141712; color:#fff; border:1px solid var(--lime); padding:10px 12px; width:100%; border-radius:4px; font-weight:600; font-size:13px; cursor:pointer;"
+                                    onchange="window.location.href='/thanh-toan/' + this.value + '?cycle=' + (document.getElementById('cy-year').checked ? 'year' : 'month');">
+                                @foreach (var p in allPackages)
+                                {
+                                    <option value="@p.PackageId" selected="@(p.PackageId == plan.PackageId)">
+                                        @p.PackageName — @p.Price.ToString("N0")đ (@p.DurationDays ngày)
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                    }
+                </div>
                 <h2 class="co-plan">@plan.Name</h2>
                 <p class="co-desc">@plan.Description</p>
+                <div style="font-size:13px; color:var(--lime); margin-bottom:12px; font-weight:600;">
+                    <span>Thời hạn: @plan.DurationDays ngày</span> • <span>HLV cá nhân: @(plan.IncludesPT ? "Có PT kèm 1:1" : "Tự tập")</span>
+                </div>
                 <ul class="check">
                     @foreach (var f in plan.Features) { <li>@f</li> }
                 </ul>

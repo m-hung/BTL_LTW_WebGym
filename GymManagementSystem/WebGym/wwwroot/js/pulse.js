@@ -73,3 +73,125 @@
   });
   video.querySelector("source").addEventListener("error", function () { box.classList.add("failed"); });
 })();
+
+// ===== Huấn luyện viên (PT): Tìm kiếm, Bộ lọc & List trượt ngang =====
+(function () {
+  var track = document.getElementById("ptTrack");
+  var searchInput = document.getElementById("ptSearch");
+  var clearBtn = document.getElementById("ptClearSearch");
+  var filterBtns = document.querySelectorAll(".tr-filter-btn");
+  var prevBtn = document.getElementById("ptPrev");
+  var nextBtn = document.getElementById("ptNext");
+  var emptyMsg = document.getElementById("ptEmpty");
+
+  if (!track) return;
+
+  var currentFilter = "all";
+  var currentSearch = "";
+
+  function applyFilters() {
+    var slides = track.querySelectorAll(".trainer-slide");
+    var visibleCount = 0;
+    var query = currentSearch.toLowerCase().trim();
+
+    slides.forEach(function (slide) {
+      var categories = (slide.dataset.categories || "").split(" ");
+      var searchText = (slide.dataset.search || "").toLowerCase();
+
+      var matchesCategory = (currentFilter === "all") || categories.indexOf(currentFilter) !== -1;
+      var matchesSearch = !query || searchText.indexOf(query) !== -1;
+
+      if (matchesCategory && matchesSearch) {
+        slide.style.display = "";
+        visibleCount++;
+      } else {
+        slide.style.display = "none";
+      }
+    });
+
+    if (emptyMsg) {
+      emptyMsg.style.display = visibleCount === 0 ? "block" : "none";
+    }
+
+    if (clearBtn) {
+      clearBtn.style.display = query.length > 0 ? "inline-block" : "none";
+    }
+
+    track.scrollTo({ left: 0, behavior: "smooth" });
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener("input", function () {
+      currentSearch = searchInput.value;
+      applyFilters();
+    });
+  }
+
+  if (clearBtn) {
+    clearBtn.addEventListener("click", function () {
+      searchInput.value = "";
+      currentSearch = "";
+      applyFilters();
+      searchInput.focus();
+    });
+  }
+
+  window.resetPtSearch = function () {
+    if (searchInput) searchInput.value = "";
+    currentSearch = "";
+    currentFilter = "all";
+    filterBtns.forEach(function (btn) {
+      btn.classList.toggle("active", btn.dataset.filter === "all");
+    });
+    applyFilters();
+  };
+
+  filterBtns.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      filterBtns.forEach(function (b) { b.classList.remove("active"); });
+      btn.classList.add("active");
+      currentFilter = btn.dataset.filter || "all";
+      applyFilters();
+    });
+  });
+
+  if (prevBtn) {
+    prevBtn.addEventListener("click", function () {
+      var step = track.clientWidth * 0.75;
+      track.scrollBy({ left: -step, behavior: "smooth" });
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener("click", function () {
+      var step = track.clientWidth * 0.75;
+      track.scrollBy({ left: step, behavior: "smooth" });
+    });
+  }
+
+  var isDown = false;
+  var startX;
+  var scrollLeft;
+
+  track.addEventListener("mousedown", function (e) {
+    isDown = true;
+    startX = e.pageX - track.offsetLeft;
+    scrollLeft = track.scrollLeft;
+  });
+
+  track.addEventListener("mouseleave", function () {
+    isDown = false;
+  });
+
+  track.addEventListener("mouseup", function () {
+    isDown = false;
+  });
+
+  track.addEventListener("mousemove", function (e) {
+    if (!isDown) return;
+    e.preventDefault();
+    var x = e.pageX - track.offsetLeft;
+    var walk = (x - startX) * 1.5;
+    track.scrollLeft = scrollLeft - walk;
+  });
+})();

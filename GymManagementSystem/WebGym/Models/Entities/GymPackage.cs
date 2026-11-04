@@ -41,9 +41,9 @@ namespace WebGym.Models.Entities
         public long PriceInThousands => (long)Math.Round(MonthlyPrice / 1000m);
 
         [NotMapped]
-        public bool IsPopular => PackageName.Contains("Vàng", StringComparison.OrdinalIgnoreCase)
-                                 || PackageName.Contains("VIP", StringComparison.OrdinalIgnoreCase)
-                                 || PackageName.Contains("Pro", StringComparison.OrdinalIgnoreCase)
-                                 || PackageId == 2 || PackageId == 3;
+        public bool IsPopular => PackageId == 2;
+
+
+
     }
 }

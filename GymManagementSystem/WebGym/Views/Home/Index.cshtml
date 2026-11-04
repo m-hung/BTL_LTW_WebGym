@@ -4,6 +4,26 @@
     ViewData["Title"] = "Pulse Gym - Bứt phá giới hạn";
     var packages = Model ?? (IEnumerable<WebGym.Models.Entities.GymPackage>?)ViewBag.FeaturedPackages ?? Enumerable.Empty<WebGym.Models.Entities.GymPackage>();
     var trainers = (IEnumerable<WebGym.Models.Entities.Trainer>?)ViewBag.Trainers ?? Enumerable.Empty<WebGym.Models.Entities.Trainer>();
+    var bmiConfig = new
+    {
+        plans = packages.OrderBy(p => p.Price).Select(p => new
+        {
+            id = p.PackageId,
+            name = p.PackageName,
+            price = p.Price.ToString("N0") + " VNĐ",
+            duration = p.DurationDays >= 365 ? "1 năm" : (p.DurationDays % 30 == 0 ? $"{p.DurationDays / 30} tháng" : $"{p.DurationDays} ngày"),
+            desc = p.Description,
+            url = Url.Action("Index", "Checkout", new { slug = p.PackageId })
+        }),
+        areas = new
+        {
+            weights = Url.Action("FacilityDetail", "Home", new { id = "khu-ta-tu-do" }),
+            cardio = Url.Action("FacilityDetail", "Home", new { id = "khu-cardio" }),
+            boxing = Url.Action("FacilityDetail", "Home", new { id = "phong-boxing" }),
+            yoga = Url.Action("FacilityDetail", "Home", new { id = "studio-yoga" })
+        }
+    };
+    var bmiJson = System.Text.Json.JsonSerializer.Serialize(bmiConfig);
 }
 <!DOCTYPE html>
 <html lang="vi">
@@ -21,7 +41,7 @@
         <a href="#top" class="logo"><i class="logo-bars"></i>PULSE <span>GYM</span></a>
         <nav class="nav-links">
             <a href="#khu-vuc">Khu vực tập</a>
-            <a href="#lich-tap">Lịch tập</a>
+            <a href="#suc-khoe">Sức khỏe và tư vấn</a>
             <a href="#huan-luyen-vien">Huấn luyện viên</a>
             <a href="#bang-gia">Bảng giá</a>
         </nav>
@@ -78,19 +98,107 @@
             </div>
         </section>
 
-        <!-- SCHEDULE -->
-        <section id="lich-tap" class="section">
+        <!-- CÔNG CỤ BMI / TDEE -->
+        <section id="suc-khoe" class="section">
             <div class="head">
                 <div>
-                    <p class="eyebrow">Lịch tập tuần này</p>
-                    <h2 class="display">Sắp xếp thời gian<em class="outline">nâng tầm bản thân.</em></h2>
+                    <p class="eyebrow">Công cụ miễn phí</p>
+                    <h2 class="display">Hiểu cơ thể<em class="outline">chọn đúng gói</em></h2>
                 </div>
-                <a href="#" class="link-ul">Xem lịch đầy đủ →</a>
+                <p class="head-note">Nhập vài thông tin cơ bản để biết chỉ số BMI, năng lượng mỗi ngày và nhận gợi ý gói tập phù hợp với tình trạng của bạn.</p>
             </div>
-            <div class="schedule">
-                <div class="tabs" id="tabs"></div>
-                <div id="classes"></div>
+
+            <div class="bmi">
+                <form class="bmi-card" id="bmiForm" novalidate>
+                    <h3 class="bmi-title">Thông tin của bạn</h3>
+                    <div class="bmi-fields">
+                        <div class="bmi-f wide" role="radiogroup" aria-label="Giới tính">
+                            <span>Giới tính</span>
+                            <div class="bmi-seg">
+                                <input type="radio" name="gender" id="g-m" value="m" checked /><label for="g-m">Nam</label>
+                                <input type="radio" name="gender" id="g-f" value="f" /><label for="g-f">Nữ</label>
+                            </div>
+                        </div>
+                        <label class="bmi-f">Tuổi
+                            <input type="number" id="bmiAge" min="18" max="80" inputmode="numeric" placeholder="25" />
+                        </label>
+                        <label class="bmi-f">Chiều cao (cm)
+                            <input type="number" id="bmiH" min="120" max="220" inputmode="decimal" placeholder="170" />
+                        </label>
+                        <label class="bmi-f">Cân nặng (kg)
+                            <input type="number" id="bmiW" min="30" max="250" step="0.1" inputmode="decimal" placeholder="65" />
+                        </label>
+                        <label class="bmi-f wide">Mức độ vận động
+                            <select id="bmiAct">
+                                <option value="1.2">Ít vận động (ngồi nhiều, làm văn phòng)</option>
+                                <option value="1.375" selected>Nhẹ (tập 1–3 buổi mỗi tuần)</option>
+                                <option value="1.55">Vừa (tập 3–5 buổi mỗi tuần)</option>
+                                <option value="1.725">Nhiều (tập 6–7 buổi mỗi tuần)</option>
+                                <option value="1.9">Rất nhiều (tập nặng hoặc lao động nặng)</option>
+                            </select>
+                        </label>
+                        <div class="bmi-f wide" role="radiogroup" aria-label="Mục tiêu">
+                            <span>Mục tiêu của bạn</span>
+                            <div class="bmi-seg">
+                                <input type="radio" name="goal" id="go-lose" value="lose" /><label for="go-lose">Giảm mỡ</label>
+                                <input type="radio" name="goal" id="go-keep" value="keep" checked /><label for="go-keep">Duy trì</label>
+                                <input type="radio" name="goal" id="go-gain" value="gain" /><label for="go-gain">Tăng cơ</label>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="bmi-err" id="bmiErr" role="alert"></p>
+                    <button type="submit" class="btn">Phân tích cơ thể <b>→</b></button>
+                </form>
+
+                <div class="bmi-card bmi-result" id="bmiResult" aria-live="polite">
+                    <div class="bmi-empty" id="bmiEmpty">
+                        <strong>Kết quả của bạn</strong>
+                        <p>Điền thông tin bên cạnh và bấm "Phân tích cơ thể" để xem tình trạng, lời khuyên và gói tập gợi ý.</p>
+                    </div>
+
+                    <div id="bmiOut" hidden>
+                        <div class="bmi-top">
+                            <div class="bmi-val">
+                                <small>Chỉ số BMI</small>
+                                <strong id="bmiVal">0</strong>
+                                <span class="bmi-cat" id="bmiCat"></span>
+                            </div>
+                            <div class="bmi-scale" aria-hidden="true">
+                                <div class="bmi-bar">
+                                    <span style="width:20.5%;background:#6f8cff"></span>
+                                    <span style="width:20.5%;background:#c8ff2e"></span>
+                                    <span style="width:9.1%;background:#ffcf4d"></span>
+                                    <span style="width:22.7%;background:#ff9a3d"></span>
+                                    <span style="width:27.2%;background:#ff5e5e"></span>
+                                    <i class="bmi-mark" id="bmiMark"></i>
+                                </div>
+                                <div class="bmi-ticks"><span style="left:20.5%">18,5</span><span style="left:40.9%">23</span><span style="left:50%">25</span><span style="left:72.7%">30</span></div>
+                            </div>
+                        </div>
+
+                        <div class="bmi-nums">
+                            <div><small>BMR</small><strong id="bmiBmr">0</strong><em>kcal / ngày nghỉ</em></div>
+                            <div><small>TDEE</small><strong id="bmiTdee">0</strong><em>kcal / ngày duy trì</em></div>
+                            <div><small>Mục tiêu</small><strong id="bmiTarget">0</strong><em>kcal / ngày</em></div>
+                            <div><small>Protein</small><strong id="bmiProtein">0</strong><em>gram / ngày</em></div>
+                        </div>
+
+                        <h4 class="bmi-sub">Tình trạng</h4>
+                        <p class="bmi-status" id="bmiStatus"></p>
+                        <p class="bmi-note" id="bmiNote" hidden></p>
+
+                        <h4 class="bmi-sub">Lời khuyên cho bạn</h4>
+                        <ul class="check" id="bmiTips"></ul>
+
+                        <h4 class="bmi-sub">Khu vực nên tập</h4>
+                        <ul class="chips" id="bmiAreas"></ul>
+
+                        <div class="bmi-plan" id="bmiPlan" hidden></div>
+                        <p class="bmi-disc">Kết quả chỉ mang tính tham khảo, không thay thế tư vấn của bác sĩ hoặc chuyên gia dinh dưỡng. BMI phân loại theo chuẩn Châu Á – Thái Bình Dương.</p>
+                    </div>
+                </div>
             </div>
+            <script type="application/json" id="bmiConfig">@Html.Raw(bmiJson)</script>
         </section>
 
         <!-- TRAINERS -->
@@ -102,68 +210,31 @@
                 </div>
                 <p class="head-note">Không chỉ là huấn luyện viên. Họ là những người truyền cảm hứng, đồng hành và giúp bạn vượt qua mọi giới hạn.</p>
             </div>
-            <!-- Toolbar: Tìm kiếm & Bộ lọc -->
-            <div class="tr-toolbar">
-                <div class="tr-search-box">
-                    <span class="tr-search-icon" aria-hidden="true">🔍</span>
-                    <input type="text" id="ptSearch" placeholder="Tìm theo tên HLV, chuyên môn (Gym, Boxing, Yoga, HIIT...)" aria-label="Tìm kiếm huấn luyện viên" />
-                    <button type="button" id="ptClearSearch" class="tr-search-clear" title="Xóa tìm kiếm" style="display:none;">✕</button>
-                </div>
-                <div class="tr-filters" id="ptFilters">
-                    <button type="button" class="tr-filter-btn active" data-filter="all">Tất cả</button>
-                    <button type="button" class="tr-filter-btn" data-filter="gym">Gym & Thể hình</button>
-                    <button type="button" class="tr-filter-btn" data-filter="hiit">Cardio & HIIT</button>
-                    <button type="button" class="tr-filter-btn" data-filter="boxing">Boxing & Võ thuật</button>
-                    <button type="button" class="tr-filter-btn" data-filter="yoga">Yoga & Phục hồi</button>
-                </div>
-            </div>
-
-            <!-- Slider Danh sách trượt -->
-            <div class="tr-slider-wrapper">
-                <button type="button" class="tr-arrow tr-prev" id="ptPrev" aria-label="Trượt sang trái">‹</button>
-                <div class="trainers-track" id="ptTrack">
-                    @if (trainers.Any())
+            <div class="trainers">
+                @if (trainers.Any())
+                {
+                    foreach (var t in trainers)
                     {
-                        foreach (var t in trainers)
-                        {
-                            var info = WebGym.Models.TrainerInfo.FromTrainer(t);
-                            var imgSrc = info.Image.StartsWith("http") ? info.Image : Url.Content("~/images/" + info.Image);
-                            var specText = (t.Specialization + " " + info.Role + " " + info.Bio).ToLower();
-                            var cats = new List<string> { "all" };
-                            if (specText.Contains("gym") || specText.Contains("bodybuilding") || specText.Contains("tăng cơ") || specText.Contains("thể hình") || specText.Contains("crossfit") || specText.Contains("powerlifting") || specText.Contains("cử tạ")) cats.Add("gym");
-                            if (specText.Contains("hiit") || specText.Contains("cardio") || specText.Contains("sức bền") || specText.Contains("calisthenics") || specText.Contains("đốt mỡ") || specText.Contains("giảm cân")) cats.Add("hiit");
-                            if (specText.Contains("boxing") || specText.Contains("võ") || specText.Contains("combat") || specText.Contains("đấm")) cats.Add("boxing");
-                            if (specText.Contains("yoga") || specText.Contains("pilates") || specText.Contains("phục hồi") || specText.Contains("cột sống") || specText.Contains("dẻo dai")) cats.Add("yoga");
-                            var catString = string.Join(" ", cats);
-                            var searchContent = $"{info.FullName} {info.Role} {t.Specialization} {info.Bio}".ToLower();
-
-                            <article class="trainer-slide" 
-                                     data-categories="@catString" 
-                                     data-search="@searchContent">
-                                <a asp-controller="Home" asp-action="TrainerDetail" asp-route-id="@t.TrainerId" class="trainer">
-                                    <div class="photo">
-                                        <img src="@imgSrc" asp-append-version="true" alt="@info.FullName" loading="lazy" />
-                                        <span class="tag">@info.Badge</span>
+                        var info = WebGym.Models.TrainerInfo.FromTrainer(t);
+                        var imgSrc = info.Image.StartsWith("http") ? info.Image : Url.Content("~/images/" + info.Image);
+                        if (imgSrc.Contains("w=300")) { imgSrc = imgSrc.Replace("w=300", "w=800"); }
+                        <article class="trainer-card">
+                            <a asp-controller="Home" asp-action="TrainerDetail" asp-route-id="@t.TrainerId" class="trainer">
+                                <div class="photo">
+                                    <img src="@imgSrc" asp-append-version="true" alt="@info.FullName" />
+                                    <span class="tag">@info.Badge</span>
+                                </div>
+                                <div class="trainer-info">
+                                    <div>
+                                        <h3>@info.FullName</h3>
+                                        <small>@info.Role</small>
                                     </div>
-                                    <div class="trainer-info">
-                                        <div>
-                                            <h3>@info.FullName</h3>
-                                            <small>@info.Role</small>
-                                        </div>
-                                        <span class="arrow-circle">↗</span>
-                                    </div>
-                                </a>
-                            </article>
-                        }
+                                    <span class="arrow-circle">↗</span>
+                                </div>
+                            </a>
+                        </article>
                     }
-                </div>
-                <button type="button" class="tr-arrow tr-next" id="ptNext" aria-label="Trượt sang phải">›</button>
-            </div>
-
-            <!-- Trạng thái trống khi tìm không thấy -->
-            <div id="ptEmpty" class="tr-empty" style="display:none;">
-                <p>Không tìm thấy huấn luyện viên phù hợp với từ khóa hoặc bộ lọc đã chọn.</p>
-                <button type="button" class="btn btn-sm btn-ghost" onclick="resetPtSearch()">Xem tất cả HLV <b>→</b></button>
+                }
             </div>
         </section>
 
@@ -171,26 +242,23 @@
         <section id="bang-gia" class="section pricing">
             <p class="eyebrow center">Đầu tư cho chính bạn</p>
             <h2 class="display center">Chọn gói.<em class="outline">Bắt đầu thay đổi.</em></h2>
-            <div class="billing" id="billing">
-                <button class="on" data-mode="month">Hàng tháng</button>
-                <button data-mode="year">Hàng năm <b>-20%</b></button>
-            </div>
             <div class="plans">
                 @if (packages.Any())
                 {
                     foreach (var pkg in packages)
                     {
                         var plan = WebGym.Models.PlanInfo.FromGymPackage(pkg);
-                        var priceInK = (long)Math.Round(plan.MonthlyPrice / 1000m);
-                        <article class="plan @(plan.Popular ? "plan-hot" : "")">
-                            @if (plan.Popular)
+                        var isHot = pkg.PackageId == 2;
+                        var durationLabel = pkg.DurationDays >= 365 ? "1 năm" : (pkg.DurationDays % 30 == 0 ? $"{pkg.DurationDays / 30} tháng" : $"{pkg.DurationDays} ngày");
+                        <article class="plan @(isHot ? "plan-hot" : "")">
+                            @if (isHot)
                             {
                                 <span class="badge">Phổ biến nhất</span>
                             }
-                            <h3>@plan.Name</h3>
-                            <p class="price"><strong data-price="@priceInK">@priceInK.ToString("N0")</strong><span><b>Nghìn</b>/ tháng</span></p>
-                            <p class="plan-desc">@plan.Description</p>
-                            <a asp-controller="Checkout" asp-action="Index" asp-route-slug="@pkg.PackageId" data-plan-link class="btn @(plan.Popular ? "" : "btn-ghost")">Chọn gói @plan.Name <b>→</b></a>
+                            <h3>@pkg.PackageName</h3>
+                            <p class="price"><strong>@pkg.Price.ToString("N0")</strong><span><b>VNĐ</b>/ @durationLabel</span></p>
+                            <p class="plan-desc">@pkg.Description</p>
+                            <a asp-controller="Checkout" asp-action="Index" asp-route-slug="@pkg.PackageId" class="btn @(isHot ? "" : "btn-ghost")">Đăng ký ngay <b>→</b></a>
                             <ul>
                                 @foreach (var feat in plan.Features)
                                 {
@@ -222,7 +290,7 @@
                 <p class="foot-note">Tập mạnh hơn. Sống chất hơn.<br />Bứt phá giới hạn mỗi ngày.</p>
                 <div class="social"><a href="#">IG</a><a href="#">FB</a><a href="#">YT</a><a href="#">TK</a></div>
             </div>
-            <div><h4>Khám phá</h4><a href="#khu-vuc">Khu vực tập</a><a href="#lich-tap">Lịch tập</a><a href="#huan-luyen-vien">Huấn luyện viên</a><a href="#bang-gia">Bảng giá</a></div>
+            <div><h4>Khám phá</h4><a href="#khu-vuc">Khu vực tập</a><a href="#suc-khoe">Tính BMI</a><a href="#huan-luyen-vien">Huấn luyện viên</a><a href="#bang-gia">Bảng giá</a></div>
             <div><h4>Hỗ trợ</h4><a href="#">Về chúng tôi</a><a href="#">Câu hỏi thường gặp</a><a href="#">Liên hệ</a><a href="#">Tuyển dụng</a></div>
             <div>
                 <h4 class="news-title">Năng lượng mới<br />trong hộp thư.</h4>

@@ -1,45 +1,197 @@
+// ===== Công cụ BMI / TDEE =====
 (function () {
-  // ===== Lịch tập: sửa dữ liệu ở đây (hoặc đổ từ Controller sau) =====
-  var days = [
-    { t: "T2", n: "Thứ 2", c: [["06:00", "Power HIIT", "Anh Tuấn", 4], ["17:30", "Boxing Core", "Hoàng Nam", 8], ["19:00", "Strength 101", "Minh Khôi", 6]] },
-    { t: "T3", n: "Thứ 3", c: [["06:30", "Yoga Flow", "Thu Hà", 10], ["18:00", "Gym Coaching", "Minh Khôi", 5], ["19:30", "HIIT Burn", "Anh Tuấn", 7]] },
-    { t: "T4", n: "Thứ 4", c: [["06:00", "Strength 101", "Minh Khôi", 6], ["17:30", "Boxing Basic", "Hoàng Nam", 9], ["19:00", "Mobility", "Thu Hà", 12]] },
-    { t: "T5", n: "Thứ 5", c: [["06:00", "Power HIIT", "Anh Tuấn", 3], ["18:00", "Boxing Core", "Hoàng Nam", 8], ["19:30", "Yoga Flow", "Thu Hà", 10]] },
-    { t: "T6", n: "Thứ 6", c: [["06:30", "Gym Coaching", "Minh Khôi", 5], ["17:30", "HIIT Burn", "Anh Tuấn", 6], ["19:00", "Boxing Sparring", "Hoàng Nam", 4]] },
-    { t: "T7", n: "Thứ bảy", c: [["08:00", "Full Body", "Minh Khôi", 12], ["09:30", "Yoga Flow", "Thu Hà", 15], ["16:00", "Boxing Core", "Hoàng Nam", 10]] }
-  ];
-  var tabs = document.getElementById("tabs"), list = document.getElementById("classes");
+  var form = document.getElementById("bmiForm");
+  if (!form) return;
 
-  function show(i) {
-    Array.prototype.forEach.call(tabs.children, function (b, k) { b.classList.toggle("on", k === i); });
-    list.innerHTML = days[i].c.map(function (x, k) {
-      return '<div class="class"><span class="idx">0' + (k + 1) + '</span><span class="time">' + x[0] +
-        '</span><div><h4>' + x[1] + '</h4><p>Với HLV ' + x[2] + '</p></div><span class="slots">' +
-        String(x[3]).padStart(2, "0") + ' chỗ</span><a href="#" class="arrow-circle">→</a></div>';
-    }).join("");
+  var cfg = { plans: [], areas: {} };
+  try { cfg = JSON.parse(document.getElementById("bmiConfig").textContent); } catch (e) {}
+
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  };
+  var num = function (n, d) {
+    return n.toLocaleString("vi-VN", { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 });
+  };
+  var round10 = function (n) { return Math.round(n / 10) * 10; };
+
+  // Phân loại BMI theo chuẩn Châu Á - Thái Bình Dương
+  var CATS = {
+    under:  { t: "Thiếu cân",     c: "#6f8cff" },
+    normal: { t: "Bình thường",   c: "#c8ff2e" },
+    over:   { t: "Thừa cân",      c: "#ffcf4d" },
+    ob1:    { t: "Béo phì độ I",  c: "#ff9a3d" },
+    ob2:    { t: "Béo phì độ II", c: "#ff5e5e" }
+  };
+  function category(b) {
+    if (b < 18.5) return "under";
+    if (b < 23) return "normal";
+    if (b < 25) return "over";
+    if (b < 30) return "ob1";
+    return "ob2";
   }
-  days.forEach(function (d, i) {
-    var b = document.createElement("button");
-    b.innerHTML = d.t + "<small>" + d.n + "</small>";
-    b.onclick = function () { show(i); };
-    tabs.appendChild(b);
-  });
-  show(0);
 
-  // ===== Bảng giá: tháng / năm (-20%) =====
-  var fmt = function (n) { return n.toLocaleString("vi-VN"); };
-  document.querySelectorAll("#billing button").forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      document.querySelectorAll("#billing button").forEach(function (b) { b.classList.toggle("on", b === btn); });
-      var year = btn.dataset.mode === "year";
-      document.querySelectorAll("[data-plan-link]").forEach(function (a) {
-        if (!a.dataset.base) a.dataset.base = a.getAttribute("href");
-        a.setAttribute("href", year ? a.dataset.base + "?cycle=year" : a.dataset.base);
-      });
-      document.querySelectorAll("[data-price]").forEach(function (el) {
-        var p = +el.dataset.price;
-        el.textContent = fmt(year ? Math.round(p * 0.8) : p);
-      });
+  var STATUS = {
+    under:  "Cân nặng của bạn đang thấp hơn mức khuyến nghị. Cơ thể có thể thiếu năng lượng và khối cơ, nên cần ăn đủ và tập sức mạnh để tăng cân lành mạnh.",
+    normal: "Chỉ số của bạn nằm trong mức khỏe mạnh. Bạn có thể tập trung vào sức mạnh, thể lực và hình thể.",
+    over:   "Bạn đang ở mức thừa cân nhẹ theo chuẩn Châu Á. Điều chỉnh ăn uống và tập luyện đều đặn sẽ giúp đưa chỉ số về mức lý tưởng.",
+    ob1:    "Bạn đang ở mức béo phì độ I. Giảm mỡ từ từ kết hợp tập luyện đều đặn sẽ giúp cải thiện sức khỏe rõ rệt.",
+    ob2:    "Bạn đang ở mức béo phì độ II. Nên bắt đầu thật nhẹ nhàng, có người hướng dẫn và thay đổi ăn uống dần dần để giảm nguy cơ cho sức khỏe."
+  };
+
+  var TIPS = {
+    under: [
+      "Ưu tiên tập tạ 3 buổi mỗi tuần với các bài nhiều khớp như squat, đẩy ngực, kéo xà; hạn chế cardio quá nhiều.",
+      "Ăn đủ 3 bữa chính và 1 đến 2 bữa phụ, tăng lượng ăn từ từ thay vì ăn quá nhiều trong một lúc.",
+      "Ngủ 7 đến 9 tiếng mỗi đêm vì cơ bắp phát triển trong lúc nghỉ ngơi."
+    ],
+    normal: [
+      "Duy trì 3 đến 4 buổi tập mỗi tuần, kết hợp tạ và cardio để giữ thể lực cân đối.",
+      "Tăng mức tạ dần theo từng giai đoạn để cơ thể tiếp tục tiến bộ.",
+      "Uống đủ nước và ngủ đủ giấc để phục hồi tốt."
+    ],
+    over: [
+      "Kết hợp cardio cường độ vừa 3 đến 4 buổi mỗi tuần với 2 đến 3 buổi tạ để giảm mỡ mà vẫn giữ cơ.",
+      "Giảm đồ uống có đường và đồ chiên rán; giảm khoảng 0,25 đến 0,5 kg mỗi tuần là tốc độ bền vững.",
+      "Tăng dần cường độ, tránh tập quá sức ngay từ đầu để hạn chế chấn thương."
+    ],
+    ob2: [
+      "Bắt đầu với các bộ môn ít tác động lên khớp như đạp xe, máy elliptical và đi bộ.",
+      "Nên có huấn luyện viên theo sát vài tuần đầu để tập đúng kỹ thuật và an toàn.",
+      "Giảm dần lượng ăn và đồ uống có đường, không nhịn ăn cực đoan."
+    ]
+  };
+  TIPS.ob1 = TIPS.over;
+
+  var AREA_NAMES = { weights: "Khu tạ tự do", cardio: "Khu cardio", boxing: "Phòng boxing", yoga: "Studio yoga" };
+  function areasFor(k, goal) {
+    if (k === "under") return ["weights", "yoga"];
+    if (k === "ob2") return ["cardio", "yoga"];
+    if (k === "over" || k === "ob1") return ["cardio", "weights"];
+    if (goal === "gain") return ["weights", "boxing"];
+    if (goal === "lose") return ["cardio", "boxing"];
+    return ["weights", "cardio", "yoga"];
+  }
+
+  function recommendPlan(k, act) {
+    var plans = cfg.plans || [];
+    if (!plans.length) return null;
+    var pts = 0, why = [];
+    if (k === "under" || k === "ob1" || k === "ob2") { pts++; why.push("chỉ số BMI của bạn cần được hướng dẫn tập luyện và ăn uống cẩn thận"); }
+    if (act <= 1.375) { pts++; why.push("mức vận động hiện tại còn ít nên cần người đồng hành để xây thói quen"); }
+    if (k === "ob2") pts++;
+    var n = plans.length, i = pts === 0 ? 0 : pts === 1 ? Math.floor((n - 1) / 2) : n - 1;
+    var reason = pts === 0
+      ? "Bạn đã có nền tảng tốt, một gói cơ bản là đủ để bắt đầu và tự tập."
+      : "Gợi ý này dựa trên việc " + why.join(" và ") + ".";
+    return { plan: plans[i], reason: reason };
+  }
+
+  function show(r) {
+    $("bmiEmpty").hidden = true;
+    $("bmiOut").hidden = false;
+
+    $("bmiVal").textContent = num(r.bmi, 1);
+    var cat = $("bmiCat");
+    cat.textContent = CATS[r.k].t;
+    cat.style.background = CATS[r.k].c;
+    $("bmiMark").style.left = Math.max(1, Math.min(99, (r.bmi - 14) / 22 * 100)) + "%";
+
+    $("bmiBmr").textContent = num(Math.round(r.bmr));
+    $("bmiTdee").textContent = num(round10(r.tdee));
+    $("bmiTarget").textContent = num(r.target);
+    $("bmiProtein").textContent = r.protein;
+
+    $("bmiStatus").textContent = STATUS[r.k] + " Cân nặng khỏe mạnh cho chiều cao của bạn khoảng " +
+      num(r.low, 1) + " đến " + num(r.high, 1) + " kg.";
+
+    var note = $("bmiNote");
+    note.hidden = !r.note;
+    note.textContent = r.note || "";
+
+    $("bmiTips").innerHTML = r.tips.map(function (t) { return "<li>" + esc(t) + "</li>"; }).join("");
+
+    $("bmiAreas").innerHTML = r.areas.map(function (a) {
+      var url = (cfg.areas && cfg.areas[a]) || "#";
+      return '<li><a href="' + esc(url) + '">' + AREA_NAMES[a] + "</a></li>";
+    }).join("");
+
+    var box = $("bmiPlan");
+    if (r.rec) {
+      var p = r.rec.plan;
+      box.hidden = false;
+      box.innerHTML =
+        "<div><small>Gói tập phù hợp với bạn</small><h4>" + esc(p.name) + "</h4>" +
+        (p.desc ? "<p>" + esc(p.desc) + "</p>" : "") +
+        '<p class="bmi-why">' + esc(r.rec.reason) + "</p></div>" +
+        '<div class="bmi-plan-cta"><strong>' + esc(p.price) + "</strong><span>/ " + esc(p.duration) + "</span>" +
+        '<a class="btn" href="' + esc(p.url) + '">Đăng ký gói này <b>→</b></a>' +
+        '<a class="link-ul" href="#bang-gia">So sánh các gói</a></div>';
+    } else {
+      box.hidden = true;
+    }
+
+    if (window.innerWidth < 1000) {
+      $("bmiResult").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var err = $("bmiErr");
+    var male = form.elements.gender.value === "m";
+    var goal = form.elements.goal.value;
+    var age = +$("bmiAge").value, h = +$("bmiH").value, w = +$("bmiW").value, act = +$("bmiAct").value;
+
+    var msg = "";
+    if (!(age >= 18 && age <= 80)) msg = "Công cụ dành cho người từ 18 đến 80 tuổi.";
+    else if (!(h >= 120 && h <= 220)) msg = "Chiều cao hợp lệ từ 120 đến 220 cm.";
+    else if (!(w >= 30 && w <= 250)) msg = "Cân nặng hợp lệ từ 30 đến 250 kg.";
+    err.textContent = msg;
+    if (msg) return;
+
+    var hm = h / 100;
+    var bmi = w / (hm * hm);
+    var k = category(bmi);
+    // Mifflin-St Jeor
+    var bmr = 10 * w + 6.25 * h - 5 * age + (male ? 5 : -161);
+    var tdee = bmr * act;
+
+    var note = "";
+    if (k === "under" && goal === "lose") {
+      goal = "gain";
+      note = "Với chỉ số hiện tại, bạn không nên giảm thêm cân. Chúng tôi đã đổi mục tiêu sang tăng cơ để phù hợp hơn.";
+    } else if ((k === "ob1" || k === "ob2") && goal === "gain") {
+      goal = "lose";
+      note = "Với chỉ số hiện tại, nên ưu tiên giảm mỡ trước và vẫn tập tạ để giữ cơ. Chúng tôi đã đổi mục tiêu sang giảm mỡ.";
+    }
+
+    var target, protein;
+    if (goal === "lose") {
+      target = round10(Math.max(tdee * 0.85, bmr));
+      protein = Math.round(w * 1.6) + " – " + Math.round(w * 2.0);
+    } else if (goal === "gain") {
+      target = round10(tdee + 300);
+      protein = Math.round(w * 1.6) + " – " + Math.round(w * 2.0);
+    } else {
+      target = round10(tdee);
+      protein = Math.round(w * 1.2) + " – " + Math.round(w * 1.6);
+    }
+
+    var tips = TIPS[k].slice();
+    if (goal === "lose") tips.push("Mục tiêu khoảng " + num(target) + " kcal mỗi ngày, thấp hơn mức duy trì khoảng 15%.");
+    else if (goal === "gain") tips.push("Mục tiêu khoảng " + num(target) + " kcal mỗi ngày, cao hơn mức duy trì khoảng 300 kcal, kèm đủ protein.");
+    else tips.push("Giữ khoảng " + num(target) + " kcal mỗi ngày để duy trì cân nặng hiện tại.");
+    if (bmi < 16 || bmi >= 35 || age >= 60) {
+      tips.push("Với tình trạng của bạn, nên tham khảo ý kiến bác sĩ trước khi bắt đầu tập luyện cường độ cao.");
+    }
+
+    show({
+      bmi: bmi, k: k, bmr: bmr, tdee: tdee, target: target, protein: protein,
+      low: 18.5 * hm * hm, high: 22.9 * hm * hm,
+      note: note, tips: tips, areas: areasFor(k, goal), rec: recommendPlan(k, act)
     });
   });
 })();
@@ -72,126 +224,4 @@
     if (e.key === "Escape" && modal.classList.contains("open")) close();
   });
   video.querySelector("source").addEventListener("error", function () { box.classList.add("failed"); });
-})();
-
-// ===== Huấn luyện viên (PT): Tìm kiếm, Bộ lọc & List trượt ngang =====
-(function () {
-  var track = document.getElementById("ptTrack");
-  var searchInput = document.getElementById("ptSearch");
-  var clearBtn = document.getElementById("ptClearSearch");
-  var filterBtns = document.querySelectorAll(".tr-filter-btn");
-  var prevBtn = document.getElementById("ptPrev");
-  var nextBtn = document.getElementById("ptNext");
-  var emptyMsg = document.getElementById("ptEmpty");
-
-  if (!track) return;
-
-  var currentFilter = "all";
-  var currentSearch = "";
-
-  function applyFilters() {
-    var slides = track.querySelectorAll(".trainer-slide");
-    var visibleCount = 0;
-    var query = currentSearch.toLowerCase().trim();
-
-    slides.forEach(function (slide) {
-      var categories = (slide.dataset.categories || "").split(" ");
-      var searchText = (slide.dataset.search || "").toLowerCase();
-
-      var matchesCategory = (currentFilter === "all") || categories.indexOf(currentFilter) !== -1;
-      var matchesSearch = !query || searchText.indexOf(query) !== -1;
-
-      if (matchesCategory && matchesSearch) {
-        slide.style.display = "";
-        visibleCount++;
-      } else {
-        slide.style.display = "none";
-      }
-    });
-
-    if (emptyMsg) {
-      emptyMsg.style.display = visibleCount === 0 ? "block" : "none";
-    }
-
-    if (clearBtn) {
-      clearBtn.style.display = query.length > 0 ? "inline-block" : "none";
-    }
-
-    track.scrollTo({ left: 0, behavior: "smooth" });
-  }
-
-  if (searchInput) {
-    searchInput.addEventListener("input", function () {
-      currentSearch = searchInput.value;
-      applyFilters();
-    });
-  }
-
-  if (clearBtn) {
-    clearBtn.addEventListener("click", function () {
-      searchInput.value = "";
-      currentSearch = "";
-      applyFilters();
-      searchInput.focus();
-    });
-  }
-
-  window.resetPtSearch = function () {
-    if (searchInput) searchInput.value = "";
-    currentSearch = "";
-    currentFilter = "all";
-    filterBtns.forEach(function (btn) {
-      btn.classList.toggle("active", btn.dataset.filter === "all");
-    });
-    applyFilters();
-  };
-
-  filterBtns.forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      filterBtns.forEach(function (b) { b.classList.remove("active"); });
-      btn.classList.add("active");
-      currentFilter = btn.dataset.filter || "all";
-      applyFilters();
-    });
-  });
-
-  if (prevBtn) {
-    prevBtn.addEventListener("click", function () {
-      var step = track.clientWidth * 0.75;
-      track.scrollBy({ left: -step, behavior: "smooth" });
-    });
-  }
-
-  if (nextBtn) {
-    nextBtn.addEventListener("click", function () {
-      var step = track.clientWidth * 0.75;
-      track.scrollBy({ left: step, behavior: "smooth" });
-    });
-  }
-
-  var isDown = false;
-  var startX;
-  var scrollLeft;
-
-  track.addEventListener("mousedown", function (e) {
-    isDown = true;
-    startX = e.pageX - track.offsetLeft;
-    scrollLeft = track.scrollLeft;
-  });
-
-  track.addEventListener("mouseleave", function () {
-    isDown = false;
-  });
-
-  track.addEventListener("mouseup", function () {
-    isDown = false;
-  });
-
-  track.addEventListener("mousemove", function (e) {
-    if (!isDown) return;
-    e.preventDefault();
-    var x = e.pageX - track.offsetLeft;
-    var walk = (x - startX) * 1.5;
-    track.scrollLeft = scrollLeft - walk;
-  });
 })();

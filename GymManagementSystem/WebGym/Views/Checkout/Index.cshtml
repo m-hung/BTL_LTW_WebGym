@@ -113,7 +113,7 @@
                             <label for="packageSwitch" style="font-size:12px; color:var(--muted); display:block; margin-bottom:4px;">Chuyển nhanh sang gói khác:</label>
                             <select id="packageSwitch" 
                                     style="background:#141712; color:#fff; border:1px solid var(--lime); padding:10px 12px; width:100%; border-radius:4px; font-weight:600; font-size:13px; cursor:pointer;"
-                                    onchange="window.location.href='/thanh-toan/' + this.value + '?cycle=' + (document.getElementById('cy-year').checked ? 'year' : 'month');">
+                                    onchange="window.location.href='/thanh-toan/' + this.value;">
                                 @foreach (var p in allPackages)
                                 {
                                     <option value="@p.PackageId" selected="@(p.PackageId == plan.PackageId)">
@@ -133,7 +133,7 @@
                     @foreach (var f in plan.Features) { <li>@f</li> }
                 </ul>
 
-                <div class="co-cycle">
+                <div class="co-cycle" style="display:none!important;">
                     <input type="radio" name="Cycle" id="cy-month" value="month" checked="@(!Model.IsYearly)" />
                     <label for="cy-month">Hàng tháng</label>
                     <input type="radio" name="Cycle" id="cy-year" value="year" checked="@Model.IsYearly" />
@@ -141,13 +141,13 @@
                 </div>
 
                 <div class="co-lines">
-                    <div class="co-line"><span>Gói @plan.Name × <b id="coMonths">@Model.Months</b> tháng</span><span id="coBase">@CheckoutViewModel.Vnd(Model.BaseTotal)</span></div>
-                    <div class="co-line co-disc" id="coDisc" hidden="@(!Model.IsYearly)"><span>Ưu đãi thanh toán năm</span><span>-<b id="coDiscAmt">@CheckoutViewModel.Vnd(Model.Discount)</b></span></div>
-                    <div class="co-line co-total"><span>Tổng thanh toán</span><strong id="coTotal">@CheckoutViewModel.Vnd(Model.Total)</strong></div>
+                    <div class="co-line"><span>Giá trọn gói (@plan.DurationDays ngày)</span><span id="coBase">@CheckoutViewModel.Vnd(plan.Price)</span></div>
+                    <div class="co-line co-disc" id="coDisc" style="display:none!important;"><span>Ưu đãi</span><span>0đ</span></div>
+                    <div class="co-line co-total"><span>Tổng thanh toán</span><strong id="coTotal">@CheckoutViewModel.Vnd(plan.Price)</strong></div>
                 </div>
-                <p class="co-note" id="coNote">@(Model.IsYearly ? "Thanh toán một lần cho 12 tháng." : "Thanh toán theo từng tháng.")</p>
+                <p class="co-note" id="coNote">Thanh toán trọn gói cho thời hạn @plan.DurationDays ngày.</p>
 
-                <button type="submit" class="btn">Thanh toán <span id="coBtn">@CheckoutViewModel.Vnd(Model.Total)</span></button>
+                <button type="submit" class="btn">Thanh toán <span id="coBtn">@CheckoutViewModel.Vnd(plan.Price)</span></button>
                 <ul class="co-trust">
                     <li>Không phí ẩn</li>
                     <li>Hủy bất cứ lúc nào</li>

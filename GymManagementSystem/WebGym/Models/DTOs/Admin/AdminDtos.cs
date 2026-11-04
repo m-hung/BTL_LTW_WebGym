@@ -135,6 +135,21 @@ namespace WebGym.Models.DTOs.Admin
         [Display(Name = "Cân nặng ban đầu (kg)")]
         public double? Weight { get; set; }
 
+        [Display(Name = "Tỷ lệ mỡ (%)")]
+        public double? BodyFatPercentage { get; set; }
+
+        [Display(Name = "Khối lượng cơ (kg)")]
+        public double? MuscleMass { get; set; }
+
+        [Display(Name = "Vòng ngực (cm)")]
+        public double? Chest { get; set; }
+
+        [Display(Name = "Vòng eo (cm)")]
+        public double? Waist { get; set; }
+
+        [Display(Name = "Vòng hông (cm)")]
+        public double? Hips { get; set; }
+
         [Display(Name = "Đăng ký gói tập ngay")]
         public int? SelectedPackageId { get; set; }
     }
@@ -170,6 +185,21 @@ namespace WebGym.Models.DTOs.Admin
 
         [Display(Name = "Cân nặng (kg)")]
         public double? Weight { get; set; }
+
+        [Display(Name = "Tỷ lệ mỡ (%)")]
+        public double? BodyFatPercentage { get; set; }
+
+        [Display(Name = "Khối lượng cơ (kg)")]
+        public double? MuscleMass { get; set; }
+
+        [Display(Name = "Vòng ngực (cm)")]
+        public double? Chest { get; set; }
+
+        [Display(Name = "Vòng eo (cm)")]
+        public double? Waist { get; set; }
+
+        [Display(Name = "Vòng hông (cm)")]
+        public double? Hips { get; set; }
 
         [Display(Name = "Đổi mật khẩu mới (Bỏ trống nếu không đổi)")]
         [MinLength(6, ErrorMessage = "Mật khẩu tối thiểu 6 ký tự")]

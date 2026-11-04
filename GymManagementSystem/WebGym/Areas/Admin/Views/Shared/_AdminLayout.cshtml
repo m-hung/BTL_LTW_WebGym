@@ -218,6 +218,7 @@
         @@media (max-width: 991.98px) {
             #admin-sidebar {
                 left: -270px;
+                box-shadow: 0 0 30px rgba(0, 0, 0, 0.45);
             }
             #admin-sidebar.show {
                 left: 0;
@@ -229,11 +230,29 @@
                 display: none;
                 position: fixed;
                 inset: 0;
-                background: rgba(0, 0, 0, 0.5);
+                background: rgba(15, 23, 42, 0.6);
+                backdrop-filter: blur(3px);
                 z-index: 1030;
             }
             .sidebar-backdrop.show {
                 display: block;
+            }
+        }
+
+        @@media (max-width: 767.98px) {
+            .admin-topbar {
+                padding: 0 0.85rem;
+                height: 60px;
+            }
+            .admin-content {
+                padding: 0.85rem 0.65rem;
+                min-height: calc(100vh - 60px);
+            }
+            .card {
+                border-radius: 12px;
+            }
+            .table-responsive table {
+                min-width: 620px;
             }
         }
 
@@ -257,16 +276,21 @@
     <div class="d-flex">
         <!-- Sidebar Navigation -->
         <aside id="admin-sidebar" class="d-flex flex-column flex-shrink-0">
-            <!-- Brand -->
-            <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="sidebar-brand">
-                <div class="sidebar-brand-icon">
-                    <i class="bi bi-lightning-charge-fill"></i>
-                </div>
-                <div>
-                    <span class="sidebar-brand-text">WebGym</span>
-                    <span class="sidebar-brand-badge">Admin</span>
-                </div>
-            </a>
+            <!-- Brand & Mobile Close -->
+            <div class="d-flex align-items-center justify-content-between">
+                <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="sidebar-brand flex-grow-1">
+                    <div class="sidebar-brand-icon">
+                        <i class="bi bi-lightning-charge-fill"></i>
+                    </div>
+                    <div>
+                        <span class="sidebar-brand-text">WebGym</span>
+                        <span class="sidebar-brand-badge">Admin</span>
+                    </div>
+                </a>
+                <button type="button" class="btn btn-sm btn-link text-white-50 text-decoration-none d-lg-none me-2" id="sidebarCloseBtn" aria-label="Đóng menu">
+                    <i class="bi bi-x-lg fs-5"></i>
+                </button>
+            </div>
 
             <!-- Navigation Menu -->
             <div class="overflow-y-auto flex-grow-1 py-2">
@@ -377,22 +401,49 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        // Toggle Sidebar on Mobile
+        // Toggle & Close Sidebar on Mobile
         const sidebar = document.getElementById('admin-sidebar');
         const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
         const backdrop = document.getElementById('sidebarBackdrop');
 
-        if (sidebarToggle && sidebar && backdrop) {
-            sidebarToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('show');
-                backdrop.classList.toggle('show');
-            });
-
-            backdrop.addEventListener('click', () => {
-                sidebar.classList.remove('show');
-                backdrop.classList.remove('show');
-            });
+        function openSidebar() {
+            sidebar?.classList.add('show');
+            backdrop?.classList.add('show');
+            document.body.style.overflow = 'hidden';
         }
+
+        function closeSidebar() {
+            sidebar?.classList.remove('show');
+            backdrop?.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', openSidebar);
+        }
+        if (sidebarCloseBtn) {
+            sidebarCloseBtn.addEventListener('click', closeSidebar);
+        }
+        if (backdrop) {
+            backdrop.addEventListener('click', closeSidebar);
+        }
+
+        // Tự động đóng sidebar khi click vào link menu trên màn hình nhỏ
+        document.querySelectorAll('#admin-sidebar .nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 992) {
+                    closeSidebar();
+                }
+            });
+        });
+
+        // Đóng sidebar khi nhấn phím Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && sidebar?.classList.contains('show')) {
+                closeSidebar();
+            }
+        });
 
         // SweetAlert2 Toasts for TempData Messages
         const Toast = Swal.mixin({

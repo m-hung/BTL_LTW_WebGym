@@ -37,6 +37,7 @@ namespace WebGym
             builder.Services.AddHttpClient();
             builder.Services.AddScoped<IPaymentService, VnPayPaymentService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddScoped<IGymKnowledgeService, GymKnowledgeService>();
             builder.Services.AddScoped<IAIService, GeminiAIService>();
 
             // 4. Add MVC Controllers and Views

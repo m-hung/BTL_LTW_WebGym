@@ -15,6 +15,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/pulse.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/auth-modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/chat-widget.css" asp-append-version="true" />
 </head>
 <body>
     <header class="nav">
@@ -25,7 +27,7 @@
             <a href="#huan-luyen-vien">Huấn luyện viên</a>
             <a href="#bang-gia">Bảng giá</a>
         </nav>
-        <div class="nav-actions"><a href="~/Auth/Login" class="btn btn-sm btn-ghost">Đăng nhập</a><a href="~/Auth/Register" class="btn btn-sm">Đăng ký</a></div>
+        <div class="nav-actions"><partial name="_AuthButtons" /></div>
     </header>
 
     <main id="top">
@@ -247,6 +249,11 @@
         </div>
     </div>
 
+    <partial name="_AuthModal" />
+    <partial name="_ChatWidget" />
+
     <script src="~/js/pulse.js" asp-append-version="true"></script>
+    <script src="~/js/auth-modal.js" asp-append-version="true"></script>
+    <script src="~/js/chat-widget.js" asp-append-version="true"></script>
 </body>
 </html>

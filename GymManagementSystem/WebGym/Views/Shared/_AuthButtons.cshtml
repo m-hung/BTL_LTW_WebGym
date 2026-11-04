@@ -1,0 +1,36 @@
+@* Cụm nút Đăng nhập / Đăng ký trên thanh điều hướng kiểu Pulse.
+   Chưa đăng nhập → mở modal (href giữ làm fallback khi tắt JS).
+   Đã đăng nhập  → hiện tên + link vào khu vực của vai trò + nút đăng xuất. *@
+@if (User.Identity != null && User.Identity.IsAuthenticated)
+{
+    var name = User.Identity.Name ?? "Tài khoản";
+    var initial = name.Length > 0 ? name.Substring(0, 1).ToUpperInvariant() : "?";
+    var home = User.IsInRole("Admin") ? Url.Action("Index", "Dashboard", new { area = "Admin" })
+             : (User.IsInRole("PT") || User.IsInRole("Trainer")) ? Url.Action("Index", "Schedule", new { area = "PT" })
+             : User.IsInRole("Member") ? Url.Action("Index", "Profile", new { area = "Member" })
+             : Url.Action("Index", "Home", new { area = "" });
+
+    <div class="auth-actions">
+        <a class="auth-user" href="@home" title="Vào khu vực của bạn"><i>@initial</i><span>@name</span></a>
+        <form class="auth-logout" asp-area="" asp-controller="Auth" asp-action="Logout" method="post">
+            <button type="submit">Đăng xuất</button>
+        </form>
+    </div>
+}
+else
+{
+    <div class="auth-actions">
+        <a class="auth-btn auth-btn--ghost" href="@Url.Action("Login", "Auth", new { area = "" })" data-auth-open="login">
+            <span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" /></svg>
+                Đăng nhập
+            </span>
+        </a>
+        <a class="auth-btn auth-btn--solid" href="@Url.Action("Register", "Auth", new { area = "" })" data-auth-open="register">
+            <span>
+                Đăng ký
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+            </span>
+        </a>
+    </div>
+}

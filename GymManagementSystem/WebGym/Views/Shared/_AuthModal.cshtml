@@ -1,0 +1,161 @@
+@* Modal đăng nhập / đăng ký — hiện ngay trên trang hiện tại, không chuyển trang.
+   Chỉ render khi chưa đăng nhập. Form tag helper tự chèn antiforgery token. Mở bằng bất kỳ phần tử nào có data-auth-open="login|register". *@
+@if (User.Identity == null || !User.Identity.IsAuthenticated)
+{
+    <div class="am" id="authModal" role="dialog" aria-modal="true" aria-labelledby="amTitle" aria-hidden="true" data-tab="login">
+        <div class="am-backdrop" data-am-close></div>
+
+        <div class="am-box">
+            <button type="button" class="am-x" data-am-close aria-label="Đóng">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            </button>
+
+            <!-- Cột trái: thương hiệu -->
+            <aside class="am-side" style="--am-img:url('@Url.Content("~/images/hero.jpg")')">
+                <div class="am-side-in">
+                    <span class="am-brand"><i class="am-bars"></i>PULSE <b>GYM</b></span>
+                    <div class="am-side-copy">
+                        <p class="am-eyebrow">Không viện cớ. Chỉ kết quả.</p>
+                        <h3 class="am-side-title">Bứt phá<em>giới hạn</em></h3>
+                        <ul class="am-perks">
+                            <li><span></span>Đặt lịch tập &amp; HLV chỉ vài giây</li>
+                            <li><span></span>Theo dõi chỉ số InBody theo thời gian</li>
+                            <li><span></span>Gói tập linh hoạt, thanh toán online</li>
+                        </ul>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Cột phải: form -->
+            <div class="am-main">
+                <div class="am-head">
+                    <h2 class="am-title" id="amTitle">Chào mừng trở lại</h2>
+                    <p class="am-sub" id="amSub">Đăng nhập để tiếp tục hành trình tập luyện.</p>
+                </div>
+
+                <div class="am-tabs" role="tablist" aria-label="Đăng nhập hoặc đăng ký" data-active="login">
+                    <span class="am-ind" aria-hidden="true"></span>
+                    <button type="button" class="am-tab is-on" role="tab" id="amTabLogin" aria-selected="true" aria-controls="amLogin" data-am-tab="login"><span>Đăng nhập</span></button>
+                    <button type="button" class="am-tab" role="tab" id="amTabRegister" aria-selected="false" aria-controls="amRegister" data-am-tab="register" tabindex="-1"><span>Đăng ký</span></button>
+                </div>
+
+                <div class="am-notice" id="amNotice" role="status" aria-live="polite" hidden></div>
+
+                <!-- ĐĂNG NHẬP -->
+                <form class="am-form" id="amLogin" role="tabpanel" aria-labelledby="amTabLogin" asp-controller="Auth" asp-action="Login" method="post" novalidate>
+                    <input type="hidden" name="ReturnUrl" value="" />
+
+                    <div class="am-field">
+                        <label for="amLoginEmail">Email</label>
+                        <div class="am-input">
+                            <svg class="am-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 7l9 6 9-6" /></svg>
+                            <input id="amLoginEmail" name="Email" type="email" inputmode="email" autocomplete="username" placeholder="name@example.com" />
+                        </div>
+                        <p class="am-err" data-err-for="Email" role="alert"></p>
+                    </div>
+
+                    <div class="am-field">
+                        <label for="amLoginPass">Mật khẩu</label>
+                        <div class="am-input">
+                            <svg class="am-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2" /><path d="M8 10V7a4 4 0 018 0v3" /></svg>
+                            <input id="amLoginPass" name="Password" type="password" autocomplete="current-password" placeholder="••••••••" />
+                            <button type="button" class="am-eye" data-am-toggle aria-label="Hiện mật khẩu" aria-pressed="false">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+                            </button>
+                        </div>
+                        <p class="am-err" data-err-for="Password" role="alert"></p>
+                    </div>
+
+                    <div class="am-row">
+                        <label class="am-check">
+                            <input type="checkbox" name="RememberMe" value="true" />
+                            <span class="am-box-ck" aria-hidden="true"></span>
+                            Ghi nhớ đăng nhập
+                        </label>
+                        <a class="am-link" asp-controller="Auth" asp-action="ForgotPassword">Quên mật khẩu?</a>
+                    </div>
+
+                    <button type="submit" class="am-submit"><span class="am-submit-in"><span class="am-submit-label">Đăng nhập</span><i class="am-arrow">→</i><i class="am-spin" aria-hidden="true"></i></span></button>
+
+                    <details class="am-demo">
+                        <summary>Tài khoản mẫu để demo</summary>
+                        <div class="am-demo-list">
+                            <button type="button" data-am-fill data-email="admin@gym.com" data-pass="Admin@123"><b>Admin</b><small>admin@gym.com</small></button>
+                            <button type="button" data-am-fill data-email="minhnhat.pt@gym.com" data-pass="PT@123"><b>HLV (PT)</b><small>minhnhat.pt@gym.com</small></button>
+                            <button type="button" data-am-fill data-email="quanghai@gmail.com" data-pass="Member@123"><b>Hội viên</b><small>quanghai@gmail.com</small></button>
+                        </div>
+                    </details>
+
+                    <p class="am-foot">Chưa có tài khoản? <button type="button" class="am-link am-link-btn" data-am-tab="register">Đăng ký ngay</button></p>
+                </form>
+
+                <!-- ĐĂNG KÝ -->
+                <form class="am-form" id="amRegister" role="tabpanel" aria-labelledby="amTabRegister" asp-controller="Auth" asp-action="Register" method="post" novalidate hidden>
+
+                    <div class="am-field">
+                        <label for="amRegName">Họ và tên</label>
+                        <div class="am-input">
+                            <svg class="am-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" /></svg>
+                            <input id="amRegName" name="FullName" type="text" autocomplete="name" placeholder="Nguyễn Văn A" maxlength="100" />
+                        </div>
+                        <p class="am-err" data-err-for="FullName" role="alert"></p>
+                    </div>
+
+                    <div class="am-grid2">
+                        <div class="am-field">
+                            <label for="amRegEmail">Email</label>
+                            <div class="am-input">
+                                <svg class="am-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 7l9 6 9-6" /></svg>
+                                <input id="amRegEmail" name="Email" type="email" inputmode="email" autocomplete="email" placeholder="user@gmail.com" />
+                            </div>
+                            <p class="am-err" data-err-for="Email" role="alert"></p>
+                        </div>
+                        <div class="am-field">
+                            <label for="amRegPhone">Số điện thoại</label>
+                            <div class="am-input">
+                                <svg class="am-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z" /></svg>
+                                <input id="amRegPhone" name="PhoneNumber" type="tel" inputmode="tel" autocomplete="tel" placeholder="0987654321" />
+                            </div>
+                            <p class="am-err" data-err-for="PhoneNumber" role="alert"></p>
+                        </div>
+                    </div>
+
+                    <div class="am-grid2">
+                        <div class="am-field">
+                            <label for="amRegPass">Mật khẩu</label>
+                            <div class="am-input">
+                                <svg class="am-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2" /><path d="M8 10V7a4 4 0 018 0v3" /></svg>
+                                <input id="amRegPass" name="Password" type="password" autocomplete="new-password" placeholder="Từ 6 ký tự" />
+                                <button type="button" class="am-eye" data-am-toggle aria-label="Hiện mật khẩu" aria-pressed="false">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+                                </button>
+                            </div>
+                            <p class="am-err" data-err-for="Password" role="alert"></p>
+                        </div>
+                        <div class="am-field">
+                            <label for="amRegConfirm">Xác nhận mật khẩu</label>
+                            <div class="am-input">
+                                <svg class="am-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2" /><path d="M8 10V7a4 4 0 018 0v3" /></svg>
+                                <input id="amRegConfirm" name="ConfirmPassword" type="password" autocomplete="new-password" placeholder="Nhập lại mật khẩu" />
+                            </div>
+                            <p class="am-err" data-err-for="ConfirmPassword" role="alert"></p>
+                        </div>
+                    </div>
+
+                    <label class="am-check am-check-card">
+                        <input type="checkbox" name="RegisterAsTrainer" value="true" />
+                        <span class="am-box-ck" aria-hidden="true"></span>
+                        <span>
+                            <b>Đăng ký làm Huấn luyện viên (PT)</b>
+                            <small>Tích chọn nếu bạn muốn nộp hồ sơ trở thành HLV</small>
+                        </span>
+                    </label>
+
+                    <button type="submit" class="am-submit"><span class="am-submit-in"><span class="am-submit-label">Tạo tài khoản</span><i class="am-arrow">→</i><i class="am-spin" aria-hidden="true"></i></span></button>
+
+                    <p class="am-foot">Đã có tài khoản? <button type="button" class="am-link am-link-btn" data-am-tab="login">Đăng nhập</button></p>
+                </form>
+            </div>
+        </div>
+    </div>
+}

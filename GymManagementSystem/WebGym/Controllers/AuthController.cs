@@ -41,7 +41,7 @@ namespace WebGym.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return IsAjaxRequest ? AjaxValidationError() : View(model);
             }
 
             var passwordHash = HashPassword(model.Password);
@@ -51,7 +51,7 @@ namespace WebGym.Controllers
             if (user == null)
             {
                 ModelState.AddModelError(string.Empty, "Email/Tên đăng nhập hoặc mật khẩu không chính xác.");
-                return View(model);
+                return IsAjaxRequest ? AjaxValidationError() : View(model);
             }
 
             // Tạo Claims cho Cookie Authentication
@@ -75,14 +75,20 @@ namespace WebGym.Controllers
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties);
 
-            SetSuccessMessage($"Chào mừng {user.FullName} ({user.Role}) đã quay trở lại!");
+            var welcome = $"Chào mừng {user.FullName} ({user.Role}) đã quay trở lại!";
+            SetSuccessMessage(welcome);
 
-            if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+            var redirectUrl = !string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl)
+                ? model.ReturnUrl
+                : GetDashboardUrl(user.Role);
+
+            // Modal đăng nhập gọi bằng fetch → trả JSON để trang tự chuyển hướng
+            if (IsAjaxRequest)
             {
-                return Redirect(model.ReturnUrl);
+                return Json(new { success = true, message = welcome, redirectUrl });
             }
 
-            return RedirectToUserDashboard(user.Role);
+            return Redirect(redirectUrl);
         }
 
         // GET: /Auth/Register
@@ -99,14 +105,14 @@ namespace WebGym.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return IsAjaxRequest ? AjaxValidationError() : View(model);
             }
 
             var existingUser = await _context.Users.AnyAsync(u => u.Email == model.Email);
             if (existingUser)
             {
                 ModelState.AddModelError("Email", "Email này đã được sử dụng.");
-                return View(model);
+                return IsAjaxRequest ? AjaxValidationError() : View(model);
             }
 
             var role = model.RegisterAsTrainer ? "PT" : "Member";
@@ -149,7 +155,15 @@ namespace WebGym.Controllers
 
             await _context.SaveChangesAsync();
 
-            SetSuccessMessage("Đăng ký tài khoản thành công! Vui lòng đăng nhập.");
+            const string registered = "Đăng ký tài khoản thành công! Vui lòng đăng nhập.";
+
+            // Modal đăng ký: không đổi trang, JS sẽ chuyển sang tab Đăng nhập
+            if (IsAjaxRequest)
+            {
+                return Json(new { success = true, message = registered });
+            }
+
+            SetSuccessMessage(registered);
             return RedirectToAction(nameof(Login));
         }
 
@@ -177,18 +191,40 @@ namespace WebGym.Controllers
             return View();
         }
 
-        private IActionResult RedirectToUserDashboard(string? role = null)
+        // Request do modal (fetch) gửi lên có header X-Requested-With
+        private bool IsAjaxRequest =>
+            string.Equals(Request.Headers["X-Requested-With"], "XMLHttpRequest", StringComparison.OrdinalIgnoreCase);
+
+        // Trả lỗi ModelState dạng JSON: { success:false, message, errors:{ Field:[msg], "":[msg chung] } }
+        private IActionResult AjaxValidationError()
+        {
+            var errors = ModelState
+                .Where(e => e.Value != null && e.Value.Errors.Count > 0)
+                .ToDictionary(e => e.Key, e => e.Value!.Errors.Select(x => x.ErrorMessage).ToArray());
+
+            var message = errors.TryGetValue(string.Empty, out var general)
+                ? general[0]
+                : "Vui lòng kiểm tra lại thông tin.";
+
+            return BadRequest(new { success = false, message, errors });
+        }
+
+        private string GetDashboardUrl(string? role = null)
         {
             var userRole = role ?? CurrentUserRole;
 
-            return userRole switch
+            return (userRole switch
             {
-                "Admin" => RedirectToAction("Index", "Dashboard", new { area = "Admin" }),
-                "PT" => RedirectToAction("Index", "Schedule", new { area = "PT" }),
-                "Trainer" => RedirectToAction("Index", "Schedule", new { area = "PT" }),
-                "Member" => RedirectToAction("Index", "Profile", new { area = "Member" }),
-                _ => RedirectToAction("Index", "Home")
-            };
+                "Admin" => Url.Action("Index", "Dashboard", new { area = "Admin" }),
+                "PT" or "Trainer" => Url.Action("Index", "Schedule", new { area = "PT" }),
+                "Member" => Url.Action("Index", "Profile", new { area = "Member" }),
+                _ => Url.Action("Index", "Home", new { area = "" })
+            }) ?? "/";
+        }
+
+        private IActionResult RedirectToUserDashboard(string? role = null)
+        {
+            return Redirect(GetDashboardUrl(role));
         }
 
         private static string HashPassword(string password)

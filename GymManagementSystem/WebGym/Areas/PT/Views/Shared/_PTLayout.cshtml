@@ -9,7 +9,7 @@
     var uid = int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var parsedId) ? parsedId : 0;
     var me = await Db.Trainers.AsNoTracking()
         .Where(t => t.UserId == uid)
-        .Select(t => new { t.TrainerId, t.Specialization, t.AvatarUrl })
+        .Select(t => new { t.TrainerId, t.Specialization, t.AvatarUrl, t.Bio, t.User.FullName, t.User.Email, t.User.PhoneNumber })
         .FirstOrDefaultAsync();
     var pendingCount = me == null ? 0 : await Db.Bookings.CountAsync(b => b.TrainerId == me.TrainerId && b.Status == "Pending");
     var today = DateTime.Today;
@@ -71,20 +71,23 @@
             </nav>
 
             <div class="cx-me">
-                <span class="cx-avatar" aria-hidden="true">
-                    @if (!string.IsNullOrWhiteSpace(me?.AvatarUrl))
-                    {
-                        <img src="@(me!.AvatarUrl)" alt="" loading="lazy" />
-                    }
-                    else
-                    {
-                        @WebGym.Helpers.CoachUi.Initials(userName)
-                    }
-                </span>
-                <span class="cx-me-txt">
-                    <strong title="@userName">@userName</strong>
-                    <small title="@(me?.Specialization)">@(string.IsNullOrWhiteSpace(me?.Specialization) ? "Huấn luyện viên" : me!.Specialization)</small>
-                </span>
+                <button type="button" class="cx-me-open" data-profile-open aria-controls="cxProfile" aria-expanded="false" title="Xem và sửa hồ sơ cá nhân">
+                    <span class="cx-avatar" aria-hidden="true" data-profile-avatar>
+                        @if (!string.IsNullOrWhiteSpace(me?.AvatarUrl))
+                        {
+                            <img src="@(me!.AvatarUrl)" alt="" loading="lazy" />
+                        }
+                        else
+                        {
+                            @WebGym.Helpers.CoachUi.Initials(userName)
+                        }
+                    </span>
+                    <span class="cx-me-txt">
+                        <strong data-profile-name>@userName</strong>
+                        <small data-profile-spec>@(string.IsNullOrWhiteSpace(me?.Specialization) ? "Huấn luyện viên" : me!.Specialization)</small>
+                    </span>
+                    <span class="cx-visually-hidden">Mở hồ sơ cá nhân</span>
+                </button>
                 <form asp-area="" asp-controller="Auth" asp-action="Logout" method="post" class="cx-logout">
                     <button type="submit" title="Đăng xuất" aria-label="Đăng xuất">
                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h5v16h-5M10 8l-4 4 4 4M6 12h10" /></svg>
@@ -134,6 +137,90 @@
     </div>
     <div class="cx-scrim" hidden></div>
 
+    @if (me != null)
+    {
+        <!-- Bảng hồ sơ cá nhân: mở khi bấm ảnh đại diện ở góc dưới menu -->
+        <div class="cx-drawer" id="cxProfile" role="dialog" aria-modal="true" aria-labelledby="cxProfileTitle" aria-hidden="true">
+            <div class="cx-drawer-backdrop" data-profile-close></div>
+            <section class="cx-drawer-panel">
+                <header class="cx-drawer-head">
+                    <h2 class="cx-h2" id="cxProfileTitle">Hồ sơ của bạn</h2>
+                    <button type="button" class="cx-drawer-x" data-profile-close aria-label="Đóng hồ sơ">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                    </button>
+                </header>
+
+                <!-- Thẻ xem trước: học viên thấy bạn như thế này -->
+                <div class="cx-card-preview" aria-live="polite">
+                    <span class="cx-preview-photo" data-preview-photo>
+                        @if (!string.IsNullOrWhiteSpace(me.AvatarUrl))
+                        {
+                            <img src="@me.AvatarUrl" alt="" />
+                        }
+                        else
+                        {
+                            <b>@WebGym.Helpers.CoachUi.Initials(me.FullName)</b>
+                        }
+                    </span>
+                    <span class="cx-preview-txt">
+                        <small>Học viên thấy bạn như thế này</small>
+                        <strong data-preview-name>@me.FullName</strong>
+                        <em data-preview-spec>@me.Specialization</em>
+                    </span>
+                </div>
+
+                <form class="cx-profile-form" id="cxProfileForm" asp-area="PT" asp-controller="Profile" asp-action="Update" method="post" novalidate>
+                    <div class="cx-drawer-notice" id="cxProfileNotice" role="status" hidden></div>
+
+                    <fieldset class="cx-pf-group">
+                        <legend>Thông tin liên hệ</legend>
+                        <div class="cx-field">
+                            <label for="pfName">Họ và tên</label>
+                            <div class="cx-input"><input id="pfName" name="FullName" value="@me.FullName" maxlength="150" autocomplete="name" required /></div>
+                            <p class="cx-field-err" data-err-for="FullName"></p>
+                        </div>
+                        <div class="cx-field">
+                            <label for="pfEmail">Email đăng nhập</label>
+                            <div class="cx-input"><input id="pfEmail" name="Email" type="email" value="@me.Email" maxlength="150" autocomplete="email" required /></div>
+                            <p class="cx-field-err" data-err-for="Email"></p>
+                        </div>
+                        <div class="cx-field">
+                            <label for="pfPhone">Số điện thoại</label>
+                            <div class="cx-input"><input id="pfPhone" name="PhoneNumber" type="tel" value="@me.PhoneNumber" maxlength="20" autocomplete="tel" /></div>
+                            <p class="cx-field-err" data-err-for="PhoneNumber"></p>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="cx-pf-group">
+                        <legend>Hồ sơ huấn luyện viên</legend>
+                        <div class="cx-field">
+                            <label for="pfSpec">Chuyên môn</label>
+                            <div class="cx-input"><input id="pfSpec" name="Specialization" value="@me.Specialization" maxlength="200" placeholder="Ví dụ: Tăng cơ, giảm mỡ, HIIT" required /></div>
+                            <p class="cx-field-err" data-err-for="Specialization"></p>
+                        </div>
+                        <div class="cx-field">
+                            <label for="pfBio">Giới thiệu bản thân</label>
+                            <textarea id="pfBio" name="Bio" rows="4" maxlength="1000" placeholder="Kinh nghiệm, chứng chỉ, phong cách huấn luyện…">@me.Bio</textarea>
+                            <p class="cx-field-hint"><span data-bio-count>@(me.Bio?.Length ?? 0)</span>/1000 ký tự</p>
+                            <p class="cx-field-err" data-err-for="Bio"></p>
+                        </div>
+                        <div class="cx-field">
+                            <label for="pfAvatar">Ảnh đại diện (đường dẫn ảnh)</label>
+                            <div class="cx-input"><input id="pfAvatar" name="AvatarUrl" type="url" value="@me.AvatarUrl" maxlength="500" placeholder="https://..." /></div>
+                            <p class="cx-field-hint">Dán đường dẫn ảnh bắt đầu bằng https://. Để trống để dùng chữ viết tắt tên.</p>
+                            <p class="cx-field-err" data-err-for="AvatarUrl"></p>
+                        </div>
+                    </fieldset>
+
+                    <div class="cx-drawer-foot">
+                        <button type="submit" class="cx-btn" id="cxProfileSave">Lưu hồ sơ</button>
+                        <button type="button" class="cx-btn cx-btn--ghost" data-profile-close>Đóng</button>
+                    </div>
+                </form>
+            </section>
+        </div>
+    }
+
     <script>
         (function () {
             var side = document.getElementById("cxSide");
@@ -157,6 +244,7 @@
             });
         })();
     </script>
+    <script src="~/js/pt-profile.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

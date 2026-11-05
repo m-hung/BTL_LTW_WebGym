@@ -1,6 +1,15 @@
 @{
     Layout = null;
     ViewData["Title"] = "Đăng ký thành công - Pulse Gym";
+    var plan = TempData["Plan"]?.ToString() ?? "Gói tập Pulse Gym";
+    var cycle = TempData["Cycle"]?.ToString() ?? "30 ngày";
+    var start = TempData["Start"]?.ToString() ?? DateTime.Now.ToString("dd/MM/yyyy");
+    var method = TempData["Method"]?.ToString() ?? "VNPay";
+    var total = TempData["Total"]?.ToString() ?? "0đ";
+    var name = TempData["Name"]?.ToString() ?? "Quý hội viên";
+    var email = TempData["Email"]?.ToString() ?? "";
+    var txnCode = TempData["TxnCode"]?.ToString();
+    var time = TempData["Time"]?.ToString() ?? DateTime.Now.ToString("dd/MM/yyyy HH:mm");
 }
 <!DOCTYPE html>
 <html lang="vi">
@@ -9,9 +18,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"]</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/pulse.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/auth-modal.css" asp-append-version="true" />
 </head>
 <body>
     <partial name="_PulseHeader" />
@@ -19,21 +29,49 @@
         <span class="arrow-box co-ok">✓</span>
         <p class="eyebrow center">Đã nhận đăng ký</p>
         <h1 class="display center">Chào mừng<em class="outline">đến Pulse</em></h1>
-        <p class="lead center">Cảm ơn @TempData["Name"]. Chúng tôi sẽ gửi thông tin xác nhận đến @TempData["Email"].</p>
+        <p class="lead center">
+            Cảm ơn <strong>@name</strong>. @(string.IsNullOrEmpty(email) ? "Gói tập của bạn đã được kích hoạt thành công." : $"Chúng tôi sẽ gửi thông tin xác nhận đến {email}.")
+        </p>
 
         <div class="co-card co-receipt">
-            <div class="co-line"><span>Gói tập</span><b>@TempData["Plan"]</b></div>
-            <div class="co-line"><span>Chu kỳ</span><b>@TempData["Cycle"]</b></div>
-            <div class="co-line"><span>Ngày bắt đầu</span><b>@TempData["Start"]</b></div>
-            <div class="co-line"><span>Hình thức thanh toán</span><b>@TempData["Method"]</b></div>
-            <div class="co-line co-total"><span>Tổng</span><strong>@TempData["Total"]</strong></div>
+            @if (!string.IsNullOrEmpty(txnCode))
+            {
+                <div class="co-line">
+                    <span>Mã giao dịch</span>
+                    <b style="color:var(--lime);font-family:monospace;font-size:15px;letter-spacing:0.05em">@txnCode</b>
+                </div>
+            }
+            <div class="co-line"><span>Gói tập</span><b>@plan</b></div>
+            <div class="co-line"><span>Chu kỳ</span><b>@cycle</b></div>
+            <div class="co-line"><span>Ngày bắt đầu</span><b>@start</b></div>
+            @if (!string.IsNullOrEmpty(time))
+            {
+                <div class="co-line"><span>Thời gian thanh toán</span><b>@time</b></div>
+            }
+            <div class="co-line">
+                <span>Hình thức thanh toán</span>
+                <b>
+                    @if (method.Contains("VNPay"))
+                    {
+                        <span style="color:var(--lime)">●</span> @method
+                    }
+                    else
+                    {
+                        @method
+                    }
+                </b>
+            </div>
+            <div class="co-line co-total"><span>Tổng</span><strong>@total</strong></div>
         </div>
 
-        <div class="hero-cta" style="justify-content:center">
-            <a href="~/" class="btn">Về trang chủ <b>→</b></a>
-            <a href="~/#lich-tap" class="link-ul">Xem lịch tập</a>
+        <div class="hero-cta" style="justify-content:center;gap:20px;flex-wrap:wrap;margin-top:36px">
+            <a asp-area="Member" asp-controller="Profile" asp-action="Index" class="btn">Vào trang cá nhân <b>→</b></a>
+            <a href="~/" class="btn btn-ghost">Về trang chủ <b>→</b></a>
+            <a href="~/#lich-tap" class="link-ul" style="align-self:center">Xem lịch tập</a>
         </div>
     </main>
     <partial name="_PulseFooter" />
+    <partial name="_AuthModal" />
+    <script src="~/js/auth-modal.js" asp-append-version="true"></script>
 </body>
 </html>

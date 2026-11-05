@@ -1,20 +1,35 @@
 @{
-    ViewData["Title"] = "Thanh Toán Không Thành Công";
+    Layout = null;
+    ViewData["Title"] = "Thanh toán thất bại - Pulse Gym";
+    var errorMsg = ViewBag.Message as string ?? TempData["ErrorMsg"] as string ?? "Giao dịch bị hủy hoặc không thành công trên cổng VNPay. Tài khoản của bạn chưa bị trừ tiền.";
 }
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/pulse.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/auth-modal.css" asp-append-version="true" />
+</head>
+<body>
+    <partial name="_PulseHeader" />
+    <main class="co co-done">
+        <span class="arrow-box co-ok" style="background:#ff5252;color:#fff">✕</span>
+        <p class="eyebrow center" style="color:#ff5252">Giao dịch không thành công</p>
+        <h1 class="display center">Thanh toán<em class="outline" style="-webkit-text-stroke-color:#ff5252">chưa hoàn tất</em></h1>
+        <p class="lead center">@errorMsg</p>
 
-<div class="row justify-content-center">
-    <div class="col-md-6 text-center">
-        <div class="card border-0 shadow rounded-4 p-5">
-            <div class="text-danger mb-3">
-                <i class="bi bi-x-circle-fill" style="font-size: 5rem;"></i>
-            </div>
-            <h2 class="fw-bold text-danger mb-3">Giao Dịch Bị Hủy Hoặc Thất Bại</h2>
-            <p class="text-muted">Đã có lỗi xảy ra hoặc bạn đã hủy giao dịch trên cổng thanh toán. Tài khoản của bạn chưa bị trừ tiền.</p>
-
-            <div class="mt-4">
-                <a asp-controller="Home" asp-action="Packages" class="btn btn-warning px-4 py-2 me-2">Thử Lại</a>
-                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary px-4 py-2">Về Trang Chủ</a>
-            </div>
+        <div class="hero-cta" style="justify-content:center;gap:20px;flex-wrap:wrap;margin-top:36px">
+            <a href="~/#bang-gia" class="btn">Thử lại gói tập <b>→</b></a>
+            <a href="~/" class="btn btn-ghost">Về trang chủ <b>→</b></a>
         </div>
-    </div>
-</div>
+    </main>
+    <partial name="_PulseFooter" />
+    <partial name="_AuthModal" />
+    <script src="~/js/auth-modal.js" asp-append-version="true"></script>
+</body>
+</html>

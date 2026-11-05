@@ -218,6 +218,19 @@
   /* ---------------- Sự kiện ---------------- */
   // Mở modal từ nút/link bất kỳ (giữ hành vi mặc định nếu Ctrl/Cmd/Shift/giữa chuột)
   document.addEventListener("click", function (e) {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+    var chk = e.target.closest ? e.target.closest("[data-auth-checkout]") : null;
+    if (chk) {
+      e.preventDefault();
+      var targetUrl = chk.getAttribute("data-auth-checkout");
+      if (forms.login && forms.login.elements["ReturnUrl"]) {
+        forms.login.elements["ReturnUrl"].value = targetUrl;
+      }
+      open("login");
+      showNotice("error", "Vui lòng đăng nhập hoặc đăng ký tài khoản để tiếp tục mua gói tập.");
+      return;
+    }
     var t = e.target.closest ? e.target.closest("[data-auth-open]") : null;
     if (!t || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     e.preventDefault();
@@ -297,9 +310,15 @@
     var q = new URLSearchParams(window.location.search).get("auth");
     if (q === "login" || q === "register") {
       open(q);
+      var ret = new URLSearchParams(window.location.search).get("returnUrl");
+      if (ret && forms.login && forms.login.elements["ReturnUrl"]) {
+        forms.login.elements["ReturnUrl"].value = ret;
+        showNotice("error", "Vui lòng đăng nhập hoặc đăng ký tài khoản để tiếp tục mua gói tập.");
+      }
       if (window.history && history.replaceState) {
         var u = new URL(window.location.href);
         u.searchParams.delete("auth");
+        u.searchParams.delete("returnUrl");
         history.replaceState(null, "", u.pathname + u.search + u.hash);
       }
     }

@@ -32,7 +32,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"]</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/pulse.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/auth-modal.css" asp-append-version="true" />
@@ -260,7 +260,18 @@
                             <h3>@pkg.PackageName</h3>
                             <p class="price"><strong>@pkg.Price.ToString("N0")</strong><span><b>VNĐ</b>/ @durationLabel</span></p>
                             <p class="plan-desc">@pkg.Description</p>
-                            <a asp-controller="Checkout" asp-action="Index" asp-route-slug="@pkg.PackageId" class="btn @(isHot ? "" : "btn-ghost")">Đăng ký ngay <b>→</b></a>
+                            @{
+                                var isAuth = User.Identity != null && User.Identity.IsAuthenticated;
+                                var checkoutUrl = Url.Action("Index", "Checkout", new { slug = pkg.PackageId });
+                            }
+                            @if (isAuth)
+                            {
+                                <a href="@checkoutUrl" class="btn @(isHot ? "" : "btn-ghost")">Đăng ký ngay <b>→</b></a>
+                            }
+                            else
+                            {
+                                <a href="@checkoutUrl" data-auth-checkout="@checkoutUrl" class="btn @(isHot ? "" : "btn-ghost")">Đăng ký ngay <b>→</b></a>
+                            }
                             <ul>
                                 @foreach (var feat in plan.Features)
                                 {

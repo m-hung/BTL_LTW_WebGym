@@ -13,9 +13,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"]</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/pulse.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/auth-modal.css" asp-append-version="true" />
 </head>
 <body>
     <partial name="_PulseHeader" />
@@ -155,5 +156,7 @@
     </main>
 
     <partial name="_PulseFooter" />
+    <partial name="_AuthModal" />
+    <script src="~/js/auth-modal.js" asp-append-version="true"></script>
 </body>
 </html>

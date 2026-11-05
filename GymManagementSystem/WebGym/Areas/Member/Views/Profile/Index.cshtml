@@ -1,115 +1,271 @@
 @model WebGym.Models.DTOs.Member.MemberProfileDto
 @{
-    ViewData["Title"] = "Hồ Sơ Hội Viên & Chỉ Số Thể Hình";
+    ViewData["Title"] = "Hồ Sơ Cá Nhân & Thể Lực InBody";
     var progressList = ViewBag.ProgressList as List<WebGym.Models.Entities.Progress>;
+    double? bmi = (Model.Height > 0 && Model.Weight > 0) 
+        ? Math.Round((double)Model.Weight.Value / Math.Pow((double)Model.Height.Value / 100, 2), 1) 
+        : null;
 }
 
-<div class="row justify-content-center">
-    <div class="col-lg-10">
-        <div class="card border-0 shadow-sm rounded-4 bg-white p-4 mb-4">
-            <div class="d-flex align-items-center mb-4">
-                <i class="bi bi-person-badge-fill text-info fs-1 me-3"></i>
-                <div>
-                    <h3 class="fw-bold mb-0">Hồ Sơ Cá Nhân & Chỉ Số Thể Hình (InBody)</h3>
-                    <small class="text-muted">Quản lý số đo cơ thể, chỉ số chuyển hóa cơ bản (BMR) và tiến trình tập luyện</small>
-                </div>
+<!-- Membership Status Banner -->
+<div class="portal-stat-card mb-4" style="background: linear-gradient(135deg, rgba(200,255,46,0.06), var(--portal-card)); border-left: 4px solid var(--portal-lime);">
+    <div class="row align-items-center">
+        <div class="col-md-7">
+            <span class="portal-stat-label" style="color: #b5bcaf;">
+                <span>GÓI TẬP HIỆN TẠI</span>
+                @if (Model.IsMembershipActive)
+                {
+                    <span class="portal-badge portal-badge-approved">ĐANG HOẠT ĐỘNG</span>
+                }
+                else
+                {
+                    <span class="portal-badge portal-badge-cancelled">CHƯA KÍCH HOẠT / HẾT HẠN</span>
+                }
+            </span>
+            <h2 class="portal-stat-val mb-1" style="color: var(--portal-lime); font-size: 36px; letter-spacing: 0.02em;">
+                @(Model.CurrentPackageName ?? "CHƯA ĐĂNG KÝ GÓI")
+            </h2>
+            <div class="portal-stat-sub" style="color: #a2a99e;">
+                Tập luyện không giới hạn, máy móc chuẩn quốc tế & phòng xông hơi thảo dược.
             </div>
-
-            <div class="card bg-light border-0 p-3 mb-4 rounded-3">
-                <div class="row align-items-center">
-                    <div class="col-md-6">
-                        <span class="text-muted small">Gói tập đang kích hoạt:</span>
-                        <h5 class="fw-bold text-primary mb-0">@(Model.CurrentPackageName ?? "Chưa đăng ký gói nào")</h5>
-                    </div>
-                    <div class="col-md-6 text-md-end mt-2 mt-md-0">
-                        @if (Model.IsMembershipActive)
-                        {
-                            <span class="badge bg-success p-2">Còn hạn đến: @Model.MembershipEndDate?.ToString("dd/MM/yyyy")</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-secondary p-2">Chưa kích hoạt / Hết hạn</span>
-                        }
-                    </div>
+        </div>
+        <div class="col-md-5 text-md-end mt-3 mt-md-0">
+            @if (Model.MembershipEndDate.HasValue)
+            {
+                <div class="d-inline-block text-md-end me-md-3">
+                    <span class="small d-block" style="color: #a2a99e;">HẠN SỬ DỤNG ĐẾN</span>
+                    <strong class="fs-4" style="font-family: var(--portal-display); color: #dce1d8;">
+                        @Model.MembershipEndDate.Value.ToString("dd / MM / yyyy")
+                    </strong>
                 </div>
+            }
+            <div class="mt-2 d-inline-block">
+                <a asp-area="" asp-controller="Home" asp-action="Packages" class="btn-pulse-outline btn-sm">
+                    Nâng cấp gói
+                </a>
             </div>
-
-            <form asp-action="Update" method="post">
-                @Html.AntiForgeryToken()
-                
-                <h5 class="fw-bold text-secondary mb-3"><i class="bi bi-person-fill me-1"></i> Thông Tin Chung</h5>
-                <div class="row g-3 mb-4">
-                    <div class="col-md-4">
-                        <label asp-for="FullName" class="form-label fw-bold">Họ và tên</label>
-                        <input asp-for="FullName" class="form-control" />
-                    </div>
-                    <div class="col-md-4">
-                        <label asp-for="Email" class="form-label fw-bold">Email (Đăng nhập)</label>
-                        <input asp-for="Email" class="form-control" readonly />
-                    </div>
-                    <div class="col-md-4">
-                        <label asp-for="PhoneNumber" class="form-label fw-bold">Số điện thoại</label>
-                        <input asp-for="PhoneNumber" class="form-control" />
-                    </div>
-                    <div class="col-md-6">
-                        <label asp-for="Gender" class="form-label fw-bold">Giới tính</label>
-                        <select asp-for="Gender" class="form-select">
-                            <option value="Nam">Nam</option>
-                            <option value="Nữ">Nữ</option>
-                            <option value="Khác">Khác</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label asp-for="DateOfBirth" class="form-label fw-bold">Ngày sinh</label>
-                        <input asp-for="DateOfBirth" type="date" class="form-control" value="@(Model.DateOfBirth?.ToString("yyyy-MM-dd"))" />
-                    </div>
-                </div>
-
-                <h5 class="fw-bold text-primary mb-3"><i class="bi bi-heart-pulse-fill me-1"></i> Chỉ Số InBody Hiện Tại</h5>
-                <div class="row g-3 mb-4">
-                    <div class="col-md-3">
-                        <label asp-for="Height" class="form-label fw-bold">Chiều cao (cm)</label>
-                        <input asp-for="Height" class="form-control" type="number" step="0.1" />
-                    </div>
-                    <div class="col-md-3">
-                        <label asp-for="Weight" class="form-label fw-bold">Cân nặng (kg)</label>
-                        <input asp-for="Weight" class="form-control" type="number" step="0.1" />
-                    </div>
-                    <div class="col-md-3">
-                        <label asp-for="BMR" class="form-label fw-bold">BMR (kcal/ngày)</label>
-                        <input asp-for="BMR" class="form-control" type="number" step="1" />
-                    </div>
-                    <div class="col-md-3">
-                        <label asp-for="BodyFatPercentage" class="form-label fw-bold">% Mỡ (Body Fat)</label>
-                        <input asp-for="BodyFatPercentage" class="form-control" type="number" step="0.1" />
-                    </div>
-                    <div class="col-md-3">
-                        <label asp-for="MuscleMass" class="form-label fw-bold">Khối lượng cơ (kg)</label>
-                        <input asp-for="MuscleMass" class="form-control" type="number" step="0.1" />
-                    </div>
-                    <div class="col-md-3">
-                        <label asp-for="Chest" class="form-label fw-bold">Vòng ngực (cm)</label>
-                        <input asp-for="Chest" class="form-control" type="number" step="0.1" />
-                    </div>
-                    <div class="col-md-3">
-                        <label asp-for="Waist" class="form-label fw-bold">Vòng eo (cm)</label>
-                        <input asp-for="Waist" class="form-control" type="number" step="0.1" />
-                    </div>
-                    <div class="col-md-3">
-                        <label asp-for="Hips" class="form-label fw-bold">Vòng hông (cm)</label>
-                        <input asp-for="Hips" class="form-control" type="number" step="0.1" />
-                    </div>
-                </div>
-
-                <div class="mt-4">
-                    <button type="submit" class="btn btn-primary px-4 fw-bold">
-                        <i class="bi bi-save me-1"></i> Lưu Thay Đổi
-                    </button>
-                    <a asp-action="Index" asp-controller="WorkoutSchedule" class="btn btn-outline-success ms-2">
-                        <i class="bi bi-graph-up me-1"></i> Xem Biểu Đồ Lịch Sử Tiến Trình
-                    </a>
-                </div>
-            </form>
         </div>
     </div>
 </div>
+
+<!-- 4 Key InBody Stat Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-lg-3">
+        <div class="portal-stat-card">
+            <div class="portal-stat-label" style="color: #b5bcaf;">
+                <span>CÂN NẶNG</span>
+            </div>
+            <div class="portal-stat-val" style="color: #f2f5ef;">
+                @(Model.Weight?.ToString("0.0") ?? "--") <span style="font-size: 15px; color: #9aa296; font-family: var(--portal-body); font-weight: normal;">kg</span>
+            </div>
+            <div class="portal-stat-sub" style="color: #a0a79c;">Chiều cao: @(Model.Height?.ToString("0") ?? "--") cm</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="portal-stat-card">
+            <div class="portal-stat-label" style="color: #b5bcaf;">
+                <span>CHỈ SỐ BMI</span>
+            </div>
+            <div class="portal-stat-val" style="color: #f2f5ef;">
+                @(bmi?.ToString("0.0") ?? "--")
+            </div>
+            <div class="portal-stat-sub">
+                @if (bmi.HasValue)
+                {
+                    if (bmi < 18.5) { <span style="color: #8ed0e8;">Hơi gầy (Underweight)</span>; }
+                    else if (bmi < 24.9) { <span style="color: #9dd872;">Chuẩn thể hình (Normal)</span>; }
+                    else if (bmi < 29.9) { <span style="color: #f3c274;">Thừa cân (Overweight)</span>; }
+                    else { <span style="color: #f38b8b;">Béo phì (Obese)</span>; }
+                }
+                else
+                {
+                    <span style="color: #a0a79c;">Cần đủ chiều cao & cân nặng</span>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="portal-stat-card">
+            <div class="portal-stat-label" style="color: #b5bcaf;">
+                <span>TỶ LỆ MỠ CƠ THỂ</span>
+            </div>
+            <div class="portal-stat-val" style="color: #f2f5ef;">
+                @(Model.BodyFatPercentage?.ToString("0.0") ?? "--") <span style="font-size: 15px; color: #9aa296; font-family: var(--portal-body); font-weight: normal;">%</span>
+            </div>
+            <div class="portal-stat-sub" style="color: #a0a79c;">Khối lượng cơ: @(Model.MuscleMass?.ToString("0.0") ?? "--") kg</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="portal-stat-card">
+            <div class="portal-stat-label" style="color: #b5bcaf;">
+                <span>CHUYỂN HÓA BMR</span>
+            </div>
+            <div class="portal-stat-val" style="color: #f2f5ef;">
+                @(Model.BMR?.ToString("0") ?? "--") <span style="font-size: 15px; color: #9aa296; font-family: var(--portal-body); font-weight: normal;">kcal</span>
+            </div>
+            <div class="portal-stat-sub" style="color: #a0a79c;">Tiêu hao năng lượng tối thiểu/ngày</div>
+        </div>
+    </div>
+</div>
+
+<!-- Profile Form & Measurements -->
+<div class="portal-card p-4 mb-4">
+    <div class="d-flex align-items-center justify-content-between mb-4 pb-3 border-bottom border-secondary border-opacity-25">
+        <div>
+            <h3 class="portal-title-accent mb-1 fs-3">CẬP NHẬT <span>THÔNG TIN & CHỈ SỐ</span></h3>
+            <div style="color: #a6ada2; font-size: 13.5px;">Dữ liệu được dùng để HLV thiết kế giáo án và chế độ dinh dưỡng tối ưu</div>
+        </div>
+        <a asp-action="Index" asp-controller="WorkoutSchedule" class="btn-pulse-outline btn-sm d-none d-md-inline-flex">
+            Xem lịch sử tiến trình
+        </a>
+    </div>
+
+    <form asp-action="Update" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+
+        <!-- Group 1: General Info -->
+        <div class="mb-4">
+            <div class="portal-section-eyebrow">
+                01. THÔNG TIN CÁ NHÂN
+            </div>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label asp-for="FullName" class="form-label">Họ và tên</label>
+                    <input asp-for="FullName" class="form-control" placeholder="Nguyễn Văn A" required />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Email" class="form-label">Email đăng nhập (Cố định)</label>
+                    <input asp-for="Email" class="form-control" readonly style="opacity: 0.75; cursor: not-allowed; color: #b8bcb4 !important;" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="PhoneNumber" class="form-label">Số điện thoại</label>
+                    <input asp-for="PhoneNumber" class="form-control" placeholder="0901234567" />
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Gender" class="form-label">Giới tính</label>
+                    <select asp-for="Gender" class="form-select">
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                        <option value="Khác">Khác</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="DateOfBirth" class="form-label">Ngày sinh</label>
+                    <input asp-for="DateOfBirth" type="date" class="form-control" value="@(Model.DateOfBirth?.ToString("yyyy-MM-dd"))" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Group 2: InBody Measurements -->
+        <div class="mb-4">
+            <div class="portal-section-eyebrow">
+                02. THÔNG SỐ THỂ HÌNH INBODY
+            </div>
+            <div class="row g-3">
+                <div class="col-md-3 col-sm-6">
+                    <label asp-for="Height" class="form-label">Chiều cao (cm)</label>
+                    <input asp-for="Height" class="form-control" type="number" step="0.1" placeholder="175" />
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <label asp-for="Weight" class="form-label">Cân nặng (kg)</label>
+                    <input asp-for="Weight" class="form-control" type="number" step="0.1" placeholder="70.5" />
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <label asp-for="BMR" class="form-label">BMR (kcal/ngày)</label>
+                    <input asp-for="BMR" class="form-control" type="number" step="1" placeholder="1650" />
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <label asp-for="BodyFatPercentage" class="form-label">% Mỡ (Body Fat)</label>
+                    <input asp-for="BodyFatPercentage" class="form-control" type="number" step="0.1" placeholder="18.5" />
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <label asp-for="MuscleMass" class="form-label">Khối lượng cơ (kg)</label>
+                    <input asp-for="MuscleMass" class="form-control" type="number" step="0.1" placeholder="33.2" />
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <label asp-for="Chest" class="form-label">Vòng ngực (cm)</label>
+                    <input asp-for="Chest" class="form-control" type="number" step="0.1" placeholder="96" />
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <label asp-for="Waist" class="form-label">Vòng eo (cm)</label>
+                    <input asp-for="Waist" class="form-control" type="number" step="0.1" placeholder="78" />
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <label asp-for="Hips" class="form-label">Vòng mông (cm)</label>
+                    <input asp-for="Hips" class="form-control" type="number" step="0.1" placeholder="95" />
+                </div>
+            </div>
+        </div>
+
+        <div class="pt-3 border-top border-secondary border-opacity-25 d-flex gap-3">
+            <button type="submit" class="btn-pulse-primary">
+                LƯU THAY ĐỔI
+            </button>
+            <a asp-action="Index" class="btn-pulse-outline">
+                Khôi phục
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- Recent InBody Progress History (If Any) -->
+@if (progressList != null && progressList.Any())
+{
+    <div class="portal-card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="portal-title-accent fs-4 mb-0">LỊCH SỬ <span>TIẾN TRÌNH GẦN ĐÂY</span></h4>
+            <span style="color: #b0b7ad; font-size: 13px;">Có @progressList.Count lần ghi nhận</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th style="color: #cfd5ca !important;">NGÀY ĐO</th>
+                        <th style="color: #cfd5ca !important;">CÂN NẶNG</th>
+                        <th style="color: #cfd5ca !important;">% MỠ</th>
+                        <th style="color: #cfd5ca !important;">KHỐI LƯỢNG CƠ</th>
+                        <th style="color: #cfd5ca !important;">NGỰC / EO / MÔNG</th>
+                        <th style="color: #cfd5ca !important;">GHI CHÚ HLV</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in progressList.TakeLast(5).Reverse())
+                    {
+                        <tr>
+                            <td>
+                                <strong style="color: #e5eae0; font-family: var(--portal-display); font-size: 17px; letter-spacing: 0.03em;">
+                                    @p.RecordedDate.ToString("dd/MM/yyyy")
+                                </strong>
+                            </td>
+                            <td>
+                                <span class="fw-bold" style="color: #ffffff; font-size: 15px;">@p.Weight.ToString("0.0")</span>
+                                <span style="color: #9da499; font-size: 12px;">kg</span>
+                            </td>
+                            <td>
+                                <span class="fw-semibold" style="color: #f8c291; font-size: 14.5px;">@(p.BodyFatPercentage?.ToString("0.0") ?? "-")</span>
+                                <span style="color: #9da499; font-size: 12px;">%</span>
+                            </td>
+                            <td>
+                                <span class="fw-semibold" style="color: #81ecec; font-size: 14.5px;">@(p.MuscleMass?.ToString("0.0") ?? "-")</span>
+                                <span style="color: #9da499; font-size: 12px;">kg</span>
+                            </td>
+                            <td>
+                                <span style="color: #dbe0d7; font-weight: 500; font-size: 14px;">
+                                    @(p.Chest ?? 0) / @(p.Waist ?? 0) / @(p.Hips ?? 0)
+                                </span>
+                                <span style="color: #9da499; font-size: 12px;">cm</span>
+                            </td>
+                            <td>
+                                <span style="color: #b5bcaf; font-size: 13.5px; line-height: 1.5; display: inline-block;">
+                                    @(string.IsNullOrEmpty(p.Notes) ? "Chỉ số ổn định, tiếp tục phát huy" : p.Notes)
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

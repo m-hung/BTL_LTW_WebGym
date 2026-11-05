@@ -1,88 +1,359 @@
 @model IEnumerable<WebGym.Models.Entities.Progress>
 @{
-    ViewData["Title"] = "Tiến Trình Thể Hình Của Bạn";
+    ViewData["Title"] = "Lộ Trình Tập Luyện & Tiến Trình InBody";
+    var progressList = Model?.ToList() ?? new List<WebGym.Models.Entities.Progress>();
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="fw-bold"><i class="bi bi-graph-up-arrow text-success me-2"></i> Lịch Sử Tiến Trình Thể Hình & Chỉ Số InBody</h3>
-</div>
-
-@if (Model.Any())
+<!-- Section 1: InBody Evolution Summary -->
+@if (progressList.Any())
 {
-    var latest = Model.Last();
-    var first = Model.First();
+    var latest = progressList.Last();
+    var first = progressList.First();
     var weightDiff = latest.Weight - first.Weight;
     var fatDiff = (latest.BodyFatPercentage ?? 0) - (first.BodyFatPercentage ?? 0);
     var waistDiff = (latest.Waist ?? 0) - (first.Waist ?? 0);
 
-    <!-- Summary Stats -->
     <div class="row g-3 mb-4">
+        <!-- Card 1: Weight Change -->
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white text-center">
-                <span class="text-muted small">Cân Nặng Ban Đầu vs Hiện Tại</span>
-                <h4 class="fw-bold my-1 text-primary">@first.Weight kg <i class="bi bi-arrow-right"></i> @latest.Weight kg</h4>
-                <span class="badge @(weightDiff <= 0 ? "bg-success" : "bg-warning text-dark")">
-                    @(weightDiff <= 0 ? $"Giảm {Math.Abs(weightDiff):F1} kg" : $"Tăng {weightDiff:F1} kg")
-                </span>
+            <div class="portal-stat-card">
+                <div class="portal-stat-label" style="color: #b5bcaf;">
+                    <span>TIẾN TRÌNH CÂN NẶNG</span>
+                </div>
+                <div class="d-flex align-items-baseline gap-2 mb-2">
+                    <span class="portal-stat-val fs-3 mb-0" style="color: #c9d0c5;">@first.Weight</span>
+                    <span style="color: #889084; font-size: 18px;">→</span>
+                    <span class="portal-stat-val mb-0" style="color: #f2f5ef;">@latest.Weight</span>
+                    <span style="color: #9da499; font-size: 13px;">kg</span>
+                </div>
+                <div class="mt-2">
+                    @if (weightDiff <= 0)
+                    {
+                        <span class="portal-badge" style="background: rgba(46, 213, 115, 0.15); color: #2ed573; border: 1px solid rgba(46, 213, 115, 0.3);">
+                            GIẢM @Math.Abs(weightDiff).ToString("0.0") KG
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="portal-badge" style="background: rgba(245, 176, 65, 0.15); color: #f5b041; border: 1px solid rgba(245, 176, 65, 0.3);">
+                            TĂNG @weightDiff.ToString("0.0") KG CƠ BẮP
+                        </span>
+                    }
+                    <span class="small ms-2" style="color: #a0a79c;">So với mốc đo ban đầu</span>
+                </div>
             </div>
         </div>
+
+        <!-- Card 2: Body Fat Reduction -->
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white text-center">
-                <span class="text-muted small">Tỷ Lệ Mỡ Cơ Thể (%)</span>
-                <h4 class="fw-bold my-1 text-danger">@first.BodyFatPercentage% <i class="bi bi-arrow-right"></i> @latest.BodyFatPercentage%</h4>
-                <span class="badge bg-success">
-                    Giảm @Math.Abs(fatDiff):F1 % mỡ
-                </span>
+            <div class="portal-stat-card">
+                <div class="portal-stat-label" style="color: #b5bcaf;">
+                    <span>TỶ LỆ MỠ (BODY FAT %)</span>
+                </div>
+                <div class="d-flex align-items-baseline gap-2 mb-2">
+                    <span class="portal-stat-val fs-3 mb-0" style="color: #c9d0c5;">@(first.BodyFatPercentage?.ToString("0.0") ?? "--")</span>
+                    <span style="color: #889084; font-size: 18px;">→</span>
+                    <span class="portal-stat-val mb-0" style="color: #f2f5ef;">@(latest.BodyFatPercentage?.ToString("0.0") ?? "--")</span>
+                    <span style="color: #9da499; font-size: 13px;">%</span>
+                </div>
+                <div class="mt-2">
+                    @if (fatDiff <= 0)
+                    {
+                        <span class="portal-badge" style="background: rgba(46, 213, 115, 0.15); color: #2ed573; border: 1px solid rgba(46, 213, 115, 0.3);">
+                            ĐỐT CHÁY @Math.Abs(fatDiff).ToString("0.0")% MỠ
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="portal-badge" style="background: rgba(245, 176, 65, 0.15); color: #f5b041; border: 1px solid rgba(245, 176, 65, 0.3);">
+                            TĂNG @fatDiff.ToString("0.0")%
+                        </span>
+                    }
+                    <span class="small ms-2" style="color: #a0a79c;">Tối ưu độ săn chắc</span>
+                </div>
             </div>
         </div>
+
+        <!-- Card 3: Waist Measurement -->
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white text-center">
-                <span class="text-muted small">Vòng Eo (Waist)</span>
-                <h4 class="fw-bold my-1 text-info">@first.Waist cm <i class="bi bi-arrow-right"></i> @latest.Waist cm</h4>
-                <span class="badge bg-success">
-                    Thu nhỏ @Math.Abs(waistDiff):F1 cm
-                </span>
+            <div class="portal-stat-card">
+                <div class="portal-stat-label" style="color: #b5bcaf;">
+                    <span>SỐ ĐO VÒNG EO (WAIST)</span>
+                </div>
+                <div class="d-flex align-items-baseline gap-2 mb-2">
+                    <span class="portal-stat-val fs-3 mb-0" style="color: #c9d0c5;">@(first.Waist?.ToString("0.0") ?? "--")</span>
+                    <span style="color: #889084; font-size: 18px;">→</span>
+                    <span class="portal-stat-val mb-0" style="color: #f2f5ef;">@(latest.Waist?.ToString("0.0") ?? "--")</span>
+                    <span style="color: #9da499; font-size: 13px;">cm</span>
+                </div>
+                <div class="mt-2">
+                    @if (waistDiff <= 0)
+                    {
+                        <span class="portal-badge" style="background: rgba(46, 213, 115, 0.15); color: #2ed573; border: 1px solid rgba(46, 213, 115, 0.3);">
+                            GIẢM @Math.Abs(waistDiff).ToString("0.0") CM
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="portal-badge" style="background: rgba(245, 176, 65, 0.15); color: #f5b041; border: 1px solid rgba(245, 176, 65, 0.3);">
+                            TĂNG @waistDiff.ToString("0.0") CM
+                        </span>
+                    }
+                    <span class="small ms-2" style="color: #a0a79c;">Cải thiện tỉ lệ eo/hông</span>
+                </div>
             </div>
         </div>
     </div>
+}
 
-    <!-- Progress Table -->
-    <div class="card border-0 shadow-sm rounded-4 bg-white p-4">
-        <h5 class="fw-bold mb-3"><i class="bi bi-clock-history text-primary me-2"></i> Chi Tiết Các Lần Đo Định Kỳ</h5>
+<!-- Section 2: Weekly Workout Routine Schedule -->
+<div class="portal-card p-4 mb-4">
+    <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-secondary border-opacity-25">
+        <div>
+            <div class="portal-section-eyebrow mb-1">
+                GIÁO ÁN TẬP LUYỆN CHUẨN TUẦN
+            </div>
+            <h3 class="portal-title-accent fs-3 mb-0">LỘ TRÌNH <span>7 NGÀY BỨT PHÁ</span></h3>
+        </div>
+        <span class="portal-badge portal-badge-approved d-none d-sm-inline-flex">
+            HUẤN LUYỆN VIÊN ĐÃ GIAO
+        </span>
+    </div>
+
+    <!-- Day Tabs -->
+    <div class="portal-schedule-box">
+        <div class="portal-schedule-tabs" id="workoutDayTabs">
+            <button type="button" class="portal-schedule-tab active" data-day="mon">
+                T2 <small>THỨ HAI</small>
+            </button>
+            <button type="button" class="portal-schedule-tab" data-day="tue">
+                T3 <small>THỨ BA</small>
+            </button>
+            <button type="button" class="portal-schedule-tab" data-day="wed">
+                T4 <small>THỨ TƯ</small>
+            </button>
+            <button type="button" class="portal-schedule-tab" data-day="thu">
+                T5 <small>THỨ NĂM</small>
+            </button>
+            <button type="button" class="portal-schedule-tab" data-day="fri">
+                T6 <small>THỨ SÁU</small>
+            </button>
+            <button type="button" class="portal-schedule-tab" data-day="sat">
+                T7 <small>THỨ BẢY</small>
+            </button>
+            <button type="button" class="portal-schedule-tab" data-day="sun">
+                CN <small>CHỦ NHẬT</small>
+            </button>
+        </div>
+
+        <!-- Tab Contents -->
+        <div id="workoutDayPanels" class="p-3">
+            <!-- T2 Panel -->
+            <div class="day-panel" id="panel-mon">
+                <div class="portal-schedule-row">
+                    <span class="badge" style="background: rgba(200,255,46,0.12); color: #c4f03a; border: 1px solid rgba(200,255,46,0.25); font-family: var(--portal-label); font-size: 13px;">NGỰC & TAY</span>
+                    <div class="portal-schedule-time" style="color: #e2e8dd;">06:00</div>
+                    <div>
+                        <div class="portal-schedule-title" style="color: #f0f3ed;">BENCH PRESS & INCLINE DUMBBELL</div>
+                        <div style="color: #a6ada2; font-size: 13.5px;">4 hiệp x 10-12 lần | Đẩy tạ đòn ghế ngang, đẩy ngực trên ghế dốc</div>
+                    </div>
+                    <span class="portal-badge portal-badge-completed">45 PHÚT</span>
+                </div>
+                <div class="portal-schedule-row">
+                    <span class="badge" style="background: rgba(245,176,65,0.12); color: #f5b041; border: 1px solid rgba(245,176,65,0.25); font-family: var(--portal-label); font-size: 13px;">TAY SAU</span>
+                    <div class="portal-schedule-time" style="color: #e2e8dd;">17:30</div>
+                    <div>
+                        <div class="portal-schedule-title" style="color: #f0f3ed;">TRICEPS ROPE PUSHDOWN & DIPS</div>
+                        <div style="color: #a6ada2; font-size: 13.5px;">3 hiệp x 15 lần | Kéo cáp tay sau, chống xà kép</div>
+                    </div>
+                    <span class="portal-badge portal-badge-completed">30 PHÚT</span>
+                </div>
+            </div>
+
+            <!-- T3 Panel -->
+            <div class="day-panel d-none" id="panel-tue">
+                <div class="portal-schedule-row">
+                    <span class="badge" style="background: rgba(72,202,228,0.12); color: #48cae4; border: 1px solid rgba(72,202,228,0.25); font-family: var(--portal-label); font-size: 13px;">LƯNG XÔ</span>
+                    <div class="portal-schedule-time" style="color: #e2e8dd;">06:00</div>
+                    <div>
+                        <div class="portal-schedule-title" style="color: #f0f3ed;">LAT PULLDOWN & BARBELL ROW</div>
+                        <div style="color: #a6ada2; font-size: 13.5px;">4 hiệp x 12 lần | Kéo xô rộng tay, gập người kéo tạ đòn</div>
+                    </div>
+                    <span class="portal-badge portal-badge-completed">45 PHÚT</span>
+                </div>
+                <div class="portal-schedule-row">
+                    <span class="badge" style="background: rgba(200,255,46,0.12); color: #c4f03a; border: 1px solid rgba(200,255,46,0.25); font-family: var(--portal-label); font-size: 13px;">TAY TRƯỚC</span>
+                    <div class="portal-schedule-time" style="color: #e2e8dd;">17:30</div>
+                    <div>
+                        <div class="portal-schedule-title" style="color: #f0f3ed;">BICEPS DUMBBELL CURL & HAMMER CURL</div>
+                        <div style="color: #a6ada2; font-size: 13.5px;">3 hiệp x 12 lần | Cuốn tạ đơn, cuốn tạ búa</div>
+                    </div>
+                    <span class="portal-badge portal-badge-completed">30 PHÚT</span>
+                </div>
+            </div>
+
+            <!-- T4 Panel -->
+            <div class="day-panel d-none" id="panel-wed">
+                <div class="portal-schedule-row">
+                    <span class="badge" style="background: rgba(255,107,107,0.12); color: #ff6b6b; border: 1px solid rgba(255,107,107,0.25); font-family: var(--portal-label); font-size: 13px;">CARDIO & CORE</span>
+                    <div class="portal-schedule-time" style="color: #e2e8dd;">06:30</div>
+                    <div>
+                        <div class="portal-schedule-title" style="color: #f0f3ed;">HIIT TREADMILL & PLANK CIRCUIT</div>
+                        <div style="color: #a6ada2; font-size: 13.5px;">Chạy biến tốc dốc 15 phút + Chuỗi Plank, Leg Raises siết cơ bụng</div>
+                    </div>
+                    <span class="portal-badge portal-badge-approved">ĐỐT MỠ</span>
+                </div>
+            </div>
+
+            <!-- T5 Panel -->
+            <div class="day-panel d-none" id="panel-thu">
+                <div class="portal-schedule-row">
+                    <span class="badge" style="background: rgba(245,176,65,0.12); color: #f5b041; border: 1px solid rgba(245,176,65,0.25); font-family: var(--portal-label); font-size: 13px;">VAI & BỤNG</span>
+                    <div class="portal-schedule-time" style="color: #e2e8dd;">17:30</div>
+                    <div>
+                        <div class="portal-schedule-title" style="color: #f0f3ed;">OVERHEAD MILITARY PRESS & LATERAL RAISE</div>
+                        <div style="color: #a6ada2; font-size: 13.5px;">4 hiệp x 12 lần | Đẩy vai tạ đòn, dang tạ đơn tạo cầu vai sắc nét</div>
+                    </div>
+                    <span class="portal-badge portal-badge-completed">50 PHÚT</span>
+                </div>
+            </div>
+
+            <!-- T6 Panel -->
+            <div class="day-panel d-none" id="panel-fri">
+                <div class="portal-schedule-row">
+                    <span class="badge" style="background: rgba(200,255,46,0.12); color: #c4f03a; border: 1px solid rgba(200,255,46,0.25); font-family: var(--portal-label); font-size: 13px;">CHÂN & MÔNG</span>
+                    <div class="portal-schedule-time" style="color: #e2e8dd;">17:30</div>
+                    <div>
+                        <div class="portal-schedule-title" style="color: #f0f3ed;">BARBELL SQUAT & ROMANIAN DEADLIFT</div>
+                        <div style="color: #a6ada2; font-size: 13.5px;">5 hiệp x 8-10 lần | Gánh tạ đòn sâu, Deadlift đùi sau phát triển sức mạnh</div>
+                    </div>
+                    <span class="portal-badge portal-badge-approved">KHÓ NHẤT</span>
+                </div>
+            </div>
+
+            <!-- T7 Panel -->
+            <div class="day-panel d-none" id="panel-sat">
+                <div class="portal-schedule-row">
+                    <span class="badge" style="background: rgba(200,255,46,0.2); color: var(--portal-lime-soft); border: 1px solid var(--portal-lime-soft); font-family: var(--portal-label); font-size: 13px;">KÈM PT</span>
+                    <div class="portal-schedule-time" style="color: #e2e8dd;">09:00</div>
+                    <div>
+                        <div class="portal-schedule-title" style="color: #f0f3ed;">FUNCTIONAL CROSS-TRAINING & KIỂM TRA FORM</div>
+                        <div style="color: #a6ada2; font-size: 13.5px;">Buổi tập chuyên sâu 1:1 cùng Huấn luyện viên kiểm tra biên độ khớp</div>
+                    </div>
+                    <span class="portal-badge portal-badge-approved">ĐẶT LỊCH PT</span>
+                </div>
+            </div>
+
+            <!-- CN Panel -->
+            <div class="day-panel d-none" id="panel-sun">
+                <div class="portal-schedule-row">
+                    <span class="badge" style="background: rgba(255,255,255,0.08); color: #c4c9bf; border: 1px solid #444; font-family: var(--portal-label); font-size: 13px;">PHỤC HỒI</span>
+                    <div class="portal-schedule-time" style="color: #e2e8dd;">ALL DAY</div>
+                    <div>
+                        <div class="portal-schedule-title" style="color: #f0f3ed;">ACTIVE RECOVERY — FOAM ROLLING & XÔNG HƠI SAUNA</div>
+                        <div style="color: #a6ada2; font-size: 13.5px;">Lăn giãn cơ toàn thân, nạp đầy đủ đạm và ngủ đủ 8 tiếng để cơ hồi phục</div>
+                    </div>
+                    <span class="portal-badge portal-badge-completed">NGHỈ NGƠI</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Section 3: InBody Detailed Records Table -->
+<div class="portal-card p-4">
+    <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-secondary border-opacity-25">
+        <div>
+            <h3 class="portal-title-accent fs-4 mb-0">LỊCH SỬ ĐO <span>INBODY ĐỊNH KỲ</span></h3>
+        </div>
+        <a asp-action="Index" asp-controller="Profile" class="btn-pulse-outline btn-sm">
+            Cập nhật chỉ số mới
+        </a>
+    </div>
+
+    @if (progressList.Any())
+    {
         <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead class="table-light">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
                     <tr>
-                        <th>Ngày Đo</th>
-                        <th>Cân Nặng</th>
-                        <th>% Mỡ</th>
-                        <th>Khối Lượng Cơ</th>
-                        <th>Ngực - Eo - Hông</th>
-                        <th>Ghi Chú HLV</th>
+                        <th style="color: #cfd5ca !important;">NGÀY GHI NHẬN</th>
+                        <th style="color: #cfd5ca !important;">CÂN NẶNG</th>
+                        <th style="color: #cfd5ca !important;">TỶ LỆ MỠ</th>
+                        <th style="color: #cfd5ca !important;">KHỐI LƯỢNG CƠ</th>
+                        <th style="color: #cfd5ca !important;">3 VÒNG (NGỰC - EO - MÔNG)</th>
+                        <th style="color: #cfd5ca !important;">NHẬN XÉT CỦA HLV</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var p in Model)
+                    @foreach (var p in progressList.OrderByDescending(p => p.RecordedDate))
                     {
                         <tr>
-                            <td class="fw-bold">@p.RecordedDate.ToString("dd/MM/yyyy")</td>
-                            <td class="text-primary fw-semibold">@p.Weight kg</td>
-                            <td class="text-danger">@(p.BodyFatPercentage?.ToString("F1") ?? "-")%</td>
-                            <td class="text-success">@(p.MuscleMass?.ToString("F1") ?? "-") kg</td>
-                            <td>@(p.Chest ?? 0) - @(p.Waist ?? 0) - @(p.Hips ?? 0) cm</td>
-                            <td><small class="text-muted">@(p.Notes ?? "-")</small></td>
+                            <td>
+                                <strong style="color: #e5eae0; font-family: var(--portal-display); font-size: 17px; letter-spacing: 0.03em;">
+                                    @p.RecordedDate.ToString("dd/MM/yyyy")
+                                </strong>
+                            </td>
+                            <td>
+                                <span class="fw-bold" style="color: #ffffff; font-size: 15px;">@p.Weight.ToString("0.0")</span>
+                                <span style="color: #9da499; font-size: 12px;">kg</span>
+                            </td>
+                            <td>
+                                <span class="fw-semibold" style="color: #f8c291; font-size: 14.5px;">@(p.BodyFatPercentage?.ToString("0.0") ?? "--")</span>
+                                <span style="color: #9da499; font-size: 12px;">%</span>
+                            </td>
+                            <td>
+                                <span class="fw-semibold" style="color: #81ecec; font-size: 14.5px;">@(p.MuscleMass?.ToString("0.0") ?? "--")</span>
+                                <span style="color: #9da499; font-size: 12px;">kg</span>
+                            </td>
+                            <td>
+                                <span style="color: #dbe0d7; font-weight: 500; font-size: 14px;">
+                                    @(p.Chest ?? 0) / @(p.Waist ?? 0) / @(p.Hips ?? 0)
+                                </span>
+                                <span style="color: #9da499; font-size: 12px;">cm</span>
+                            </td>
+                            <td>
+                                <span style="color: #b5bcaf; font-size: 13.5px; line-height: 1.5; display: inline-block;">
+                                    @(string.IsNullOrEmpty(p.Notes) ? "Chỉ số ổn định, tiếp tục phát huy" : p.Notes)
+                                </span>
+                            </td>
                         </tr>
                     }
                 </tbody>
             </table>
         </div>
-    </div>
-}
-else
-{
-    <div class="card border-0 shadow-sm rounded-4 bg-white p-5 text-center">
-        <i class="bi bi-graph-up text-muted" style="font-size: 4rem;"></i>
-        <h5 class="fw-bold mt-3">Chưa có bản ghi tiến trình InBody</h5>
-        <p class="text-muted">Huấn luyện viên của bạn sẽ cập nhật các chỉ số sau mỗi buổi kiểm tra định kỳ.</p>
-    </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <h5 class="portal-stat-val fs-5 mt-3" style="color: #b0b7ad;">CHƯA CÓ DỮ LIỆU ĐO INBODY</h5>
+            <p class="small mb-0" style="color: #a0a79c;">Huấn luyện viên của bạn sẽ cập nhật các chỉ số sau mỗi buổi kiểm tra định kỳ tại phòng tập.</p>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabs = document.querySelectorAll('#workoutDayTabs .portal-schedule-tab');
+            const panels = document.querySelectorAll('#workoutDayPanels .day-panel');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function () {
+                    const day = this.getAttribute('data-day');
+
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+
+                    panels.forEach(p => {
+                        if (p.id === 'panel-' + day) {
+                            p.classList.remove('d-none');
+                        } else {
+                            p.classList.add('d-none');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 }

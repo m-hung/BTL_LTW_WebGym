@@ -1,78 +1,136 @@
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var userName = User.Identity?.Name ?? "Huấn Luyện Viên";
+}
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Huấn Luyện Viên WebGym</title>
+    <title>@ViewData["Title"] - Pulse Gym Trainer Portal</title>
+    <!-- Fonts Pulse Gym -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    
+    <!-- CSS Libs -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pulse-portal.css" asp-append-version="true" />
 </head>
-<body class="bg-light">
-    <div class="d-flex">
-        <!-- Sidebar -->
-        <div class="bg-dark text-white p-3 min-vh-100" style="width: 260px;">
-            <a asp-area="PT" asp-controller="Schedule" asp-action="Index" class="d-flex align-items-center mb-4 text-warning text-decoration-none fs-4 fw-bold">
-                <i class="bi bi-person-workspace me-2"></i> PT Portal
+<body class="portal-body">
+    <div class="portal-wrapper">
+        <!-- Sidebar Navigation -->
+        <aside class="portal-sidebar">
+            <!-- Brand / Logo -->
+            <a asp-area="PT" asp-controller="Schedule" asp-action="Index" class="portal-brand">
+                <i class="portal-logo-bars"></i>
+                <div>
+                    <div class="brand-title">PULSE <span>GYM</span></div>
+                    <span class="portal-badge-role badge-role-pt">HLV / PT PORTAL</span>
+                </div>
             </a>
-            <hr class="border-secondary">
-            <ul class="nav nav-pills flex-column mb-auto">
-                <li class="nav-item mb-2">
-                    <a asp-area="PT" asp-controller="Schedule" asp-action="Index" class="nav-link text-white">
-                        <i class="bi bi-calendar3 me-2"></i> Lịch Dạy Cá Nhân
+
+            <!-- User Quick Snippet -->
+            <div class="portal-user-card">
+                <div class="portal-user-avatar">
+                    <img src="~/images/default-avatar.svg" asp-append-version="true" alt="@userName" />
+                </div>
+                <div class="portal-user-info">
+                    <div class="portal-user-name" title="@userName">@userName</div>
+                    <div class="portal-user-sub">Huấn luyện viên</div>
+                </div>
+            </div>
+
+            <!-- Main Menu -->
+            <div class="portal-nav-group-title">Quản lý huấn luyện</div>
+            <ul class="portal-nav-list">
+                <li>
+                    <a asp-area="PT" asp-controller="Schedule" asp-action="Index" 
+                       class="portal-nav-link @(currentController == "Schedule" ? "active" : "")">
+                        <span>Lịch Dạy Cá Nhân</span>
                     </a>
                 </li>
-                <li class="nav-item mb-2">
-                    <a asp-area="PT" asp-controller="BookingApproval" asp-action="Index" class="nav-link text-white">
-                        <i class="bi bi-check2-circle me-2"></i> Duyệt Yêu Cầu Tập
+                <li>
+                    <a asp-area="PT" asp-controller="BookingApproval" asp-action="Index" 
+                       class="portal-nav-link @(currentController == "BookingApproval" ? "active" : "")">
+                        <span>Duyệt Yêu Cầu Tập</span>
                     </a>
                 </li>
-                <li class="nav-item mb-2">
-                    <a asp-area="PT" asp-controller="AssignedMembers" asp-action="Index" class="nav-link text-white">
-                        <i class="bi bi-people me-2"></i> Học Viên & Giáo Án
-                    </a>
-                </li>
-                <li class="nav-item mb-2">
-                    <a asp-area="" asp-controller="AI" asp-action="Index" class="nav-link text-info">
-                        <i class="bi bi-robot me-2"></i> Trợ Lý AI
+                <li>
+                    <a asp-area="PT" asp-controller="AssignedMembers" asp-action="Index" 
+                       class="portal-nav-link @(currentController == "AssignedMembers" ? "active" : "")">
+                        <span>Học Viên & Giáo Án</span>
                     </a>
                 </li>
             </ul>
-            <hr class="border-secondary mt-4">
-            <div>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-outline-light btn-sm w-100 mb-2">
-                    <i class="bi bi-house me-1"></i> Trang Chủ
+
+            <div class="portal-nav-group-title">Công cụ hỗ trợ</div>
+            <ul class="portal-nav-list">
+                <li>
+                    <a asp-area="" asp-controller="AI" asp-action="Index" class="portal-nav-link">
+                        <span class="text-info fw-semibold">Hỏi Đáp AI Trợ Lý</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Sidebar Footer Actions -->
+            <div class="portal-sidebar-footer">
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="portal-btn-footer portal-btn-ghost">
+                    Về Trang Chủ
                 </a>
-                <form asp-area="" asp-controller="Auth" asp-action="Logout" method="post">
+                <form asp-area="" asp-controller="Auth" asp-action="Logout" method="post" class="m-0">
                     @Html.AntiForgeryToken()
-                    <button type="submit" class="btn btn-danger btn-sm w-100">
-                        <i class="bi bi-power me-1"></i> Đăng Xuất
+                    <button type="submit" class="portal-btn-footer portal-btn-danger">
+                        Đăng Xuất
                     </button>
                 </form>
             </div>
-        </div>
+        </aside>
 
-        <!-- Main Content Area -->
-        <div class="flex-grow-1 p-4" style="min-height: 100vh;">
-            @if (TempData["SuccessMessage"] != null)
-            {
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="bi bi-check-circle me-2"></i> @TempData["SuccessMessage"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <!-- Main Workspace -->
+        <div class="portal-main">
+            <!-- Topbar Header -->
+            <header class="portal-topbar">
+                <h1 class="portal-topbar-title">
+                    <span>@ViewData["Title"]</span>
+                </h1>
+                <div class="portal-topbar-actions">
+                    <span class="text-secondary small d-none d-md-inline">
+                        Ca trực đang mở
+                    </span>
+                    <a asp-area="PT" asp-controller="BookingApproval" asp-action="Index" class="btn-pulse-outline btn-sm">
+                        Xem yêu cầu mới
+                    </a>
                 </div>
-            }
-            @if (TempData["ErrorMessage"] != null)
-            {
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="bi bi-exclamation-triangle me-2"></i> @TempData["ErrorMessage"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            }
+            </header>
 
-            @RenderBody()
+            <!-- Page Content Body -->
+            <main class="portal-content">
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="portal-alert portal-alert-success" role="alert">
+                        <div class="d-flex align-items-center gap-2">
+                            <span>@TempData["SuccessMessage"]</span>
+                        </div>
+                        <button type="button" class="portal-alert-close" onclick="this.parentElement.remove();">&times;</button>
+                    </div>
+                }
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="portal-alert portal-alert-danger" role="alert">
+                        <div class="d-flex align-items-center gap-2">
+                            <span>@TempData["ErrorMessage"]</span>
+                        </div>
+                        <button type="button" class="portal-alert-close" onclick="this.parentElement.remove();">&times;</button>
+                    </div>
+                }
+
+                @RenderBody()
+            </main>
         </div>
     </div>
 
+    <!-- Scripts -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)

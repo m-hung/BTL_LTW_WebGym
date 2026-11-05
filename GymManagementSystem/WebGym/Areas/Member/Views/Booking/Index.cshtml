@@ -1,73 +1,92 @@
 @model IEnumerable<WebGym.Models.Entities.Booking>
 @{
-    ViewData["Title"] = "Đặt Lịch Huấn Luyện Viên";
+    ViewData["Title"] = "Đặt Lịch Huấn Luyện Viên (PT)";
     var trainers = ViewBag.Trainers as List<WebGym.Models.Entities.Trainer>;
 }
 
-<div class="row">
-    <!-- Booking Form -->
-    <div class="col-lg-4 mb-4">
-        <div class="card border-0 shadow-sm rounded-4 bg-white p-4">
-            <h5 class="fw-bold mb-3"><i class="bi bi-calendar-plus text-primary me-2"></i> Đăng Ký Lịch Tập Mới</h5>
+<div class="row g-4">
+    <!-- Booking Form Column -->
+    <div class="col-lg-5 col-xl-4">
+        <div class="portal-card p-4">
+            <div class="mb-3 pb-2 border-bottom border-secondary border-opacity-25">
+                <h3 class="portal-title-accent fs-4 mb-0">ĐĂNG KÝ <span>CA TẬP MỚI</span></h3>
+            </div>
+            <p class="small mb-4" style="color: #a6ada2; line-height: 1.6;">
+                Chọn HLV chuyên nghiệp đồng hành cùng bạn để sửa tư thế, đảm bảo an toàn và tối đa hiệu quả bài tập.
+            </p>
+
             <form asp-action="Create" method="post">
                 @Html.AntiForgeryToken()
+
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Chọn Huấn Luyện Viên</label>
+                    <label class="form-label">Chọn Huấn Luyện Viên <span style="color: #ff6b6b;">*</span></label>
                     <select name="TrainerId" class="form-select" required>
-                        <option value="">-- Chọn HLV phù hợp --</option>
-                        @if (trainers != null)
+                        <option value="">-- Danh sách HLV Pulse Gym --</option>
+                        @if (trainers != null && trainers.Any())
                         {
                             foreach (var t in trainers)
                             {
-                                <option value="@t.TrainerId">@t.User.FullName (@t.Specialization)</option>
+                                <option value="@t.TrainerId">
+                                    @t.User.FullName — @t.Specialization
+                                </option>
                             }
                         }
                     </select>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Ngày Tập</label>
-                    <input type="date" name="BookingDate" class="form-control" value="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" required />
+                    <label class="form-label">Ngày Tập Luyện <span style="color: #ff6b6b;">*</span></label>
+                    <input type="date" name="BookingDate" class="form-control" 
+                           value="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" 
+                           min="@DateTime.Today.ToString("yyyy-MM-dd")" required />
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Khung Giờ Tập (TimeSlot)</label>
+                    <label class="form-label">Khung Giờ Tập (TimeSlot) <span style="color: #ff6b6b;">*</span></label>
                     <select name="TimeSlot" class="form-select" required>
-                        <option value="08:00 - 09:30">08:00 - 09:30 (Buổi Sáng)</option>
-                        <option value="09:30 - 11:00">09:30 - 11:00 (Buổi Sáng)</option>
-                        <option value="14:00 - 15:30">14:00 - 15:30 (Buổi Chiều)</option>
-                        <option value="16:00 - 17:30">16:00 - 17:30 (Buổi Chiều)</option>
-                        <option value="17:30 - 19:00">17:30 - 19:00 (Khung Giờ Vàng)</option>
-                        <option value="19:00 - 20:30">19:00 - 20:30 (Buổi Tối)</option>
+                        <option value="06:00 - 07:30">06:00 - 07:30 (Sáng sớm - Cardio/Khởi động)</option>
+                        <option value="08:00 - 09:30">08:00 - 09:30 (Buổi Sáng - Tăng cơ)</option>
+                        <option value="09:30 - 11:00">09:30 - 11:00 (Buổi Sáng - Thể lực)</option>
+                        <option value="14:00 - 15:30">14:00 - 15:30 (Buổi Chiều - Kỹ thuật)</option>
+                        <option value="16:00 - 17:30">16:00 - 17:30 (Buổi Chiều - HIIT/Boxing)</option>
+                        <option value="17:30 - 19:00" selected>17:30 - 19:00 (Khung Giờ Vàng - Full Body)</option>
+                        <option value="19:00 - 20:30">19:00 - 20:30 (Buổi Tối - Giãn cơ & Phục hồi)</option>
                     </select>
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Ghi Chú Cho HLV</label>
-                    <textarea name="Notes" class="form-control" rows="2" placeholder="Ví dụ: Tập trung bài tập ngực & tay sau, đau nhẹ cổ chân..."></textarea>
+                <div class="mb-4">
+                    <label class="form-label">Ghi Chú Mục Tiêu Cho HLV</label>
+                    <textarea name="Notes" class="form-control" rows="3" 
+                              placeholder="Ví dụ: Muốn tập trung phát triển ngực trên, đau nhẹ vai trái cần chú ý form..."></textarea>
                 </div>
 
-                <button type="submit" class="btn btn-warning w-100 fw-bold py-2">
-                    <i class="bi bi-send-check me-1"></i> Gửi Yêu Cầu Đặt Lịch
+                <button type="submit" class="btn-pulse-primary w-100 justify-content-center py-3">
+                    GỬI YÊU CẦU ĐẶT LỊCH
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- Booking History -->
-    <div class="col-lg-8">
-        <div class="card border-0 shadow-sm rounded-4 bg-white p-4">
-            <h5 class="fw-bold mb-3"><i class="bi bi-clock-history text-success me-2"></i> Lịch Sử Đặt Lịch Của Bạn</h5>
+    <!-- Booking History Column -->
+    <div class="col-lg-7 col-xl-8">
+        <div class="portal-card p-4">
+            <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-secondary border-opacity-25">
+                <div>
+                    <h3 class="portal-title-accent fs-4 mb-0">LỊCH SỬ <span>ĐẶT CA TẬP</span></h3>
+                </div>
+                <span style="color: #b0b7ad; font-size: 13px;">Tổng số: @Model.Count() buổi</span>
+            </div>
+
             <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
                         <tr>
-                            <th>Huấn Luyện Viên</th>
-                            <th>Ngày Tập</th>
-                            <th>Khung Giờ</th>
-                            <th>Trạng Thái</th>
-                            <th>Ghi Chú</th>
-                            <th>Hủy</th>
+                            <th style="color: #cfd5ca !important;">HUẤN LUYỆN VIÊN</th>
+                            <th style="color: #cfd5ca !important;">NGÀY TẬP</th>
+                            <th style="color: #cfd5ca !important;">KHUNG GIỜ</th>
+                            <th style="color: #cfd5ca !important;">TRẠNG THÁI</th>
+                            <th style="color: #cfd5ca !important;">GHI CHÚ</th>
+                            <th class="text-end" style="color: #cfd5ca !important;">THAO TÁC</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -76,22 +95,69 @@
                             foreach (var b in Model)
                             {
                                 <tr>
-                                    <td class="fw-bold">@b.Trainer.User.FullName</td>
-                                    <td>@b.BookingDate.ToString("dd/MM/yyyy")</td>
-                                    <td><span class="badge bg-light text-dark border">@b.TimeSlot</span></td>
                                     <td>
-                                        <span class="badge @(b.Status == "Approved" ? "bg-success" : (b.Status == "Pending" ? "bg-warning text-dark" : (b.Status == "Completed" ? "bg-primary" : "bg-secondary")))">
-                                            @b.Status
+                                        <div>
+                                            <strong class="d-block" style="color: #f2f5ef;">@b.Trainer.User.FullName</strong>
+                                            <small style="color: #a6ada2;">@b.Trainer.Specialization</small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <strong style="color: #e5eae0; font-family: var(--portal-display); font-size: 17px; letter-spacing: 0.03em;">
+                                            @b.BookingDate.ToString("dd/MM/yyyy")
+                                        </strong>
+                                    </td>
+                                    <td>
+                                        <span class="badge" style="background: rgba(255,255,255,0.05); border: 1px solid var(--portal-line); color: #dce1d8; font-weight: normal; padding: 6px 10px;">
+                                            @b.TimeSlot
                                         </span>
                                     </td>
-                                    <td><small class="text-muted">@(b.Notes ?? "-")</small></td>
                                     <td>
+                                        @if (b.Status == "Approved")
+                                        {
+                                            <span class="portal-badge" style="background: rgba(46, 213, 115, 0.16); color: #2ed573; border: 1px solid rgba(46, 213, 115, 0.35);">
+                                                ĐÃ DUYỆT
+                                            </span>
+                                        }
+                                        else if (b.Status == "Pending")
+                                        {
+                                            <span class="portal-badge" style="background: rgba(245, 176, 65, 0.16); color: #f5b041; border: 1px solid rgba(245, 176, 65, 0.35);">
+                                                CHỜ DUYỆT
+                                            </span>
+                                        }
+                                        else if (b.Status == "Completed")
+                                        {
+                                            <span class="portal-badge" style="background: rgba(72, 202, 228, 0.16); color: #48cae4; border: 1px solid rgba(72, 202, 228, 0.35);">
+                                                HOÀN THÀNH
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="portal-badge" style="background: rgba(255, 255, 255, 0.05); color: #9da499; border: 1px solid #333d36;">
+                                                ĐÃ HỦY
+                                            </span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="d-inline-block text-truncate" style="max-width: 150px; color: #b5bcaf; font-size: 13.5px;" title="@b.Notes">
+                                            @(string.IsNullOrEmpty(b.Notes) ? "--" : b.Notes)
+                                        </span>
+                                    </td>
+                                    <td class="text-end">
                                         @if (b.Status == "Pending")
                                         {
                                             <form asp-action="Cancel" asp-route-id="@b.BookingId" method="post" class="d-inline">
                                                 @Html.AntiForgeryToken()
-                                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Bạn có chắc muốn hủy ca tập này?');">Hủy</button>
+                                                <button type="submit" class="btn-pulse-outline btn-sm" 
+                                                        style="color: #ff7675; border-color: rgba(255, 118, 117, 0.4); padding: 5px 12px; font-size: 13px;"
+                                                        onclick="return confirm('Bạn có chắc chắn muốn hủy yêu cầu buổi tập này?');"
+                                                        title="Hủy buổi tập">
+                                                    Hủy
+                                                </button>
                                             </form>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: #7b8377; font-size: 13px;">--</span>
                                         }
                                     </td>
                                 </tr>
@@ -100,7 +166,12 @@
                         else
                         {
                             <tr>
-                                <td colspan="6" class="text-center text-muted py-4">Bạn chưa có lịch hẹn tập nào. Hãy đặt lịch ngay!</td>
+                                <td colspan="6" class="text-center py-5">
+                                    <div class="py-4">
+                                        <h5 class="portal-stat-val fs-5 mt-3" style="color: #b0b7ad;">CHƯA CÓ LỊCH HẸN NÀO</h5>
+                                        <p class="small mb-0" style="color: #a0a79c;">Hãy chọn Huấn luyện viên ở bảng bên trái để lên lịch ca tập đầu tiên của bạn!</p>
+                                    </div>
+                                </td>
                             </tr>
                         }
                     </tbody>

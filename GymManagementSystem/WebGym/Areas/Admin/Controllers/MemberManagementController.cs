@@ -1,9 +1,8 @@
-using System.Security.Cryptography;
-using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebGym.Data;
+using WebGym.Helpers;
 using WebGym.Models.DTOs.Admin;
 using WebGym.Models.Entities;
 using Member = WebGym.Models.Entities.Member;
@@ -101,7 +100,7 @@ namespace WebGym.Areas.Admin.Controllers
             var user = new User
             {
                 Username = model.Username.Trim(),
-                PasswordHash = HashPassword(model.Password),
+                PasswordHash = PasswordHelper.Hash(model.Password),
                 FullName = model.FullName.Trim(),
                 Email = model.Email.Trim(),
                 PhoneNumber = model.PhoneNumber?.Trim(),
@@ -250,7 +249,7 @@ namespace WebGym.Areas.Admin.Controllers
 
             if (!string.IsNullOrWhiteSpace(model.NewPassword))
             {
-                member.User.PasswordHash = HashPassword(model.NewPassword);
+                member.User.PasswordHash = PasswordHelper.Hash(model.NewPassword);
             }
 
             // Cập nhật Member
@@ -305,13 +304,6 @@ namespace WebGym.Areas.Admin.Controllers
 
             SetSuccessMessage($"Đã xóa hội viên '{member.User.FullName}' khỏi hệ thống.");
             return RedirectToAction(nameof(Index));
-        }
-
-        private static string HashPassword(string password)
-        {
-            using var sha256 = SHA256.Create();
-            var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-            return Convert.ToBase64String(bytes);
         }
     }
 }

@@ -3,23 +3,42 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebGym.Data;
+using WebGym.Helpers;
 using WebGym.Models.DTOs.Auth;
 using WebGym.Models.Entities;
+using WebGym.Services.Interfaces;
 
 namespace WebGym.Controllers
 {
     public class AuthController : BaseController
     {
+        // Liên kết đặt lại mật khẩu có hiệu lực 30 phút và chỉ dùng được 1 lần
+        private const string ResetTokenPurpose = "WebGym.Auth.ResetPassword.v1";
+        private static readonly TimeSpan ResetTokenLifetime = TimeSpan.FromMinutes(30);
+
         private readonly ApplicationDbContext _context;
         private readonly ILogger<AuthController> _logger;
+        private readonly IEmailService _emailService;
+        private readonly IDataProtectionProvider _dataProtection;
+        private readonly IWebHostEnvironment _env;
 
-        public AuthController(ApplicationDbContext context, ILogger<AuthController> logger)
+        public AuthController(
+            ApplicationDbContext context,
+            ILogger<AuthController> logger,
+            IEmailService emailService,
+            IDataProtectionProvider dataProtection,
+            IWebHostEnvironment env)
         {
             _context = context;
             _logger = logger;
+            _emailService = emailService;
+            _dataProtection = dataProtection;
+            _env = env;
         }
 
         // GET: /Auth/Login
@@ -44,14 +63,41 @@ namespace WebGym.Controllers
                 return IsAjaxRequest ? AjaxValidationError() : View(model);
             }
 
-            var passwordHash = HashPassword(model.Password);
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => (u.Email == model.Email || u.Username == model.Email) && u.PasswordHash == passwordHash);
+            // Tìm theo email hoặc tên đăng nhập, rồi kiểm tra mật khẩu bằng PasswordHasher (có salt)
+            var login = model.Email.Trim();
+            var candidates = await _context.Users
+                .Where(u => u.Email == login || u.Username == login)
+                .ToListAsync();
+
+            User? user = null;
+            var verifyResult = PasswordVerificationResult.Failed;
+            foreach (var candidate in candidates)
+            {
+                verifyResult = PasswordHelper.Verify(candidate.PasswordHash, model.Password);
+                if (verifyResult != PasswordVerificationResult.Failed)
+                {
+                    user = candidate;
+                    break;
+                }
+            }
+
+            if (candidates.Count == 0)
+            {
+                PasswordHelper.VerifyDummy(model.Password); // giữ thời gian phản hồi như khi có tài khoản
+            }
 
             if (user == null)
             {
                 ModelState.AddModelError(string.Empty, "Email/Tên đăng nhập hoặc mật khẩu không chính xác.");
                 return IsAjaxRequest ? AjaxValidationError() : View(model);
+            }
+
+            // Tài khoản còn hash SHA-256 cũ → đổi sang hash mới ngay khi đăng nhập đúng
+            if (verifyResult == PasswordVerificationResult.SuccessRehashNeeded)
+            {
+                user.PasswordHash = PasswordHelper.Hash(model.Password);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Đã nâng cấp hash mật khẩu cho UserId {UserId}", user.UserId);
             }
 
             // Tạo Claims cho Cookie Authentication
@@ -124,7 +170,7 @@ namespace WebGym.Controllers
                 FullName = model.FullName,
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
-                PasswordHash = HashPassword(model.Password),
+                PasswordHash = PasswordHelper.Hash(model.Password),
                 Role = role,
                 CreatedAt = DateTime.UtcNow
             };
@@ -177,11 +223,115 @@ namespace WebGym.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        // GET: /Auth/ForgotPassword
+        // GET: /Auth/ForgotPassword  (trang dự phòng khi không dùng modal)
         [HttpGet]
         public IActionResult ForgotPassword()
         {
-            return View();
+            return View(new ForgotPasswordViewModel());
+        }
+
+        // POST: /Auth/ForgotPassword
+        // Luôn trả cùng một thông báo dù email có tồn tại hay không, để không lộ danh sách tài khoản.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return IsAjaxRequest ? AjaxValidationError() : View(model);
+            }
+
+            const string sentMessage = "Nếu email này đã đăng ký, chúng tôi đã gửi liên kết đặt lại mật khẩu. " +
+                                       "Vui lòng kiểm tra hộp thư (kể cả mục Spam). Liên kết có hiệu lực trong 30 phút.";
+            string? devLink = null;
+
+            var email = model.Email.Trim();
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (user != null)
+            {
+                var token = CreateResetToken(user);
+                var link = Url.Action(nameof(ResetPassword), "Auth", new { token }, Request.Scheme)!;
+
+                _ = _emailService.SendPasswordResetAsync(user.Email, user.FullName, link, (int)ResetTokenLifetime.TotalMinutes);
+                _logger.LogInformation("Đã tạo liên kết đặt lại mật khẩu cho UserId {UserId}", user.UserId);
+
+                // Môi trường Development: hiện luôn liên kết trên màn hình để demo khi chưa cấu hình gửi mail
+                if (_env.IsDevelopment())
+                {
+                    devLink = link;
+                }
+            }
+
+            if (IsAjaxRequest)
+            {
+                return Json(new { success = true, message = sentMessage, devLink });
+            }
+
+            ViewBag.SentMessage = sentMessage;
+            ViewBag.DevLink = devLink;
+            return View(model);
+        }
+
+        // GET: /Auth/ResetPassword?token=...  (liên kết trong email)
+        // Kiểm tra token rồi mở form đặt mật khẩu mới trong modal ở trang chủ.
+        [HttpGet]
+        public async Task<IActionResult> ResetPassword(string? token)
+        {
+            var home = Url.Content("~/");
+            var user = await FindUserByResetTokenAsync(token);
+            if (user == null)
+            {
+                return Redirect(home + "?auth=forgot&reset=invalid");
+            }
+
+            // Đang đăng nhập tài khoản khác → đăng xuất để modal đặt lại mật khẩu hiện ra
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            }
+
+            return Redirect(home + "?auth=reset&token=" + Uri.EscapeDataString(token!));
+        }
+
+        // POST: /Auth/ResetPassword
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            var home = Url.Content("~/");
+            const string invalidMessage = "Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn. Vui lòng gửi lại yêu cầu.";
+
+            var user = await FindUserByResetTokenAsync(model.Token);
+            if (user == null)
+            {
+                if (IsAjaxRequest)
+                {
+                    return BadRequest(new { success = false, expired = true, message = invalidMessage });
+                }
+                return Redirect(home + "?auth=forgot&reset=invalid");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                if (IsAjaxRequest)
+                {
+                    return AjaxValidationError();
+                }
+                return Redirect(home + "?auth=reset&token=" + Uri.EscapeDataString(model.Token));
+            }
+
+            user.PasswordHash = PasswordHelper.Hash(model.Password);
+            await _context.SaveChangesAsync();
+            _logger.LogInformation("UserId {UserId} đã đặt lại mật khẩu", user.UserId);
+
+            const string doneMessage = "Đặt lại mật khẩu thành công! Hãy đăng nhập bằng mật khẩu mới.";
+            if (IsAjaxRequest)
+            {
+                return Json(new { success = true, message = doneMessage, email = user.Email });
+            }
+
+            SetSuccessMessage(doneMessage);
+            return RedirectToAction(nameof(Login));
         }
 
         // GET: /Auth/AccessDenied
@@ -227,11 +377,53 @@ namespace WebGym.Controllers
             return Redirect(GetDashboardUrl(role));
         }
 
-        private static string HashPassword(string password)
+        /* ---------- Token đặt lại mật khẩu (ASP.NET Data Protection, không cần thêm bảng DB) ---------- */
+
+        private ITimeLimitedDataProtector ResetTokenProtector =>
+            _dataProtection.CreateProtector(ResetTokenPurpose).ToTimeLimitedDataProtector();
+
+        // "Dấu vân tay" của mật khẩu hiện tại: đổi mật khẩu xong thì mọi token cũ tự mất hiệu lực
+        private static string PasswordStamp(string passwordHash)
         {
-            using var sha256 = SHA256.Create();
-            var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-            return Convert.ToBase64String(bytes);
+            return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(passwordHash)))[..16];
+        }
+
+        private string CreateResetToken(User user)
+        {
+            var payload = $"{user.UserId}|{PasswordStamp(user.PasswordHash)}";
+            return ResetTokenProtector.Protect(payload, ResetTokenLifetime);
+        }
+
+        private async Task<User?> FindUserByResetTokenAsync(string? token)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                return null;
+            }
+
+            string payload;
+            try
+            {
+                payload = ResetTokenProtector.Unprotect(token); // tự báo lỗi nếu bị sửa hoặc đã hết hạn
+            }
+            catch (Exception ex) when (ex is CryptographicException or FormatException)
+            {
+                return null; // token bị sửa, sai định dạng hoặc hết hạn
+            }
+
+            var parts = payload.Split('|');
+            if (parts.Length != 2 || !int.TryParse(parts[0], out var userId))
+            {
+                return null;
+            }
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+            if (user == null || PasswordStamp(user.PasswordHash) != parts[1])
+            {
+                return null; // mật khẩu đã đổi sau khi tạo liên kết → liên kết đã dùng rồi
+            }
+
+            return user;
         }
     }
 }

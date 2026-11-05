@@ -22,11 +22,11 @@
 <!-- Filter Card -->
 <div class="card border-0 bg-white p-3 mb-4 rounded-4 shadow-sm no-print">
     <form method="get" class="row g-2 align-items-end">
-        <div class="col-md-3">
+        <div class="col-6 col-sm-6 col-md-3">
             <label class="form-label small fw-bold text-muted">Năm thống kê</label>
             <input type="number" name="year" class="form-control bg-light" value="@(report?.Year ?? DateTime.Now.Year)" />
         </div>
-        <div class="col-md-3">
+        <div class="col-6 col-sm-6 col-md-3">
             <label class="form-label small fw-bold text-muted">Tháng (Tùy chọn)</label>
             <select name="month" class="form-select bg-light">
                 <option value="">-- Cả năm --</option>
@@ -36,7 +36,7 @@
                 }
             </select>
         </div>
-        <div class="col-md-3">
+        <div class="col-12 col-sm-6 col-md-3">
             <label class="form-label small fw-bold text-muted">Phương thức thanh toán</label>
             <select name="paymentMethod" class="form-select bg-light">
                 <option value="">-- Tất cả phương thức --</option>
@@ -46,7 +46,7 @@
                 <option value="DirectCash" selected="@(report?.PaymentMethod == "DirectCash")">Tiền mặt tại quầy</option>
             </select>
         </div>
-        <div class="col-md-3">
+        <div class="col-12 col-sm-6 col-md-3">
             <button type="submit" class="btn btn-primary w-100 rounded-3">
                 <i class="bi bi-funnel me-1"></i> Lọc dữ liệu
             </button>
@@ -56,28 +56,28 @@
 
 <!-- 4 Key Financial Stat Cards -->
 <div class="row g-3 mb-4">
-    <div class="col-sm-6 col-xl-3">
+    <div class="col-12 col-sm-6 col-xl-3">
         <div class="card border-0 rounded-4 bg-white shadow-sm p-3">
             <span class="text-muted small fw-semibold">TỔNG DOANH THU KỲ NÀY</span>
             <h3 class="fw-bold text-success my-2">@(report?.TotalRevenue.ToString("N0") ?? "0") <small class="fs-6 text-muted">VNĐ</small></h3>
             <small class="text-muted"><i class="bi bi-calendar3 me-1"></i>Năm @(report?.Year) @(report?.Month.HasValue == true ? $"- Tháng {report.Month}" : "")</small>
         </div>
     </div>
-    <div class="col-sm-6 col-xl-3">
+    <div class="col-12 col-sm-6 col-xl-3">
         <div class="card border-0 rounded-4 bg-white shadow-sm p-3">
             <span class="text-muted small fw-semibold">SỐ LƯỢT GIAO DỊCH</span>
             <h3 class="fw-bold text-primary my-2">@(report?.TotalTransactions ?? 0) <small class="fs-6 text-muted">đơn</small></h3>
             <small class="text-success"><i class="bi bi-check-all me-1"></i>Thanh toán thành công 100%</small>
         </div>
     </div>
-    <div class="col-sm-6 col-xl-3">
+    <div class="col-12 col-sm-6 col-xl-3">
         <div class="card border-0 rounded-4 bg-white shadow-sm p-3">
             <span class="text-muted small fw-semibold">GIÁ TRỊ ĐƠN TRUNG BÌNH (AOV)</span>
             <h3 class="fw-bold text-dark my-2">@(report?.AverageOrderValue.ToString("N0") ?? "0") <small class="fs-6 text-muted">đ</small></h3>
             <small class="text-muted">Doanh thu / số đơn hàng</small>
         </div>
     </div>
-    <div class="col-sm-6 col-xl-3">
+    <div class="col-12 col-sm-6 col-xl-3">
         <div class="card border-0 rounded-4 bg-white shadow-sm p-3">
             <span class="text-muted small fw-semibold">GÓI TẬP BÁN CHẠY NHẤT</span>
             <h4 class="fw-bold text-warning my-2 text-truncate" title="@(report?.BestSellingPackage)">@(report?.BestSellingPackage)</h4>
@@ -89,7 +89,7 @@
 <!-- Charts Section -->
 <div class="row g-4 mb-4">
     <!-- Monthly Breakdown Bar Chart -->
-    <div class="col-lg-8">
+    <div class="col-12 col-lg-8">
         <div class="card border-0 rounded-4 bg-white shadow-sm p-4 h-100">
             <h5 class="fw-bold text-dark mb-1">Doanh Thu 12 Tháng Trong Năm @(report?.Year)</h5>
             <small class="text-muted mb-3 d-block">Biểu đồ đối sánh doanh số giữa các tháng</small>
@@ -100,7 +100,7 @@
     </div>
 
     <!-- Method Breakdown Pie Chart -->
-    <div class="col-lg-4">
+    <div class="col-12 col-lg-4">
         <div class="card border-0 rounded-4 bg-white shadow-sm p-4 h-100">
             <h5 class="fw-bold text-dark mb-1">Cơ Cấu Phương Thức</h5>
             <small class="text-muted mb-3 d-block">Tỷ trọng dòng tiền theo cổng thanh toán</small>

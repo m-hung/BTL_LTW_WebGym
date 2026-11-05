@@ -48,7 +48,7 @@
     @foreach (var t in Model)
     {
         var activeBookings = t.Bookings.Count(b => b.Status == "Approved" || b.Status == "Pending");
-        <div class="col-md-6 col-xl-4">
+        <div class="col-12 col-md-6 col-xl-4">
             <div class="card h-100 border-0 rounded-4 bg-white shadow-sm p-4 d-flex flex-column justify-content-between">
                 <div>
                     <div class="d-flex align-items-center gap-3 mb-3">

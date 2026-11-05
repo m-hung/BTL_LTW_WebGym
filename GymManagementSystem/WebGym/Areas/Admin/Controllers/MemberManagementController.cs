@@ -134,6 +134,11 @@ namespace WebGym.Areas.Admin.Controllers
                 DateOfBirth = model.DateOfBirth,
                 Height = model.Height,
                 Weight = model.Weight,
+                BodyFatPercentage = model.BodyFatPercentage,
+                MuscleMass = model.MuscleMass,
+                Chest = model.Chest,
+                Waist = model.Waist,
+                Hips = model.Hips,
                 BMR = bmr.HasValue ? Math.Round(bmr.Value, 1) : null
             };
             _context.Members.Add(member);
@@ -198,7 +203,12 @@ namespace WebGym.Areas.Admin.Controllers
                 Gender = member.Gender,
                 DateOfBirth = member.DateOfBirth,
                 Height = member.Height,
-                Weight = member.Weight
+                Weight = member.Weight,
+                BodyFatPercentage = member.BodyFatPercentage,
+                MuscleMass = member.MuscleMass,
+                Chest = member.Chest,
+                Waist = member.Waist,
+                Hips = member.Hips
             };
 
             return View(model);
@@ -248,6 +258,11 @@ namespace WebGym.Areas.Admin.Controllers
             member.DateOfBirth = model.DateOfBirth;
             member.Height = model.Height;
             member.Weight = model.Weight;
+            member.BodyFatPercentage = model.BodyFatPercentage;
+            member.MuscleMass = model.MuscleMass;
+            member.Chest = model.Chest;
+            member.Waist = model.Waist;
+            member.Hips = model.Hips;
 
             await _context.SaveChangesAsync();
 

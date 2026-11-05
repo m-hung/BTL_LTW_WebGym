@@ -1,47 +1,77 @@
 @model IEnumerable<WebGym.Models.Entities.Booking>
 @{
-    ViewData["Title"] = "Duyệt Lịch Đặt Của Học Viên";
+    ViewData["Title"] = "Duyệt Yêu Cầu Đặt Lịch";
+    var pendingList = Model?.ToList() ?? new List<WebGym.Models.Entities.Booking>();
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="fw-bold"><i class="bi bi-clock-history text-danger me-2"></i> Yêu Cầu Chờ Duyệt</h3>
-</div>
+<div class="portal-card p-4">
+    <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-secondary border-opacity-25">
+        <div>
+            <h3 class="portal-title-accent fs-3 mb-0">YÊU CẦU ĐẶT LỊCH <span>CHỜ DUYỆT</span></h3>
+            <div style="color: #a6ada2; font-size: 13.5px;" class="mt-1">
+                Tiếp nhận và sắp xếp thời gian biểu phù hợp trước khi xác nhận ca tập chính thức cho học viên
+            </div>
+        </div>
+        <span class="portal-badge" style="background: rgba(245, 176, 65, 0.16); color: #f5b041; border: 1px solid rgba(245, 176, 65, 0.35);">
+            Đang chờ: @pendingList.Count yêu cầu
+        </span>
+    </div>
 
-<div class="card border-0 shadow-sm rounded-4 bg-white p-3">
     <div class="table-responsive">
-        <table class="table table-hover align-middle">
-            <thead class="table-light">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
                 <tr>
-                    <th>Học Viên</th>
-                    <th>Ngày Đặt</th>
-                    <th>Khung Giờ</th>
-                    <th>Ghi Chú</th>
-                    <th>Thao Tác</th>
+                    <th style="color: #cfd5ca !important;">HỌC VIÊN</th>
+                    <th style="color: #cfd5ca !important;">NGÀY ĐẶT</th>
+                    <th style="color: #cfd5ca !important;">KHUNG GIỜ</th>
+                    <th style="color: #cfd5ca !important;">GHI CHÚ MỤC TIÊU</th>
+                    <th class="text-end" style="color: #cfd5ca !important;">THAO TÁC</th>
                 </tr>
             </thead>
             <tbody>
-                @if (Model.Any())
+                @if (pendingList.Any())
                 {
-                    foreach (var b in Model)
+                    foreach (var b in pendingList)
                     {
                         <tr>
-                            <td class="fw-bold">@b.Member.User.FullName</td>
-                            <td>@b.BookingDate.ToString("dd/MM/yyyy")</td>
-                            <td><span class="badge bg-light text-dark border">@b.TimeSlot</span></td>
-                            <td><small class="text-muted">@(b.Notes ?? "-")</small></td>
                             <td>
-                                <form asp-action="Approve" asp-route-id="@b.BookingId" method="post" class="d-inline">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-sm btn-success me-1">
-                                        <i class="bi bi-check-lg"></i> Duyệt
-                                    </button>
-                                </form>
-                                <form asp-action="Reject" asp-route-id="@b.BookingId" method="post" class="d-inline">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Bạn muốn từ chối yêu cầu này?');">
-                                        <i class="bi bi-x-lg"></i> Từ Chối
-                                    </button>
-                                </form>
+                                <div>
+                                    <strong class="d-block" style="color: #f2f5ef; font-size: 15px;">@b.Member.User.FullName</strong>
+                                    <small style="color: #a6ada2;">@(b.Member.User.PhoneNumber ?? b.Member.User.Email)</small>
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color: #e5eae0; font-family: var(--portal-display); font-size: 17px; letter-spacing: 0.03em;">
+                                    @b.BookingDate.ToString("dd/MM/yyyy")
+                                </strong>
+                            </td>
+                            <td>
+                                <span class="badge" style="background: rgba(255,255,255,0.05); border: 1px solid var(--portal-line); color: #dce1d8; font-weight: normal; padding: 6px 10px;">
+                                    @b.TimeSlot
+                                </span>
+                            </td>
+                            <td>
+                                <span style="color: #b5bcaf; font-size: 13.5px; line-height: 1.5; display: inline-block; max-width: 300px;">
+                                    @(string.IsNullOrEmpty(b.Notes) ? "Học viên không để lại ghi chú" : b.Notes)
+                                </span>
+                            </td>
+                            <td class="text-end">
+                                <div class="d-inline-flex gap-2">
+                                    <form asp-action="Approve" asp-route-id="@b.BookingId" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn-pulse-primary btn-sm py-1 px-3" style="font-size: 13px;">
+                                            Duyệt
+                                        </button>
+                                    </form>
+                                    <form asp-action="Reject" asp-route-id="@b.BookingId" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn-pulse-outline btn-sm py-1 px-3" 
+                                                style="color: #ff6b6b; border-color: rgba(255, 107, 107, 0.4); font-size: 13px;" 
+                                                onclick="return confirm('Bạn có chắc chắn muốn từ chối yêu cầu đặt lịch này?');">
+                                            Từ Chối
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     }
@@ -49,7 +79,12 @@
                 else
                 {
                     <tr>
-                        <td colspan="5" class="text-center text-muted py-4">Hiện không có yêu cầu nào đang chờ duyệt.</td>
+                        <td colspan="5" class="text-center py-5">
+                            <div class="py-4">
+                                <h5 class="portal-stat-val fs-5 mt-3" style="color: #b0b7ad;">KHÔNG CÓ YÊU CẦU NÀO ĐANG CHỜ</h5>
+                                <p class="small mb-0" style="color: #a0a79c;">Tất cả các ca tập đã được xử lý hoặc học viên chưa gửi yêu cầu mới.</p>
+                            </div>
+                        </td>
                     </tr>
                 }
             </tbody>

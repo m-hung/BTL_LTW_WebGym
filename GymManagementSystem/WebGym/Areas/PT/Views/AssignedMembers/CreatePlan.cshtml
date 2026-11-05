@@ -4,52 +4,77 @@
 }
 
 <div class="row justify-content-center">
-    <div class="col-lg-8">
-        <div class="card border-0 shadow-sm rounded-4 bg-white p-4">
-            <h4 class="fw-bold mb-3"><i class="bi bi-file-earmark-medical text-primary me-2"></i> Lên Lộ Trình Cho Học Viên: @Model.MemberName</h4>
+    <div class="col-lg-9 col-xl-8">
+        <div class="portal-card p-4">
+            <div class="mb-4 pb-3 border-bottom border-secondary border-opacity-25">
+                <h3 class="portal-title-accent fs-3 mb-1">THIẾT KẾ GIÁO ÁN <span>HỌC VIÊN: @Model.MemberName</span></h3>
+                <div style="color: #a6ada2; font-size: 13.5px;">
+                    Xây dựng lộ trình bài tập chi tiết và chế độ dinh dưỡng để học viên theo dõi hàng ngày trên Member Portal
+                </div>
+            </div>
 
             <form asp-action="CreatePlan" method="post">
                 @Html.AntiForgeryToken()
                 <input type="hidden" asp-for="MemberId" />
                 <input type="hidden" asp-for="MemberName" />
 
-                <div class="mb-3">
-                    <label asp-for="Title" class="form-label fw-bold">Tiêu đề lộ trình</label>
-                    <input asp-for="Title" class="form-control" placeholder="Ví dụ: Lộ trình Giảm mỡ Tăng cơ 4 tuần cho người mới" />
-                    <span asp-validation-for="Title" class="text-danger small"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Goal" class="form-label fw-bold">Mục tiêu thể chất</label>
-                    <input asp-for="Goal" class="form-control" placeholder="Ví dụ: Giảm 3kg mỡ, tăng vòng ngực và thể lực chung" />
-                </div>
-
-                <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                        <label asp-for="StartDate" class="form-label fw-bold">Ngày bắt đầu</label>
-                        <input asp-for="StartDate" type="date" class="form-control" />
+                <!-- Group 1: General Plan Info -->
+                <div class="mb-4">
+                    <div class="portal-section-eyebrow">
+                        01. MỤC TIÊU & THỜI HẠN LỘ TRÌNH
                     </div>
-                    <div class="col-md-6">
-                        <label asp-for="EndDate" class="form-label fw-bold">Ngày kết thúc</label>
-                        <input asp-for="EndDate" type="date" class="form-control" />
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label">Tên lộ trình huấn luyện <span style="color: #ff6b6b;">*</span></label>
+                        <input asp-for="Title" class="form-control" placeholder="Ví dụ: Lộ trình Giảm mỡ Tăng cơ 4 tuần bứt phá" required />
+                        <span asp-validation-for="Title" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Goal" class="form-label">Mục tiêu thể chất cụ thể</label>
+                        <input asp-for="Goal" class="form-control" placeholder="Ví dụ: Giảm 3.5kg mỡ, tăng 1.5kg cơ nạc, thu nhỏ vòng eo dưới 78cm" />
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="StartDate" class="form-label">Ngày bắt đầu</label>
+                            <input asp-for="StartDate" type="date" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="EndDate" class="form-label">Ngày kết thúc</label>
+                            <input asp-for="EndDate" type="date" class="form-control" />
+                        </div>
                     </div>
                 </div>
 
-                <div class="mb-3">
-                    <label asp-for="RoutineDetails" class="form-label fw-bold">Chi tiết bài tập theo tuần</label>
-                    <textarea asp-for="RoutineDetails" class="form-control" rows="5" placeholder="Thứ 2: Ngực + Tay sau (Bench Press 4x10, Tricep pushdown 3x12)&#10;Thứ 4: Lưng + Tay trước..."></textarea>
+                <!-- Group 2: Routine Details -->
+                <div class="mb-4">
+                    <div class="portal-section-eyebrow">
+                        02. CHI TIẾT BÀI TẬP THEO TUẦN (ROUTINE)
+                    </div>
+                    <label asp-for="RoutineDetails" class="form-label">Lịch phân chia nhóm cơ & số hiệp/lần</label>
+                    <textarea asp-for="RoutineDetails" class="form-control" rows="6" 
+                              placeholder="Thứ 2: Ngực + Tay sau (Bench Press 4x10, Incline Dumbbell 3x12, Tricep Rope 3x15)&#10;Thứ 3: Lưng + Tay trước (Lat Pulldown 4x12, Barbell Row 4x10)&#10;Thứ 4: Nghỉ ngơi tích cực / Cardio nhẹ 20 phút&#10;Thứ 5: Vai + Bụng..."></textarea>
                     <span asp-validation-for="RoutineDetails" class="text-danger small"></span>
                 </div>
 
+                <!-- Group 3: Nutrition Advice -->
                 <div class="mb-4">
-                    <label asp-for="NutritionAdvice" class="form-label fw-bold">Chế độ dinh dưỡng khuyến nghị</label>
-                    <textarea asp-for="NutritionAdvice" class="form-control" rows="3" placeholder="Bổ sung ức gà, trứng, cá hồi; uống đủ 2.5 lít nước mỗi ngày..."></textarea>
+                    <div class="portal-section-eyebrow">
+                        03. HƯỚNG DẪN CHẾ ĐỘ DINH DƯỠNG
+                    </div>
+                    <label asp-for="NutritionAdvice" class="form-label">Khuyến nghị lượng calo, protein & nước</label>
+                    <textarea asp-for="NutritionAdvice" class="form-control" rows="3" 
+                              placeholder="Nạp tối thiểu 1.8g protein/kg cân nặng (ức gà, cá, trứng). Uống đủ 2.5 - 3 lít nước mỗi ngày. Tránh đường tinh luyện và đồ uống có gas..."></textarea>
                 </div>
 
-                <button type="submit" class="btn btn-warning px-4 fw-bold">
-                    <i class="bi bi-check-circle-fill me-1"></i> Lưu & Gửi Cho Học Viên
-                </button>
-                <a asp-action="Index" class="btn btn-outline-secondary ms-2">Quay Lại</a>
+                <div class="pt-3 border-top border-secondary border-opacity-25 d-flex gap-3">
+                    <button type="submit" class="btn-pulse-primary">
+                        LƯU & GỬI CHO HỌC VIÊN
+                    </button>
+                    <a asp-action="Index" class="btn-pulse-outline">
+                        Quay Lại
+                    </a>
+                </div>
             </form>
         </div>
     </div>

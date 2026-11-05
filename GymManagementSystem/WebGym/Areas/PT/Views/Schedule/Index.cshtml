@@ -1,48 +1,168 @@
 @model IEnumerable<WebGym.Models.DTOs.Trainer.TrainerScheduleDto>
 @{
-    ViewData["Title"] = "Lịch Dạy Của HLV";
+    ViewData["Title"] = "Lịch Dạy Huấn Luyện Viên";
+    var scheduleList = Model?.ToList() ?? new List<WebGym.Models.DTOs.Trainer.TrainerScheduleDto>();
+    var totalSessions = scheduleList.Count;
+    var approvedSessions = scheduleList.Count(s => s.Status == "Approved");
+    var pendingSessions = scheduleList.Count(s => s.Status == "Pending");
+    var completedSessions = scheduleList.Count(s => s.Status == "Completed");
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="fw-bold"><i class="bi bi-calendar-week-fill text-warning me-2"></i> Lịch Dạy Huấn Luyện Viên</h3>
+<!-- Summary Stat Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-lg-3">
+        <div class="portal-stat-card">
+            <div class="portal-stat-label" style="color: #b5bcaf;">
+                <span>TỔNG CA TẬP</span>
+            </div>
+            <div class="portal-stat-val" style="color: #f2f5ef;">
+                @totalSessions <span style="font-size: 14px; color: #9aa296; font-family: var(--portal-body); font-weight: normal;">buổi</span>
+            </div>
+            <div class="portal-stat-sub" style="color: #a0a79c;">Toàn bộ lịch đã đăng ký</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="portal-stat-card">
+            <div class="portal-stat-label" style="color: #b5bcaf;">
+                <span>ĐÃ XÁC NHẬN</span>
+            </div>
+            <div class="portal-stat-val" style="color: var(--portal-lime);">
+                @approvedSessions <span style="font-size: 14px; color: #9aa296; font-family: var(--portal-body); font-weight: normal;">buổi</span>
+            </div>
+            <div class="portal-stat-sub" style="color: #a0a79c;">Lịch dạy chính thức sẵn sàng</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="portal-stat-card">
+            <div class="portal-stat-label" style="color: #b5bcaf;">
+                <span>CHỜ DUYỆT</span>
+            </div>
+            <div class="portal-stat-val" style="color: #f5b041;">
+                @pendingSessions <span style="font-size: 14px; color: #9aa296; font-family: var(--portal-body); font-weight: normal;">yêu cầu</span>
+            </div>
+            <div class="portal-stat-sub" style="color: #a0a79c;">
+                @if (pendingSessions > 0)
+                {
+                    <a asp-controller="BookingApproval" asp-action="Index" style="color: #f5b041; text-decoration: underline;">
+                        Xem và duyệt ngay
+                    </a>
+                }
+                else
+                {
+                    <span>Không có yêu cầu tồn đọng</span>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="portal-stat-card">
+            <div class="portal-stat-label" style="color: #b5bcaf;">
+                <span>HOÀN THÀNH</span>
+            </div>
+            <div class="portal-stat-val" style="color: #48cae4;">
+                @completedSessions <span style="font-size: 14px; color: #9aa296; font-family: var(--portal-body); font-weight: normal;">buổi</span>
+            </div>
+            <div class="portal-stat-sub" style="color: #a0a79c;">Ca huấn luyện thành công</div>
+        </div>
+    </div>
 </div>
 
-<div class="card border-0 shadow-sm rounded-4 bg-white p-3">
+<!-- Schedule Details Table -->
+<div class="portal-card p-4">
+    <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-secondary border-opacity-25">
+        <div>
+            <h3 class="portal-title-accent fs-3 mb-0">LỊCH DẠY <span>CÁ NHÂN</span></h3>
+            <div style="color: #a6ada2; font-size: 13.5px;" class="mt-1">
+                Theo dõi thời gian biểu huấn luyện và chuẩn bị giáo án cho từng học viên
+            </div>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-controller="BookingApproval" asp-action="Index" class="btn-pulse-outline btn-sm">
+                Duyệt ca tập mới
+            </a>
+            <a asp-controller="AssignedMembers" asp-action="Index" class="btn-pulse-primary btn-sm">
+                Danh sách học viên
+            </a>
+        </div>
+    </div>
+
     <div class="table-responsive">
-        <table class="table table-hover align-middle">
-            <thead class="table-light">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
                 <tr>
-                    <th>Học Viên</th>
-                    <th>Số Điện Thoại</th>
-                    <th>Ngày Dạy</th>
-                    <th>Khung Giờ</th>
-                    <th>Trạng Thái</th>
-                    <th>Ghi Chú</th>
+                    <th style="color: #cfd5ca !important;">HỌC VIÊN</th>
+                    <th style="color: #cfd5ca !important;">SỐ ĐIỆN THOẠI</th>
+                    <th style="color: #cfd5ca !important;">NGÀY DẠY</th>
+                    <th style="color: #cfd5ca !important;">KHUNG GIỜ</th>
+                    <th style="color: #cfd5ca !important;">TRẠNG THÁI</th>
+                    <th style="color: #cfd5ca !important;">GHI CHÚ HỌC VIÊN</th>
                 </tr>
             </thead>
             <tbody>
-                @if (Model.Any())
+                @if (scheduleList.Any())
                 {
-                    foreach (var s in Model)
+                    foreach (var s in scheduleList)
                     {
                         <tr>
-                            <td class="fw-bold">@s.MemberName</td>
-                            <td>@(s.MemberPhone ?? "Chưa có")</td>
-                            <td>@s.BookingDate.ToString("dd/MM/yyyy")</td>
-                            <td><span class="badge bg-light text-dark border">@s.TimeSlot</span></td>
                             <td>
-                                <span class="badge @(s.Status == "Approved" ? "bg-success" : (s.Status == "Pending" ? "bg-warning text-dark" : (s.Status == "Completed" ? "bg-primary" : "bg-secondary")))">
-                                    @s.Status
+                                <strong class="d-block" style="color: #f2f5ef; font-size: 15px;">@s.MemberName</strong>
+                            </td>
+                            <td>
+                                <span style="color: #b5bcaf; font-size: 14px;">@(string.IsNullOrEmpty(s.MemberPhone) ? "Chưa cập nhật" : s.MemberPhone)</span>
+                            </td>
+                            <td>
+                                <strong style="color: #e5eae0; font-family: var(--portal-display); font-size: 17px; letter-spacing: 0.03em;">
+                                    @s.BookingDate.ToString("dd/MM/yyyy")
+                                </strong>
+                            </td>
+                            <td>
+                                <span class="badge" style="background: rgba(255,255,255,0.05); border: 1px solid var(--portal-line); color: #dce1d8; font-weight: normal; padding: 6px 10px;">
+                                    @s.TimeSlot
                                 </span>
                             </td>
-                            <td><small class="text-muted">@(s.Notes ?? "-")</small></td>
+                            <td>
+                                @if (s.Status == "Approved")
+                                {
+                                    <span class="portal-badge" style="background: rgba(46, 213, 115, 0.16); color: #2ed573; border: 1px solid rgba(46, 213, 115, 0.35);">
+                                        ĐÃ DUYỆT
+                                    </span>
+                                }
+                                else if (s.Status == "Pending")
+                                {
+                                    <span class="portal-badge" style="background: rgba(245, 176, 65, 0.16); color: #f5b041; border: 1px solid rgba(245, 176, 65, 0.35);">
+                                        CHỜ DUYỆT
+                                    </span>
+                                }
+                                else if (s.Status == "Completed")
+                                {
+                                    <span class="portal-badge" style="background: rgba(72, 202, 228, 0.16); color: #48cae4; border: 1px solid rgba(72, 202, 228, 0.35);">
+                                        HOÀN THÀNH
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="portal-badge" style="background: rgba(255, 255, 255, 0.05); color: #9da499; border: 1px solid #333d36;">
+                                        ĐÃ HỦY
+                                    </span>
+                                }
+                            </td>
+                            <td>
+                                <span style="color: #b5bcaf; font-size: 13.5px; line-height: 1.5; display: inline-block; max-width: 250px;">
+                                    @(string.IsNullOrEmpty(s.Notes) ? "--" : s.Notes)
+                                </span>
+                            </td>
                         </tr>
                     }
                 }
                 else
                 {
                     <tr>
-                        <td colspan="6" class="text-center text-muted py-4">Chưa có ca dạy nào trong lịch.</td>
+                        <td colspan="6" class="text-center py-5">
+                            <div class="py-4">
+                                <h5 class="portal-stat-val fs-5 mt-3" style="color: #b0b7ad;">CHƯA CÓ LỊCH DẠY NÀO</h5>
+                                <p class="small mb-0" style="color: #a0a79c;">Khi học viên đặt lịch và được duyệt, các ca dạy sẽ hiển thị chi tiết tại đây.</p>
+                            </div>
+                        </td>
                     </tr>
                 }
             </tbody>

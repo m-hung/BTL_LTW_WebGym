@@ -199,8 +199,8 @@ namespace WebGym.Controllers
             }
 
             // 2. Tạo bản ghi Thanh toán (Payment) và Gói đăng ký (Subscription)
-            var durationDays = model.IsYearly ? 365 : package.DurationDays;
-            var totalAmount = model.Total;
+            var durationDays = package.DurationDays;
+            var totalAmount = package.Price;
             var orderId = $"ORDER_{DateTime.UtcNow.Ticks}";
 
             var payment = new Payment
@@ -224,7 +224,7 @@ namespace WebGym.Controllers
             {
                 MemberId = member.MemberId,
                 PackageId = package.PackageId,
-                OriginalPrice = model.BaseTotal,
+                OriginalPrice = package.Price,
                 PaidAmount = totalAmount,
                 StartDate = model.StartDate ?? DateTime.UtcNow,
                 EndDate = (model.StartDate ?? DateTime.UtcNow).AddDays(durationDays),
@@ -239,7 +239,7 @@ namespace WebGym.Controllers
                 var payDto = new PaymentRequestDto
                 {
                     PackageId = package.PackageId,
-                    PackageName = $"{package.PackageName} ({(model.IsYearly ? "1 Năm" : "1 Tháng")})",
+                    PackageName = $"{package.PackageName} ({package.DurationDays} ngày)",
                     Amount = totalAmount,
                     OrderDescription = $"Thanh toan goi {package.PackageName} - {model.FullName}"
                 };
@@ -271,7 +271,7 @@ namespace WebGym.Controllers
 
             // 5. Lưu thông tin hiển thị tại trang thành công
             TempData["Plan"] = package.PackageName;
-            TempData["Cycle"] = model.IsYearly ? "Hàng năm" : "Hàng tháng";
+            TempData["Cycle"] = $"{package.DurationDays} ngày";
             TempData["Total"] = CheckoutViewModel.Vnd(totalAmount);
             TempData["Email"] = model.Email;
             TempData["Name"] = model.FullName;

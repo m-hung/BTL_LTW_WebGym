@@ -80,7 +80,7 @@ namespace WebGym.Data
                     Email = "quanghai@gmail.com",
                     PhoneNumber = "0987654321",
                     Role = "Member",
-                    CreatedAt = new DateTime(2026, 8, 1, 8, 0, 0, DateTimeKind.Utc)
+                    CreatedAt = new DateTime(2026, 1, 10, 8, 0, 0, DateTimeKind.Utc)
                 },
                 new User
                 {
@@ -125,6 +125,50 @@ namespace WebGym.Data
                     PhoneNumber = "0987654325",
                     Role = "Member",
                     CreatedAt = new DateTime(2026, 7, 20, 16, 45, 0, DateTimeKind.Utc)
+                },
+                new User
+                {
+                    UserId = 21,
+                    Username = "member_baongoc",
+                    PasswordHash = MemberHash,
+                    FullName = "Trần Bảo Ngọc",
+                    Email = "baongoc@gmail.com",
+                    PhoneNumber = "0987654326",
+                    Role = "Member",
+                    CreatedAt = new DateTime(2026, 2, 10, 8, 30, 0, DateTimeKind.Utc)
+                },
+                new User
+                {
+                    UserId = 22,
+                    Username = "member_hoanglong",
+                    PasswordHash = MemberHash,
+                    FullName = "Lê Hoàng Long",
+                    Email = "hoanglong@gmail.com",
+                    PhoneNumber = "0987654327",
+                    Role = "Member",
+                    CreatedAt = new DateTime(2026, 3, 5, 9, 15, 0, DateTimeKind.Utc)
+                },
+                new User
+                {
+                    UserId = 23,
+                    Username = "member_mailinh",
+                    PasswordHash = MemberHash,
+                    FullName = "Đỗ Mai Linh",
+                    Email = "mailinh@gmail.com",
+                    PhoneNumber = "0987654328",
+                    Role = "Member",
+                    CreatedAt = new DateTime(2026, 4, 1, 14, 20, 0, DateTimeKind.Utc)
+                },
+                new User
+                {
+                    UserId = 24,
+                    Username = "member_huuduc",
+                    PasswordHash = MemberHash,
+                    FullName = "Nguyễn Hữu Đức",
+                    Email = "huuduc@gmail.com",
+                    PhoneNumber = "0987654329",
+                    Role = "Member",
+                    CreatedAt = new DateTime(2026, 1, 5, 10, 0, 0, DateTimeKind.Utc)
                 }
             };
         }

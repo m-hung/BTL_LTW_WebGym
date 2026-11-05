@@ -161,6 +161,146 @@ namespace WebGym.Migrations
                             Status = "Pending",
                             TimeSlot = "18:00 - 19:30",
                             TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 21,
+                            BookingDate = new DateTime(2026, 10, 25, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 21,
+                            Notes = "Tập cơ mông đùi và cơ bụng dưới (Glutes & Core)",
+                            Status = "Completed",
+                            TimeSlot = "07:00 - 08:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 22,
+                            BookingDate = new DateTime(2026, 10, 29, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 21,
+                            Notes = "Cardio HIIT đốt mỡ toàn thân và giãn cơ",
+                            Status = "Completed",
+                            TimeSlot = "17:00 - 18:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 23,
+                            BookingDate = new DateTime(2026, 11, 4, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 21,
+                            Notes = "Tập thân trên và chỉnh form Squat nâng cao",
+                            Status = "Approved",
+                            TimeSlot = "17:00 - 18:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 24,
+                            BookingDate = new DateTime(2026, 10, 24, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 22,
+                            Notes = "Tập ngực nâng cao - Pyramid Bench Press & Incline Dumbbell",
+                            Status = "Completed",
+                            TimeSlot = "18:00 - 19:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 25,
+                            BookingDate = new DateTime(2026, 10, 28, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 22,
+                            Notes = "Tập lưng xô - Barbell Row & Lat Pulldown form check",
+                            Status = "Completed",
+                            TimeSlot = "18:00 - 19:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 26,
+                            BookingDate = new DateTime(2026, 11, 3, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 22,
+                            Notes = "Tập chân mông - Barbell Squat 100kg & Romanian Deadlift",
+                            Status = "Approved",
+                            TimeSlot = "18:00 - 19:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 27,
+                            BookingDate = new DateTime(2026, 10, 26, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 23,
+                            Notes = "Phục hồi tư thế cột sống và giải mỏi cổ vai gáy",
+                            Status = "Completed",
+                            TimeSlot = "15:30 - 17:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 28,
+                            BookingDate = new DateTime(2026, 10, 31, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 23,
+                            Notes = "Pilates tăng độ dẻo dai cơ bụng và săn chắc eo",
+                            Status = "Completed",
+                            TimeSlot = "15:30 - 17:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 29,
+                            BookingDate = new DateTime(2026, 11, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 23,
+                            Notes = "Luyện tập thân dưới và thăng bằng cơ thể",
+                            Status = "Pending",
+                            TimeSlot = "15:30 - 17:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 30,
+                            BookingDate = new DateTime(2026, 10, 27, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 24,
+                            Notes = "Tập sức mạnh toàn thân (Full Body Functional Training)",
+                            Status = "Completed",
+                            TimeSlot = "06:30 - 08:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 31,
+                            BookingDate = new DateTime(2026, 11, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 24,
+                            Notes = "Tập chuỗi bài Deadlift & Overhead Press",
+                            Status = "Completed",
+                            TimeSlot = "06:30 - 08:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 32,
+                            BookingDate = new DateTime(2026, 11, 6, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 24,
+                            Notes = "Kiểm tra thể lực định kỳ và tăng khối lượng tạ",
+                            Status = "Approved",
+                            TimeSlot = "06:30 - 08:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 33,
+                            BookingDate = new DateTime(2026, 11, 7, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 2,
+                            Notes = "Tập eo thon và cơ lưng dưới",
+                            Status = "Pending",
+                            TimeSlot = "17:30 - 19:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 34,
+                            BookingDate = new DateTime(2026, 11, 8, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 4,
+                            Notes = "Tập tăng cơ đùi và điều chỉnh tư thế bước đi",
+                            Status = "Approved",
+                            TimeSlot = "14:00 - 15:30",
+                            TrainerId = 1
                         });
                 });
 
@@ -356,6 +496,66 @@ namespace WebGym.Migrations
                             UserId = 9,
                             Waist = 80.0,
                             Weight = 73.0
+                        },
+                        new
+                        {
+                            MemberId = 21,
+                            BMR = 1320.0,
+                            BodyFatPercentage = 23.5,
+                            Chest = 85.0,
+                            DateOfBirth = new DateTime(2000, 3, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Gender = "Nữ",
+                            Height = 165.0,
+                            Hips = 90.0,
+                            MuscleMass = 21.800000000000001,
+                            UserId = 21,
+                            Waist = 65.0,
+                            Weight = 54.0
+                        },
+                        new
+                        {
+                            MemberId = 22,
+                            BMR = 1810.0,
+                            BodyFatPercentage = 24.0,
+                            Chest = 101.0,
+                            DateOfBirth = new DateTime(1996, 7, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Gender = "Nam",
+                            Height = 178.0,
+                            Hips = 98.0,
+                            MuscleMass = 35.0,
+                            UserId = 22,
+                            Waist = 86.0,
+                            Weight = 82.0
+                        },
+                        new
+                        {
+                            MemberId = 23,
+                            BMR = 1290.0,
+                            BodyFatPercentage = 22.0,
+                            Chest = 83.0,
+                            DateOfBirth = new DateTime(2002, 11, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Gender = "Nữ",
+                            Height = 160.0,
+                            Hips = 89.0,
+                            MuscleMass = 20.5,
+                            UserId = 23,
+                            Waist = 63.0,
+                            Weight = 52.5
+                        },
+                        new
+                        {
+                            MemberId = 24,
+                            BMR = 1700.0,
+                            BodyFatPercentage = 21.0,
+                            Chest = 97.0,
+                            DateOfBirth = new DateTime(1994, 9, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Gender = "Nam",
+                            Height = 172.0,
+                            Hips = 95.0,
+                            MuscleMass = 33.0,
+                            UserId = 24,
+                            Waist = 82.0,
+                            Weight = 75.0
                         });
                 });
 
@@ -523,6 +723,325 @@ namespace WebGym.Migrations
                             PaymentMethod = "Cash",
                             Status = "Failed",
                             TransactionCode = "CSH20261015112233"
+                        },
+                        new
+                        {
+                            PaymentId = 21,
+                            Amount = 500000m,
+                            MemberId = 1,
+                            PackageId = 1,
+                            PaymentDate = new DateTime(2026, 1, 15, 9, 10, 22, 0, DateTimeKind.Utc),
+                            PaymentMethod = "VNPay",
+                            Status = "Success",
+                            TransactionCode = "VNP20260115091022"
+                        },
+                        new
+                        {
+                            PaymentId = 22,
+                            Amount = 8000000m,
+                            MemberId = 24,
+                            PackageId = 4,
+                            PaymentDate = new DateTime(2026, 1, 12, 10, 30, 45, 0, DateTimeKind.Utc),
+                            PaymentMethod = "VNPay",
+                            Status = "Success",
+                            TransactionCode = "VNP20260112103045"
+                        },
+                        new
+                        {
+                            PaymentId = 23,
+                            Amount = 500000m,
+                            MemberId = 22,
+                            PackageId = 1,
+                            PaymentDate = new DateTime(2026, 1, 20, 15, 0, 0, 0, DateTimeKind.Utc),
+                            PaymentMethod = "Cash",
+                            Status = "Success",
+                            TransactionCode = "CSH20260120150000"
+                        },
+                        new
+                        {
+                            PaymentId = 24,
+                            Amount = 1300000m,
+                            MemberId = 1,
+                            PackageId = 2,
+                            PaymentDate = new DateTime(2026, 2, 15, 11, 15, 30, 0, DateTimeKind.Utc),
+                            PaymentMethod = "VNPay",
+                            Status = "Success",
+                            TransactionCode = "VNP20260215111530"
+                        },
+                        new
+                        {
+                            PaymentId = 25,
+                            Amount = 1300000m,
+                            MemberId = 21,
+                            PackageId = 2,
+                            PaymentDate = new DateTime(2026, 2, 15, 8, 40, 10, 0, DateTimeKind.Utc),
+                            PaymentMethod = "VNPay",
+                            Status = "Success",
+                            TransactionCode = "VNP20260215084010"
+                        },
+                        new
+                        {
+                            PaymentId = 26,
+                            Amount = 500000m,
+                            MemberId = 3,
+                            PackageId = 1,
+                            PaymentDate = new DateTime(2026, 2, 24, 16, 45, 0, 0, DateTimeKind.Utc),
+                            PaymentMethod = "Cash",
+                            Status = "Success",
+                            TransactionCode = "CSH20260224164500"
+                        },
+                        new
+                        {
+                            PaymentId = 27,
+                            Amount = 4500000m,
+                            MemberId = 22,
+                            PackageId = 3,
+                            PaymentDate = new DateTime(2026, 3, 12, 14, 20, 55, 0, DateTimeKind.Utc),
+                            PaymentMethod = "VNPay",
+                            Status = "Success",
+                            TransactionCode = "VNP20260312142055"
+                        },
+                        new
+                        {
+                            PaymentId = 28,
+                            Amount = 500000m,
+                            MemberId = 2,
+                            PackageId = 1,
+                            PaymentDate = new DateTime(2026, 3, 18, 9, 5, 14, 0, DateTimeKind.Utc),
+                            PaymentMethod = "VNPay",
+                            Status = "Success",
+                            TransactionCode = "VNP20260318090514"
+                        },
+                        new
+                        {
+                            PaymentId = 29,
+                            Amount = 500000m,
+                            MemberId = 5,
+                            PackageId = 1,
+                            PaymentDate = new DateTime(2026, 3, 28, 18, 30, 0, 0, DateTimeKind.Utc),
+                            PaymentMethod = "Cash",
+                            Status = "Failed",
+                            TransactionCode = "CSH20260328183000"
+                        },
+                        new
+                        {
+                            PaymentId = 30,
+                            Amount = 500000m,
+                            MemberId = 23,
+                            PackageId = 1,
+                            PaymentDate = new DateTime(2026, 4, 10, 10, 15, 0, 0, DateTimeKind.Utc),
+                            PaymentMethod = "VNPay",
+                            Status = "Success",
+                            TransactionCode = "VNP20260410101500"
+                        },
+                        new
+                        {
+                            PaymentId = 31,
+                            Amount = 500000m,
+                            MemberId = 21,
+                            PackageId = 1,
+                            PaymentDate = new DateTime(2026, 4, 18, 16, 30, 22, 0, DateTimeKind.Utc),
+                            PaymentMethod = "Cash",
+                            Status = "Success",
+                            TransactionCode = "CSH20260418163022"
+                        },
+                        new
+                        {
+                            PaymentId = 32,
+                            Amount = 1300000m,
+                            MemberId = 24,
+                            PackageId = 2,
+                            PaymentDate = new DateTime(2026, 4, 25, 11, 20, 0, 0, DateTimeKind.Utc),
+                            PaymentMethod = "VNPay",
+                            Status = "Success",
+                            TransactionCode = "VNP20260425112000"
+                        },
+                        new
+                        {
+                            PaymentId = 33,
+                            Amount = 1300000m,
+                            MemberId = 1,
+                            PackageId = 2,
+                            PaymentDate = new DateTime(2026, 5, 17, 9, 45, 0, 0, DateTimeKind.Utc),
+                            PaymentMethod = "VNPay",
+                            Status = "Success",
+                            TransactionCode = "VNP20260517094500"
+                        },
+                        new
+                        {
+                            PaymentId = 34,
+                            Amount = 4500000m,
+                            MemberId = 21,
+                            PackageId = 3,
+                            PaymentDate = new DateTime(2026, 5, 18, 10, 30, 0, 0, DateTimeKind.Utc),
+                            PaymentMethod = "VNPay",
+                            Status = "Success",
+                            TransactionCode = "VNP20260518103000"
+                        },
+                        new
+                        {
+                            PaymentId = 35,
+                            Amount = 1300000m,
+                            MemberId = 23,
+                            PackageId = 2,
+                            PaymentDate = new DateTime(2026, 5, 11, 14, 0, 0, 0, DateTimeKind.Utc),
+                            PaymentMethod = "Cash",
+                            Status = "Success",
+                            TransactionCode = "CSH20260511140000"
+                        },
+                        new
+                        {
+                            PaymentId = 36,
+                            Amount = 1300000m,
+                            MemberId = 22,
+                            PackageId = 2,
+                            PaymentDate = new DateTime(2026, 6, 20, 16, 40, 10, 0, DateTimeKind.Utc),
+                            PaymentMethod = "VNPay",
+                            Status = "Success",
+                            TransactionCode = "VNP20260620164010"
+                        },
+                        new
+                        {
+                            PaymentId = 37,
+                            Amount = 500000m,
+                            MemberId = 24,
+                            PackageId = 1,
+                            PaymentDate = new DateTime(2026, 6, 28, 11, 15, 0, 0, DateTimeKind.Utc),
+                            PaymentMethod = "Cash",
+                            Status = "Success",
+                            TransactionCode = "CSH20260628111500"
+                        },
+                        new
+                        {
+                            PaymentId = 38,
+                            Amount = 500000m,
+                            MemberId = 21,
+                            PackageId = 1,
+                            PaymentDate = new DateTime(2026, 7, 14, 15, 20, 0, 0, DateTimeKind.Utc),
+                            PaymentMethod = "VNPay",
+                            Status = "Success",
+                            TransactionCode = "VNP20260714152000"
+                        },
+                        new
+                        {
+                            PaymentId = 39,
+                            Amount = 1300000m,
+                            MemberId = 22,
+                            PackageId = 2,
+                            PaymentDate = new DateTime(2026, 7, 25, 18, 10, 30, 0, DateTimeKind.Utc),
+                            PaymentMethod = "Cash",
+                            Status = "Success",
+                            TransactionCode = "CSH20260725181030"
+                        },
+                        new
+                        {
+                            PaymentId = 40,
+                            Amount = 4500000m,
+                            MemberId = 23,
+                            PackageId = 3,
+                            PaymentDate = new DateTime(2026, 8, 10, 14, 15, 0, 0, DateTimeKind.Utc),
+                            PaymentMethod = "VNPay",
+                            Status = "Success",
+                            TransactionCode = "VNP20260810141500"
+                        },
+                        new
+                        {
+                            PaymentId = 41,
+                            Amount = 4500000m,
+                            MemberId = 24,
+                            PackageId = 3,
+                            PaymentDate = new DateTime(2026, 8, 22, 9, 30, 0, 0, DateTimeKind.Utc),
+                            PaymentMethod = "Cash",
+                            Status = "Success",
+                            TransactionCode = "CSH20260822093000"
+                        },
+                        new
+                        {
+                            PaymentId = 42,
+                            Amount = 8000000m,
+                            MemberId = 22,
+                            PackageId = 4,
+                            PaymentDate = new DateTime(2026, 9, 10, 8, 50, 0, 0, DateTimeKind.Utc),
+                            PaymentMethod = "VNPay",
+                            Status = "Success",
+                            TransactionCode = "VNP20260910085000"
+                        },
+                        new
+                        {
+                            PaymentId = 43,
+                            Amount = 1300000m,
+                            MemberId = 21,
+                            PackageId = 2,
+                            PaymentDate = new DateTime(2026, 9, 20, 17, 25, 0, 0, DateTimeKind.Utc),
+                            PaymentMethod = "Cash",
+                            Status = "Success",
+                            TransactionCode = "CSH20260920172500"
+                        },
+                        new
+                        {
+                            PaymentId = 44,
+                            Amount = 500000m,
+                            MemberId = 23,
+                            PackageId = 1,
+                            PaymentDate = new DateTime(2026, 10, 12, 11, 5, 0, 0, DateTimeKind.Utc),
+                            PaymentMethod = "VNPay",
+                            Status = "Success",
+                            TransactionCode = "VNP20261012110500"
+                        },
+                        new
+                        {
+                            PaymentId = 45,
+                            Amount = 1300000m,
+                            MemberId = 24,
+                            PackageId = 2,
+                            PaymentDate = new DateTime(2026, 10, 28, 16, 40, 0, 0, DateTimeKind.Utc),
+                            PaymentMethod = "VNPay",
+                            Status = "Success",
+                            TransactionCode = "VNP20261028164000"
+                        },
+                        new
+                        {
+                            PaymentId = 46,
+                            Amount = 1300000m,
+                            MemberId = 1,
+                            PackageId = 2,
+                            PaymentDate = new DateTime(2026, 11, 2, 9, 20, 0, 0, DateTimeKind.Utc),
+                            PaymentMethod = "VNPay",
+                            Status = "Success",
+                            TransactionCode = "VNP20261102092000"
+                        },
+                        new
+                        {
+                            PaymentId = 47,
+                            Amount = 4500000m,
+                            MemberId = 21,
+                            PackageId = 3,
+                            PaymentDate = new DateTime(2026, 11, 3, 14, 15, 0, 0, DateTimeKind.Utc),
+                            PaymentMethod = "Cash",
+                            Status = "Success",
+                            TransactionCode = "CSH20261103141500"
+                        },
+                        new
+                        {
+                            PaymentId = 48,
+                            Amount = 1300000m,
+                            MemberId = 22,
+                            PackageId = 2,
+                            PaymentDate = new DateTime(2026, 11, 4, 10, 30, 0, 0, DateTimeKind.Utc),
+                            PaymentMethod = "VNPay",
+                            Status = "Success",
+                            TransactionCode = "VNP20261104103000"
+                        },
+                        new
+                        {
+                            PaymentId = 49,
+                            Amount = 8000000m,
+                            MemberId = 23,
+                            PackageId = 4,
+                            PaymentDate = new DateTime(2026, 11, 5, 15, 45, 0, 0, DateTimeKind.Utc),
+                            PaymentMethod = "VNPay",
+                            Status = "Success",
+                            TransactionCode = "VNP20261105154500"
                         });
                 });
 
@@ -646,6 +1165,357 @@ namespace WebGym.Migrations
                             RecordedDate = new DateTime(2026, 11, 1, 9, 0, 0, 0, DateTimeKind.Utc),
                             Waist = 77.5,
                             Weight = 70.200000000000003
+                        },
+                        new
+                        {
+                            ProgressId = 21,
+                            BodyFatPercentage = 28.0,
+                            Chest = 96.0,
+                            Hips = 98.0,
+                            MemberId = 1,
+                            MuscleMass = 30.5,
+                            Notes = "Đo InBody khi mới bắt đầu tập luyện. Thể trạng nhiều mỡ thừa vùng eo, thể lực yếu.",
+                            RecordedDate = new DateTime(2026, 3, 1, 8, 30, 0, 0, DateTimeKind.Utc),
+                            Waist = 93.0,
+                            Weight = 83.0
+                        },
+                        new
+                        {
+                            ProgressId = 22,
+                            BodyFatPercentage = 26.5,
+                            Chest = 97.0,
+                            Hips = 97.0,
+                            MemberId = 1,
+                            MuscleMass = 31.199999999999999,
+                            Notes = "Tập gói cơ bản 3 tháng, giảm được 2.5kg mỡ, bắt đầu hình thành thói quen vận động.",
+                            RecordedDate = new DateTime(2026, 5, 15, 9, 0, 0, 0, DateTimeKind.Utc),
+                            Waist = 90.0,
+                            Weight = 80.5
+                        },
+                        new
+                        {
+                            ProgressId = 23,
+                            BodyFatPercentage = 17.800000000000001,
+                            Chest = 101.5,
+                            Hips = 92.0,
+                            MemberId = 1,
+                            MuscleMass = 35.0,
+                            Notes = "Vượt mục tiêu đề ra! Tỷ lệ mỡ giảm xuống 17.8%, cơ bắp sắc nét, cơ bụng lộ 6 múi.",
+                            RecordedDate = new DateTime(2026, 11, 5, 9, 15, 0, 0, DateTimeKind.Utc),
+                            Waist = 76.5,
+                            Weight = 69.5
+                        },
+                        new
+                        {
+                            ProgressId = 24,
+                            BodyFatPercentage = 24.0,
+                            Chest = 84.0,
+                            Hips = 91.0,
+                            MemberId = 2,
+                            MuscleMass = 22.5,
+                            Notes = "Đo chỉ số ban đầu. Mục tiêu giảm mỡ bụng dưới, săn chắc vòng eo và cải thiện số đo vòng 3.",
+                            RecordedDate = new DateTime(2026, 6, 15, 9, 0, 0, 0, DateTimeKind.Utc),
+                            Waist = 68.0,
+                            Weight = 56.0
+                        },
+                        new
+                        {
+                            ProgressId = 25,
+                            BodyFatPercentage = 22.199999999999999,
+                            Chest = 84.5,
+                            Hips = 92.0,
+                            MemberId = 2,
+                            MuscleMass = 23.0,
+                            Notes = "Vòng eo giảm 3cm, mông căng tròn hơn nhờ các bài Hip Thrust và Romanian Deadlift.",
+                            RecordedDate = new DateTime(2026, 8, 15, 9, 30, 0, 0, DateTimeKind.Utc),
+                            Waist = 65.0,
+                            Weight = 54.5
+                        },
+                        new
+                        {
+                            ProgressId = 26,
+                            BodyFatPercentage = 20.5,
+                            Chest = 85.0,
+                            Hips = 92.5,
+                            MemberId = 2,
+                            MuscleMass = 23.800000000000001,
+                            Notes = "Form dáng đồng hồ cát rất đẹp, cơ bụng số 11 lộ rõ, sức bền tim mạch tăng rõ rệt.",
+                            RecordedDate = new DateTime(2026, 10, 20, 10, 0, 0, 0, DateTimeKind.Utc),
+                            Waist = 63.0,
+                            Weight = 53.0
+                        },
+                        new
+                        {
+                            ProgressId = 27,
+                            BodyFatPercentage = 26.0,
+                            Chest = 102.0,
+                            Hips = 100.0,
+                            MemberId = 3,
+                            MuscleMass = 34.5,
+                            Notes = "Thể trạng thừa cân, mỡ nội tạng cao, thường xuyên mệt mỏi khi vận động mạnh.",
+                            RecordedDate = new DateTime(2026, 5, 10, 14, 0, 0, 0, DateTimeKind.Utc),
+                            Waist = 92.0,
+                            Weight = 84.0
+                        },
+                        new
+                        {
+                            ProgressId = 28,
+                            BodyFatPercentage = 23.0,
+                            Chest = 103.0,
+                            Hips = 99.0,
+                            MemberId = 3,
+                            MuscleMass = 35.5,
+                            Notes = "Giảm 3.8kg mỡ, tăng 1kg cơ nạc. Thể lực cải thiện, hoàn thành tốt các bài tập tạ nặng.",
+                            RecordedDate = new DateTime(2026, 7, 20, 14, 30, 0, 0, DateTimeKind.Utc),
+                            Waist = 87.0,
+                            Weight = 80.200000000000003
+                        },
+                        new
+                        {
+                            ProgressId = 29,
+                            BodyFatPercentage = 19.800000000000001,
+                            Chest = 105.0,
+                            Hips = 98.0,
+                            MemberId = 3,
+                            MuscleMass = 36.399999999999999,
+                            Notes = "Eo thon gọn rõ nét, cơ ngực và xô lưng phát triển ấn tượng, mức tạ Bench Press đạt 85kg.",
+                            RecordedDate = new DateTime(2026, 10, 15, 15, 0, 0, 0, DateTimeKind.Utc),
+                            Waist = 82.5,
+                            Weight = 76.799999999999997
+                        },
+                        new
+                        {
+                            ProgressId = 30,
+                            BodyFatPercentage = 21.5,
+                            Chest = 82.0,
+                            Hips = 88.0,
+                            MemberId = 4,
+                            MuscleMass = 20.0,
+                            Notes = "Thể trạng gầy, cơ bắp yếu, dễ mệt mỏi. Mục tiêu tăng cơ nạc và tăng cân lành mạnh.",
+                            RecordedDate = new DateTime(2026, 9, 5, 10, 0, 0, 0, DateTimeKind.Utc),
+                            Waist = 64.0,
+                            Weight = 49.0
+                        },
+                        new
+                        {
+                            ProgressId = 31,
+                            BodyFatPercentage = 20.5,
+                            Chest = 83.0,
+                            Hips = 89.5,
+                            MemberId = 4,
+                            MuscleMass = 21.300000000000001,
+                            Notes = "Tăng 1.3kg chủ yếu là cơ nạc, cơ thể có sức sống hơn, thể lực cải thiện rõ rệt.",
+                            RecordedDate = new DateTime(2026, 10, 10, 10, 30, 0, 0, DateTimeKind.Utc),
+                            Waist = 63.5,
+                            Weight = 50.299999999999997
+                        },
+                        new
+                        {
+                            ProgressId = 32,
+                            BodyFatPercentage = 20.0,
+                            Chest = 83.5,
+                            Hips = 90.5,
+                            MemberId = 4,
+                            MuscleMass = 22.100000000000001,
+                            Notes = "Vóc dáng cân đối, săn chắc, vòng 3 nở nang tự nhiên, hoàn thành giáo án xuất sắc.",
+                            RecordedDate = new DateTime(2026, 11, 2, 11, 0, 0, 0, DateTimeKind.Utc),
+                            Waist = 63.0,
+                            Weight = 51.200000000000003
+                        },
+                        new
+                        {
+                            ProgressId = 33,
+                            BodyFatPercentage = 19.0,
+                            Chest = 96.0,
+                            Hips = 94.0,
+                            MemberId = 5,
+                            MuscleMass = 33.0,
+                            Notes = "Mục tiêu duy trì thể lực, rèn luyện sức bền và tăng độ nét cơ bắp toàn thân.",
+                            RecordedDate = new DateTime(2026, 7, 20, 16, 30, 0, 0, DateTimeKind.Utc),
+                            Waist = 80.0,
+                            Weight = 73.0
+                        },
+                        new
+                        {
+                            ProgressId = 34,
+                            BodyFatPercentage = 17.199999999999999,
+                            Chest = 98.0,
+                            Hips = 94.0,
+                            MemberId = 5,
+                            MuscleMass = 34.200000000000003,
+                            Notes = "Cơ vai và bắp tay cắt nét rõ, sức bền chạy bộ 5km đạt thời gian 24 phút.",
+                            RecordedDate = new DateTime(2026, 9, 15, 17, 0, 0, 0, DateTimeKind.Utc),
+                            Waist = 78.0,
+                            Weight = 72.400000000000006
+                        },
+                        new
+                        {
+                            ProgressId = 35,
+                            BodyFatPercentage = 16.0,
+                            Chest = 99.5,
+                            Hips = 93.5,
+                            MemberId = 5,
+                            MuscleMass = 35.0,
+                            Notes = "Chỉ số cơ thể chuẩn vận động viên thể hình, múi bụng săn chắc, sức đẩy cực khỏe.",
+                            RecordedDate = new DateTime(2026, 10, 28, 17, 30, 0, 0, DateTimeKind.Utc),
+                            Waist = 76.5,
+                            Weight = 71.799999999999997
+                        },
+                        new
+                        {
+                            ProgressId = 36,
+                            BodyFatPercentage = 23.5,
+                            Chest = 85.0,
+                            Hips = 90.0,
+                            MemberId = 21,
+                            MuscleMass = 21.800000000000001,
+                            Notes = "Buổi kiểm tra thể lực đầu vào. Cơ địa linh hoạt nhưng cơ lưng và cơ mông còn yếu.",
+                            RecordedDate = new DateTime(2026, 2, 15, 9, 0, 0, 0, DateTimeKind.Utc),
+                            Waist = 65.0,
+                            Weight = 54.0
+                        },
+                        new
+                        {
+                            ProgressId = 37,
+                            BodyFatPercentage = 21.199999999999999,
+                            Chest = 85.5,
+                            Hips = 91.0,
+                            MemberId = 21,
+                            MuscleMass = 22.699999999999999,
+                            Notes = "Vòng eo giảm 2.5cm, mông đẩy cao săn chắc, thích nghi rất tốt với các bài tập kháng lực.",
+                            RecordedDate = new DateTime(2026, 5, 20, 9, 30, 0, 0, DateTimeKind.Utc),
+                            Waist = 62.5,
+                            Weight = 52.799999999999997
+                        },
+                        new
+                        {
+                            ProgressId = 38,
+                            BodyFatPercentage = 19.800000000000001,
+                            Chest = 86.0,
+                            Hips = 92.0,
+                            MemberId = 21,
+                            MuscleMass = 23.300000000000001,
+                            Notes = "Hình thể chuẩn người mẫu fitness, hoàn thành xuất sắc giáo án tập luyện kèm PT Nhật.",
+                            RecordedDate = new DateTime(2026, 8, 30, 10, 0, 0, 0, DateTimeKind.Utc),
+                            Waist = 61.0,
+                            Weight = 52.0
+                        },
+                        new
+                        {
+                            ProgressId = 39,
+                            BodyFatPercentage = 24.0,
+                            Chest = 101.0,
+                            Hips = 98.0,
+                            MemberId = 22,
+                            MuscleMass = 35.0,
+                            Notes = "Mục tiêu siết mỡ bụng và phát triển cơ ngực, vai, lưng xô chữ V.",
+                            RecordedDate = new DateTime(2026, 3, 10, 10, 0, 0, 0, DateTimeKind.Utc),
+                            Waist = 86.0,
+                            Weight = 82.0
+                        },
+                        new
+                        {
+                            ProgressId = 40,
+                            BodyFatPercentage = 20.800000000000001,
+                            Chest = 103.5,
+                            Hips = 97.0,
+                            MemberId = 22,
+                            MuscleMass = 36.299999999999997,
+                            Notes = "Giảm hơn 3kg mỡ, cơ ngực nở rộng, hoàn thành bài Deadlift 120kg đúng kỹ thuật.",
+                            RecordedDate = new DateTime(2026, 6, 15, 10, 30, 0, 0, DateTimeKind.Utc),
+                            Waist = 82.0,
+                            Weight = 78.799999999999997
+                        },
+                        new
+                        {
+                            ProgressId = 41,
+                            BodyFatPercentage = 17.5,
+                            Chest = 105.5,
+                            Hips = 96.5,
+                            MemberId = 22,
+                            MuscleMass = 37.600000000000001,
+                            Notes = "Lưng chữ V cực kỳ rõ nét, bắp tay cuồn cuộn, nâng cấp thành công lên gói Kim Cương.",
+                            RecordedDate = new DateTime(2026, 10, 5, 11, 0, 0, 0, DateTimeKind.Utc),
+                            Waist = 78.5,
+                            Weight = 76.200000000000003
+                        },
+                        new
+                        {
+                            ProgressId = 42,
+                            BodyFatPercentage = 22.0,
+                            Chest = 83.0,
+                            Hips = 89.0,
+                            MemberId = 23,
+                            MuscleMass = 20.5,
+                            Notes = "Dân văn phòng ngồi nhiều, cơ cổ vai gáy căng cứng, bụng dưới tích mỡ nhẹ.",
+                            RecordedDate = new DateTime(2026, 4, 5, 14, 0, 0, 0, DateTimeKind.Utc),
+                            Waist = 63.0,
+                            Weight = 52.5
+                        },
+                        new
+                        {
+                            ProgressId = 43,
+                            BodyFatPercentage = 20.300000000000001,
+                            Chest = 83.5,
+                            Hips = 89.5,
+                            MemberId = 23,
+                            MuscleMass = 21.399999999999999,
+                            Notes = "Hết hẳn triệu chứng đau mỏi vai gáy, tư thế đi đứng thẳng thớm và tự tin hơn.",
+                            RecordedDate = new DateTime(2026, 7, 10, 14, 30, 0, 0, DateTimeKind.Utc),
+                            Waist = 61.200000000000003,
+                            Weight = 51.399999999999999
+                        },
+                        new
+                        {
+                            ProgressId = 44,
+                            BodyFatPercentage = 19.199999999999999,
+                            Chest = 84.0,
+                            Hips = 90.0,
+                            MemberId = 23,
+                            MuscleMass = 22.199999999999999,
+                            Notes = "Vòng eo 60cm săn chắc thon gọn, sức khỏe dẻo dai, rất yêu thích tập luyện tại phòng gym.",
+                            RecordedDate = new DateTime(2026, 10, 25, 15, 0, 0, 0, DateTimeKind.Utc),
+                            Waist = 60.0,
+                            Weight = 50.600000000000001
+                        },
+                        new
+                        {
+                            ProgressId = 45,
+                            BodyFatPercentage = 21.0,
+                            Chest = 97.0,
+                            Hips = 95.0,
+                            MemberId = 24,
+                            MuscleMass = 33.0,
+                            Notes = "Đăng ký gói VVIP Kim Cương 1 năm. Khởi đầu với quyết tâm rèn luyện sức khỏe bền vững.",
+                            RecordedDate = new DateTime(2026, 1, 10, 10, 0, 0, 0, DateTimeKind.Utc),
+                            Waist = 82.0,
+                            Weight = 75.0
+                        },
+                        new
+                        {
+                            ProgressId = 46,
+                            BodyFatPercentage = 18.199999999999999,
+                            Chest = 99.200000000000003,
+                            Hips = 94.5,
+                            MemberId = 24,
+                            MuscleMass = 34.299999999999997,
+                            Notes = "Giảm 3.5cm vòng eo, cơ ngực săn chắc, sức bền bứt phá trong các buổi tập functional.",
+                            RecordedDate = new DateTime(2026, 5, 12, 10, 30, 0, 0, DateTimeKind.Utc),
+                            Waist = 78.5,
+                            Weight = 73.200000000000003
+                        },
+                        new
+                        {
+                            ProgressId = 47,
+                            BodyFatPercentage = 16.199999999999999,
+                            Chest = 101.0,
+                            Hips = 94.0,
+                            MemberId = 24,
+                            MuscleMass = 35.200000000000003,
+                            Notes = "Tập luyện đều đặn suốt 9 tháng, chỉ số InBody tiệm cận chuẩn vận động viên.",
+                            RecordedDate = new DateTime(2026, 9, 22, 11, 0, 0, 0, DateTimeKind.Utc),
+                            Waist = 76.5,
+                            Weight = 72.0
                         });
                 });
 
@@ -775,6 +1645,127 @@ namespace WebGym.Migrations
                             PackageId = 2,
                             PaidAmount = 1300000m,
                             StartDate = new DateTime(2026, 10, 6, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Status = "Active"
+                        },
+                        new
+                        {
+                            SubscriptionId = 21,
+                            EndDate = new DateTime(2026, 2, 14, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 1,
+                            OriginalPrice = 500000m,
+                            PackageId = 1,
+                            PaidAmount = 500000m,
+                            StartDate = new DateTime(2026, 1, 15, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Status = "Expired"
+                        },
+                        new
+                        {
+                            SubscriptionId = 22,
+                            EndDate = new DateTime(2026, 5, 16, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 1,
+                            OriginalPrice = 1300000m,
+                            PackageId = 2,
+                            PaidAmount = 1300000m,
+                            StartDate = new DateTime(2026, 2, 15, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Status = "Expired"
+                        },
+                        new
+                        {
+                            SubscriptionId = 23,
+                            EndDate = new DateTime(2026, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 1,
+                            OriginalPrice = 1300000m,
+                            PackageId = 2,
+                            PaidAmount = 1300000m,
+                            StartDate = new DateTime(2026, 5, 17, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Status = "Expired"
+                        },
+                        new
+                        {
+                            SubscriptionId = 24,
+                            EndDate = new DateTime(2026, 5, 16, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 21,
+                            OriginalPrice = 1300000m,
+                            PackageId = 2,
+                            PaidAmount = 1300000m,
+                            StartDate = new DateTime(2026, 2, 15, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Status = "Expired"
+                        },
+                        new
+                        {
+                            SubscriptionId = 25,
+                            EndDate = new DateTime(2026, 11, 14, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 21,
+                            OriginalPrice = 4500000m,
+                            PackageId = 3,
+                            PaidAmount = 4500000m,
+                            StartDate = new DateTime(2026, 5, 18, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Status = "Active"
+                        },
+                        new
+                        {
+                            SubscriptionId = 26,
+                            EndDate = new DateTime(2026, 9, 8, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 22,
+                            OriginalPrice = 4500000m,
+                            PackageId = 3,
+                            PaidAmount = 4500000m,
+                            StartDate = new DateTime(2026, 3, 12, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Status = "Expired"
+                        },
+                        new
+                        {
+                            SubscriptionId = 27,
+                            EndDate = new DateTime(2027, 9, 10, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 22,
+                            OriginalPrice = 8000000m,
+                            PackageId = 4,
+                            PaidAmount = 8000000m,
+                            StartDate = new DateTime(2026, 9, 10, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Status = "Active"
+                        },
+                        new
+                        {
+                            SubscriptionId = 28,
+                            EndDate = new DateTime(2026, 5, 10, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 23,
+                            OriginalPrice = 500000m,
+                            PackageId = 1,
+                            PaidAmount = 500000m,
+                            StartDate = new DateTime(2026, 4, 10, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Status = "Expired"
+                        },
+                        new
+                        {
+                            SubscriptionId = 29,
+                            EndDate = new DateTime(2026, 8, 9, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 23,
+                            OriginalPrice = 1300000m,
+                            PackageId = 2,
+                            PaidAmount = 1300000m,
+                            StartDate = new DateTime(2026, 5, 11, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Status = "Expired"
+                        },
+                        new
+                        {
+                            SubscriptionId = 30,
+                            EndDate = new DateTime(2027, 2, 6, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 23,
+                            OriginalPrice = 4500000m,
+                            PackageId = 3,
+                            PaidAmount = 4500000m,
+                            StartDate = new DateTime(2026, 8, 10, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Status = "Active"
+                        },
+                        new
+                        {
+                            SubscriptionId = 31,
+                            EndDate = new DateTime(2027, 1, 12, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 24,
+                            OriginalPrice = 8000000m,
+                            PackageId = 4,
+                            PaidAmount = 8000000m,
+                            StartDate = new DateTime(2026, 1, 12, 0, 0, 0, 0, DateTimeKind.Utc),
                             Status = "Active"
                         });
                 });
@@ -932,7 +1923,7 @@ namespace WebGym.Migrations
                         new
                         {
                             UserId = 5,
-                            CreatedAt = new DateTime(2026, 8, 1, 8, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedAt = new DateTime(2026, 1, 10, 8, 0, 0, 0, DateTimeKind.Utc),
                             Email = "quanghai@gmail.com",
                             FullName = "Nguyễn Quang Hải",
                             PasswordHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=",
@@ -983,6 +1974,50 @@ namespace WebGym.Migrations
                             PhoneNumber = "0987654325",
                             Role = "Member",
                             Username = "member_hoangnam"
+                        },
+                        new
+                        {
+                            UserId = 21,
+                            CreatedAt = new DateTime(2026, 2, 10, 8, 30, 0, 0, DateTimeKind.Utc),
+                            Email = "baongoc@gmail.com",
+                            FullName = "Trần Bảo Ngọc",
+                            PasswordHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=",
+                            PhoneNumber = "0987654326",
+                            Role = "Member",
+                            Username = "member_baongoc"
+                        },
+                        new
+                        {
+                            UserId = 22,
+                            CreatedAt = new DateTime(2026, 3, 5, 9, 15, 0, 0, DateTimeKind.Utc),
+                            Email = "hoanglong@gmail.com",
+                            FullName = "Lê Hoàng Long",
+                            PasswordHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=",
+                            PhoneNumber = "0987654327",
+                            Role = "Member",
+                            Username = "member_hoanglong"
+                        },
+                        new
+                        {
+                            UserId = 23,
+                            CreatedAt = new DateTime(2026, 4, 1, 14, 20, 0, 0, DateTimeKind.Utc),
+                            Email = "mailinh@gmail.com",
+                            FullName = "Đỗ Mai Linh",
+                            PasswordHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=",
+                            PhoneNumber = "0987654328",
+                            Role = "Member",
+                            Username = "member_mailinh"
+                        },
+                        new
+                        {
+                            UserId = 24,
+                            CreatedAt = new DateTime(2026, 1, 5, 10, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "huuduc@gmail.com",
+                            FullName = "Nguyễn Hữu Đức",
+                            PasswordHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=",
+                            PhoneNumber = "0987654329",
+                            Role = "Member",
+                            Username = "member_huuduc"
                         });
                 });
 

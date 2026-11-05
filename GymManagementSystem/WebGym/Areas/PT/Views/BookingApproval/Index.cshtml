@@ -1,93 +1,88 @@
 @model IEnumerable<WebGym.Models.Entities.Booking>
 @{
-    ViewData["Title"] = "Duyệt Yêu Cầu Đặt Lịch";
+    ViewData["Title"] = "Yêu cầu đặt lịch";
     var pendingList = Model?.ToList() ?? new List<WebGym.Models.Entities.Booking>();
+    var now = DateTime.Now;
+    var lateCount = pendingList.Count(b => CoachUi.EndAt(b.BookingDate, b.TimeSlot) < now);
 }
 
-<div class="portal-card p-4">
-    <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-secondary border-opacity-25">
-        <div>
-            <h3 class="portal-title-accent fs-3 mb-0">YÊU CẦU ĐẶT LỊCH <span>CHỜ DUYỆT</span></h3>
-            <div style="color: #a6ada2; font-size: 13.5px;" class="mt-1">
-                Tiếp nhận và sắp xếp thời gian biểu phù hợp trước khi xác nhận ca tập chính thức cho học viên
-            </div>
-        </div>
-        <span class="portal-badge" style="background: rgba(245, 176, 65, 0.16); color: #f5b041; border: 1px solid rgba(245, 176, 65, 0.35);">
-            Đang chờ: @pendingList.Count yêu cầu
-        </span>
-    </div>
+@section TopActions {
+    <a class="cx-btn cx-btn--ghost" asp-controller="Schedule" asp-action="Index">Xem lịch dạy</a>
+}
 
-    <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-            <thead>
-                <tr>
-                    <th style="color: #cfd5ca !important;">HỌC VIÊN</th>
-                    <th style="color: #cfd5ca !important;">NGÀY ĐẶT</th>
-                    <th style="color: #cfd5ca !important;">KHUNG GIỜ</th>
-                    <th style="color: #cfd5ca !important;">GHI CHÚ MỤC TIÊU</th>
-                    <th class="text-end" style="color: #cfd5ca !important;">THAO TÁC</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (pendingList.Any())
-                {
-                    foreach (var b in pendingList)
-                    {
-                        <tr>
-                            <td>
-                                <div>
-                                    <strong class="d-block" style="color: #f2f5ef; font-size: 15px;">@b.Member.User.FullName</strong>
-                                    <small style="color: #a6ada2;">@(b.Member.User.PhoneNumber ?? b.Member.User.Email)</small>
-                                </div>
-                            </td>
-                            <td>
-                                <strong style="color: #e5eae0; font-family: var(--portal-display); font-size: 17px; letter-spacing: 0.03em;">
-                                    @b.BookingDate.ToString("dd/MM/yyyy")
-                                </strong>
-                            </td>
-                            <td>
-                                <span class="badge" style="background: rgba(255,255,255,0.05); border: 1px solid var(--portal-line); color: #dce1d8; font-weight: normal; padding: 6px 10px;">
-                                    @b.TimeSlot
-                                </span>
-                            </td>
-                            <td>
-                                <span style="color: #b5bcaf; font-size: 13.5px; line-height: 1.5; display: inline-block; max-width: 300px;">
-                                    @(string.IsNullOrEmpty(b.Notes) ? "Học viên không để lại ghi chú" : b.Notes)
-                                </span>
-                            </td>
-                            <td class="text-end">
-                                <div class="d-inline-flex gap-2">
-                                    <form asp-action="Approve" asp-route-id="@b.BookingId" method="post" class="d-inline">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn-pulse-primary btn-sm py-1 px-3" style="font-size: 13px;">
-                                            Duyệt
-                                        </button>
-                                    </form>
-                                    <form asp-action="Reject" asp-route-id="@b.BookingId" method="post" class="d-inline">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn-pulse-outline btn-sm py-1 px-3" 
-                                                style="color: #ff6b6b; border-color: rgba(255, 107, 107, 0.4); font-size: 13px;" 
-                                                onclick="return confirm('Bạn có chắc chắn muốn từ chối yêu cầu đặt lịch này?');">
-                                            Từ Chối
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                }
-                else
-                {
-                    <tr>
-                        <td colspan="5" class="text-center py-5">
-                            <div class="py-4">
-                                <h5 class="portal-stat-val fs-5 mt-3" style="color: #b0b7ad;">KHÔNG CÓ YÊU CẦU NÀO ĐANG CHỜ</h5>
-                                <p class="small mb-0" style="color: #a0a79c;">Tất cả các ca tập đã được xử lý hoặc học viên chưa gửi yêu cầu mới.</p>
-                            </div>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
+<section class="cx-panel" aria-labelledby="cxReqTitle">
+    <header class="cx-panel-head">
+        <div>
+            <h2 class="cx-h2" id="cxReqTitle">
+                @(pendingList.Count == 0 ? "Không có yêu cầu nào" : $"{pendingList.Count} yêu cầu đang chờ bạn")
+            </h2>
+            <p class="cx-sub">Duyệt để xác nhận ca tập với học viên, hoặc từ chối kèm lý do để học viên chọn giờ khác.</p>
+        </div>
+        @if (lateCount > 0)
+        {
+            <p class="cx-flag">@lateCount yêu cầu đã quá giờ tập</p>
+        }
+    </header>
+
+    @if (pendingList.Any())
+    {
+        <ul class="cx-reqs">
+            @foreach (var b in pendingList)
+            {
+                var late = CoachUi.EndAt(b.BookingDate, b.TimeSlot) < now;
+                var reasonId = $"reason-{b.BookingId}";
+                <li class="cx-req @(late ? "is-late" : "")">
+                    <span class="cx-date cx-date--lg">
+                        <b>@b.BookingDate.ToString("dd")</b>
+                        <small>@CoachUi.DayShort(b.BookingDate)</small>
+                        <small>@($"Th{b.BookingDate.Month}")</small>
+                    </span>
+
+                    <div class="cx-req-main">
+                        <p class="cx-req-when">
+                            <strong>@CoachUi.SlotText(b.TimeSlot)</strong>
+                            <span class="@(late ? "cx-late" : "cx-soon")">@(late ? "Đã quá giờ tập" : CoachUi.RelativeDay(b.BookingDate))</span>
+                        </p>
+                        <div class="cx-req-who">
+                            <span class="cx-avatar cx-avatar--sm" aria-hidden="true">@CoachUi.Initials(b.Member.User.FullName)</span>
+                            <span>
+                                <strong>@b.Member.User.FullName</strong>
+                                <small>@(b.Member.User.PhoneNumber ?? b.Member.User.Email)</small>
+                            </span>
+                        </div>
+                        @if (!string.IsNullOrWhiteSpace(b.Notes))
+                        {
+                            <blockquote class="cx-quote">@b.Notes</blockquote>
+                        }
+                        else
+                        {
+                            <p class="cx-quote cx-quote--none">Học viên không để lại ghi chú.</p>
+                        }
+                    </div>
+
+                    <div class="cx-req-act">
+                        <form asp-action="Approve" asp-route-id="@b.BookingId" method="post">
+                            <button type="submit" class="cx-btn">Duyệt ca này</button>
+                        </form>
+
+                        <details class="cx-reject">
+                            <summary class="cx-btn cx-btn--danger">Từ chối</summary>
+                            <form asp-action="Reject" asp-route-id="@b.BookingId" method="post" class="cx-reject-form">
+                                <label for="@reasonId">Lý do gửi cho học viên</label>
+                                <textarea id="@reasonId" name="reason" rows="2" maxlength="250" placeholder="Ví dụ: Khung giờ này tôi đã kín lịch, bạn chọn 17:30–19:00 nhé."></textarea>
+                                <button type="submit" class="cx-btn cx-btn--danger-solid">Xác nhận từ chối</button>
+                            </form>
+                        </details>
+                    </div>
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <div class="cx-empty">
+            <p><strong>Bạn đã xử lý hết yêu cầu.</strong> Khi học viên đặt lịch mới với bạn, yêu cầu sẽ hiện ở đây và số lượng sẽ hiện cạnh mục Yêu cầu đặt lịch trên menu.</p>
+            <a class="cx-btn cx-btn--ghost" asp-controller="Schedule" asp-action="Index">Về lịch dạy</a>
+        </div>
+    }
+</section>

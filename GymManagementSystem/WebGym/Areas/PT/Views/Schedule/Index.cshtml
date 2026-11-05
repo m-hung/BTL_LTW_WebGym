@@ -1,171 +1,280 @@
 @model IEnumerable<WebGym.Models.DTOs.Trainer.TrainerScheduleDto>
+@using System.Globalization
 @{
-    ViewData["Title"] = "Lịch Dạy Huấn Luyện Viên";
-    var scheduleList = Model?.ToList() ?? new List<WebGym.Models.DTOs.Trainer.TrainerScheduleDto>();
-    var totalSessions = scheduleList.Count;
-    var approvedSessions = scheduleList.Count(s => s.Status == "Approved");
-    var pendingSessions = scheduleList.Count(s => s.Status == "Pending");
-    var completedSessions = scheduleList.Count(s => s.Status == "Completed");
+    ViewData["Title"] = "Lịch dạy";
+    var all = Model?.ToList() ?? new List<WebGym.Models.DTOs.Trainer.TrainerScheduleDto>();
+    var now = DateTime.Now;
+    var today = DateTime.Today;
+    var coachFirstName = CoachUi.FirstName(User.Identity?.Name);
+
+    // Ca chưa kết thúc (đã xác nhận hoặc đang chờ duyệt), sắp theo thời gian
+    var upcoming = all
+        .Where(s => (s.Status == "Approved" || s.Status == "Pending") && CoachUi.EndAt(s.BookingDate, s.TimeSlot) >= now)
+        .OrderBy(s => CoachUi.StartAt(s.BookingDate, s.TimeSlot))
+        .ToList();
+    var next = upcoming.FirstOrDefault(s => s.Status == "Approved");
+    var nextPending = upcoming.FirstOrDefault(s => s.Status == "Pending");
+
+    var upcomingApproved = upcoming.Count(s => s.Status == "Approved");
+    var pendingTotal = all.Count(s => s.Status == "Pending");
+    var completedTotal = all.Count(s => s.Status == "Completed");
+    var memberTotal = all.Select(s => s.MemberName).Distinct().Count();
+
+    // Danh sách đầy đủ: ca sắp tới (gần nhất trước), rồi ca đã qua (mới nhất trước)
+    var ordered = upcoming
+        .Concat(all.Except(upcoming).OrderByDescending(s => CoachUi.StartAt(s.BookingDate, s.TimeSlot)))
+        .ToList();
+
+    var week = Enumerable.Range(0, 7).Select(i => today.AddDays(i)).ToList();
+
+    // Thước thời gian hôm nay: giờ mở cửa 05:00 - 23:00
+    var inv = CultureInfo.InvariantCulture;
+    var openAt = today.AddHours(5);
+    var closeAt = today.AddHours(23);
+    var dayMinutes = (closeAt - openAt).TotalMinutes;
+    string Pct(DateTime t) => Math.Clamp((t - openAt).TotalMinutes / dayMinutes * 100, 0, 100).ToString("0.##", inv);
+    var todaySessions = all
+        .Where(s => s.BookingDate.Date == today && s.Status != "Cancelled")
+        .OrderBy(s => CoachUi.SlotStart(s.TimeSlot))
+        .ToList();
+
+    void Dayline()
+    {
+        <div class="cx-dayline">
+            <p class="cx-dayline-label">
+                Hôm nay
+                <span>@(todaySessions.Count == 0 ? "không có ca nào" : $"{todaySessions.Count} ca")</span>
+            </p>
+            <div class="cx-dayline-track" role="img" aria-label="Các ca hôm nay theo giờ, từ 05:00 đến 23:00">
+                @foreach (var s in todaySessions)
+                {
+                    var from = CoachUi.StartAt(s.BookingDate, s.TimeSlot);
+                    var to = CoachUi.EndAt(s.BookingDate, s.TimeSlot);
+                    var st = CoachUi.SessionState(s.Status, s.BookingDate, s.TimeSlot);
+                    var width = Math.Max((to - from).TotalMinutes / dayMinutes * 100, 1.5).ToString("0.##", inv);
+                    <span class="cx-dl-block cx-dl-block--@st.Css" style="left:@Pct(from)%;width:@width%" title="@CoachUi.SlotText(s.TimeSlot) @s.MemberName (@st.Label)"></span>
+                }
+                @if (now > openAt && now < closeAt)
+                {
+                    <span class="cx-dl-now" style="left:@Pct(now)%"><b>@now.ToString("HH:mm")</b></span>
+                }
+            </div>
+            <ol class="cx-dayline-ticks" aria-hidden="true">
+                @for (var h = 5; h <= 23; h += 3)
+                {
+                    <li style="left:@Pct(today.AddHours(h))%">@($"{h:00}:00")</li>
+                }
+            </ol>
+        </div>
+    }
 }
 
-<!-- Summary Stat Cards -->
-<div class="row g-3 mb-4">
-    <div class="col-sm-6 col-lg-3">
-        <div class="portal-stat-card">
-            <div class="portal-stat-label" style="color: #b5bcaf;">
-                <span>TỔNG CA TẬP</span>
-            </div>
-            <div class="portal-stat-val" style="color: #f2f5ef;">
-                @totalSessions <span style="font-size: 14px; color: #9aa296; font-family: var(--portal-body); font-weight: normal;">buổi</span>
-            </div>
-            <div class="portal-stat-sub" style="color: #a0a79c;">Toàn bộ lịch đã đăng ký</div>
+@section TopActions {
+    <a class="cx-btn cx-btn--ghost" asp-controller="AssignedMembers" asp-action="Index">Học viên của tôi</a>
+    @if (pendingTotal > 0)
+    {
+        <a class="cx-btn" asp-controller="BookingApproval" asp-action="Index">Duyệt @pendingTotal yêu cầu</a>
+    }
+}
+
+<div class="cx-overview">
+<!-- Ca tiếp theo: thứ đầu tiên HLV cần biết khi mở trang -->
+@if (next != null)
+{
+    var start = CoachUi.StartAt(next.BookingDate, next.TimeSlot);
+    var live = start <= now;
+    <section class="cx-next" aria-labelledby="cxNextTitle">
+        <div class="cx-next-time">
+            <span class="cx-next-clock">@CoachUi.SlotStart(next.TimeSlot).ToString("hh\\:mm")</span>
+            <span class="cx-next-day">@CoachUi.RelativeDay(next.BookingDate)</span>
         </div>
-    </div>
-    <div class="col-sm-6 col-lg-3">
-        <div class="portal-stat-card">
-            <div class="portal-stat-label" style="color: #b5bcaf;">
-                <span>ĐÃ XÁC NHẬN</span>
-            </div>
-            <div class="portal-stat-val" style="color: var(--portal-lime);">
-                @approvedSessions <span style="font-size: 14px; color: #9aa296; font-family: var(--portal-body); font-weight: normal;">buổi</span>
-            </div>
-            <div class="portal-stat-sub" style="color: #a0a79c;">Lịch dạy chính thức sẵn sàng</div>
-        </div>
-    </div>
-    <div class="col-sm-6 col-lg-3">
-        <div class="portal-stat-card">
-            <div class="portal-stat-label" style="color: #b5bcaf;">
-                <span>CHỜ DUYỆT</span>
-            </div>
-            <div class="portal-stat-val" style="color: #f5b041;">
-                @pendingSessions <span style="font-size: 14px; color: #9aa296; font-family: var(--portal-body); font-weight: normal;">yêu cầu</span>
-            </div>
-            <div class="portal-stat-sub" style="color: #a0a79c;">
-                @if (pendingSessions > 0)
+        <div class="cx-next-body">
+            <p class="cx-next-kicker" id="cxNextTitle">@(live ? "Đang diễn ra" : "Ca dạy tiếp theo")</p>
+            <h2 class="cx-next-name">@next.MemberName</h2>
+            <p class="cx-next-meta">
+                @CoachUi.DayLong(next.BookingDate), @next.BookingDate.ToString("dd/MM")
+                <span class="cx-sep" aria-hidden="true"></span>
+                @CoachUi.SlotText(next.TimeSlot)
+                @if (!string.IsNullOrEmpty(next.MemberPhone))
                 {
-                    <a asp-controller="BookingApproval" asp-action="Index" style="color: #f5b041; text-decoration: underline;">
-                        Xem và duyệt ngay
-                    </a>
+                    <span class="cx-sep" aria-hidden="true"></span>
+                    <a href="tel:@next.MemberPhone">@next.MemberPhone</a>
                 }
-                else
-                {
-                    <span>Không có yêu cầu tồn đọng</span>
-                }
-            </div>
+            </p>
+            @if (!string.IsNullOrWhiteSpace(next.Notes))
+            {
+                <p class="cx-next-note">“@next.Notes”</p>
+            }
         </div>
-    </div>
-    <div class="col-sm-6 col-lg-3">
-        <div class="portal-stat-card">
-            <div class="portal-stat-label" style="color: #b5bcaf;">
-                <span>HOÀN THÀNH</span>
-            </div>
-            <div class="portal-stat-val" style="color: #48cae4;">
-                @completedSessions <span style="font-size: 14px; color: #9aa296; font-family: var(--portal-body); font-weight: normal;">buổi</span>
-            </div>
-            <div class="portal-stat-sub" style="color: #a0a79c;">Ca huấn luyện thành công</div>
+        <p class="cx-next-count">@(live ? "Học viên đang tập" : CoachUi.Countdown(start))</p>
+        @{ Dayline(); }
+    </section>
+}
+else if (nextPending != null)
+{
+    <section class="cx-next cx-next--wait" aria-labelledby="cxNextTitle">
+        <div class="cx-next-time">
+            <span class="cx-next-clock">@CoachUi.SlotStart(nextPending.TimeSlot).ToString("hh\\:mm")</span>
+            <span class="cx-next-day">@CoachUi.RelativeDay(nextPending.BookingDate)</span>
         </div>
+        <div class="cx-next-body">
+            <p class="cx-next-kicker" id="cxNextTitle">Chưa có ca nào được xác nhận</p>
+            <h2 class="cx-next-name">@nextPending.MemberName đang chờ bạn duyệt</h2>
+            <p class="cx-next-meta">
+                @CoachUi.DayLong(nextPending.BookingDate), @nextPending.BookingDate.ToString("dd/MM")
+                <span class="cx-sep" aria-hidden="true"></span>
+                @CoachUi.SlotText(nextPending.TimeSlot)
+            </p>
+        </div>
+        <a class="cx-btn" asp-controller="BookingApproval" asp-action="Index">Xem yêu cầu</a>
+        @{ Dayline(); }
+    </section>
+}
+else
+{
+    <section class="cx-next cx-next--empty">
+        <div class="cx-next-body">
+            <p class="cx-next-kicker">Lịch đang trống</p>
+            <h2 class="cx-next-name">Chào @coachFirstName, chưa có ca nào sắp tới</h2>
+            <p class="cx-next-meta">Khi học viên đặt lịch với bạn, yêu cầu sẽ hiện ở mục Yêu cầu đặt lịch để bạn duyệt.</p>
+        </div>
+        @{ Dayline(); }
+    </section>
+}
+
+<!-- Số liệu nhanh -->
+<dl class="cx-stats">
+    <div class="cx-stat">
+        <dt>Ca sắp tới đã xác nhận</dt>
+        <dd>@upcomingApproved</dd>
     </div>
+    <div class="cx-stat @(pendingTotal > 0 ? "cx-stat--wait" : "")">
+        <dt>Yêu cầu chờ duyệt</dt>
+        <dd>
+            @if (pendingTotal > 0)
+            {
+                <a asp-controller="BookingApproval" asp-action="Index">@pendingTotal</a>
+            }
+            else
+            {
+                @pendingTotal
+            }
+        </dd>
+    </div>
+    <div class="cx-stat">
+        <dt>Buổi đã hoàn thành</dt>
+        <dd>@completedTotal</dd>
+    </div>
+    <div class="cx-stat">
+        <dt>Học viên từng tập cùng bạn</dt>
+        <dd>@memberTotal</dd>
+    </div>
+</dl>
+
 </div>
 
-<!-- Schedule Details Table -->
-<div class="portal-card p-4">
-    <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-secondary border-opacity-25">
-        <div>
-            <h3 class="portal-title-accent fs-3 mb-0">LỊCH DẠY <span>CÁ NHÂN</span></h3>
-            <div style="color: #a6ada2; font-size: 13.5px;" class="mt-1">
-                Theo dõi thời gian biểu huấn luyện và chuẩn bị giáo án cho từng học viên
-            </div>
-        </div>
-        <div class="d-flex gap-2">
-            <a asp-controller="BookingApproval" asp-action="Index" class="btn-pulse-outline btn-sm">
-                Duyệt ca tập mới
-            </a>
-            <a asp-controller="AssignedMembers" asp-action="Index" class="btn-pulse-primary btn-sm">
-                Danh sách học viên
-            </a>
-        </div>
-    </div>
-
-    <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-            <thead>
-                <tr>
-                    <th style="color: #cfd5ca !important;">HỌC VIÊN</th>
-                    <th style="color: #cfd5ca !important;">SỐ ĐIỆN THOẠI</th>
-                    <th style="color: #cfd5ca !important;">NGÀY DẠY</th>
-                    <th style="color: #cfd5ca !important;">KHUNG GIỜ</th>
-                    <th style="color: #cfd5ca !important;">TRẠNG THÁI</th>
-                    <th style="color: #cfd5ca !important;">GHI CHÚ HỌC VIÊN</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (scheduleList.Any())
-                {
-                    foreach (var s in scheduleList)
+<!-- 7 ngày tới: mỗi ca là một vạch nghiêng như logo Pulse -->
+<section class="cx-panel" aria-labelledby="cxWeekTitle">
+    <header class="cx-panel-head">
+        <h2 class="cx-h2" id="cxWeekTitle">7 ngày tới</h2>
+        <p class="cx-legend">
+            <span><i class="cx-key cx-key--ok"></i>Đã xác nhận</span>
+            <span><i class="cx-key cx-key--wait"></i>Chờ duyệt</span>
+        </p>
+    </header>
+    <ol class="cx-week">
+        @foreach (var d in week)
+        {
+            var dayItems = all
+                .Where(s => s.BookingDate.Date == d && (s.Status == "Approved" || s.Status == "Pending"))
+                .OrderBy(s => CoachUi.SlotStart(s.TimeSlot))
+                .ToList();
+            var label = dayItems.Count == 0 ? "trống" : $"{dayItems.Count} ca";
+            <li class="cx-day @(d == today ? "is-today" : "") @(dayItems.Count == 0 ? "is-free" : "")"
+                aria-label="@CoachUi.DayLong(d) @d.ToString("dd/MM"): @label">
+                <span class="cx-day-dow">@(d == today ? "Hôm nay" : CoachUi.DayShort(d))</span>
+                <span class="cx-day-num">@d.Day</span>
+                <span class="cx-day-bars" aria-hidden="true">
+                    @foreach (var s in dayItems.Take(6))
                     {
-                        <tr>
-                            <td>
-                                <strong class="d-block" style="color: #f2f5ef; font-size: 15px;">@s.MemberName</strong>
-                            </td>
-                            <td>
-                                <span style="color: #b5bcaf; font-size: 14px;">@(string.IsNullOrEmpty(s.MemberPhone) ? "Chưa cập nhật" : s.MemberPhone)</span>
-                            </td>
-                            <td>
-                                <strong style="color: #e5eae0; font-family: var(--portal-display); font-size: 17px; letter-spacing: 0.03em;">
-                                    @s.BookingDate.ToString("dd/MM/yyyy")
-                                </strong>
-                            </td>
-                            <td>
-                                <span class="badge" style="background: rgba(255,255,255,0.05); border: 1px solid var(--portal-line); color: #dce1d8; font-weight: normal; padding: 6px 10px;">
-                                    @s.TimeSlot
-                                </span>
-                            </td>
-                            <td>
-                                @if (s.Status == "Approved")
-                                {
-                                    <span class="portal-badge" style="background: rgba(46, 213, 115, 0.16); color: #2ed573; border: 1px solid rgba(46, 213, 115, 0.35);">
-                                        ĐÃ DUYỆT
-                                    </span>
-                                }
-                                else if (s.Status == "Pending")
-                                {
-                                    <span class="portal-badge" style="background: rgba(245, 176, 65, 0.16); color: #f5b041; border: 1px solid rgba(245, 176, 65, 0.35);">
-                                        CHỜ DUYỆT
-                                    </span>
-                                }
-                                else if (s.Status == "Completed")
-                                {
-                                    <span class="portal-badge" style="background: rgba(72, 202, 228, 0.16); color: #48cae4; border: 1px solid rgba(72, 202, 228, 0.35);">
-                                        HOÀN THÀNH
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="portal-badge" style="background: rgba(255, 255, 255, 0.05); color: #9da499; border: 1px solid #333d36;">
-                                        ĐÃ HỦY
-                                    </span>
-                                }
-                            </td>
-                            <td>
-                                <span style="color: #b5bcaf; font-size: 13.5px; line-height: 1.5; display: inline-block; max-width: 250px;">
-                                    @(string.IsNullOrEmpty(s.Notes) ? "--" : s.Notes)
-                                </span>
-                            </td>
-                        </tr>
+                        <i class="@(s.Status == "Approved" ? "ok" : "wait")" title="@CoachUi.SlotText(s.TimeSlot) @s.MemberName"></i>
                     }
-                }
-                else
+                </span>
+                <span class="cx-day-sum">@label</span>
+                @if (dayItems.Count > 0)
                 {
-                    <tr>
-                        <td colspan="6" class="text-center py-5">
-                            <div class="py-4">
-                                <h5 class="portal-stat-val fs-5 mt-3" style="color: #b0b7ad;">CHƯA CÓ LỊCH DẠY NÀO</h5>
-                                <p class="small mb-0" style="color: #a0a79c;">Khi học viên đặt lịch và được duyệt, các ca dạy sẽ hiển thị chi tiết tại đây.</p>
-                            </div>
-                        </td>
-                    </tr>
+                    <span class="cx-day-times">@(string.Join(", ", dayItems.Take(3).Select(x => CoachUi.SlotStart(x.TimeSlot).ToString("hh\\:mm"))))@(dayItems.Count > 3 ? "…" : "")</span>
                 }
-            </tbody>
-        </table>
-    </div>
-</div>
+            </li>
+        }
+    </ol>
+</section>
+
+<!-- Toàn bộ ca dạy, lọc nhanh theo trạng thái -->
+<section class="cx-panel" aria-labelledby="cxListTitle">
+    <header class="cx-panel-head">
+        <h2 class="cx-h2" id="cxListTitle">Tất cả ca dạy</h2>
+        <div class="cx-filters" role="group" aria-label="Lọc ca dạy">
+            <button type="button" class="cx-chip is-on" data-filter="all" aria-pressed="true">Tất cả <b>@all.Count</b></button>
+            <button type="button" class="cx-chip" data-filter="upcoming" aria-pressed="false">Sắp tới <b>@upcoming.Count</b></button>
+            <button type="button" class="cx-chip" data-filter="pending" aria-pressed="false">Chờ duyệt <b>@pendingTotal</b></button>
+            <button type="button" class="cx-chip" data-filter="done" aria-pressed="false">Đã dạy</button>
+            <button type="button" class="cx-chip" data-filter="cancelled" aria-pressed="false">Đã huỷ</button>
+        </div>
+    </header>
+
+    @if (ordered.Any())
+    {
+        <ul class="cx-list" id="cxList">
+            @foreach (var s in ordered)
+            {
+                var st = CoachUi.SessionState(s.Status, s.BookingDate, s.TimeSlot);
+                <li class="cx-row cx-row--@st.Css" data-groups="all @st.Groups">
+                    <span class="cx-date">
+                        <b>@s.BookingDate.ToString("dd")</b>
+                        <small>@CoachUi.DayShort(s.BookingDate)</small>
+                        <small>@($"Th{s.BookingDate.Month}")</small>
+                    </span>
+                    <span class="cx-row-time">@CoachUi.SlotText(s.TimeSlot)</span>
+                    <span class="cx-row-who">
+                        <span class="cx-avatar cx-avatar--sm" aria-hidden="true">@CoachUi.Initials(s.MemberName)</span>
+                        <span>
+                            <strong>@s.MemberName</strong>
+                            <small>@(string.IsNullOrEmpty(s.MemberPhone) ? "Chưa có số điện thoại" : s.MemberPhone)</small>
+                        </span>
+                    </span>
+                    <span class="cx-row-note">@(string.IsNullOrWhiteSpace(s.Notes) ? "Không có ghi chú" : s.Notes)</span>
+                    <span class="cx-st cx-st--@st.Css">@st.Label</span>
+                </li>
+            }
+        </ul>
+        <p class="cx-empty-filter" id="cxListEmpty" hidden>Không có ca nào trong mục này.</p>
+    }
+    else
+    {
+        <div class="cx-empty">
+            <p><strong>Chưa có ca dạy nào.</strong> Học viên đặt lịch với bạn ở trang Đặt lịch HLV; ca đã duyệt sẽ hiện ở đây.</p>
+        </div>
+    }
+</section>
+
+@section Scripts {
+    <script>
+        (function () {
+            var chips = document.querySelectorAll(".cx-filters .cx-chip");
+            var rows = document.querySelectorAll("#cxList .cx-row");
+            var empty = document.getElementById("cxListEmpty");
+            chips.forEach(function (chip) {
+                chip.addEventListener("click", function () {
+                    var f = chip.dataset.filter, shown = 0;
+                    chips.forEach(function (c) { var on = c === chip; c.classList.toggle("is-on", on); c.setAttribute("aria-pressed", on ? "true" : "false"); });
+                    rows.forEach(function (r) {
+                        var match = (" " + r.dataset.groups + " ").indexOf(" " + f + " ") !== -1;
+                        r.hidden = !match; if (match) shown++;
+                    });
+                    if (empty) empty.hidden = shown !== 0;
+                });
+            });
+        })();
+    </script>
+}

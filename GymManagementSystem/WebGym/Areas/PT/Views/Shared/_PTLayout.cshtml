@@ -1,138 +1,162 @@
+@using System.Security.Claims
+@using Microsoft.EntityFrameworkCore
+@inject WebGym.Data.ApplicationDbContext Db
 @{
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
-    var userName = User.Identity?.Name ?? "Huấn Luyện Viên";
+    var userName = User.Identity?.Name ?? "Huấn luyện viên";
+
+    // Thông tin HLV đang đăng nhập + số yêu cầu chờ duyệt (hiện trên menu)
+    var uid = int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var parsedId) ? parsedId : 0;
+    var me = await Db.Trainers.AsNoTracking()
+        .Where(t => t.UserId == uid)
+        .Select(t => new { t.TrainerId, t.Specialization, t.AvatarUrl })
+        .FirstOrDefaultAsync();
+    var pendingCount = me == null ? 0 : await Db.Bookings.CountAsync(b => b.TrainerId == me.TrainerId && b.Status == "Pending");
+    var today = DateTime.Today;
+
+    string NavClass(string controller) => "cx-link" + (currentController == controller ? " is-on" : "");
+    string? Current(string controller) => currentController == controller ? "page" : null;
 }
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Pulse Gym Trainer Portal</title>
-    <!-- Fonts Pulse Gym -->
+    <title>@ViewData["Title"] - Pulse Gym Coach</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    
-    <!-- CSS Libs -->
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/pulse-portal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pt-portal.css" asp-append-version="true" />
 </head>
-<body class="portal-body">
-    <div class="portal-wrapper">
-        <!-- Sidebar Navigation -->
-        <aside class="portal-sidebar">
-            <!-- Brand / Logo -->
-            <a asp-area="PT" asp-controller="Schedule" asp-action="Index" class="portal-brand">
-                <i class="portal-logo-bars"></i>
-                <div>
-                    <div class="brand-title">PULSE <span>GYM</span></div>
-                    <span class="portal-badge-role badge-role-pt">HLV / PT PORTAL</span>
-                </div>
+<body class="cx">
+    <a class="cx-skip" href="#cxMain">Bỏ qua menu</a>
+
+    <div class="cx-shell">
+        <!-- Menu bên trái (trên điện thoại: ngăn kéo mở bằng nút menu) -->
+        <aside class="cx-side" id="cxSide" aria-label="Menu huấn luyện viên">
+            <a class="cx-brand" asp-area="PT" asp-controller="Schedule" asp-action="Index">
+                <i class="cx-bars" aria-hidden="true"></i>
+                <span class="cx-brand-name">Pulse <b>Gym</b></span>
+                <span class="cx-brand-tag">Coach</span>
             </a>
 
-            <!-- User Quick Snippet -->
-            <div class="portal-user-card">
-                <div class="portal-user-avatar">
-                    <img src="~/images/default-avatar.svg" asp-append-version="true" alt="@userName" />
-                </div>
-                <div class="portal-user-info">
-                    <div class="portal-user-name" title="@userName">@userName</div>
-                    <div class="portal-user-sub">Huấn luyện viên</div>
-                </div>
-            </div>
-
-            <!-- Main Menu -->
-            <div class="portal-nav-group-title">Quản lý huấn luyện</div>
-            <ul class="portal-nav-list">
-                <li>
-                    <a asp-area="PT" asp-controller="Schedule" asp-action="Index" 
-                       class="portal-nav-link @(currentController == "Schedule" ? "active" : "")">
-                        <span>Lịch Dạy Cá Nhân</span>
-                    </a>
-                </li>
-                <li>
-                    <a asp-area="PT" asp-controller="BookingApproval" asp-action="Index" 
-                       class="portal-nav-link @(currentController == "BookingApproval" ? "active" : "")">
-                        <span>Duyệt Yêu Cầu Tập</span>
-                    </a>
-                </li>
-                <li>
-                    <a asp-area="PT" asp-controller="AssignedMembers" asp-action="Index" 
-                       class="portal-nav-link @(currentController == "AssignedMembers" ? "active" : "")">
-                        <span>Học Viên & Giáo Án</span>
-                    </a>
-                </li>
-            </ul>
-
-            <div class="portal-nav-group-title">Công cụ hỗ trợ</div>
-            <ul class="portal-nav-list">
-                <li>
-                    <a asp-area="" asp-controller="AI" asp-action="Index" class="portal-nav-link">
-                        <span class="text-info fw-semibold">Hỏi Đáp AI Trợ Lý</span>
-                    </a>
-                </li>
-            </ul>
-
-            <!-- Sidebar Footer Actions -->
-            <div class="portal-sidebar-footer">
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="portal-btn-footer portal-btn-ghost">
-                    Về Trang Chủ
+            <nav class="cx-nav">
+                <a class="@NavClass("Schedule")" aria-current="@Current("Schedule")" asp-area="PT" asp-controller="Schedule" asp-action="Index">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="1.5" /><path d="M3.5 10h17M8 3v4M16 3v4" /></svg>
+                    <span>Lịch dạy</span>
                 </a>
-                <form asp-area="" asp-controller="Auth" asp-action="Logout" method="post" class="m-0">
-                    @Html.AntiForgeryToken()
-                    <button type="submit" class="portal-btn-footer portal-btn-danger">
-                        Đăng Xuất
+                <a class="@NavClass("BookingApproval")" aria-current="@Current("BookingApproval")" asp-area="PT" asp-controller="BookingApproval" asp-action="Index">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5l4.5 4.5L20 6" /></svg>
+                    <span>Yêu cầu đặt lịch</span>
+                    @if (pendingCount > 0)
+                    {
+                        <span class="cx-count" aria-label="@pendingCount yêu cầu đang chờ">@pendingCount</span>
+                    }
+                </a>
+                <a class="@NavClass("AssignedMembers")" aria-current="@Current("AssignedMembers")" asp-area="PT" asp-controller="AssignedMembers" asp-action="Index">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3.5" /><path d="M2.5 20c.6-3.4 3.2-5.5 6.5-5.5s5.9 2.1 6.5 5.5M16 5.2a3.4 3.4 0 010 6.6M18.5 14.8c1.7.8 2.8 2.6 3 5.2" /></svg>
+                    <span>Học viên</span>
+                </a>
+
+                <span class="cx-nav-sep" role="presentation"></span>
+
+                <a class="cx-link" asp-area="" asp-controller="AI" asp-action="Index">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1-4.6A8 8 0 1121 12z" /><path d="M13 8l-3 4h4l-3 4" /></svg>
+                    <span>Trợ lý Pulse AI</span>
+                </a>
+                <a class="cx-link" asp-area="" asp-controller="Home" asp-action="Index">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11L12 4l8.5 7M6 9.5V20h12V9.5" /></svg>
+                    <span>Trang chủ Pulse</span>
+                </a>
+            </nav>
+
+            <div class="cx-me">
+                <span class="cx-avatar" aria-hidden="true">
+                    @if (!string.IsNullOrWhiteSpace(me?.AvatarUrl))
+                    {
+                        <img src="@(me!.AvatarUrl)" alt="" loading="lazy" />
+                    }
+                    else
+                    {
+                        @WebGym.Helpers.CoachUi.Initials(userName)
+                    }
+                </span>
+                <span class="cx-me-txt">
+                    <strong title="@userName">@userName</strong>
+                    <small title="@(me?.Specialization)">@(string.IsNullOrWhiteSpace(me?.Specialization) ? "Huấn luyện viên" : me!.Specialization)</small>
+                </span>
+                <form asp-area="" asp-controller="Auth" asp-action="Logout" method="post" class="cx-logout">
+                    <button type="submit" title="Đăng xuất" aria-label="Đăng xuất">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h5v16h-5M10 8l-4 4 4 4M6 12h10" /></svg>
                     </button>
                 </form>
             </div>
         </aside>
 
-        <!-- Main Workspace -->
-        <div class="portal-main">
-            <!-- Topbar Header -->
-            <header class="portal-topbar">
-                <h1 class="portal-topbar-title">
-                    <span>@ViewData["Title"]</span>
-                </h1>
-                <div class="portal-topbar-actions">
-                    <span class="text-secondary small d-none d-md-inline">
-                        Ca trực đang mở
-                    </span>
-                    <a asp-area="PT" asp-controller="BookingApproval" asp-action="Index" class="btn-pulse-outline btn-sm">
-                        Xem yêu cầu mới
-                    </a>
+        <div class="cx-main">
+            <header class="cx-top" data-mark="Coach">
+                <button type="button" class="cx-menu" aria-controls="cxSide" aria-expanded="false" aria-label="Mở menu">
+                    <span></span><span></span><span></span>
+                </button>
+                <div class="cx-top-txt">
+                    <p class="cx-today">@WebGym.Helpers.CoachUi.DayLong(today), @today.ToString("dd/MM/yyyy")</p>
+                    <h1 class="cx-title">@ViewData["Title"]</h1>
+                </div>
+                <div class="cx-top-act">
+                    @await RenderSectionAsync("TopActions", required: false)
                 </div>
             </header>
 
-            <!-- Page Content Body -->
-            <main class="portal-content">
-                @if (TempData["SuccessMessage"] != null)
-                {
-                    <div class="portal-alert portal-alert-success" role="alert">
-                        <div class="d-flex align-items-center gap-2">
+            @if (TempData["SuccessMessage"] != null || TempData["ErrorMessage"] != null)
+            {
+                <div class="cx-toasts" aria-live="polite">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="cx-toast cx-toast--ok" role="status">
                             <span>@TempData["SuccessMessage"]</span>
+                            <button type="button" class="cx-toast-x" aria-label="Đóng thông báo">&times;</button>
                         </div>
-                        <button type="button" class="portal-alert-close" onclick="this.parentElement.remove();">&times;</button>
-                    </div>
-                }
-                @if (TempData["ErrorMessage"] != null)
-                {
-                    <div class="portal-alert portal-alert-danger" role="alert">
-                        <div class="d-flex align-items-center gap-2">
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="cx-toast cx-toast--err" role="alert">
                             <span>@TempData["ErrorMessage"]</span>
+                            <button type="button" class="cx-toast-x" aria-label="Đóng thông báo">&times;</button>
                         </div>
-                        <button type="button" class="portal-alert-close" onclick="this.parentElement.remove();">&times;</button>
-                    </div>
-                }
+                    }
+                </div>
+            }
 
+            <main class="cx-content" id="cxMain" tabindex="-1">
                 @RenderBody()
             </main>
         </div>
     </div>
+    <div class="cx-scrim" hidden></div>
 
-    <!-- Scripts -->
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        (function () {
+            var side = document.getElementById("cxSide");
+            var btn = document.querySelector(".cx-menu");
+            var scrim = document.querySelector(".cx-scrim");
+            function setOpen(open) {
+                document.body.classList.toggle("cx-nav-open", open);
+                btn.setAttribute("aria-expanded", open ? "true" : "false");
+                btn.setAttribute("aria-label", open ? "Đóng menu" : "Mở menu");
+                scrim.hidden = !open;
+                if (open) { var first = side.querySelector("a"); if (first) first.focus(); }
+            }
+            btn.addEventListener("click", function () { setOpen(!document.body.classList.contains("cx-nav-open")); });
+            scrim.addEventListener("click", function () { setOpen(false); });
+            document.addEventListener("keydown", function (e) {
+                if (e.key === "Escape" && document.body.classList.contains("cx-nav-open")) { setOpen(false); btn.focus(); }
+            });
+            document.addEventListener("click", function (e) {
+                var x = e.target.closest(".cx-toast-x");
+                if (x) x.parentElement.remove();
+            });
+        })();
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

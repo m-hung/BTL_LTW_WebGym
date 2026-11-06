@@ -90,6 +90,66 @@ namespace WebGym.Data
                     Chest = 96.0,
                     Waist = 80.0,
                     Hips = 94.0
+                },
+                new Member
+                {
+                    MemberId = 21,
+                    UserId = 21,
+                    Gender = "Nữ",
+                    DateOfBirth = new DateTime(2000, 3, 12),
+                    Height = 165.0,
+                    Weight = 54.0,
+                    BMR = 1320.0,
+                    BodyFatPercentage = 23.5,
+                    MuscleMass = 21.8,
+                    Chest = 85.0,
+                    Waist = 65.0,
+                    Hips = 90.0
+                },
+                new Member
+                {
+                    MemberId = 22,
+                    UserId = 22,
+                    Gender = "Nam",
+                    DateOfBirth = new DateTime(1996, 7, 25),
+                    Height = 178.0,
+                    Weight = 82.0,
+                    BMR = 1810.0,
+                    BodyFatPercentage = 24.0,
+                    MuscleMass = 35.0,
+                    Chest = 101.0,
+                    Waist = 86.0,
+                    Hips = 98.0
+                },
+                new Member
+                {
+                    MemberId = 23,
+                    UserId = 23,
+                    Gender = "Nữ",
+                    DateOfBirth = new DateTime(2002, 11, 18),
+                    Height = 160.0,
+                    Weight = 52.5,
+                    BMR = 1290.0,
+                    BodyFatPercentage = 22.0,
+                    MuscleMass = 20.5,
+                    Chest = 83.0,
+                    Waist = 63.0,
+                    Hips = 89.0
+                },
+                new Member
+                {
+                    MemberId = 24,
+                    UserId = 24,
+                    Gender = "Nam",
+                    DateOfBirth = new DateTime(1994, 9, 8),
+                    Height = 172.0,
+                    Weight = 75.0,
+                    BMR = 1700.0,
+                    BodyFatPercentage = 21.0,
+                    MuscleMass = 33.0,
+                    Chest = 97.0,
+                    Waist = 82.0,
+                    Hips = 95.0
                 }
             };
         }

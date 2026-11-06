@@ -1,81 +1,70 @@
 @model WebGym.Models.DTOs.Trainer.WorkoutPlanDto
 @{
-    ViewData["Title"] = "Lên Kế Hoạch Tập Luyện";
+    ViewData["Title"] = "Lên giáo án";
 }
 
-<div class="row justify-content-center">
-    <div class="col-lg-9 col-xl-8">
-        <div class="portal-card p-4">
-            <div class="mb-4 pb-3 border-bottom border-secondary border-opacity-25">
-                <h3 class="portal-title-accent fs-3 mb-1">THIẾT KẾ GIÁO ÁN <span>HỌC VIÊN: @Model.MemberName</span></h3>
-                <div style="color: #a6ada2; font-size: 13.5px;">
-                    Xây dựng lộ trình bài tập chi tiết và chế độ dinh dưỡng để học viên theo dõi hàng ngày trên Member Portal
-                </div>
-            </div>
+@section TopActions {
+    <a class="cx-btn cx-btn--ghost" asp-action="Index">Quay lại danh sách</a>
+}
 
-            <form asp-action="CreatePlan" method="post">
-                @Html.AntiForgeryToken()
-                <input type="hidden" asp-for="MemberId" />
-                <input type="hidden" asp-for="MemberName" />
+@* Lưu ý: AssignedMembersController chưa có action CreatePlan (GET/POST) và DbContext chưa có bảng WorkoutPlans.
+   View này đã sẵn giao diện; cần thêm action + migration thì mới dùng được. *@
+<form asp-action="CreatePlan" method="post" class="cx-form">
+    <input type="hidden" asp-for="MemberId" />
+    <input type="hidden" asp-for="MemberName" />
 
-                <!-- Group 1: General Plan Info -->
-                <div class="mb-4">
-                    <div class="portal-section-eyebrow">
-                        01. MỤC TIÊU & THỜI HẠN LỘ TRÌNH
-                    </div>
-                    <div class="mb-3">
-                        <label asp-for="Title" class="form-label">Tên lộ trình huấn luyện <span style="color: #ff6b6b;">*</span></label>
-                        <input asp-for="Title" class="form-control" placeholder="Ví dụ: Lộ trình Giảm mỡ Tăng cơ 4 tuần bứt phá" required />
-                        <span asp-validation-for="Title" class="text-danger small"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Goal" class="form-label">Mục tiêu thể chất cụ thể</label>
-                        <input asp-for="Goal" class="form-control" placeholder="Ví dụ: Giảm 3.5kg mỡ, tăng 1.5kg cơ nạc, thu nhỏ vòng eo dưới 78cm" />
-                    </div>
-
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label asp-for="StartDate" class="form-label">Ngày bắt đầu</label>
-                            <input asp-for="StartDate" type="date" class="form-control" />
-                        </div>
-                        <div class="col-md-6">
-                            <label asp-for="EndDate" class="form-label">Ngày kết thúc</label>
-                            <input asp-for="EndDate" type="date" class="form-control" />
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Group 2: Routine Details -->
-                <div class="mb-4">
-                    <div class="portal-section-eyebrow">
-                        02. CHI TIẾT BÀI TẬP THEO TUẦN (ROUTINE)
-                    </div>
-                    <label asp-for="RoutineDetails" class="form-label">Lịch phân chia nhóm cơ & số hiệp/lần</label>
-                    <textarea asp-for="RoutineDetails" class="form-control" rows="6" 
-                              placeholder="Thứ 2: Ngực + Tay sau (Bench Press 4x10, Incline Dumbbell 3x12, Tricep Rope 3x15)&#10;Thứ 3: Lưng + Tay trước (Lat Pulldown 4x12, Barbell Row 4x10)&#10;Thứ 4: Nghỉ ngơi tích cực / Cardio nhẹ 20 phút&#10;Thứ 5: Vai + Bụng..."></textarea>
-                    <span asp-validation-for="RoutineDetails" class="text-danger small"></span>
-                </div>
-
-                <!-- Group 3: Nutrition Advice -->
-                <div class="mb-4">
-                    <div class="portal-section-eyebrow">
-                        03. HƯỚNG DẪN CHẾ ĐỘ DINH DƯỠNG
-                    </div>
-                    <label asp-for="NutritionAdvice" class="form-label">Khuyến nghị lượng calo, protein & nước</label>
-                    <textarea asp-for="NutritionAdvice" class="form-control" rows="3" 
-                              placeholder="Nạp tối thiểu 1.8g protein/kg cân nặng (ức gà, cá, trứng). Uống đủ 2.5 - 3 lít nước mỗi ngày. Tránh đường tinh luyện và đồ uống có gas..."></textarea>
-                </div>
-
-                <div class="pt-3 border-top border-secondary border-opacity-25 d-flex gap-3">
-                    <button type="submit" class="btn-pulse-primary">
-                        LƯU & GỬI CHO HỌC VIÊN
-                    </button>
-                    <a asp-action="Index" class="btn-pulse-outline">
-                        Quay Lại
-                    </a>
-                </div>
-            </form>
+    <header class="cx-form-head">
+        <span class="cx-avatar cx-avatar--lg" aria-hidden="true">@CoachUi.Initials(Model.MemberName)</span>
+        <div>
+            <h2 class="cx-h2">Giáo án cho @Model.MemberName</h2>
+            <p class="cx-sub">Học viên sẽ xem lộ trình tập và hướng dẫn dinh dưỡng này trong trang của mình.</p>
         </div>
+    </header>
+
+    <div asp-validation-summary="ModelOnly" class="cx-form-error"></div>
+
+    <fieldset class="cx-fieldset">
+        <legend>Mục tiêu và thời hạn</legend>
+        <div class="cx-field">
+            <label asp-for="Title">Tên lộ trình <abbr title="bắt buộc">*</abbr></label>
+            <div class="cx-input"><input asp-for="Title" placeholder="Ví dụ: Giảm mỡ, giữ cơ trong 4 tuần" required /></div>
+            <span asp-validation-for="Title" class="cx-field-err"></span>
+        </div>
+        <div class="cx-field">
+            <label asp-for="Goal">Mục tiêu cụ thể</label>
+            <div class="cx-input"><input asp-for="Goal" placeholder="Ví dụ: Giảm 3,5 kg mỡ, vòng eo dưới 78 cm" /></div>
+        </div>
+        <div class="cx-grid2">
+            <div class="cx-field">
+                <label asp-for="StartDate">Ngày bắt đầu</label>
+                <div class="cx-input"><input asp-for="StartDate" type="date" /></div>
+            </div>
+            <div class="cx-field">
+                <label asp-for="EndDate">Ngày kết thúc</label>
+                <div class="cx-input"><input asp-for="EndDate" type="date" /></div>
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset class="cx-fieldset">
+        <legend>Bài tập theo tuần</legend>
+        <div class="cx-field">
+            <label asp-for="RoutineDetails">Mỗi dòng một buổi: nhóm cơ, bài tập, số hiệp × số lần</label>
+            <textarea asp-for="RoutineDetails" rows="7" placeholder="Thứ hai: Ngực, tay sau. Bench Press 4×10, Incline Dumbbell 3×12&#10;Thứ ba: Lưng, tay trước. Lat Pulldown 4×12, Barbell Row 4×10&#10;Thứ tư: Nghỉ, đi bộ nhẹ 20 phút"></textarea>
+            <span asp-validation-for="RoutineDetails" class="cx-field-err"></span>
+        </div>
+    </fieldset>
+
+    <fieldset class="cx-fieldset">
+        <legend>Dinh dưỡng</legend>
+        <div class="cx-field">
+            <label asp-for="NutritionAdvice">Lượng calo, đạm và nước khuyến nghị</label>
+            <textarea asp-for="NutritionAdvice" rows="3" placeholder="Ví dụ: 1,8 g đạm cho mỗi kg cân nặng, uống 2,5–3 lít nước mỗi ngày, hạn chế đồ ngọt."></textarea>
+        </div>
+    </fieldset>
+
+    <div class="cx-form-bar">
+        <button type="submit" class="cx-btn">Lưu và gửi cho học viên</button>
+        <a class="cx-btn cx-btn--ghost" asp-action="Index">Huỷ</a>
     </div>
-</div>
+</form>

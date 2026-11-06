@@ -1,101 +1,130 @@
 @model IEnumerable<WebGym.Models.Entities.Member>
+@using System.Globalization
 @{
-    ViewData["Title"] = "Học Viên Phụ Trách";
+    ViewData["Title"] = "Học viên";
     var memberList = Model?.ToList() ?? new List<WebGym.Models.Entities.Member>();
+    var inv = CultureInfo.InvariantCulture;
+
+    // Đường xu hướng cân nặng (SVG 120x36) từ các lần đo InBody
+    string Sparkline(List<double> values)
+    {
+        if (values.Count < 2) return string.Empty;
+        double min = values.Min(), max = values.Max();
+        var range = Math.Max(max - min, 0.5);
+        var step = 116.0 / (values.Count - 1);
+        return string.Join(" ", values.Select((v, i) =>
+            $"{(2 + i * step).ToString("0.#", inv)},{(4 + (max - v) / range * 28).ToString("0.#", inv)}"));
+    }
 }
 
-<div class="portal-card p-4">
-    <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-secondary border-opacity-25">
-        <div>
-            <h3 class="portal-title-accent fs-3 mb-0">DANH SÁCH <span>HỌC VIÊN PHỤ TRÁCH</span></h3>
-            <div style="color: #a6ada2; font-size: 13.5px;" class="mt-1">
-                Theo dõi sát sao thể chất học viên, đo đạc tiến trình định kỳ và xây dựng lộ trình đạt mục tiêu
-            </div>
-        </div>
-        <span class="portal-badge portal-badge-approved">
-            Tổng cộng: @memberList.Count học viên
-        </span>
-    </div>
+@section TopActions {
+    <a class="cx-btn cx-btn--ghost" asp-controller="Schedule" asp-action="Index">Xem lịch dạy</a>
+}
 
-    <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-            <thead>
-                <tr>
-                    <th style="color: #cfd5ca !important;">HỌC VIÊN</th>
-                    <th style="color: #cfd5ca !important;">THÔNG TIN LIÊN HỆ</th>
-                    <th style="color: #cfd5ca !important;">CHỈ SỐ THỂ HÌNH HIỆN TẠI</th>
-                    <th style="color: #cfd5ca !important;">GÓI TẬP</th>
-                    <th class="text-end" style="color: #cfd5ca !important;">THAO TÁC</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (memberList.Any())
-                {
-                    foreach (var m in memberList)
-                    {
-                        var activeSub = m.Subscriptions.OrderByDescending(s => s.StartDate).FirstOrDefault(s => s.Status == "Active");
-                        <tr>
-                            <td>
-                                <div>
-                                    <strong class="d-block" style="color: #f2f5ef; font-size: 15px;">@m.User.FullName</strong>
-                                    <small style="color: #a6ada2;">Giới tính: @(m.Gender ?? "Chưa rõ")</small>
-                                </div>
-                            </td>
-                            <td>
-                                <div style="font-size: 13.5px;">
-                                    <span class="d-block" style="color: #dbe0d7;">@m.User.Email</span>
-                                    <span style="color: #a6ada2;">@(string.IsNullOrEmpty(m.User.PhoneNumber) ? "Chưa có SĐT" : m.User.PhoneNumber)</span>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="badge" style="background: rgba(255,255,255,0.05); border: 1px solid var(--portal-line); color: #f2f5ef; font-size: 13px; padding: 6px 10px;">
-                                        @(m.Weight.HasValue ? $"{m.Weight:0.0} kg" : "-- kg")
-                                    </span>
-                                    <span class="badge" style="background: rgba(248, 194, 145, 0.12); color: #f8c291; border: 1px solid rgba(248, 194, 145, 0.25); font-size: 13px; padding: 6px 10px;">
-                                        @(m.BodyFatPercentage.HasValue ? $"{m.BodyFatPercentage:0.0}% mỡ" : "--% mỡ")
-                                    </span>
-                                </div>
-                            </td>
-                            <td>
-                                @if (activeSub != null)
-                                {
-                                    <span class="portal-badge portal-badge-approved">
-                                        @activeSub.Package.PackageName
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="portal-badge portal-badge-cancelled">
-                                        Chưa có gói tập
-                                    </span>
-                                }
-                            </td>
-                            <td class="text-end">
-                                <div class="d-inline-flex gap-2">
-                                    <a asp-action="RecordProgress" asp-route-memberId="@m.MemberId" class="btn-pulse-primary btn-sm py-1 px-3" style="font-size: 13px;">
-                                        Đo InBody
-                                    </a>
-                                    <a asp-action="CreatePlan" asp-route-memberId="@m.MemberId" class="btn-pulse-outline btn-sm py-1 px-3" style="font-size: 13px;">
-                                        Lên Giáo Án
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                }
-                else
-                {
-                    <tr>
-                        <td colspan="5" class="text-center py-5">
-                            <div class="py-4">
-                                <h5 class="portal-stat-val fs-5 mt-3" style="color: #b0b7ad;">CHƯA CÓ HỌC VIÊN NÀO</h5>
-                                <p class="small mb-0" style="color: #a0a79c;">Học viên khi đặt ca tập và được bạn duyệt sẽ xuất hiện trong danh sách này.</p>
-                            </div>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
+<section class="cx-panel" aria-labelledby="cxRosterTitle">
+    <header class="cx-panel-head">
+        <div>
+            <h2 class="cx-h2" id="cxRosterTitle">@memberList.Count học viên đã tập cùng bạn</h2>
+            <p class="cx-sub">Đo InBody định kỳ để theo dõi tiến độ. Số đo mới nhất cũng hiện trong hồ sơ của học viên.</p>
+        </div>
+        @if (memberList.Count > 3)
+        {
+            <label class="cx-search">
+                <span class="cx-visually-hidden">Tìm học viên</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="M16 16l4.5 4.5" /></svg>
+                <input type="search" id="cxRosterSearch" placeholder="Tìm theo tên hoặc số điện thoại" autocomplete="off" />
+            </label>
+        }
+    </header>
+
+    @if (memberList.Any())
+    {
+        <ul class="cx-roster" id="cxRoster">
+            @foreach (var m in memberList)
+            {
+                var activeSub = m.Subscriptions.OrderByDescending(s => s.StartDate).FirstOrDefault(s => s.Status == "Active");
+                var records = m.ProgressRecords.OrderBy(p => p.RecordedDate).ToList();
+                var weights = records.Select(p => p.Weight).ToList();
+                var points = Sparkline(weights);
+                var delta = weights.Count >= 2 ? weights[^1] - weights[0] : (double?)null;
+                var last = records.LastOrDefault();
+                <li class="cx-member" data-search="@($"{m.User.FullName} {m.User.PhoneNumber} {m.User.Email}".ToLowerInvariant())">
+                    <div class="cx-member-id">
+                        <span class="cx-avatar" aria-hidden="true">@CoachUi.Initials(m.User.FullName)</span>
+                        <span>
+                            <strong>@m.User.FullName</strong>
+                            <small>@(m.Gender ?? "Chưa rõ giới tính")@(string.IsNullOrEmpty(m.User.PhoneNumber) ? "" : $", {m.User.PhoneNumber}")</small>
+                            @if (activeSub != null)
+                            {
+                                <span class="cx-pack">@activeSub.Package.PackageName</span>
+                            }
+                            else
+                            {
+                                <span class="cx-pack cx-pack--none">Chưa có gói tập</span>
+                            }
+                        </span>
+                    </div>
+
+                    <dl class="cx-metrics">
+                        <div><dt>Cân nặng</dt><dd>@(m.Weight.HasValue ? m.Weight.Value.ToString("0.0") : "--")<small>kg</small></dd></div>
+                        <div><dt>Mỡ</dt><dd>@(m.BodyFatPercentage.HasValue ? m.BodyFatPercentage.Value.ToString("0.0") : "--")<small>%</small></dd></div>
+                        <div><dt>Cơ</dt><dd>@(m.MuscleMass.HasValue ? m.MuscleMass.Value.ToString("0.0") : "--")<small>kg</small></dd></div>
+                    </dl>
+
+                    <div class="cx-trend">
+                        @if (!string.IsNullOrEmpty(points))
+                        {
+                            <svg viewBox="0 0 120 36" class="cx-spark" role="img" aria-label="Cân nặng qua @weights.Count lần đo, từ @(weights[0].ToString("0.0")) đến @(weights[^1].ToString("0.0")) kg">
+                                <polyline points="@points" />
+                            </svg>
+                            <p>
+                                <strong class="@(delta < 0 ? "is-down" : delta > 0 ? "is-up" : "")">@(delta > 0 ? "+" : "")@(delta!.Value.ToString("0.0")) kg</strong>
+                                <small>sau @weights.Count lần đo</small>
+                            </p>
+                        }
+                        else
+                        {
+                            <p class="cx-trend-none">@(records.Count == 1 ? "Mới đo 1 lần" : "Chưa có lần đo nào")</p>
+                        }
+                        @if (last != null)
+                        {
+                            <small class="cx-trend-last">Đo gần nhất @last.RecordedDate.ToLocalTime().ToString("dd/MM/yyyy")</small>
+                        }
+                    </div>
+
+                    <div class="cx-member-act">
+                        <a class="cx-btn" asp-action="RecordProgress" asp-route-memberId="@m.MemberId">Đo InBody</a>
+                        <span class="cx-btn cx-btn--ghost is-disabled" aria-disabled="true" title="Chức năng lên giáo án đang được phát triển">Giáo án</span>
+                    </div>
+                </li>
+            }
+        </ul>
+        <p class="cx-empty-filter" id="cxRosterEmpty" hidden>Không tìm thấy học viên phù hợp.</p>
+    }
+    else
+    {
+        <div class="cx-empty">
+            <p><strong>Chưa có học viên nào.</strong> Học viên sẽ xuất hiện ở đây sau khi đặt lịch tập với bạn.</p>
+            <a class="cx-btn cx-btn--ghost" asp-controller="BookingApproval" asp-action="Index">Xem yêu cầu đặt lịch</a>
+        </div>
+    }
+</section>
+
+@section Scripts {
+    <script>
+        (function () {
+            var input = document.getElementById("cxRosterSearch");
+            if (!input) return;
+            var items = document.querySelectorAll("#cxRoster .cx-member");
+            var empty = document.getElementById("cxRosterEmpty");
+            input.addEventListener("input", function () {
+                var q = input.value.trim().toLowerCase(), shown = 0;
+                items.forEach(function (li) {
+                    var ok = !q || li.dataset.search.indexOf(q) !== -1;
+                    li.hidden = !ok; if (ok) shown++;
+                });
+                empty.hidden = shown !== 0;
+            });
+        })();
+    </script>
+}

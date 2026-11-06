@@ -1,0 +1,163 @@
+@model WebGym.Models.DTOs.Member.MemberPersonalInfoDto
+@{
+    ViewData["Title"] = "Thông Tin Cá Nhân";
+    var defaultAvatar = Url.Content("~/images/default-avatar.svg");
+    var currentAvatar = !string.IsNullOrEmpty(Model.AvatarUrl) ? Model.AvatarUrl : defaultAvatar;
+}
+
+<div class="row g-4 justify-content-center">
+    <div class="col-lg-10 col-xl-9">
+        <form asp-action="UpdatePersonalInfo" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="MemberId" />
+
+            <!-- Card 1: Avatar & Quick Info (Yêu cầu ảnh 1: Icon chỉnh sửa góc dưới phải avatar, xóa các chú thích) -->
+            <div class="portal-card p-4 mb-4">
+                <div class="d-flex flex-column flex-sm-row align-items-center gap-4 py-2">
+                    <!-- Avatar Preview Box with Edit Badge -->
+                    <div class="position-relative d-inline-block">
+                        <div style="width: 120px; height: 120px; border-radius: 50%; overflow: hidden; border: 2.5px solid var(--portal-lime); background-color: var(--portal-bg2); box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);">
+                            <img id="avatarPreview" src="@currentAvatar" alt="@Model.FullName" 
+                                 style="width: 100%; height: 100%; object-fit: cover;" />
+                        </div>
+                        <input type="file" id="avatarFileInput" name="avatarFile" accept="image/png, image/jpeg, image/webp" class="d-none" />
+                        <button type="button" class="avatar-edit-badge" onclick="document.getElementById('avatarFileInput').click();" 
+                                title="Đổi ảnh đại diện" aria-label="Đổi ảnh đại diện">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                <circle cx="12" cy="13" r="4"></circle>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- User Quick Identity (Không còn dòng chú thích dài dòng) -->
+                    <div class="text-center text-sm-start flex-grow-1">
+                        <h4 class="mb-1 fw-bold" style="color: #f4f6f2; font-size: 21px;">@Model.FullName</h4>
+                        <div class="d-flex flex-wrap gap-2 justify-content-center justify-content-sm-start align-items-center mt-2">
+                            <span class="portal-badge" style="background: rgba(200, 255, 46, 0.12); color: var(--portal-lime); border: 1px solid rgba(200, 255, 46, 0.3);">
+                                GÓI: @(Model.CurrentPackageName ?? "Chưa có gói tập")
+                            </span>
+                            @if (!string.IsNullOrEmpty(Model.AvatarUrl))
+                            {
+                                <button type="submit" form="deleteAvatarForm" class="btn-pulse-outline btn-sm py-1 px-2" 
+                                        style="color: #ff7675; border-color: rgba(255, 118, 117, 0.35); font-size: 12px;"
+                                        onclick="return confirm('Bạn có chắc muốn xóa ảnh đại diện và thiết lập lại ảnh mặc định?');">
+                                    Xóa ảnh đại diện
+                                </button>
+                            }
+                            <button type="button" class="btn-pulse-outline btn-sm py-1 px-2" id="btnResetAvatar" style="display: none; font-size: 12px;">
+                                Hủy ảnh vừa chọn
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Personal Contact Information (Ảnh 2: Xóa hoàn toàn khung lưu ý chỉ số cơ thể) -->
+            <div class="portal-card p-4 mb-4">
+                <div class="mb-4 pb-3 border-bottom border-secondary border-opacity-25">
+                    <h3 class="portal-title-accent mb-1 fs-3">CHI TIẾT <span>HỒ SƠ CÁ NHÂN</span></h3>
+                    <div style="color: #a6ada2; font-size: 13.5px;">
+                        Thông tin được dùng để bảo mật tài khoản và liên hệ khi có thông báo lịch tập
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="FullName" class="form-label">Họ và tên <span style="color: var(--portal-danger);">*</span></label>
+                        <input asp-for="FullName" class="form-control" placeholder="Nguyễn Văn A" required />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Email" class="form-label">
+                            Email đăng nhập <span class="badge ms-1" style="background: rgba(255,255,255,0.08); color: #a0a79c; font-weight: normal;">Cố định</span>
+                        </label>
+                        <input asp-for="Email" class="form-control" readonly 
+                               style="background-color: #121614 !important; opacity: 0.85; cursor: not-allowed; color: #b8bcb4 !important;" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="PhoneNumber" class="form-label">Số điện thoại</label>
+                        <input asp-for="PhoneNumber" class="form-control" placeholder="0901234567" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="Gender" class="form-label">Giới tính</label>
+                        <select asp-for="Gender" class="form-select">
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                            <option value="Khác">Khác</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="DateOfBirth" class="form-label">Ngày sinh</label>
+                        <input asp-for="DateOfBirth" type="date" class="form-control" 
+                               value="@(Model.DateOfBirth?.ToString("yyyy-MM-dd"))" />
+                    </div>
+                </div>
+
+                <!-- Form Action Buttons -->
+                <div class="pt-4 mt-3 border-top border-secondary border-opacity-25 d-flex flex-wrap gap-2 gap-sm-3">
+                    <button type="submit" class="btn-pulse-primary">
+                        LƯU THAY ĐỔI
+                    </button>
+                    <a asp-action="Index" class="btn-pulse-outline">
+                        Xem chỉ số cơ thể
+                    </a>
+                </div>
+            </div>
+        </form>
+
+        <!-- Form xóa ảnh đại diện -->
+        <form id="deleteAvatarForm" asp-action="DeleteAvatar" method="post" class="d-none">
+            @Html.AntiForgeryToken()
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const fileInput = document.getElementById('avatarFileInput');
+            const previewImg = document.getElementById('avatarPreview');
+            const btnReset = document.getElementById('btnResetAvatar');
+            const originalSrc = previewImg.src;
+
+            if (fileInput && previewImg) {
+                fileInput.addEventListener('change', function () {
+                    const file = this.files[0];
+                    if (file) {
+                        const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+                        if (!validTypes.includes(file.type)) {
+                            alert('Vui lòng chọn file ảnh định dạng JPG, PNG hoặc WEBP.');
+                            this.value = '';
+                            return;
+                        }
+
+                        if (file.size > 5 * 1024 * 1024) {
+                            alert('Dung lượng file ảnh không được vượt quá 5MB.');
+                            this.value = '';
+                            return;
+                        }
+
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            previewImg.src = e.target.result;
+                            if (btnReset) btnReset.style.display = 'inline-block';
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+                if (btnReset) {
+                    btnReset.addEventListener('click', function () {
+                        fileInput.value = '';
+                        previewImg.src = originalSrc;
+                        btnReset.style.display = 'none';
+                    });
+                }
+            }
+        });
+    </script>
+}

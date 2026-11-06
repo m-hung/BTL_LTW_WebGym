@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Text;
 using System.Text.Json;
 using WebGym.Models.DTOs.AI;
@@ -11,6 +12,16 @@ namespace WebGym.Services.Implementations
         private const int MaxHistoryTurns = 10;
         private static readonly string[] DefaultFallbackModels = { "gemini-3.7-flash", "gemini-flash-latest", "gemini-flash-lite-latest" };
         private const string DefaultModel = "gemini-3.8-flash";
+
+        // Thời gian chờ: mỗi lần gọi một model và tổng cả chuỗi (hết thì trả lời bằng dữ liệu có sẵn)
+        private static readonly TimeSpan AttemptTimeout = TimeSpan.FromSeconds(12);
+        private static readonly TimeSpan TotalBudget = TimeSpan.FromSeconds(20);
+
+        // Ghi nhớ model đang lỗi để các tin nhắn sau không phải chờ thử lại nó:
+        // quá tải / giới hạn tốc độ / quá thời gian → bỏ qua 2 phút; model không tồn tại → bỏ qua 1 ngày.
+        private static readonly ConcurrentDictionary<string, DateTime> SkipModelUntil = new(StringComparer.OrdinalIgnoreCase);
+        // Model không nhận tuỳ chọn thinkingConfig → các lần sau gửi không kèm tuỳ chọn này
+        private static readonly ConcurrentDictionary<string, bool> NoThinkingConfig = new(StringComparer.OrdinalIgnoreCase);
 
         private readonly IConfiguration _configuration;
         private readonly IHttpClientFactory _httpClientFactory;
@@ -102,16 +113,25 @@ namespace WebGym.Services.Implementations
             }
             contents.Add(new { role = "user", parts = new[] { new { text = message } } });
 
-            var payload = new
+            // Mức "suy nghĩ" của Gemini 3: càng thấp trả lời càng nhanh. AI:ThinkingLevel = minimal | low | medium | high | none
+            var thinkingLevel = (_configuration["AI:ThinkingLevel"] ?? "low").Trim().ToLowerInvariant();
+            var sendThinking = thinkingLevel is "minimal" or "low" or "medium" or "high";
+
+            string BuildJson(bool withThinking)
             {
-                systemInstruction = new { parts = new[] { new { text = systemPrompt } } },
-                contents,
-                generationConfig = new { temperature = 0.6, maxOutputTokens = 1500 }
-            };
+                object generationConfig = withThinking
+                    ? new { temperature = 0.6, maxOutputTokens = 1500, thinkingConfig = new { thinkingLevel } }
+                    : new { temperature = 0.6, maxOutputTokens = 1500 };
+                return JsonSerializer.Serialize(new
+                {
+                    systemInstruction = new { parts = new[] { new { text = systemPrompt } } },
+                    contents,
+                    generationConfig
+                });
+            }
 
             var client = _httpClientFactory.CreateClient();
-            client.Timeout = TimeSpan.FromSeconds(20);
-            var json = JsonSerializer.Serialize(payload);
+            client.Timeout = Timeout.InfiniteTimeSpan; // thời gian chờ do AttemptTimeout / TotalBudget quản lý
 
             // Danh sách model thử lần lượt: model chính → các model dự phòng (AI:FallbackModels, cách nhau bởi dấu phẩy)
             var models = new List<string> { model };
@@ -124,36 +144,63 @@ namespace WebGym.Services.Implementations
                 if (!models.Contains(f, StringComparer.OrdinalIgnoreCase)) models.Add(f);
             }
 
-            // Tổng thời gian chờ tối đa cho cả chuỗi thử, tránh để khách đợi quá lâu
-            using var budget = new CancellationTokenSource(TimeSpan.FromSeconds(35));
+            // Bỏ qua model vừa lỗi gần đây; nếu tất cả đều đang bị bỏ qua thì vẫn thử lại cả danh sách
+            var now = DateTime.UtcNow;
+            var ready = models.Where(m => !SkipModelUntil.TryGetValue(m, out var until) || until <= now).ToList();
+            if (ready.Count == 0) ready = models;
+
+            using var budget = new CancellationTokenSource(TotalBudget);
 
             string? body = null;
-            foreach (var m in models)
+            foreach (var m in ready)
             {
-                var endpoint = $"https://generativelanguage.googleapis.com/v1beta/models/{m}:generateContent";
-                using var httpRequest = new HttpRequestMessage(HttpMethod.Post, endpoint)
-                {
-                    Content = new StringContent(json, Encoding.UTF8, "application/json")
-                };
-                // Gửi key qua header để không lộ trong URL/log
-                httpRequest.Headers.Add("x-goog-api-key", apiKey);
+                var withThinking = sendThinking && !NoThinkingConfig.ContainsKey(m);
+                var (status, text) = await SendOnceAsync(client, apiKey, m, BuildJson(withThinking), budget.Token);
 
-                using var response = await client.SendAsync(httpRequest, budget.Token);
-                var text = await response.Content.ReadAsStringAsync(budget.Token);
-
-                if (response.IsSuccessStatusCode)
+                // Model không nhận thinkingConfig → gửi lại ngay không kèm tuỳ chọn đó
+                if (status == 400 && withThinking && text.Contains("thinking", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (m != model) _logger.LogInformation("AI trả lời bằng model dự phòng {Model}", m);
+                    NoThinkingConfig[m] = true;
+                    _logger.LogInformation("Model {Model} không hỗ trợ thinkingConfig, gửi lại không kèm tuỳ chọn này", m);
+                    (status, text) = await SendOnceAsync(client, apiKey, m, BuildJson(false), budget.Token);
+                }
+
+                if (status is >= 200 and < 300)
+                {
+                    SkipModelUntil.TryRemove(m, out _);
+                    if (!string.Equals(m, model, StringComparison.OrdinalIgnoreCase))
+                        _logger.LogInformation("AI trả lời bằng model dự phòng {Model}", m);
                     body = text;
                     break;
                 }
 
-                var status = (int)response.StatusCode;
+                if (budget.IsCancellationRequested)
+                {
+                    _logger.LogWarning("AI hết {Seconds} giây chờ, chuyển sang câu trả lời có sẵn", TotalBudget.TotalSeconds);
+                    return null;
+                }
+
+                if (status == 0)
+                {
+                    _logger.LogWarning("AI model {Model} quá {Seconds} giây không phản hồi", m, AttemptTimeout.TotalSeconds);
+                    SkipModelUntil[m] = DateTime.UtcNow.AddMinutes(2);
+                    continue;
+                }
+
                 _logger.LogWarning("AI API model {Model} returned {Status}: {Error}", m, status, text);
 
                 // Quá tải / giới hạn tốc độ / model không có cho key này → thử model kế tiếp; lỗi khác (key sai...) → dừng
-                var tryNext = status == 503 || status == 429 || status == 404;
-                if (!tryNext) return null;
+                if (status == 404)
+                {
+                    SkipModelUntil[m] = DateTime.UtcNow.AddDays(1);
+                    continue;
+                }
+                if (status == 503 || status == 429)
+                {
+                    SkipModelUntil[m] = DateTime.UtcNow.AddMinutes(2);
+                    continue;
+                }
+                return null;
             }
 
             if (body == null) return null;
@@ -172,6 +219,32 @@ namespace WebGym.Services.Implementations
                 if (part.TryGetProperty("text", out var t)) sb.Append(t.GetString());
             }
             return sb.ToString();
+        }
+
+        /// <summary>Gọi một model một lần. Trả về (mã HTTP, nội dung); mã 0 nghĩa là quá thời gian chờ.</summary>
+        private static async Task<(int Status, string Text)> SendOnceAsync(HttpClient client, string apiKey, string model, string json, CancellationToken budgetToken)
+        {
+            using var attempt = CancellationTokenSource.CreateLinkedTokenSource(budgetToken);
+            attempt.CancelAfter(AttemptTimeout);
+
+            var endpoint = $"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent";
+            using var httpRequest = new HttpRequestMessage(HttpMethod.Post, endpoint)
+            {
+                Content = new StringContent(json, Encoding.UTF8, "application/json")
+            };
+            // Gửi key qua header để không lộ trong URL/log
+            httpRequest.Headers.Add("x-goog-api-key", apiKey);
+
+            try
+            {
+                using var response = await client.SendAsync(httpRequest, attempt.Token);
+                var text = await response.Content.ReadAsStringAsync(attempt.Token);
+                return ((int)response.StatusCode, text);
+            }
+            catch (OperationCanceledException)
+            {
+                return (0, string.Empty);
+            }
         }
 
         private async Task<string> BuildSystemPromptAsync(ChatbotRequestDto request)
@@ -193,7 +266,8 @@ namespace WebGym.Services.Implementations
             sb.AppendLine("- Luôn trả lời bằng tiếng Việt, thân thiện, ngắn gọn (tối đa khoảng 120 từ), đi thẳng vào ý chính.");
             sb.AppendLine("- Về giá, tên gói, tên PT, giờ mở cửa: CHỈ dùng dữ liệu bên dưới. Không bịa. Nếu không có thông tin, nói rõ và gợi ý hỏi lễ tân.");
             sb.AppendLine("- Định dạng cho phép: **in đậm**, danh sách gạch đầu dòng bắt đầu bằng \"- \", và liên kết dạng [chữ](/đường-dẫn). Không dùng bảng, tiêu đề (#) hay HTML.");
-            sb.AppendLine("- Khi nhắc tới gói tập, PT hoặc khu vực, hãy kèm liên kết nội bộ tương ứng có trong dữ liệu.");
+            sb.AppendLine("- Khi nhắc tới gói tập, PT hoặc khu vực, hãy kèm liên kết nội bộ tương ứng có trong dữ liệu. " +
+                          "Chỉ dùng đúng các đường dẫn trong mục LIÊN KẾT HỢP LỆ; không tự tạo đường dẫn khác (ví dụ không dùng /Home/Packages).");
             sb.AppendLine("- Tiền tệ viết dạng 1.300.000đ.");
             sb.AppendLine("- Không chẩn đoán bệnh hay kê thuốc; với vấn đề sức khỏe/chấn thương, khuyên gặp bác sĩ.");
             sb.AppendLine("- Câu hỏi ngoài lĩnh vực phòng tập/thể hình: từ chối lịch sự và quay lại chủ đề của phòng tập.");

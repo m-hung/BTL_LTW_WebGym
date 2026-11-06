@@ -219,6 +219,18 @@
     if (e.key === "Escape" && root.classList.contains("is-open") && !document.querySelector(".am.open")) close();
   });
 
+  // Bấm liên kết tới một mục trên chính trang đang xem (vd /#bang-gia khi đang ở trang chủ)
+  // → thu khung chat lại để không che phần vừa cuộn tới
+  log.addEventListener("click", function (e) {
+    var a = e.target.closest ? e.target.closest("a[href]") : null;
+    if (!a || a.target === "_blank") return;
+    var url;
+    try { url = new URL(a.getAttribute("href"), window.location.href); } catch (err) { return; }
+    if (url.hash && url.origin === window.location.origin && url.pathname === window.location.pathname) {
+      if (window.matchMedia("(max-width: 560px)").matches || root.classList.contains("is-open")) close();
+    }
+  });
+
   // Mở cửa sổ chat từ nơi khác trên site: <a data-chat-open>
   document.addEventListener("click", function (e) {
     var t = e.target.closest ? e.target.closest("[data-chat-open]") : null;

@@ -1,0 +1,109 @@
+@model WebGym.Models.DTOs.Trainer.TrainerProfileDto
+@{
+    ViewData["Title"] = "Thông tin cá nhân";
+    var avatarSrc = Model.AvatarPath == null ? null : Url.Content(Model.AvatarPath);
+    var bioLength = Model.Bio?.Length ?? 0;
+}
+
+@section TopActions {
+    <a class="cx-btn cx-btn--ghost" href="@Url.Action("TrainerDetail", "Home", new { area = "", id = Model.TrainerId })" target="_blank" rel="noopener">Xem trang công khai</a>
+}
+
+<form asp-action="Index" method="post" enctype="multipart/form-data" class="cx-profile" id="cxProfileForm" novalidate>
+    <!-- Cột trái: thẻ hồ sơ như học viên nhìn thấy -->
+    <aside class="cx-pcard" aria-label="Hồ sơ công khai của bạn">
+        <div class="cx-pcard-photo" data-photo>
+            @if (avatarSrc != null)
+            {
+                <img src="@avatarSrc" alt="Ảnh đại diện của @Model.FullName" asp-append-version="true" data-photo-img />
+            }
+            else
+            {
+                <b data-photo-initials>@CoachUi.Initials(Model.FullName)</b>
+            }
+            <label class="cx-pcard-cam" for="avatarFile" title="Đổi ảnh đại diện">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8.5A1.5 1.5 0 014.5 7h3l1.6-2.2h5.8L16.5 7h3A1.5 1.5 0 0121 8.5v10a1.5 1.5 0 01-1.5 1.5h-15A1.5 1.5 0 013 18.5z" /><circle cx="12" cy="13.2" r="3.6" /></svg>
+                <span class="cx-visually-hidden">Đổi ảnh đại diện</span>
+            </label>
+        </div>
+        <input type="file" id="avatarFile" name="avatarFile" accept="image/jpeg,image/png,image/webp" class="cx-visually-hidden" />
+
+        <div class="cx-pcard-body">
+            <p class="cx-pcard-hint">Học viên thấy bạn như thế này</p>
+            <h2 class="cx-pcard-name" data-preview-name>@Model.FullName</h2>
+            <p class="cx-pcard-spec" data-preview-spec>@Model.Specialization</p>
+
+            <dl class="cx-pcard-stats">
+                <div><dt>Học viên</dt><dd>@Model.MemberCount</dd></div>
+                <div><dt>Buổi đã dạy</dt><dd>@Model.CompletedSessions</dd></div>
+                <div><dt>Ca sắp tới</dt><dd>@Model.UpcomingSessions</dd></div>
+            </dl>
+
+            <div class="cx-pcard-act">
+                <label class="cx-btn cx-btn--ghost" for="avatarFile">Chọn ảnh mới</label>
+                <button type="button" class="cx-btn cx-btn--ghost" id="cxAvatarUndo" hidden>Huỷ ảnh vừa chọn</button>
+                @if (avatarSrc != null)
+                {
+                    <button type="submit" form="cxDeleteAvatar" class="cx-btn cx-btn--danger" id="cxAvatarDelete">Xoá ảnh</button>
+                }
+            </div>
+            <p class="cx-field-hint" id="cxAvatarNote">JPG, PNG hoặc WEBP, tối đa 5 MB. Ảnh dọc nhìn đẹp nhất.</p>
+            <span class="cx-field-err">@Html.ValidationMessage("avatarFile")</span>
+        </div>
+    </aside>
+
+    <!-- Cột phải: thông tin chỉnh sửa -->
+    <div class="cx-pform">
+        <div asp-validation-summary="ModelOnly" class="cx-form-error"></div>
+
+        <fieldset class="cx-fieldset">
+            <legend>Thông tin liên hệ</legend>
+            <div class="cx-grid2">
+                <div class="cx-field">
+                    <label asp-for="FullName">Họ và tên <abbr title="bắt buộc">*</abbr></label>
+                    <div class="cx-input"><input asp-for="FullName" maxlength="150" autocomplete="name" required /></div>
+                    <span asp-validation-for="FullName" class="cx-field-err"></span>
+                </div>
+                <div class="cx-field">
+                    <label asp-for="PhoneNumber">Số điện thoại</label>
+                    <div class="cx-input"><input asp-for="PhoneNumber" type="tel" maxlength="20" autocomplete="tel" placeholder="0901234567" /></div>
+                    <span asp-validation-for="PhoneNumber" class="cx-field-err"></span>
+                </div>
+            </div>
+            <div class="cx-field">
+                <label asp-for="Email">Email đăng nhập <span class="cx-tag">Cố định</span></label>
+                <div class="cx-input is-readonly"><input asp-for="Email" readonly tabindex="-1" aria-readonly="true" /></div>
+                <p class="cx-field-hint">Email dùng để đăng nhập và nhận liên kết đặt lại mật khẩu. Liên hệ Admin nếu cần đổi.</p>
+            </div>
+        </fieldset>
+
+        <fieldset class="cx-fieldset">
+            <legend>Hồ sơ huấn luyện viên</legend>
+            <div class="cx-field">
+                <label asp-for="Specialization">Chuyên môn <abbr title="bắt buộc">*</abbr></label>
+                <div class="cx-input"><input asp-for="Specialization" maxlength="200" placeholder="Ví dụ: Tăng cơ, giảm mỡ, HIIT" required /></div>
+                <span asp-validation-for="Specialization" class="cx-field-err"></span>
+            </div>
+            <div class="cx-field">
+                <label asp-for="Bio">Giới thiệu bản thân</label>
+                <textarea asp-for="Bio" rows="6" maxlength="1000" placeholder="Kinh nghiệm, chứng chỉ, phong cách huấn luyện. Ví dụ: 8 năm kinh nghiệm, chứng chỉ NASM-CPT, chuyên lộ trình tăng cơ giảm mỡ cho người mới."></textarea>
+                <p class="cx-field-hint"><span data-bio-count>@bioLength</span>/1000 ký tự. Số năm kinh nghiệm (ví dụ "8 năm kinh nghiệm") sẽ hiện trên trang công khai.</p>
+                <span asp-validation-for="Bio" class="cx-field-err"></span>
+            </div>
+        </fieldset>
+
+        <div class="cx-form-bar">
+            <button type="submit" class="cx-btn">Lưu thay đổi</button>
+            <a class="cx-btn cx-btn--ghost" asp-controller="Schedule" asp-action="Index">Huỷ</a>
+        </div>
+    </div>
+</form>
+
+@if (avatarSrc != null)
+{
+    <form id="cxDeleteAvatar" asp-action="DeleteAvatar" method="post" hidden></form>
+}
+
+@section Scripts {
+    <script src="~/js/pt-profile.js" asp-append-version="true"></script>
+}

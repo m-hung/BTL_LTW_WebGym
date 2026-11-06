@@ -37,9 +37,10 @@ namespace WebGym.Services.Implementations
             foreach (var p in packages)
             {
                 sb.AppendLine($"- {p.PackageName}: {Vnd(p.Price)} / {DurationLabel(p.DurationDays)} " +
-                              $"(~{Vnd(MonthlyPrice(p))}/tháng); {(p.IncludesPT ? "CÓ kèm PT" : "KHÔNG kèm PT")}. {p.Description}");
+                              $"(~{Vnd(MonthlyPrice(p))}/tháng); {(p.IncludesPT ? "CÓ kèm PT" : "KHÔNG kèm PT")}. {p.Description} " +
+                              $"(link đăng ký gói này: /thanh-toan/{p.PackageId})");
             }
-            sb.AppendLine("Xem & mua gói: /Home/Packages");
+            sb.AppendLine("Bảng giá tất cả các gói trên trang chủ: /#bang-gia");
             sb.AppendLine();
 
             sb.AppendLine("HUẤN LUYỆN VIÊN (PT):");
@@ -56,9 +57,12 @@ namespace WebGym.Services.Implementations
             }
             sb.AppendLine();
 
-            sb.AppendLine("QUY TRÌNH: Đăng ký tài khoản → chọn gói tại /Home/Packages → thanh toán online (VNPay, Momo hoặc chuyển khoản). " +
+            sb.AppendLine("QUY TRÌNH: Đăng ký tài khoản → chọn gói ở Bảng giá (/#bang-gia) → thanh toán bằng VNPay hoặc thanh toán tại quầy. " +
                           "Hội viên đăng nhập có thể đặt lịch tập với PT và theo dõi chỉ số InBody trong khu vực Hội viên.");
-            sb.AppendLine("Lịch lớp nhóm theo tuần: xem mục Lịch tập ở trang chủ (/#lich-tap).");
+            sb.AppendLine("Công cụ tính BMI, năng lượng mỗi ngày và gợi ý gói phù hợp: mục Sức khỏe và tư vấn trên trang chủ (/#suc-khoe).");
+            sb.AppendLine();
+            sb.AppendLine("LIÊN KẾT HỢP LỆ (chỉ dùng các đường dẫn này): /#bang-gia, /#khu-vuc, /#huan-luyen-vien, /#suc-khoe, " +
+                          "/thanh-toan/{mã gói}, /huan-luyen-vien/{mã HLV}, /khu-vuc/{mã khu vực} như trong dữ liệu ở trên.");
             return sb.ToString();
         }
 
@@ -100,7 +104,7 @@ namespace WebGym.Services.Implementations
                 var cheapest = packages.OrderBy(MonthlyPrice).FirstOrDefault();
                 if (cheapest != null)
                     return ($"Gói **rẻ nhất** theo tháng là **{cheapest.PackageName}**: {Vnd(cheapest.Price)} cho {DurationLabel(cheapest.DurationDays)} " +
-                            $"(~{Vnd(MonthlyPrice(cheapest))}/tháng).\n\nXem chi tiết các gói tại [Bảng giá](/Home/Packages).",
+                            $"(~{Vnd(MonthlyPrice(cheapest))}/tháng).\n\nXem chi tiết các gói tại [Bảng giá](/#bang-gia).",
                             S("Gói nào có kèm PT?", "So sánh các gói tập"));
             }
 
@@ -110,7 +114,7 @@ namespace WebGym.Services.Implementations
                 var sbPt = new StringBuilder("Các gói **có kèm PT** (tập 1 kèm 1 cùng huấn luyện viên):\n");
                 foreach (var p in withPt)
                     sbPt.AppendLine($"- **{p.PackageName}** — {Vnd(p.Price)} / {DurationLabel(p.DurationDays)}");
-                sbPt.Append("\nXem chi tiết tại [Bảng giá](/Home/Packages).");
+                sbPt.Append("\nXem chi tiết tại [Bảng giá](/#bang-gia).");
                 return (sbPt.ToString(), S("Xem danh sách HLV", "Thanh toán thế nào?"));
             }
 
@@ -118,8 +122,8 @@ namespace WebGym.Services.Implementations
             {
                 return ("Để đăng ký tập tại Pulse Gym rất đơn giản:\n" +
                         "1. **Tạo tài khoản** (nút *Đăng ký* trên thanh menu).\n" +
-                        "2. Chọn gói phù hợp tại [Bảng giá](/Home/Packages).\n" +
-                        "3. **Thanh toán online** bằng VNPay, Momo hoặc chuyển khoản.\n\n" +
+                        "2. Chọn gói phù hợp tại [Bảng giá](/#bang-gia).\n" +
+                        "3. **Thanh toán** bằng VNPay hoặc thanh toán tại quầy.\n\n" +
                         "Sau khi thanh toán, gói tập của bạn được kích hoạt ngay.",
                         S("Có những gói nào?", "Gói nào rẻ nhất?", "Giờ mở cửa?"));
             }
@@ -136,7 +140,7 @@ namespace WebGym.Services.Implementations
 
             if (Has(tokens, norm, "gio", "mo cua", "dong cua", "may gio", "open", "hoat dong"))
             {
-                return ($"Pulse Gym mở cửa **{OpeningHours}**.\n\nBạn có thể xem mức độ đông/vắng theo khung giờ ở từng [khu vực tập](/Home/Facilities) để chọn giờ tập thoải mái nhất.",
+                return ($"Pulse Gym mở cửa **{OpeningHours}**.\n\nBạn có thể xem mức độ đông/vắng theo khung giờ ở từng [khu vực tập](/#khu-vuc) để chọn giờ tập thoải mái nhất.",
                         S("Các khu vực tập?", "Có những gói nào?"));
             }
 
@@ -148,8 +152,8 @@ namespace WebGym.Services.Implementations
             if (Has(tokens, norm, "lich", "dat lich", "booking", "lop", "class", "buoi tap"))
             {
                 return ("Bạn có thể:\n" +
-                        "- Xem **lịch lớp nhóm** theo tuần ở mục [Lịch tập](/#lich-tap) trên trang chủ.\n" +
-                        "- **Đặt lịch tập với PT**: đăng nhập tài khoản hội viên rồi chọn HLV và khung giờ phù hợp; HLV sẽ xác nhận lịch cho bạn.\n\n" +
+                        "- **Đặt lịch tập với PT**: đăng nhập tài khoản hội viên, vào mục *Đặt lịch* rồi chọn HLV và khung giờ phù hợp; HLV sẽ xác nhận lịch cho bạn.\n" +
+                        "- Xem hồ sơ và chuyên môn từng HLV ở mục [Huấn luyện viên](/#huan-luyen-vien) trên trang chủ.\n\n" +
                         "Bạn chưa có tài khoản? Bấm *Đăng ký* trên thanh menu nhé.",
                         S("Danh sách HLV", "Gói nào có kèm PT?"));
             }
@@ -160,7 +164,7 @@ namespace WebGym.Services.Implementations
                         "- Tập **3–4 buổi/tuần**, ưu tiên bài đa khớp (squat, deadlift, đẩy ngực, kéo xà).\n" +
                         "- Ăn đủ đạm khoảng **1,6–2 g protein/kg** cân nặng, ngủ đủ 7–8 giờ.\n" +
                         "- Muốn giảm mỡ: thêm cardio/HIIT 2 buổi/tuần và kiểm soát calo.\n\n" +
-                        "Để có giáo án cá nhân hoá, bạn nên gặp một [HLV của Pulse Gym](/#huan-luyen-vien).",
+                        "Tính nhanh BMI và năng lượng cần mỗi ngày ở mục [Sức khỏe và tư vấn](/#suc-khoe). Để có giáo án cá nhân hoá, bạn nên gặp một [HLV của Pulse Gym](/#huan-luyen-vien).",
                         S("Danh sách HLV", "Gói nào có kèm PT?"));
             }
 
@@ -202,9 +206,9 @@ namespace WebGym.Services.Implementations
             var sb = new StringBuilder("Pulse Gym hiện có **" + packages.Count + " gói tập**:\n");
             foreach (var p in packages)
             {
-                sb.AppendLine($"- **{p.PackageName}** — {Vnd(p.Price)} / {DurationLabel(p.DurationDays)}{(p.IncludesPT ? " · kèm PT" : "")}");
+                sb.AppendLine($"- **[{p.PackageName}](/thanh-toan/{p.PackageId})** — {Vnd(p.Price)} / {DurationLabel(p.DurationDays)}{(p.IncludesPT ? ", kèm PT" : "")}");
             }
-            sb.Append("\nXem chi tiết & đăng ký tại [Bảng giá](/Home/Packages).");
+            sb.Append("\nXem chi tiết & đăng ký tại [Bảng giá](/#bang-gia).");
             return sb.ToString();
         }
 
@@ -213,7 +217,7 @@ namespace WebGym.Services.Implementations
             $"- Giá: **{Vnd(p.Price)}** / {DurationLabel(p.DurationDays)} (~{Vnd(MonthlyPrice(p))}/tháng)\n" +
             $"- {(p.IncludesPT ? "Có kèm PT cá nhân" : "Không kèm PT")}\n" +
             (string.IsNullOrWhiteSpace(p.Description) ? "" : $"- {p.Description}\n") +
-            "\nĐăng ký tại [Bảng giá](/Home/Packages).";
+            $"\n[Đăng ký gói này](/thanh-toan/{p.PackageId}) hoặc xem tất cả ở [Bảng giá](/#bang-gia).";
 
         private static string TrainerList(List<Trainer> trainers)
         {

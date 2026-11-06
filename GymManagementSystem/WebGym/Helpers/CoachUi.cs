@@ -76,6 +76,21 @@ namespace WebGym.Helpers
             return span.Hours > 0 ? $"Còn {span.Hours} giờ {span.Minutes} phút" : $"Còn {span.Minutes} phút";
         }
 
+        /// <summary>
+        /// Chuẩn hoá đường dẫn ảnh HLV về dạng "~/..." hoặc "http(s)://..." để dùng với Url.Content.
+        /// Chấp nhận: "https://...", "~/images/coach1.jpg", "/images/x.jpg", "coach1.jpg" (tên file trong wwwroot/images).
+        /// Trả về null nếu chưa có ảnh.
+        /// </summary>
+        public static string? AvatarPath(string? avatarUrl)
+        {
+            if (string.IsNullOrWhiteSpace(avatarUrl)) return null;
+            var v = avatarUrl.Trim();
+            if (v.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || v.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) return v;
+            if (v.StartsWith("~/")) return v;
+            if (v.StartsWith("/")) return "~" + v;
+            return "~/images/" + v;
+        }
+
         public static string Initials(string? fullName)
         {
             var words = (fullName ?? string.Empty).Split(' ', StringSplitOptions.RemoveEmptyEntries);

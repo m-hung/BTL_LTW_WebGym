@@ -2,7 +2,8 @@
 @{
     Layout = null;
     ViewData["Title"] = Model.FullName + " - Huấn luyện viên Pulse Gym";
-    var imgSrc = Model.Image.StartsWith("http") ? Model.Image : Url.Content("~/images/" + Model.Image);
+    var rawImg = (Model.Image ?? "").Replace("~/images/", "").Replace("/images/", "");
+    var imgSrc = rawImg.StartsWith("http") ? rawImg : Url.Content("~/images/" + rawImg);
 }
 <!DOCTYPE html>
 <html lang="vi">
@@ -135,7 +136,8 @@
                 }
                 @foreach (var t in otherTrainers)
                 {
-                    var otherImg = t.Image.StartsWith("http") ? t.Image : Url.Content("~/images/" + t.Image);
+                    var rawOther = (t.Image ?? "").Replace("~/images/", "").Replace("/images/", "");
+                    var otherImg = rawOther.StartsWith("http") ? rawOther : Url.Content("~/images/" + rawOther);
                     <a asp-controller="Home" asp-action="TrainerDetail" asp-route-id="@t.Slug" class="trainer">
                         <div class="photo"><img src="@otherImg" asp-append-version="true" alt="@t.FullName" /><span class="tag">@t.Badge</span></div>
                         <div class="trainer-info"><div><h3>@t.FullName</h3><small>@t.Role</small></div><span class="arrow-circle">↗</span></div>

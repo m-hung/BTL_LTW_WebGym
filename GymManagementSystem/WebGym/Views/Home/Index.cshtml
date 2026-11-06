@@ -218,7 +218,8 @@
                     foreach (var t in trainers)
                     {
                         var info = WebGym.Models.TrainerInfo.FromTrainer(t);
-                        var imgSrc = info.Image.StartsWith("http") ? info.Image : Url.Content("~/images/" + info.Image);
+                        var rawImg = (info.Image ?? "").Replace("~/images/", "").Replace("/images/", "");
+                        var imgSrc = rawImg.StartsWith("http") ? rawImg : Url.Content("~/images/" + rawImg);
                         if (imgSrc.Contains("w=300")) { imgSrc = imgSrc.Replace("w=300", "w=800"); }
                         <article class="trainer-card">
                             <a asp-controller="Home" asp-action="TrainerDetail" asp-route-id="@t.TrainerId" class="trainer">

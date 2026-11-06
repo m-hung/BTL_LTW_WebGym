@@ -114,7 +114,8 @@
                 <div class="trainers">
                     @foreach (var t in coaches)
                     {
-                        var coachImg = t.Image.StartsWith("http") ? t.Image : Url.Content("~/images/" + t.Image);
+                        var rawCoach = (t.Image ?? "").Replace("~/images/", "").Replace("/images/", "");
+                        var coachImg = rawCoach.StartsWith("http") ? rawCoach : Url.Content("~/images/" + rawCoach);
                         <a asp-controller="Home" asp-action="TrainerDetail" asp-route-id="@t.Slug" class="trainer">
                             <div class="photo"><img src="@coachImg" asp-append-version="true" alt="@t.FullName" /><span class="tag">@t.Badge</span></div>
                             <div class="trainer-info"><div><h3>@t.FullName</h3><small>@t.Role</small></div><span class="arrow-circle">↗</span></div>

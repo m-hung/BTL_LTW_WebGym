@@ -32,7 +32,7 @@ namespace WebGym.Models
         public string? TrainerSlug { get; set; }
 
         [Required(ErrorMessage = "Vui lòng chọn hình thức thanh toán")]
-        public string PaymentMethod { get; set; } = "vnpay";   // vnpay | bank | counter
+        public string PaymentMethod { get; set; } = "vnpay";   // vnpay | counter
 
         [Range(typeof(bool), "true", "true", ErrorMessage = "Bạn cần đồng ý với điều khoản sử dụng")]
         public bool AgreeTerms { get; set; }

@@ -123,23 +123,34 @@ namespace WebGym.Controllers
                 payment.TransactionCode = callbackDto.vnp_TransactionNo ?? payment.TransactionCode;
                 payment.PaymentDate = DateTime.UtcNow;
 
-                // Tạo mới hoặc kích hoạt Subscription cho hội viên
-                var subscription = new Subscription
+                // Kích hoạt Subscription nếu đã có từ Checkout (PendingPayment), hoặc tạo mới
+                var subscription = await _context.Subscriptions
+                    .FirstOrDefaultAsync(s => s.MemberId == payment.MemberId && s.PackageId == payment.PackageId && s.Status == "PendingPayment");
+                if (subscription != null)
                 {
-                    MemberId = payment.MemberId,
-                    PackageId = payment.PackageId,
-                    OriginalPrice = payment.Package.Price,
-                    PaidAmount = payment.Amount,
-                    StartDate = DateTime.UtcNow,
-                    EndDate = DateTime.UtcNow.AddDays(payment.Package.DurationDays),
-                    Status = "Active"
-                };
-                _context.Subscriptions.Add(subscription);
+                    subscription.Status = "Active";
+                    subscription.StartDate = DateTime.UtcNow;
+                    subscription.EndDate = DateTime.UtcNow.AddDays(payment.Package.DurationDays);
+                }
+                else
+                {
+                    subscription = new Subscription
+                    {
+                        MemberId = payment.MemberId,
+                        PackageId = payment.PackageId,
+                        OriginalPrice = payment.Package.Price,
+                        PaidAmount = payment.Amount,
+                        StartDate = DateTime.UtcNow,
+                        EndDate = DateTime.UtcNow.AddDays(payment.Package.DurationDays),
+                        Status = "Active"
+                    };
+                    _context.Subscriptions.Add(subscription);
+                }
 
                 await _context.SaveChangesAsync();
 
                 // Gửi email xác nhận
-                if (!string.IsNullOrEmpty(payment.Member.User.Email))
+                if (!string.IsNullOrEmpty(payment.Member?.User?.Email))
                 {
                     _ = _emailService.SendPaymentConfirmationAsync(
                         payment.Member.User.Email,
@@ -150,12 +161,24 @@ namespace WebGym.Controllers
                     );
                 }
 
-                return View("PaymentSuccess", payment);
+                // Chuyển hướng sang giao diện thông báo thành công Pulse Gym (Ảnh 2)
+                TempData["Plan"] = payment.Package?.PackageName;
+                TempData["Cycle"] = $"{payment.Package?.DurationDays} ngày";
+                TempData["Total"] = payment.Amount.ToString("N0") + "đ";
+                TempData["Email"] = payment.Member?.User?.Email;
+                TempData["Name"] = payment.Member?.User?.FullName;
+                TempData["Start"] = (subscription?.StartDate ?? DateTime.UtcNow).ToString("dd/MM/yyyy");
+                TempData["Time"] = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+                TempData["TxnCode"] = payment.TransactionCode;
+                TempData["Method"] = "VNPay (Đã thanh toán)";
+
+                return RedirectToAction("Success", "Checkout");
             }
             else
             {
                 payment.Status = "Failed";
                 await _context.SaveChangesAsync();
+                ViewBag.Message = "Giao dịch bị hủy hoặc không thành công trên cổng VNPay. Tài khoản của bạn chưa bị trừ tiền.";
                 return View("PaymentFailed");
             }
         }

@@ -1,29 +1,69 @@
 @model WebGym.Models.Entities.Payment
 @{
-    ViewData["Title"] = "Thanh Toán Thành Công";
+    Layout = null;
+    ViewData["Title"] = "Thanh toán thành công - Pulse Gym";
+    var plan = Model?.Package?.PackageName ?? TempData["Plan"]?.ToString() ?? "Gói tập Pulse Gym";
+    var cycle = Model?.Package != null ? $"{Model.Package.DurationDays} ngày" : (TempData["Cycle"]?.ToString() ?? "30 ngày");
+    var start = Model?.PaymentDate.ToString("dd/MM/yyyy") ?? TempData["Start"]?.ToString() ?? DateTime.Now.ToString("dd/MM/yyyy");
+    var method = Model?.PaymentMethod ?? TempData["Method"]?.ToString() ?? "VNPay (Đã thanh toán)";
+    var total = Model != null ? Model.Amount.ToString("N0") + "đ" : (TempData["Total"]?.ToString() ?? "0đ");
+    var name = Model?.Member?.User?.FullName ?? TempData["Name"]?.ToString() ?? "Quý hội viên";
+    var email = Model?.Member?.User?.Email ?? TempData["Email"]?.ToString() ?? "";
+    var txnCode = Model?.TransactionCode ?? TempData["TxnCode"]?.ToString();
+    var time = Model?.PaymentDate.ToString("dd/MM/yyyy HH:mm") ?? TempData["Time"]?.ToString() ?? DateTime.Now.ToString("dd/MM/yyyy HH:mm");
 }
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/pulse.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/auth-modal.css" asp-append-version="true" />
+</head>
+<body>
+    <partial name="_PulseHeader" />
+    <main class="co co-done">
+        <span class="arrow-box co-ok">✓</span>
+        <p class="eyebrow center">Đã nhận đăng ký</p>
+        <h1 class="display center">Chào mừng<em class="outline">đến Pulse</em></h1>
+        <p class="lead center">
+            Cảm ơn <strong>@name</strong>. @(string.IsNullOrEmpty(email) ? "Gói tập của bạn đã được kích hoạt thành công." : $"Chúng tôi sẽ gửi thông tin xác nhận đến {email}.")
+        </p>
 
-<div class="row justify-content-center">
-    <div class="col-md-6 text-center">
-        <div class="card border-0 shadow rounded-4 p-5">
-            <div class="text-success mb-3">
-                <i class="bi bi-check-circle-fill" style="font-size: 5rem;"></i>
+        <div class="co-card co-receipt">
+            @if (!string.IsNullOrEmpty(txnCode))
+            {
+                <div class="co-line">
+                    <span>Mã giao dịch</span>
+                    <b style="color:var(--lime);font-family:monospace;font-size:15px;letter-spacing:0.05em">@txnCode</b>
+                </div>
+            }
+            <div class="co-line"><span>Gói tập</span><b>@plan</b></div>
+            <div class="co-line"><span>Chu kỳ</span><b>@cycle</b></div>
+            <div class="co-line"><span>Ngày bắt đầu</span><b>@start</b></div>
+            @if (!string.IsNullOrEmpty(time))
+            {
+                <div class="co-line"><span>Thời gian thanh toán</span><b>@time</b></div>
+            }
+            <div class="co-line">
+                <span>Hình thức thanh toán</span>
+                <b><span style="color:var(--lime)">●</span> @method</b>
             </div>
-            <h2 class="fw-bold text-success mb-3">Thanh Toán Thành Công!</h2>
-            <p class="text-muted">Cảm ơn bạn đã đăng ký gói tập tại hệ thống WebGym. Thẻ tập đã được kích hoạt và email xác nhận đã gửi đến bạn.</p>
-
-            <div class="bg-light p-3 rounded-3 text-start my-3">
-                <p class="mb-1"><strong>Mã giao dịch:</strong> <code>@Model.TransactionCode</code></p>
-                <p class="mb-1"><strong>Gói tập:</strong> @Model.Package?.PackageName</p>
-                <p class="mb-1"><strong>Phương thức:</strong> @Model.PaymentMethod</p>
-                <p class="mb-1"><strong>Số tiền:</strong> @Model.Amount.ToString("N0") VNĐ</p>
-                <p class="mb-0"><strong>Thời gian:</strong> @Model.PaymentDate.ToString("dd/MM/yyyy HH:mm")</p>
-            </div>
-
-            <div class="mt-4">
-                <a asp-area="Member" asp-controller="Profile" asp-action="Index" class="btn btn-primary px-4 py-2 me-2">Vào Trang Cá Nhân</a>
-                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary px-4 py-2">Về Trang Chủ</a>
-            </div>
+            <div class="co-line co-total"><span>Tổng</span><strong>@total</strong></div>
         </div>
-    </div>
-</div>
+
+        <div class="hero-cta" style="justify-content:center;gap:20px;flex-wrap:wrap;margin-top:36px">
+            <a asp-area="Member" asp-controller="Profile" asp-action="Index" class="btn">Vào trang cá nhân <b>→</b></a>
+            <a href="~/" class="btn btn-ghost">Về trang chủ <b>→</b></a>
+            <a href="~/#lich-tap" class="link-ul" style="align-self:center">Xem lịch tập</a>
+        </div>
+    </main>
+    <partial name="_PulseFooter" />
+    <partial name="_AuthModal" />
+    <script src="~/js/auth-modal.js" asp-append-version="true"></script>
+</body>
+</html>

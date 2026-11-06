@@ -2,7 +2,8 @@
 @{
     Layout = null;
     ViewData["Title"] = Model.FullName + " - Huấn luyện viên Pulse Gym";
-    var imgSrc = Model.Image.StartsWith("http") ? Model.Image : Url.Content("~/images/" + Model.Image);
+    var rawImg = (Model.Image ?? "").Replace("~/images/", "").Replace("/images/", "");
+    var imgSrc = rawImg.StartsWith("http") ? rawImg : Url.Content("~/images/" + rawImg);
 }
 <!DOCTYPE html>
 <html lang="vi">
@@ -11,9 +12,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"]</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/pulse.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/auth-modal.css" asp-append-version="true" />
 </head>
 <body>
     <partial name="_PulseHeader" />
@@ -134,7 +136,8 @@
                 }
                 @foreach (var t in otherTrainers)
                 {
-                    var otherImg = t.Image.StartsWith("http") ? t.Image : Url.Content("~/images/" + t.Image);
+                    var rawOther = (t.Image ?? "").Replace("~/images/", "").Replace("/images/", "");
+                    var otherImg = rawOther.StartsWith("http") ? rawOther : Url.Content("~/images/" + rawOther);
                     <a asp-controller="Home" asp-action="TrainerDetail" asp-route-id="@t.Slug" class="trainer">
                         <div class="photo"><img src="@otherImg" asp-append-version="true" alt="@t.FullName" /><span class="tag">@t.Badge</span></div>
                         <div class="trainer-info"><div><h3>@t.FullName</h3><small>@t.Role</small></div><span class="arrow-circle">↗</span></div>
@@ -155,5 +158,7 @@
     </main>
 
     <partial name="_PulseFooter" />
+    <partial name="_AuthModal" />
+    <script src="~/js/auth-modal.js" asp-append-version="true"></script>
 </body>
 </html>

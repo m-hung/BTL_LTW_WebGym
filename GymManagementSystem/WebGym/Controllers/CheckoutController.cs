@@ -28,10 +28,17 @@ namespace WebGym.Controllers
             _logger = logger;
         }
 
-        // GET: /thanh-toan/1?cycle=year hoặc /thanh-toan/pro
+        // GET: /thanh-toan/1 hoặc /thanh-toan/pro
         [HttpGet("thanh-toan/{slug?}")]
         public async Task<IActionResult> Index(string? slug, string cycle = "month")
         {
+            // Bắt buộc phải đăng nhập trước khi vào trang thanh toán
+            if (User.Identity == null || !User.Identity.IsAuthenticated)
+            {
+                var target = string.IsNullOrEmpty(slug) ? "/thanh-toan" : $"/thanh-toan/{slug}";
+                return Redirect($"/?auth=login&returnUrl={Uri.EscapeDataString(target)}");
+            }
+
             var allPackages = await _context.GymPackages
                 .OrderBy(p => p.Price)
                 .ToListAsync();
@@ -67,10 +74,10 @@ namespace WebGym.Controllers
             {
                 PackageId = package.PackageId,
                 Plan = plan,
-                Cycle = cycle == "year" ? "year" : "month"
+                Cycle = "package"
             };
 
-            // Nếu người dùng đã đăng nhập, tự động điền thông tin
+            // Điền thông tin từ tài khoản đã đăng nhập
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (int.TryParse(userIdClaim, out int uid))
             {
@@ -91,6 +98,13 @@ namespace WebGym.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Submit(string? slug, CheckoutViewModel model)
         {
+            // Bắt buộc phải đăng nhập trước khi submit thanh toán
+            if (User.Identity == null || !User.Identity.IsAuthenticated)
+            {
+                var target = string.IsNullOrEmpty(slug) ? "/thanh-toan" : $"/thanh-toan/{slug}";
+                return Redirect($"/?auth=login&returnUrl={Uri.EscapeDataString(target)}");
+            }
+
             var allPackages = await _context.GymPackages
                 .OrderBy(p => p.Price)
                 .ToListAsync();
@@ -120,15 +134,8 @@ namespace WebGym.Controllers
                 return NotFound("Gói tập không tồn tại.");
             }
 
-            var plan = PlanInfo.FromGymPackage(package);
-            model.Plan = plan;
-            model.PackageId = package.PackageId;
-            model.Cycle = model.Cycle == "year" ? "year" : "month";
-
-            if (model.StartDate.HasValue && model.StartDate.Value.Date < DateTime.Today)
-            {
-                ModelState.AddModelError(nameof(model.StartDate), "Ngày bắt đầu không được ở quá khứ");
-            }
+            // Gán lại Plan cho ViewModel nếu ModelState có lỗi cần render lại
+            model.Plan = PlanInfo.FromGymPackage(package);
 
             if (!ModelState.IsValid)
             {
@@ -171,8 +178,8 @@ namespace WebGym.Controllers
                 }
                 else
                 {
-                    // Tạo tài khoản User mới với mật khẩu mặc định (Member@123)
-                    const string defaultPassHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=";
+                    // Tạo tài khoản Member mới
+                    var defaultPassHash = AuthController.HashPassword("Member@123");
                     var emailPrefix = model.Email.Split('@')[0];
                     var uniqueUsername = $"{emailPrefix}_{DateTime.UtcNow.Ticks.ToString()[^4..]}";
 
@@ -208,12 +215,7 @@ namespace WebGym.Controllers
                 MemberId = member.MemberId,
                 PackageId = package.PackageId,
                 Amount = totalAmount,
-                PaymentMethod = model.PaymentMethod switch
-                {
-                    "vnpay" => "VNPay",
-                    "bank" => "BankTransfer",
-                    _ => "Cash"
-                },
+                PaymentMethod = model.PaymentMethod == "vnpay" ? "VNPay" : "Cash",
                 TransactionCode = orderId,
                 PaymentDate = DateTime.UtcNow,
                 Status = model.PaymentMethod == "vnpay" ? "Pending" : "Completed"
@@ -276,12 +278,9 @@ namespace WebGym.Controllers
             TempData["Email"] = model.Email;
             TempData["Name"] = model.FullName;
             TempData["Start"] = (model.StartDate ?? DateTime.UtcNow).ToString("dd/MM/yyyy");
-            TempData["Method"] = model.PaymentMethod switch
-            {
-                "vnpay" => "VNPay",
-                "bank" => "Chuyển khoản ngân hàng",
-                _ => "Thanh toán tại quầy"
-            };
+            TempData["Time"] = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+            TempData["TxnCode"] = orderId;
+            TempData["Method"] = model.PaymentMethod == "vnpay" ? "VNPay" : "Thanh toán tại quầy";
 
             return RedirectToAction(nameof(Success));
         }
@@ -290,10 +289,11 @@ namespace WebGym.Controllers
         [HttpGet("thanh-toan/thanh-cong")]
         public IActionResult Success()
         {
-            if (TempData["Plan"] == null)
+            if (TempData["Plan"] == null && TempData["Name"] == null)
             {
                 return Redirect("~/");
             }
+            TempData.Keep();
             return View();
         }
     }

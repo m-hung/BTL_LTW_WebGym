@@ -14,9 +14,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"]</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/pulse.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/auth-modal.css" asp-append-version="true" />
 </head>
 <body>
     <partial name="_PulseHeader" />
@@ -88,8 +89,6 @@
                     <div class="co-methods">
                         <input type="radio" name="PaymentMethod" id="pm-vnpay" value="vnpay" checked="@(Model.PaymentMethod == "vnpay")" />
                         <label for="pm-vnpay"><b>VNPay</b><small>Thẻ ATM, Visa, QR ngân hàng</small></label>
-                        <input type="radio" name="PaymentMethod" id="pm-bank" value="bank" checked="@(Model.PaymentMethod == "bank")" />
-                        <label for="pm-bank"><b>Chuyển khoản</b><small>Chuyển thủ công theo hướng dẫn</small></label>
                         <input type="radio" name="PaymentMethod" id="pm-counter" value="counter" checked="@(Model.PaymentMethod == "counter")" />
                         <label for="pm-counter"><b>Tại quầy</b><small>Thanh toán khi đến phòng tập</small></label>
                     </div>
@@ -157,8 +156,9 @@
             </aside>
         </form>
     </main>
-
     <partial name="_PulseFooter" />
-    <script src="~/js/checkout.js" asp-append-version="true"></script>
+    <partial name="_AuthModal" />
+    <script src="~/js/auth-modal.js" asp-append-version="true"></script>
+    <script src="~/js/pulse.js" asp-append-version="true"></script>
 </body>
 </html>

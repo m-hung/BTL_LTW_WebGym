@@ -41,4 +41,53 @@ namespace WebGym.Models.DTOs.Member
         [MaxLength(300)]
         public string? Notes { get; set; }
     }
+
+    public class MemberPersonalInfoDto
+    {
+        public int MemberId { get; set; }
+
+        [Required(ErrorMessage = "Vui lòng nhập họ và tên")]
+        [MaxLength(150)]
+        public string FullName { get; set; } = string.Empty;
+
+        public string Email { get; set; } = string.Empty;
+
+        [Phone(ErrorMessage = "Số điện thoại không hợp lệ")]
+        public string? PhoneNumber { get; set; }
+
+        public string? Gender { get; set; }
+
+        public DateTime? DateOfBirth { get; set; }
+
+        public string? AvatarUrl { get; set; }
+
+        public string? CurrentPackageName { get; set; }
+    }
+
+    public class MemberPackageViewModel
+    {
+        public int MemberId { get; set; }
+        public string MemberName { get; set; } = string.Empty;
+        public string CardNumber { get; set; } = string.Empty;
+        public bool HasActivePackage { get; set; }
+        public string PackageName { get; set; } = string.Empty;
+        public string PackageTier { get; set; } = "VIP";
+        public string Status { get; set; } = "Active";
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public decimal Price { get; set; }
+        public int RemainingDays { get; set; }
+
+        public List<PackageHistoryItemDto> History { get; set; } = new();
+    }
+
+    public class PackageHistoryItemDto
+    {
+        public string InvoiceCode { get; set; } = string.Empty;
+        public string PackageName { get; set; } = string.Empty;
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public decimal Amount { get; set; }
+        public string Status { get; set; } = "Đã thanh toán";
+    }
 }

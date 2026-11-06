@@ -100,11 +100,12 @@
     $("bmiMark").style.left = Math.max(1, Math.min(99, (r.bmi - 14) / 22 * 100)) + "%";
 
     $("bmiBmr").textContent = num(Math.round(r.bmr));
-    $("bmiTdee").textContent = num(round10(r.tdee));
+    $("bmiTdee").textContent = num(Math.round(r.tdee));
     $("bmiTarget").textContent = num(r.target);
     $("bmiProtein").textContent = r.protein;
 
-    $("bmiStatus").textContent = STATUS[r.k] + " Cân nặng khỏe mạnh cho chiều cao của bạn khoảng " +
+    $("bmiStatus").textContent = STATUS[r.k];
+    $("bmiRange").textContent = "Cân nặng hợp lý cho chiều cao của bạn là khoảng " +
       num(r.low, 1) + " đến " + num(r.high, 1) + " kg.";
 
     var note = $("bmiNote");
@@ -224,4 +225,136 @@
     if (e.key === "Escape" && modal.classList.contains("open")) close();
   });
   video.querySelector("source").addEventListener("error", function () { box.classList.add("failed"); });
+})();
+
+// ===== Scroll Reveal & Dynamic Animations =====
+(function () {
+  "use strict";
+
+  // 1. Thanh tiến độ cuộn trang neon trên cùng
+  var bar = document.createElement("div");
+  bar.className = "scroll-progress";
+  bar.setAttribute("aria-hidden", "true");
+  document.body.appendChild(bar);
+
+  var nav = document.querySelector(".nav");
+  function onScroll() {
+    var winScroll = window.scrollY || document.documentElement.scrollTop;
+    var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    var pct = height > 0 ? (winScroll / height) * 100 : 0;
+    bar.style.width = pct + "%";
+    if (nav) nav.classList.toggle("is-scrolled", winScroll > 40);
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  // 2. Gán tự động các class hiệu ứng vào các khối chính
+  document.querySelectorAll(".section .head, .pricing > .eyebrow, .pricing > .display, .cta > div, .footer-grid > div").forEach(function (el) {
+    el.classList.add("reveal");
+  });
+
+  // Cơ sở vật chất: so le từng thẻ
+  document.querySelectorAll(".programs .program").forEach(function (el, idx) {
+    el.classList.add("reveal", "delay-" + ((idx % 4) + 1));
+  });
+
+  // BMI Tool: trượt mượt từ 2 bên
+  var bmiForm = document.querySelector(".bmi-card");
+  var bmiPreview = document.querySelector(".bmi-preview");
+  if (bmiForm) bmiForm.classList.add("reveal-left");
+  if (bmiPreview) bmiPreview.classList.add("reveal-right");
+
+  // Huấn luyện viên: so le
+  document.querySelectorAll(".trainers .trainer-card").forEach(function (el, idx) {
+    el.classList.add("reveal", "delay-" + ((idx % 3) + 1));
+  });
+
+  // Bảng giá: so le dạng scale nhẹ
+  document.querySelectorAll(".plans .plan").forEach(function (el, idx) {
+    el.classList.add("reveal-scale", "delay-" + ((idx % 4) + 1));
+  });
+
+  // Stats items
+  document.querySelectorAll(".stats li").forEach(function (el, idx) {
+    el.classList.add("reveal", "delay-" + ((idx % 4) + 1));
+  });
+
+  // Hero elements
+  var heroText = document.querySelector(".hero-text");
+  var heroMedia = document.querySelector(".hero-media");
+  if (heroText) heroText.classList.add("reveal");
+  if (heroMedia) heroMedia.classList.add("reveal-scale", "delay-2");
+
+  // 3. IntersectionObserver kích hoạt hiệu ứng khi cuộn tới
+  if ("IntersectionObserver" in window) {
+    var observer = new IntersectionObserver(function (entries, obs) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-revealed");
+          obs.unobserve(entry.target);
+        }
+      });
+    }, {
+      rootMargin: "0px 0px -50px 0px",
+      threshold: 0.12
+    });
+
+    document.querySelectorAll(".reveal, .reveal-fade, .reveal-left, .reveal-right, .reveal-scale").forEach(function (el) {
+      observer.observe(el);
+    });
+  } else {
+    document.querySelectorAll(".reveal, .reveal-fade, .reveal-left, .reveal-right, .reveal-scale").forEach(function (el) {
+      el.classList.add("is-revealed");
+    });
+  }
+
+  // 4. Hiệu ứng đếm số (Counting Numbers Animation) khi lướt tới
+  function animateNumber(el, target, suffix, isDecimal) {
+    var duration = 1800;
+    var start = 0;
+    var startTime = null;
+
+    function step(timestamp) {
+      if (!startTime) startTime = timestamp;
+      var progress = Math.min((timestamp - startTime) / duration, 1);
+      var ease = 1 - Math.pow(1 - progress, 3);
+      var current = start + (target - start) * ease;
+      el.innerHTML = (isDecimal ? current.toFixed(1) : Math.floor(current)) + suffix;
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      } else {
+        el.innerHTML = (isDecimal ? target.toFixed(1) : target) + suffix;
+      }
+    }
+    window.requestAnimationFrame(step);
+  }
+
+  var statsContainer = document.querySelector(".stats");
+  if (statsContainer && "IntersectionObserver" in window) {
+    var statsObserver = new IntersectionObserver(function (entries, obs) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          var items = statsContainer.querySelectorAll("strong");
+          if (items[0]) animateNumber(items[0], 2.5, "K<sup>+</sup>", true);
+          if (items[1]) animateNumber(items[1], 25, "<sup>+</sup>", false);
+          if (items[2]) animateNumber(items[2], 12, "", false);
+          obs.unobserve(statsContainer);
+        }
+      });
+    }, { threshold: 0.25 });
+    statsObserver.observe(statsContainer);
+  }
+
+  var chipSat = document.querySelector(".chip-sat strong");
+  if (chipSat && "IntersectionObserver" in window) {
+    var chipObserver = new IntersectionObserver(function (entries, obs) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          animateNumber(chipSat, 98, "%", false);
+          obs.unobserve(chipSat);
+        }
+      });
+    }, { threshold: 0.3 });
+    chipObserver.observe(chipSat);
+  }
 })();

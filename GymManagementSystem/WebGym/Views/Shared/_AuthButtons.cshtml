@@ -4,14 +4,30 @@
 @if (User.Identity != null && User.Identity.IsAuthenticated)
 {
     var name = User.Identity.Name ?? "Tài khoản";
-    var initial = name.Length > 0 ? name.Substring(0, 1).ToUpperInvariant() : "?";
     var home = User.IsInRole("Admin") ? Url.Action("Index", "Dashboard", new { area = "Admin" })
              : (User.IsInRole("PT") || User.IsInRole("Trainer")) ? Url.Action("Index", "Schedule", new { area = "PT" })
              : User.IsInRole("Member") ? Url.Action("Index", "Profile", new { area = "Member" })
              : Url.Action("Index", "Home", new { area = "" });
 
+    string? userAvatar = null;
+    var userIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    if (int.TryParse(userIdStr, out var uId))
+    {
+        var avatarDiskPath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatars", $"user_{uId}.jpg");
+        if (System.IO.File.Exists(avatarDiskPath))
+        {
+            userAvatar = $"/uploads/avatars/user_{uId}.jpg";
+        }
+    }
+
     <div class="auth-actions">
-        <a class="auth-user" href="@home" title="Vào khu vực của bạn"><i>@initial</i><span>@name</span></a>
+        <a class="auth-user @(!string.IsNullOrEmpty(userAvatar) ? "has-avatar" : "")" href="@home" title="Vào khu vực của bạn">
+            @if (!string.IsNullOrEmpty(userAvatar))
+            {
+                <img src="@userAvatar" alt="Avatar" class="auth-user-avatar" />
+            }
+            <span>@name</span>
+        </a>
         <form class="auth-logout" asp-area="" asp-controller="Auth" asp-action="Logout" method="post">
             <button type="submit">Đăng xuất</button>
         </form>

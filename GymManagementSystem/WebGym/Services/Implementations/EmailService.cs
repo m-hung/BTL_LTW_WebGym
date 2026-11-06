@@ -100,8 +100,9 @@ namespace WebGym.Services.Implementations
         public Task<bool> SendBookingConfirmationAsync(string toEmail, string customerName, string trainerName, DateTime bookingDate, TimeSpan startTime)
         {
             var subject = $"[WebGym] Lịch tập cùng HLV {trainerName} đã được xác nhận";
+            var timeStr = startTime != TimeSpan.Zero ? startTime.ToString(@"hh\:mm") : "khung giờ đã chọn";
             var body = $@"
-                <div style='font-family: Arial, sans-serif; padding: 20px;'>
+                <div style='font-family: Arial, sans-serif; padding: 20px; line-height: 1.6;'>
                     <h2 style='color: #007bff;'>Lịch hẹn tập luyện thành công</h2>
                     <p>Xin chào <strong>{WebUtility.HtmlEncode(customerName)}</strong>,</p>
                     <p>Bạn có lịch tập cùng Huấn Luyện Viên <strong>{WebUtility.HtmlEncode(trainerName)}</strong> vào ngày <strong>{bookingDate:dd/MM/yyyy}</strong> lúc <strong>{startTime:hh\\:mm}</strong>.</p>

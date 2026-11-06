@@ -73,16 +73,33 @@ namespace WebGym.Areas.Member.Controllers
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync();
 
-            // Gửi email thông báo cho hội viên
+            // Gửi email thông báo cho hội viên (an toàn, không làm gián đoạn đặt lịch)
             if (!string.IsNullOrEmpty(member.User.Email))
             {
-                _ = _emailService.SendBookingConfirmationAsync(
-                    member.User.Email,
-                    member.User.FullName,
-                    trainer.User.FullName,
-                    booking.BookingDate,
-                    TimeSpan.Zero
-                );
+                TimeSpan startTime = TimeSpan.Zero;
+                if (!string.IsNullOrEmpty(model.TimeSlot))
+                {
+                    var timePart = model.TimeSlot.Split(new[] { '-', '|' }, StringSplitOptions.RemoveEmptyEntries)[0].Trim();
+                    if (TimeSpan.TryParse(timePart, out var parsed))
+                    {
+                        startTime = parsed;
+                    }
+                }
+
+                try
+                {
+                    _ = _emailService.SendBookingConfirmationAsync(
+                        member.User.Email,
+                        member.User.FullName,
+                        trainer.User.FullName,
+                        booking.BookingDate,
+                        startTime
+                    );
+                }
+                catch
+                {
+                    // Tránh lỗi gửi mail làm crash flow đặt lịch của hội viên
+                }
             }
 
             SetSuccessMessage("Đặt lịch tập thành công! Vui lòng chờ HLV duyệt yêu cầu.");

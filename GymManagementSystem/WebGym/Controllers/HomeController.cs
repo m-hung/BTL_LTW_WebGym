@@ -89,14 +89,10 @@ namespace WebGym.Controllers
             return View(model);
         }
 
-        // GET: /Home/Packages
-        public async Task<IActionResult> Packages()
+        // GET: /Home/Packages -> Chuyển hướng trực tiếp về Bảng giá chuẩn trên trang chủ
+        public IActionResult Packages()
         {
-            var packages = await _context.GymPackages
-                .OrderBy(p => p.Price)
-                .ToListAsync();
-
-            return View(packages);
+            return Redirect("/#bang-gia");
         }
 
         // GET: /Home/Facilities

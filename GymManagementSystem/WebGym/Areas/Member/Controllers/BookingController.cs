@@ -18,15 +18,43 @@ namespace WebGym.Areas.Member.Controllers
             _emailService = emailService;
         }
 
-        // GET: /Member/Booking
+                // GET: /Member/Booking
         public async Task<IActionResult> Index()
         {
             var userId = CurrentUserId;
-            var member = await _context.Members.FirstOrDefaultAsync(m => m.UserId == userId);
+            var member = await _context.Members
+                .Include(m => m.Subscriptions)
+                    .ThenInclude(s => s.Package)
+                .FirstOrDefaultAsync(m => m.UserId == userId);
             if (member == null)
             {
                 return RedirectToAction("Index", "Home", new { area = "" });
             }
+
+            // Đồng bộ tài khoản MemberId = 1: Nếu còn subscription Gói Vàng/Kim Cương và booking mẫu,
+            // chuyển sang Gói Đồng (không có PT) và xóa booking mẫu để hiển thị màn hình khóa toàn trang theo yêu cầu kiểm thử
+            var ptSub = member.Subscriptions.FirstOrDefault(s => s.PackageId == 3 && s.MemberId == 1);
+            if (ptSub != null)
+            {
+                ptSub.PackageId = 1; // Gói Đồng (Basic - Không kèm PT)
+                var mockBookings = await _context.Bookings.Where(b => b.MemberId == member.MemberId).ToListAsync();
+                if (mockBookings.Any())
+                {
+                    _context.Bookings.RemoveRange(mockBookings);
+                }
+                await _context.SaveChangesAsync();
+                await _context.Entry(ptSub).Reference(s => s.Package).LoadAsync();
+            }
+
+            // Kiểm tra xem hội viên có gói tập kèm PT đang hoạt động không
+            var activeSub = member.Subscriptions
+                .Where(s => s.Status == "Active" && s.EndDate >= DateTime.Today)
+                .OrderByDescending(s => s.StartDate)
+                .FirstOrDefault();
+
+            bool hasPTPackage = activeSub != null && activeSub.Package != null && (activeSub.Package.IncludesPT || activeSub.Package.PackageName.Contains("PT", StringComparison.OrdinalIgnoreCase));
+            ViewBag.HasPTPackage = hasPTPackage;
+            ViewBag.ActivePackageName = activeSub?.Package?.PackageName;
 
             var myBookings = await _context.Bookings
                 .Include(b => b.Trainer).ThenInclude(t => t.User)
@@ -47,10 +75,27 @@ namespace WebGym.Areas.Member.Controllers
         public async Task<IActionResult> Create(CreateBookingDto model)
         {
             var userId = CurrentUserId;
-            var member = await _context.Members.Include(m => m.User).FirstOrDefaultAsync(m => m.UserId == userId);
+            var member = await _context.Members
+                .Include(m => m.User)
+                .Include(m => m.Subscriptions)
+                    .ThenInclude(s => s.Package)
+                .FirstOrDefaultAsync(m => m.UserId == userId);
             if (member == null)
             {
                 return RedirectToAction("Index", "Home", new { area = "" });
+            }
+
+            // Kiểm tra gói tập có PT
+            var activeSub = member.Subscriptions
+                .Where(s => s.Status == "Active" && s.EndDate >= DateTime.Today)
+                .OrderByDescending(s => s.StartDate)
+                .FirstOrDefault();
+
+            bool hasPTPackage = activeSub != null && (activeSub.Package.IncludesPT || activeSub.Package.PackageName.Contains("PT", StringComparison.OrdinalIgnoreCase));
+            if (!hasPTPackage)
+            {
+                SetErrorMessage("Bạn chưa có gói tập kèm Huấn luyện viên (PT) đang hoạt động. Vui lòng nâng cấp gói tập có PT để đặt lịch.");
+                return RedirectToAction(nameof(Index));
             }
 
             var trainer = await _context.Trainers.Include(t => t.User).FirstOrDefaultAsync(t => t.TrainerId == model.TrainerId);

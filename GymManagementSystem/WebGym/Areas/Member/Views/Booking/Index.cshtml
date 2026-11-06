@@ -3,229 +3,321 @@
     ViewData["Title"] = "Đặt Lịch Huấn Luyện Viên (PT)";
     var trainers = ViewBag.Trainers as List<WebGym.Models.Entities.Trainer> ?? new List<WebGym.Models.Entities.Trainer>();
     var bookings = Model?.ToList() ?? new List<WebGym.Models.Entities.Booking>();
+    bool hasPTPackage = ViewBag.HasPTPackage is true;
 }
 
-<!-- KHỐI 1 (TRÊN): ĐĂNG KÝ CA TẬP MỚI (Yêu cầu 5) -->
-<div class="portal-card p-4 mb-4">
-    <div class="mb-4 pb-3 border-bottom border-secondary border-opacity-25">
-        <h3 class="portal-title-accent mb-1 fs-3">ĐĂNG KÝ <span>CA TẬP MỚI</span></h3>
-        <div style="color: #a6ada2; font-size: 13.5px;">
-            Nhập thời gian bạn rảnh, hệ thống sẽ đề xuất danh sách Huấn luyện viên (PT) phù hợp nhất
-        </div>
-    </div>
-
-    <form asp-action="Create" method="post" id="bookingForm">
-        @Html.AntiForgeryToken()
-
-        <!-- BƯỚC 1: THỜI GIAN RẢNH CỦA HỘI VIÊN -->
-        <div class="mb-4">
-            <div class="portal-section-eyebrow">
-                01. THỜI GIAN BẠN CÓ THỂ TẬP LUYỆN
-            </div>
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label">Ngày tập luyện <span style="color: var(--portal-danger);">*</span></label>
-                    <input type="date" name="BookingDate" id="bookingDateInput" class="form-control" 
-                           value="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" 
-                           min="@DateTime.Today.ToString("yyyy-MM-dd")" required />
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Khung giờ rảnh mong muốn <span style="color: var(--portal-danger);">*</span></label>
-                    <select name="TimeSlot" id="timeSlotSelect" class="form-select" required>
-                        <option value="06:00 - 07:30">06:00 - 07:30 | Sáng sớm (Cardio)</option>
-                        <option value="08:00 - 09:30">08:00 - 09:30 | Buổi Sáng (Tăng cơ)</option>
-                        <option value="09:30 - 11:00">09:30 - 11:00 | Buổi Sáng (Thể lực)</option>
-                        <option value="14:00 - 15:30">14:00 - 15:30 | Buổi Chiều (Kỹ thuật)</option>
-                        <option value="16:00 - 17:30">16:00 - 17:30 | Buổi Chiều (HIIT)</option>
-                        <option value="17:30 - 19:00" selected>17:30 - 19:00 | Giờ Vàng (Full Body)</option>
-                        <option value="19:00 - 20:30">19:00 - 20:30 | Buổi Tối (Giãn cơ)</option>
-                    </select>
-                </div>
+@if (hasPTPackage)
+{
+    <!-- KHỐI 1 (TRÊN): ĐĂNG KÝ CA TẬP MỚI -->
+    <div class="portal-card p-4 mb-4">
+        <div class="mb-4 pb-3 border-bottom border-secondary border-opacity-25">
+            <h3 class="portal-title-accent mb-1 fs-3">ĐĂNG KÝ <span>CA TẬP MỚI</span></h3>
+            <div style="color: #a6ada2; font-size: 13.5px;">
+                Nhập thời gian bạn rảnh, hệ thống sẽ đề xuất danh sách Huấn luyện viên (PT) phù hợp nhất
             </div>
         </div>
 
-        <!-- BƯỚC 2: HỆ THỐNG ĐỀ XUẤT HUẤN LUYỆN VIÊN (PT) -->
-        <div class="mb-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div class="portal-section-eyebrow mb-0">
-                    02. ĐỀ XUẤT HUẤN LUYỆN VIÊN (PT) PHÙ HỢP
+        <form asp-action="Create" method="post" id="bookingForm">
+            @Html.AntiForgeryToken()
+
+            <!-- BƯỚC 1: THỜI GIAN RẢNH CỦA HỘI VIÊN -->
+            <div class="mb-4">
+                <div class="portal-section-eyebrow">
+                    01. THỜI GIAN BẠN CÓ THỂ TẬP LUYỆN
                 </div>
-                <span class="small" style="color: #9aa296;">Chọn 1 HLV đồng hành cùng bạn</span>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Ngày tập luyện <span style="color: var(--portal-danger);">*</span></label>
+                        <input type="date" name="BookingDate" id="bookingDateInput" class="form-control" 
+                               value="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" 
+                               min="@DateTime.Today.ToString("yyyy-MM-dd")" required />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Khung giờ rảnh mong muốn <span style="color: var(--portal-danger);">*</span></label>
+                        <select name="TimeSlot" id="timeSlotSelect" class="form-select" required>
+                            <option value="06:00 - 07:30">06:00 - 07:30 | Sáng sớm (Cardio)</option>
+                            <option value="08:00 - 09:30">08:00 - 09:30 | Buổi Sáng (Tăng cơ)</option>
+                            <option value="09:30 - 11:00">09:30 - 11:00 | Buổi Sáng (Thể lực)</option>
+                            <option value="14:00 - 15:30">14:00 - 15:30 | Buổi Chiều (Kỹ thuật)</option>
+                            <option value="16:00 - 17:30">16:00 - 17:30 | Buổi Chiều (HIIT)</option>
+                            <option value="17:30 - 19:00" selected>17:30 - 19:00 | Giờ Vàng (Full Body)</option>
+                            <option value="19:00 - 20:30">19:00 - 20:30 | Buổi Tối (Giãn cơ)</option>
+                        </select>
+                    </div>
+                </div>
             </div>
 
-            @if (trainers.Any())
-            {
-                <div class="row g-3" id="trainerCardsContainer">
-                    @for (int i = 0; i < trainers.Count; i++)
-                    {
-                        var t = trainers[i];
-                        var isChecked = (i == 0); // Mặc định chọn HLV đầu tiên
-                        <div class="col-md-6 col-lg-4">
-                            <label class="pt-select-card @(isChecked ? "active" : "") d-block position-relative p-3 rounded" 
-                                   style="cursor: pointer; background-color: var(--portal-bg2); border: 2px solid @(isChecked ? "var(--portal-lime)" : "var(--portal-line)"); transition: all 0.25s ease;">
-                                <div class="d-flex align-items-center gap-3">
-                                    <div style="width: 48px; height: 48px; border-radius: 50%; background: #1f2722; border: 1px solid var(--portal-line); display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--portal-lime); font-size: 18px; flex-shrink: 0;">
-                                        @(string.IsNullOrEmpty(t.User.FullName) ? "PT" : t.User.FullName.Substring(0, 1).ToUpper())
-                                    </div>
-                                    <div class="flex-grow-1 overflow-hidden">
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <div class="fw-bold text-truncate" style="color: #f2f5ef; font-size: 15px;">
-                                                @t.User.FullName
-                                            </div>
-                                            <input type="radio" name="TrainerId" value="@t.TrainerId" class="pt-radio-input" 
-                                                   @(isChecked ? "checked" : "") required style="accent-color: var(--portal-lime); transform: scale(1.2);" />
-                                        </div>
-                                        <div class="small text-truncate" style="color: var(--portal-lime); font-weight: 500;">
-                                            @(string.IsNullOrEmpty(t.Specialization) ? "HLV Thể Hình Cá Nhân" : t.Specialization)
-                                        </div>
-                                        <div class="small text-truncate mt-1" style="color: #9aa296; font-size: 12px;">
-                                            Sẵn sàng nhận lịch tập
-                                        </div>
-                                    </div>
-                                </div>
-                            </label>
-                        </div>
-                    }
+            <!-- BƯỚC 2: HỆ THỐNG ĐỀ XUẤT HUẤN LUYỆN VIÊN (PT) -->
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="portal-section-eyebrow mb-0">
+                        02. ĐỀ XUẤT HUẤN LUYỆN VIÊN (PT) PHÙ HỢP
+                    </div>
+                    <span class="small" style="color: #9aa296;">Chọn 1 HLV đồng hành cùng bạn</span>
                 </div>
-            }
-            else
-            {
-                <div class="p-3 text-center rounded" style="background: var(--portal-bg2); border: 1px solid var(--portal-line); color: #b0b7ad;">
-                    Hiện chưa có huấn luyện viên nào khả dụng. Vui lòng quay lại sau.
-                </div>
-            }
-        </div>
 
-        <!-- BƯỚC 3: GHI CHÚ MỤC TIÊU -->
-        <div class="mb-4">
-            <div class="portal-section-eyebrow">
-                03. GHI CHÚ MỤC TIÊU CHO HLV
-            </div>
-            <textarea name="Notes" class="form-control" rows="2" 
-                      placeholder="Ví dụ: Tập trung phát triển ngực trên, đau nhẹ cổ tay cần chú ý form, hướng dẫn bài mới..."></textarea>
-        </div>
-
-        <!-- BUTTON GỬI LỊCH -->
-        <div class="pt-3 border-top border-secondary border-opacity-25 d-flex flex-wrap gap-2 gap-sm-3">
-            <button type="submit" class="btn-pulse-primary">
-                GỬI YÊU CẦU ĐẶT LỊCH
-            </button>
-            <button type="reset" class="btn-pulse-outline">
-                Nhập lại
-            </button>
-        </div>
-    </form>
-</div>
-
-<!-- KHỐI 2 (DƯỚI): LỊCH SỬ ĐẶT CA TẬP (Yêu cầu 5) -->
-<div class="portal-card p-4">
-    <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-secondary border-opacity-25">
-        <div>
-            <h3 class="portal-title-accent fs-4 mb-0">LỊCH SỬ <span>ĐẶT CA TẬP</span></h3>
-        </div>
-        <span style="color: #b0b7ad; font-size: 13.5px;">Tổng cộng: @bookings.Count buổi</span>
-    </div>
-
-    <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-            <thead>
-                <tr>
-                    <th style="color: #cfd5ca !important; min-width: 220px;">HUẤN LUYỆN VIÊN</th>
-                    <th style="color: #cfd5ca !important; min-width: 110px; white-space: nowrap;">NGÀY TẬP</th>
-                    <th style="color: #cfd5ca !important; min-width: 140px; white-space: nowrap;">KHUNG GIỜ</th>
-                    <th class="text-center" style="color: #cfd5ca !important; min-width: 130px; white-space: nowrap;">TRẠNG THÁI</th>
-                    <th style="color: #cfd5ca !important; min-width: 200px;">GHI CHÚ</th>
-                    <th class="text-end" style="color: #cfd5ca !important; min-width: 90px; white-space: nowrap;">THAO TÁC</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (bookings.Any())
+                @if (trainers.Any())
                 {
-                    foreach (var b in bookings)
-                    {
-                        <tr>
-                            <td>
-                                <div>
-                                    <div class="fw-bold" style="color: #f2f5ef; font-size: 15px;">@b.Trainer.User.FullName</div>
-                                    <div class="small text-truncate" style="color: #a6ada2; max-width: 260px;" title="@b.Trainer.Specialization">
-                                        @(string.IsNullOrEmpty(b.Trainer.Specialization) ? "Huấn luyện viên" : b.Trainer.Specialization)
+                    <div class="row g-3" id="trainerCardsContainer">
+                        @for (int i = 0; i < trainers.Count; i++)
+                        {
+                            var t = trainers[i];
+                            var isChecked = (i == 0); // Mặc định chọn HLV đầu tiên
+                            <div class="col-md-6 col-lg-4">
+                                <label class="pt-select-card @(isChecked ? "active" : "") d-block position-relative p-3 rounded" 
+                                       style="cursor: pointer; background-color: var(--portal-bg2); border: 2px solid @(isChecked ? "var(--portal-lime)" : "var(--portal-line)"); transition: all 0.25s ease;">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div style="width: 48px; height: 48px; border-radius: 50%; background: #1f2722; border: 1px solid var(--portal-line); display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--portal-lime); font-size: 18px; flex-shrink: 0;">
+                                            @(string.IsNullOrEmpty(t.User.FullName) ? "PT" : t.User.FullName.Substring(0, 1).ToUpper())
+                                        </div>
+                                        <div class="flex-grow-1 overflow-hidden">
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <div class="fw-bold text-truncate" style="color: #f2f5ef; font-size: 15px;">
+                                                    @t.User.FullName
+                                                </div>
+                                                <input type="radio" name="TrainerId" value="@t.TrainerId" class="pt-radio-input" 
+                                                       @(isChecked ? "checked" : "") required style="accent-color: var(--portal-lime); transform: scale(1.2);" />
+                                            </div>
+                                            <div class="small text-truncate" style="color: var(--portal-lime); font-weight: 500;">
+                                                @(string.IsNullOrEmpty(t.Specialization) ? "HLV Thể Hình Cá Nhân" : t.Specialization)
+                                            </div>
+                                            <div class="small text-truncate mt-1" style="color: #9aa296; font-size: 12px;">
+                                                Sẵn sàng nhận lịch tập
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </td>
-                            <td>
-                                <span class="fw-semibold" style="color: #e5eae0; font-size: 15px; letter-spacing: 0.02em; white-space: nowrap;">
-                                    @b.BookingDate.ToString("dd/MM/yyyy")
-                                </span>
-                            </td>
-                            <td>
-                                <span class="badge" style="background: rgba(255,255,255,0.04); border: 1px solid var(--portal-line); color: #dce1d8; font-weight: 500; font-size: 13px; padding: 6px 12px; border-radius: 4px; white-space: nowrap;">
-                                    @b.TimeSlot
-                                </span>
-                            </td>
-                            <td class="text-center">
-                                @if (b.Status == "Approved")
-                                {
-                                    <span class="portal-badge" style="background: rgba(46, 213, 115, 0.16); color: #2ed573; border: 1px solid rgba(46, 213, 115, 0.35); white-space: nowrap;">
-                                        ĐÃ DUYỆT
-                                    </span>
-                                }
-                                else if (b.Status == "Pending")
-                                {
-                                    <span class="portal-badge" style="background: rgba(245, 176, 65, 0.16); color: #f5b041; border: 1px solid rgba(245, 176, 65, 0.35); white-space: nowrap;">
-                                        CHỜ DUYỆT
-                                    </span>
-                                }
-                                else if (b.Status == "Completed")
-                                {
-                                    <span class="portal-badge" style="background: rgba(72, 202, 228, 0.16); color: #48cae4; border: 1px solid rgba(72, 202, 228, 0.35); white-space: nowrap;">
-                                        HOÀN THÀNH
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="portal-badge" style="background: rgba(255, 255, 255, 0.05); color: #9da499; border: 1px solid #333d36; white-space: nowrap;">
-                                        ĐÃ HỦY
-                                    </span>
-                                }
-                            </td>
-                            <td>
-                                <span class="d-inline-block text-truncate" style="max-width: 240px; color: #b5bcaf; font-size: 13.5px;" title="@b.Notes">
-                                    @(string.IsNullOrEmpty(b.Notes) ? "--" : b.Notes)
-                                </span>
-                            </td>
-                            <td class="text-end">
-                                @if (b.Status == "Pending")
-                                {
-                                    <form asp-action="Cancel" asp-route-id="@b.BookingId" method="post" class="d-inline">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn-pulse-outline btn-sm" 
-                                                style="color: #ff7675; border-color: rgba(255, 118, 117, 0.4); padding: 5px 12px; font-size: 13px;"
-                                                onclick="return confirm('Bạn có chắc chắn muốn hủy yêu cầu buổi tập này?');"
-                                                title="Hủy buổi tập">
-                                            Hủy lịch
-                                        </button>
-                                    </form>
-                                }
-                                else
-                                {
-                                    <span style="color: #7b8377; font-size: 13px;">--</span>
-                                }
-                            </td>
-                        </tr>
-                    }
+                                </label>
+                            </div>
+                        }
+                    </div>
                 }
                 else
                 {
-                    <tr>
-                        <td colspan="6" class="text-center py-4" style="color: #9aa296;">
-                            Bạn chưa có lịch đặt ca tập nào. Hãy chọn ngày và giờ ở trên để gửi yêu cầu cho HLV!
-                        </td>
-                    </tr>
+                    <div class="p-3 text-center rounded" style="background: var(--portal-bg2); border: 1px solid var(--portal-line); color: #b0b7ad;">
+                        Hiện chưa có huấn luyện viên nào khả dụng. Vui lòng quay lại sau.
+                    </div>
                 }
-            </tbody>
-        </table>
+            </div>
+
+            <!-- BƯỚC 3: GHI CHÚ MỤC TIÊU -->
+            <div class="mb-4">
+                <div class="portal-section-eyebrow">
+                    03. GHI CHÚ MỤC TIÊU CHO HLV
+                </div>
+                <textarea name="Notes" class="form-control" rows="2" 
+                          placeholder="Ví dụ: Tập trung phát triển ngực trên, đau nhẹ cổ tay cần chú ý form, hướng dẫn bài mới..."></textarea>
+            </div>
+
+            <!-- BUTTON GỬI LỊCH -->
+            <div class="pt-3 border-top border-secondary border-opacity-25 d-flex flex-wrap gap-2 gap-sm-3">
+                <button type="submit" class="btn-pulse-primary">
+                    GỬI YÊU CẦU ĐẶT LỊCH
+                </button>
+                <button type="reset" class="btn-pulse-outline">
+                    Nhập lại
+                </button>
+            </div>
+        </form>
     </div>
-</div>
+
+    <!-- KHỐI 2 (DƯỚI): LỊCH SỬ ĐẶT CA TẬP -->
+    <div class="portal-card p-4">
+        <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-secondary border-opacity-25">
+            <div>
+                <h3 class="portal-title-accent fs-4 mb-0">LỊCH SỬ <span>ĐẶT CA TẬP</span></h3>
+            </div>
+            <span style="color: #b0b7ad; font-size: 13.5px;">Tổng cộng: @bookings.Count buổi</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th style="color: #cfd5ca !important; min-width: 220px;">HUẤN LUYỆN VIÊN</th>
+                        <th style="color: #cfd5ca !important; min-width: 110px; white-space: nowrap;">NGÀY TẬP</th>
+                        <th style="color: #cfd5ca !important; min-width: 140px; white-space: nowrap;">KHUNG GIỜ</th>
+                        <th class="text-center" style="color: #cfd5ca !important; min-width: 130px; white-space: nowrap;">TRẠNG THÁI</th>
+                        <th style="color: #cfd5ca !important; min-width: 200px;">GHI CHÚ</th>
+                        <th class="text-end" style="color: #cfd5ca !important; min-width: 90px; white-space: nowrap;">THAO TÁC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (bookings.Any())
+                    {
+                        foreach (var b in bookings)
+                        {
+                            <tr>
+                                <td>
+                                    <div>
+                                        <div class="fw-bold" style="color: #f2f5ef; font-size: 15px;">@b.Trainer.User.FullName</div>
+                                        <div class="small text-truncate" style="color: #a6ada2; max-width: 260px;" title="@b.Trainer.Specialization">
+                                            @(string.IsNullOrEmpty(b.Trainer.Specialization) ? "Huấn luyện viên" : b.Trainer.Specialization)
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="fw-semibold" style="color: #e5eae0; font-size: 15px; letter-spacing: 0.02em; white-space: nowrap;">
+                                        @b.BookingDate.ToString("dd/MM/yyyy")
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge" style="background: rgba(255,255,255,0.04); border: 1px solid var(--portal-line); color: #dce1d8; font-weight: 500; font-size: 13px; padding: 6px 12px; border-radius: 4px; white-space: nowrap;">
+                                        @b.TimeSlot
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    @if (b.Status == "Approved")
+                                    {
+                                        <span class="portal-badge" style="background: rgba(46, 213, 115, 0.16); color: #2ed573; border: 1px solid rgba(46, 213, 115, 0.35); white-space: nowrap;">
+                                            ĐÃ DUYỆT
+                                        </span>
+                                    }
+                                    else if (b.Status == "Pending")
+                                    {
+                                        <span class="portal-badge" style="background: rgba(245, 176, 65, 0.16); color: #f5b041; border: 1px solid rgba(245, 176, 65, 0.35); white-space: nowrap;">
+                                            CHỜ DUYỆT
+                                        </span>
+                                    }
+                                    else if (b.Status == "Completed")
+                                    {
+                                        <span class="portal-badge" style="background: rgba(72, 202, 228, 0.16); color: #48cae4; border: 1px solid rgba(72, 202, 228, 0.35); white-space: nowrap;">
+                                            HOÀN THÀNH
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="portal-badge" style="background: rgba(255, 255, 255, 0.05); color: #9da499; border: 1px solid #333d36; white-space: nowrap;">
+                                            ĐÃ HỦY
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="d-inline-block text-truncate" style="max-width: 240px; color: #b5bcaf; font-size: 13.5px;" title="@b.Notes">
+                                        @(string.IsNullOrEmpty(b.Notes) ? "--" : b.Notes)
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    @if (b.Status == "Pending")
+                                    {
+                                        <form asp-action="Cancel" asp-route-id="@b.BookingId" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn-pulse-outline btn-sm" 
+                                                    style="color: #ff7675; border-color: rgba(255, 118, 117, 0.4); padding: 5px 12px; font-size: 13px;"
+                                                    onclick="return confirm('Bạn có chắc chắn muốn hủy yêu cầu buổi tập này?');"
+                                                    title="Hủy buổi tập">
+                                                Hủy lịch
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <span style="color: #7b8377; font-size: 13px;">--</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-4" style="color: #9aa296;">
+                                Bạn chưa có lịch đặt ca tập nào. Hãy chọn ngày và giờ ở trên để gửi yêu cầu cho HLV!
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+else
+{
+    <!-- MÀN HÌNH KHÓA TOÀN TRANG KHI CHƯA CÓ GÓI PT (YÊU CẦU 10) -->
+    <div class="portal-card py-5 px-4 p-md-5 text-center position-relative overflow-hidden" 
+         style="min-height: 540px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 20%, rgba(200, 255, 46, 0.08) 0%, rgba(19, 23, 21, 0.98) 75%, #0b0e0c 100%); border: 1px solid rgba(200, 255, 46, 0.3); border-radius: 16px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);">
+        
+        <!-- Glowing Lock Emblem -->
+        <div class="mb-4 position-relative">
+            <div style="width: 88px; height: 88px; margin: 0 auto; border-radius: 50%; background: rgba(200, 255, 46, 0.12); border: 2px solid var(--portal-lime); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 35px rgba(200, 255, 46, 0.3);">
+                <i class="bi bi-lock-fill" style="font-size: 40px; color: var(--portal-lime);"></i>
+            </div>
+        </div>
+
+        <!-- Tagline / Badge -->
+        <div class="portal-section-eyebrow mb-2" style="color: var(--portal-lime); letter-spacing: 0.14em; font-size: 12.5px;">
+            QUYỀN LỢI ĐẶC QUYỀN HUẤN LUYỆN VIÊN (PT)
+        </div>
+
+        <!-- Main Title -->
+        <h2 class="portal-title-accent display-6 fw-bold mb-3" style="font-family: var(--portal-display); letter-spacing: 0.04em; max-width: 750px;">
+            TÍNH NĂNG ĐẶT LỊCH HUẤN LUYỆN VIÊN (PT) <span>ĐANG BỊ KHÓA</span>
+        </h2>
+
+        <!-- Description Paragraph -->
+        <p class="mb-4 mx-auto" style="max-width: 640px; font-size: 15px; line-height: 1.65; color: #a6ada2;">
+            Tài khoản của bạn hiện tại chưa có gói tập hoặc gói tập hiện tại không bao gồm quyền lợi kèm Huấn luyện viên cá nhân (PT 1-1). 
+            Vui lòng nâng cấp gói tập để mở khóa toàn bộ quyền lợi đặt lịch và tập luyện cùng đội ngũ HLV thể hình chuyên nghiệp.
+        </p>
+
+        <!-- 3 Feature Highlight Boxes -->
+        <div class="row g-3 justify-content-center mb-4 text-start w-100" style="max-width: 780px;">
+            <div class="col-md-4">
+                <div class="p-3 h-100 rounded" style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.07);">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="bi bi-person-badge-fill" style="color: var(--portal-lime); font-size: 18px;"></i>
+                        <span class="fw-bold text-white" style="font-size: 13.5px;">HLV 1-1 KÈM RIÊNG</span>
+                    </div>
+                    <div style="font-size: 12.5px; color: #9aa296; line-height: 1.5;">
+                        Đồng hành sửa form từng động tác, tránh chấn thương và tối ưu hiệu quả bài tập.
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-3 h-100 rounded" style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.07);">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="bi bi-activity" style="color: var(--portal-lime); font-size: 18px;"></i>
+                        <span class="fw-bold text-white" style="font-size: 13.5px;">GIÁO ÁN RIÊNG BIỆT</span>
+                    </div>
+                    <div style="font-size: 12.5px; color: #9aa296; line-height: 1.5;">
+                        Thiết kế lộ trình tập & thực đơn dinh dưỡng cá nhân hóa theo thể trạng InBody.
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-3 h-100 rounded" style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.07);">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="bi bi-calendar-check-fill" style="color: var(--portal-lime); font-size: 18px;"></i>
+                        <span class="fw-bold text-white" style="font-size: 13.5px;">CHỦ ĐỘNG GIỜ TẬP</span>
+                    </div>
+                    <div style="font-size: 12.5px; color: #9aa296; line-height: 1.5;">
+                        Linh hoạt đặt lịch theo khung giờ rảnh từ 06:00 đến 20:30 mỗi ngày.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upgrade Notice Box -->
+        <div class="p-3 mb-4 mx-auto rounded text-start w-100" style="max-width: 680px; background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(200, 255, 46, 0.25);">
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <i class="bi bi-shield-exclamation" style="color: var(--portal-lime); font-size: 19px;"></i>
+                <span class="fw-bold text-white" style="font-size: 14px;">YÊU CẦU NÂNG CẤP GÓI TẬP CÓ PT</span>
+            </div>
+            <div class="small" style="color: #a6ada2; line-height: 1.55;">
+                Vui lòng nâng cấp lên các gói tập có kèm PT như <strong style="color: #ffffff;">Gói Vàng (VIP 6 Tháng kèm PT)</strong> hoặc <strong style="color: #ffffff;">Gói Kim Cương (VVIP 1 Năm kèm PT)</strong> để mở khóa tính năng đặt lịch luyện tập 1-1.
+            </div>
+        </div>
+
+        <!-- CTA Buttons -->
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+            <a asp-area="Member" asp-controller="WorkoutSchedule" asp-action="Index" class="btn-pulse-primary py-2 px-4 d-inline-flex align-items-center gap-2" style="font-size: 14.5px; text-decoration: none;">
+                <i class="bi bi-lightning-charge-fill"></i> NÂNG CẤP GÓI TẬP CÓ PT
+            </a>
+            <a href="/#bang-gia" class="btn-pulse-outline py-2 px-4 d-inline-flex align-items-center gap-2" style="font-size: 14.5px; text-decoration: none;">
+                <i class="bi bi-grid-fill"></i> XEM BẢNG GIÁ GÓI TẬP
+            </a>
+        </div>
+    </div>
+}
 
 @section Scripts {
     <script>
@@ -251,7 +343,6 @@
             const timeSlot = document.getElementById('timeSlotSelect');
             const bookingDate = document.getElementById('bookingDateInput');
             function highlightAvailable() {
-                // Hiệu ứng nhẹ khi chọn thời gian rảnh
                 const container = document.getElementById('trainerCardsContainer');
                 if (container) {
                     container.style.opacity = '0.7';

@@ -67,6 +67,8 @@ namespace WebGym.Models.DTOs.Member
     public class MemberPackageViewModel
     {
         public int MemberId { get; set; }
+        public int? PackageId { get; set; }
+        public int DurationDays { get; set; }
         public string MemberName { get; set; } = string.Empty;
         public string CardNumber { get; set; } = string.Empty;
         public bool HasActivePackage { get; set; }

@@ -1,3 +1,4 @@
+@inject WebGym.Data.ApplicationDbContext _context
 @* Cụm nút Đăng nhập / Đăng ký trên thanh điều hướng kiểu Pulse.
    Chưa đăng nhập → mở modal (href giữ làm fallback khi tắt JS).
    Đã đăng nhập  → hiện tên + link vào khu vực của vai trò + nút đăng xuất. *@
@@ -13,10 +14,18 @@
     var userIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
     if (int.TryParse(userIdStr, out var uId))
     {
-        var avatarDiskPath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatars", $"user_{uId}.jpg");
-        if (System.IO.File.Exists(avatarDiskPath))
+        var member = _context.Members.FirstOrDefault(m => m.UserId == uId);
+        if (!string.IsNullOrEmpty(member?.AvatarUrl))
         {
-            userAvatar = $"/uploads/avatars/user_{uId}.jpg";
+            userAvatar = member.AvatarUrl;
+        }
+        else
+        {
+            var avatarDiskPath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatars", $"user_{uId}.jpg");
+            if (System.IO.File.Exists(avatarDiskPath))
+            {
+                userAvatar = $"/uploads/avatars/user_{uId}.jpg";
+            }
         }
     }
 

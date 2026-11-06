@@ -21,6 +21,9 @@ namespace WebGym.Models.Entities
 
         public DateTime? DateOfBirth { get; set; }
 
+        [MaxLength(500)]
+        public string? AvatarUrl { get; set; }
+
         public double? Height { get; set; } // Chiều cao (cm)
         public double? Weight { get; set; } // Cân nặng ban đầu (kg)
         public double? BMR { get; set; } // Basal Metabolic Rate (kcal)

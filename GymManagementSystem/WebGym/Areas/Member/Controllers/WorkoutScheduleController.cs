@@ -14,7 +14,7 @@ namespace WebGym.Areas.Member.Controllers
             _context = context;
         }
 
-        // GET: /Member/WorkoutSchedule (Trang GÓI TẬP - Yêu cầu 6)
+                // GET: /Member/WorkoutSchedule (Trang GÓI TẬP - Yêu cầu 6)
         public async Task<IActionResult> Index()
         {
             var userId = CurrentUserId;
@@ -33,18 +33,44 @@ namespace WebGym.Areas.Member.Controllers
                 .OrderByDescending(s => s.StartDate)
                 .FirstOrDefault(s => s.Status == "Active");
 
+            // Tự động đồng bộ nếu Member 1 đang gán Gói Đồng (Basic) nhưng số tiền hoặc thời gian còn dính Gói Vàng cũ
+            if (activeSub != null && activeSub.PackageId == 1 && (activeSub.PaidAmount != 500000m || (activeSub.EndDate - activeSub.StartDate).TotalDays > 35))
+            {
+                activeSub.OriginalPrice = 500000m;
+                activeSub.PaidAmount = 500000m;
+                activeSub.StartDate = new DateTime(2026, 11, 1, 0, 0, 0, DateTimeKind.Utc);
+                activeSub.EndDate = new DateTime(2026, 12, 1, 0, 0, 0, DateTimeKind.Utc);
+                await _context.SaveChangesAsync();
+                await _context.Entry(activeSub).Reference(s => s.Package).LoadAsync();
+            }
+
+            string tier = "MEMBER TIER";
+            if (activeSub != null && activeSub.Package != null)
+            {
+                if (activeSub.Package.PackageName.Contains("Kim Cương", StringComparison.OrdinalIgnoreCase))
+                    tier = "VIP DIAMOND";
+                else if (activeSub.Package.PackageName.Contains("Vàng", StringComparison.OrdinalIgnoreCase))
+                    tier = "VIP GOLD";
+                else if (activeSub.Package.PackageName.Contains("Bạc", StringComparison.OrdinalIgnoreCase))
+                    tier = "STANDARD";
+                else if (activeSub.Package.PackageName.Contains("Đồng", StringComparison.OrdinalIgnoreCase))
+                    tier = "BASIC MEMBER";
+            }
+
             var vm = new MemberPackageViewModel
             {
                 MemberId = member.MemberId,
+                PackageId = activeSub?.PackageId,
+                DurationDays = activeSub?.Package?.DurationDays ?? 30,
                 MemberName = member.User.FullName,
                 CardNumber = $"MB-{DateTime.Now.Year} •••• •••• {member.MemberId:D4}",
                 HasActivePackage = activeSub != null,
-                PackageName = activeSub?.Package.PackageName ?? "Chưa đăng ký gói",
-                PackageTier = (activeSub?.Package.PackageName.Contains("VIP", StringComparison.OrdinalIgnoreCase) == true) ? "VIP DIAMOND" : "MEMBER TIER",
+                PackageName = activeSub?.Package?.PackageName ?? "Chưa đăng ký gói",
+                PackageTier = tier,
                 Status = activeSub != null ? "Active" : "None",
                 StartDate = activeSub?.StartDate,
                 EndDate = activeSub?.EndDate,
-                Price = activeSub != null ? (activeSub.PaidAmount > 0 ? activeSub.PaidAmount : activeSub.Package.Price) : 0,
+                Price = activeSub != null ? (activeSub.PaidAmount > 0 ? activeSub.PaidAmount : (activeSub.Package?.Price ?? 500000m)) : 0,
                 RemainingDays = activeSub != null ? Math.Max(0, (int)(activeSub.EndDate.Date - DateTime.Today).TotalDays) : 0
             };
 
@@ -59,24 +85,27 @@ namespace WebGym.Areas.Member.Controllers
                         PackageName = sub.Package?.PackageName ?? "Gói tập Pulse Gym",
                         StartDate = sub.StartDate,
                         EndDate = sub.EndDate,
-                        Amount = sub.PaidAmount > 0 ? sub.PaidAmount : (sub.Package?.Price ?? 0),
+                        Amount = sub.PaidAmount > 0 ? sub.PaidAmount : (sub.Package?.Price ?? 500000m),
                         Status = sub.Status == "Active" ? "Đã thanh toán" : (sub.Status == "Expired" ? "Đã hoàn thành" : "Đã hủy")
                     });
                 }
             }
             else
             {
-                // Nếu chưa có giao dịch, tạo dòng mẫu trực quan theo hình ảnh của Leader
                 vm.History.Add(new PackageHistoryItemDto
                 {
                     InvoiceCode = $"#HD-{DateTime.Now.Year}-0001",
-                    PackageName = "Gói Tập Thử Nghiệm 1 Tháng",
-                    StartDate = DateTime.Today.AddDays(-30),
-                    EndDate = DateTime.Today,
+                    PackageName = "Gói Đồng (Basic 1 Tháng)",
+                    StartDate = new DateTime(2026, 11, 1),
+                    EndDate = new DateTime(2026, 12, 1),
                     Amount = 500000,
-                    Status = "Đã hoàn thành"
+                    Status = "Đã thanh toán"
                 });
             }
+
+            ViewBag.AvailablePackages = await _context.GymPackages
+                .OrderBy(p => p.Price)
+                .ToListAsync();
 
             return View(vm);
         }

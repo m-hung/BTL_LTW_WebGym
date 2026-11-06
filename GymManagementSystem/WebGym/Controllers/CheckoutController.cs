@@ -28,10 +28,19 @@ namespace WebGym.Controllers
             _logger = logger;
         }
 
-        // GET: /thanh-toan/1?cycle=year hoặc /thanh-toan/pro
+        // GET: /thanh-toan/1 hoặc /thanh-toan/pro hoặc /Checkout?slug=1
         [HttpGet("thanh-toan/{slug?}")]
+        [HttpGet("Checkout/{slug?}")]
+        [HttpGet("Checkout")]
         public async Task<IActionResult> Index(string? slug, string cycle = "month")
         {
+            // Bắt buộc phải đăng nhập trước khi vào trang thanh toán
+            if (User.Identity == null || !User.Identity.IsAuthenticated)
+            {
+                var target = string.IsNullOrEmpty(slug) ? "/thanh-toan" : $"/thanh-toan/{slug}";
+                return Redirect($"/?auth=login&returnUrl={Uri.EscapeDataString(target)}");
+            }
+
             var allPackages = await _context.GymPackages
                 .OrderBy(p => p.Price)
                 .ToListAsync();
@@ -67,10 +76,10 @@ namespace WebGym.Controllers
             {
                 PackageId = package.PackageId,
                 Plan = plan,
-                Cycle = cycle == "year" ? "year" : "month"
+                Cycle = "package"
             };
 
-            // Nếu người dùng đã đăng nhập, tự động điền thông tin
+            // Điền thông tin từ tài khoản đã đăng nhập
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (int.TryParse(userIdClaim, out int uid))
             {
@@ -91,16 +100,22 @@ namespace WebGym.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Submit(string? slug, CheckoutViewModel model)
         {
+            // Bắt buộc phải đăng nhập trước khi submit thanh toán
+            if (User.Identity == null || !User.Identity.IsAuthenticated)
+            {
+                var target = string.IsNullOrEmpty(slug) ? "/thanh-toan" : $"/thanh-toan/{slug}";
+                return Redirect($"/?auth=login&returnUrl={Uri.EscapeDataString(target)}");
+            }
+
             var allPackages = await _context.GymPackages
                 .OrderBy(p => p.Price)
                 .ToListAsync();
 
-            GymPackage? package = null;
+            ViewBag.AllPackages = allPackages;
+            var allTrainers = await _context.Trainers.Include(t => t.User).ToListAsync();
+            ViewBag.AllTrainers = allTrainers.Select(TrainerInfo.FromTrainer).ToList();
 
-            if (model.PackageId > 0)
-            {
-                package = allPackages.FirstOrDefault(p => p.PackageId == model.PackageId);
-            }
+            var package = allPackages.FirstOrDefault(p => p.PackageId == model.PackageId);
             if (package == null && int.TryParse(slug, out int pkgId))
             {
                 package = allPackages.FirstOrDefault(p => p.PackageId == pkgId);
@@ -114,93 +129,69 @@ namespace WebGym.Controllers
                     || (slug.Equals("elite", StringComparison.OrdinalIgnoreCase) && p.PackageId == 4));
             }
 
-            package ??= allPackages.FirstOrDefault();
             if (package == null)
             {
                 return NotFound("Gói tập không tồn tại.");
             }
 
-            var plan = PlanInfo.FromGymPackage(package);
-            model.Plan = plan;
-            model.PackageId = package.PackageId;
-            model.Cycle = model.Cycle == "year" ? "year" : "month";
-
-            if (model.StartDate.HasValue && model.StartDate.Value.Date < DateTime.Today)
-            {
-                ModelState.AddModelError(nameof(model.StartDate), "Ngày bắt đầu không được ở quá khứ");
-            }
+            // Gán lại Plan cho ViewModel nếu ModelState có lỗi cần render lại
+            model.Plan = PlanInfo.FromGymPackage(package);
 
             if (!ModelState.IsValid)
             {
-                ViewBag.AllPackages = allPackages;
-                var allTrainers = await _context.Trainers.Include(t => t.User).ToListAsync();
-                ViewBag.AllTrainers = allTrainers.Select(TrainerInfo.FromTrainer).ToList();
                 return View("Index", model);
             }
 
-            // 1. Tìm hoặc tạo hội viên (Member) trong Database
+            // 1. Tìm hoặc tạo tài khoản Member tương ứng với người dùng
+            var userEmail = model.Email.Trim().ToLowerInvariant();
+            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == userEmail);
             Member? member = null;
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (int.TryParse(userIdClaim, out int uid))
+
+            if (existingUser != null)
             {
-                member = await _context.Members
-                    .Include(m => m.User)
-                    .FirstOrDefaultAsync(m => m.UserId == uid);
-            }
-
-            if (member == null)
-            {
-                var existingUser = await _context.Users
-                    .FirstOrDefaultAsync(u => u.Email == model.Email || u.PhoneNumber == model.Phone);
-
-                if (existingUser != null)
+                member = await _context.Members.FirstOrDefaultAsync(m => m.UserId == existingUser.UserId);
+                if (member == null)
                 {
-                    member = await _context.Members
-                        .Include(m => m.User)
-                        .FirstOrDefaultAsync(m => m.UserId == existingUser.UserId);
-
-                    if (member == null)
-                    {
-                        member = new Member
-                        {
-                            UserId = existingUser.UserId
-                        };
-                        _context.Members.Add(member);
-                        await _context.SaveChangesAsync();
-                    }
-                }
-                else
-                {
-                    // Tạo tài khoản User mới với mật khẩu mặc định (Member@123)
-                    const string defaultPassHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=";
-                    var emailPrefix = model.Email.Split('@')[0];
-                    var uniqueUsername = $"{emailPrefix}_{DateTime.UtcNow.Ticks.ToString()[^4..]}";
-
-                    var newUser = new User
-                    {
-                        FullName = model.FullName,
-                        Email = model.Email,
-                        PhoneNumber = model.Phone,
-                        Username = uniqueUsername,
-                        PasswordHash = defaultPassHash,
-                        Role = "Member",
-                        CreatedAt = DateTime.UtcNow
-                    };
-                    _context.Users.Add(newUser);
-                    await _context.SaveChangesAsync();
-
+                    // Đã có User nhưng chưa có Member profile
                     member = new Member
                     {
-                        UserId = newUser.UserId
+                        UserId = existingUser.UserId
                     };
                     _context.Members.Add(member);
                     await _context.SaveChangesAsync();
                 }
             }
+            else
+            {
+                // Tạo tài khoản Member mới
+                const string defaultPassHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=";
+                var emailPrefix = model.Email.Split('@')[0];
+                var uniqueUsername = $"{emailPrefix}_{DateTime.UtcNow.Ticks.ToString()[^4..]}";
 
-            // 2. Tạo bản ghi Thanh toán (Payment) và Gói đăng ký (Subscription)
-            var durationDays = package.DurationDays;
-            var totalAmount = package.Price;
+                var newUser = new User
+                {
+                    Username = uniqueUsername,
+                    PasswordHash = defaultPassHash,
+                    Email = model.Email,
+                    FullName = model.FullName,
+                    PhoneNumber = model.Phone,
+                    Role = "Member",
+                    CreatedAt = DateTime.UtcNow
+                };
+                _context.Users.Add(newUser);
+                await _context.SaveChangesAsync();
+
+                member = new Member
+                {
+                    UserId = newUser.UserId
+                };
+                _context.Members.Add(member);
+                await _context.SaveChangesAsync();
+            }
+
+            // 2. Tính tiền & tạo Payment + Subscription
+            decimal totalAmount = package.Price;
+            int durationDays = package.DurationDays;
             var orderId = $"ORDER_{DateTime.UtcNow.Ticks}";
 
             var payment = new Payment
@@ -208,12 +199,7 @@ namespace WebGym.Controllers
                 MemberId = member.MemberId,
                 PackageId = package.PackageId,
                 Amount = totalAmount,
-                PaymentMethod = model.PaymentMethod switch
-                {
-                    "vnpay" => "VNPay",
-                    "bank" => "BankTransfer",
-                    _ => "Cash"
-                },
+                PaymentMethod = model.PaymentMethod == "vnpay" ? "VNPay" : "Cash",
                 TransactionCode = orderId,
                 PaymentDate = DateTime.UtcNow,
                 Status = model.PaymentMethod == "vnpay" ? "Pending" : "Completed"
@@ -276,12 +262,9 @@ namespace WebGym.Controllers
             TempData["Email"] = model.Email;
             TempData["Name"] = model.FullName;
             TempData["Start"] = (model.StartDate ?? DateTime.UtcNow).ToString("dd/MM/yyyy");
-            TempData["Method"] = model.PaymentMethod switch
-            {
-                "vnpay" => "VNPay",
-                "bank" => "Chuyển khoản ngân hàng",
-                _ => "Thanh toán tại quầy"
-            };
+            TempData["Time"] = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+            TempData["TxnCode"] = orderId;
+            TempData["Method"] = model.PaymentMethod == "vnpay" ? "VNPay" : "Thanh toán tại quầy";
 
             return RedirectToAction(nameof(Success));
         }
@@ -290,10 +273,11 @@ namespace WebGym.Controllers
         [HttpGet("thanh-toan/thanh-cong")]
         public IActionResult Success()
         {
-            if (TempData["Plan"] == null)
+            if (TempData["Plan"] == null && TempData["Name"] == null)
             {
                 return Redirect("~/");
             }
+            TempData.Keep();
             return View();
         }
     }

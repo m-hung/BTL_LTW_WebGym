@@ -6,12 +6,13 @@
         ? Math.Round((double)Model.Weight.Value / Math.Pow((double)Model.Height.Value / 100, 2), 1) 
         : null;
 
-    // Chuẩn bị dữ liệu cho Chart.js
+    // Chuẩn bị dữ liệu cho Chart.js (Không dùng dữ liệu ảo cho tài khoản mới)
     var chartLabels = new List<string>();
     var weightData = new List<double>();
     var bodyFatData = new List<double>();
+    bool hasProgressData = progressList.Any() && Model.Weight.HasValue && Model.Weight > 0;
 
-    if (progressList.Any())
+    if (hasProgressData)
     {
         int step = 1;
         foreach (var p in progressList.OrderBy(x => x.RecordedDate))
@@ -21,15 +22,6 @@
             bodyFatData.Add(p.BodyFatPercentage ?? 0);
             step++;
         }
-    }
-    else
-    {
-        // Dữ liệu mẫu minh họa tiến trình nếu chưa có lịch sử đo
-        var currentW = Model.Weight ?? 72.0;
-        var currentF = Model.BodyFatPercentage ?? 16.5;
-        chartLabels.AddRange(new[] { "T1 (Tháng 1)", "T2 (Tháng 2)", "T3 (Tháng 3)", "T4 (Tháng 4)", "T5 (Tháng 5)", "T6 (Hiện tại)" });
-        weightData.AddRange(new[] { currentW + 6.0, currentW + 5.0, currentW + 4.0, currentW + 2.8, currentW + 1.5, currentW });
-        bodyFatData.AddRange(new[] { currentF + 5.5, currentF + 4.0, currentF + 2.5, currentF + 1.7, currentF + 0.5, currentF });
     }
 }
 
@@ -41,9 +33,18 @@
                 <span>CÂN NẶNG</span>
             </div>
             <div class="portal-stat-val" style="color: #f2f5ef;">
-                @(Model.Weight?.ToString("0.0") ?? "--") <span style="font-size: 15px; color: #9aa296; font-family: var(--portal-body); font-weight: normal;">kg</span>
+                @if (Model.Weight > 0)
+                {
+                    @Model.Weight.Value.ToString("0.0") <span style="font-size: 15px; color: #9aa296; font-family: var(--portal-body); font-weight: normal;">kg</span>
+                }
+                else
+                {
+                    <span>--</span>
+                }
             </div>
-            <div class="portal-stat-sub" style="color: #a0a79c;">Chiều cao: @(Model.Height?.ToString("0") ?? "--") cm</div>
+            <div class="portal-stat-sub" style="color: #a0a79c;">
+                Chiều cao: @(Model.Height > 0 ? $"{Model.Height.Value:0} cm" : "--")
+            </div>
         </div>
     </div>
     <div class="col-sm-6 col-lg-3">
@@ -64,7 +65,7 @@
                 }
                 else
                 {
-                    <span style="color: #a0a79c;">Cần đủ chiều cao & cân nặng</span>
+                    <span style="color: #a0a79c;">Chưa có dữ liệu InBody</span>
                 }
             </div>
         </div>
@@ -75,9 +76,18 @@
                 <span>TỶ LỆ MỠ CƠ THỂ</span>
             </div>
             <div class="portal-stat-val" style="color: #f2f5ef;">
-                @(Model.BodyFatPercentage?.ToString("0.0") ?? "--") <span style="font-size: 15px; color: #9aa296; font-family: var(--portal-body); font-weight: normal;">%</span>
+                @if (Model.BodyFatPercentage > 0)
+                {
+                    @Model.BodyFatPercentage.Value.ToString("0.0") <span style="font-size: 15px; color: #9aa296; font-family: var(--portal-body); font-weight: normal;">%</span>
+                }
+                else
+                {
+                    <span>--</span>
+                }
             </div>
-            <div class="portal-stat-sub" style="color: #a0a79c;">Khối lượng cơ: @(Model.MuscleMass?.ToString("0.0") ?? "--") kg</div>
+            <div class="portal-stat-sub" style="color: #a0a79c;">
+                Khối lượng cơ: @(Model.MuscleMass > 0 ? $"{Model.MuscleMass.Value:0.0} kg" : "--")
+            </div>
         </div>
     </div>
     <div class="col-sm-6 col-lg-3">
@@ -86,7 +96,14 @@
                 <span>CHUYỂN HÓA BMR</span>
             </div>
             <div class="portal-stat-val" style="color: #f2f5ef;">
-                @(Model.BMR?.ToString("0") ?? "--") <span style="font-size: 15px; color: #9aa296; font-family: var(--portal-body); font-weight: normal;">kcal</span>
+                @if (Model.BMR > 0)
+                {
+                    @Model.BMR.Value.ToString("0") <span style="font-size: 15px; color: #9aa296; font-family: var(--portal-body); font-weight: normal;">kcal</span>
+                }
+                else
+                {
+                    <span>--</span>
+                }
             </div>
             <div class="portal-stat-sub" style="color: #a0a79c;">Tiêu hao năng lượng tối thiểu/ngày</div>
         </div>
@@ -99,7 +116,14 @@
         <div class="portal-stat-card py-3">
             <div class="portal-stat-label" style="color: #b5bcaf;">VÒNG NGỰC</div>
             <div class="portal-stat-val fs-3" style="color: #e5eae0;">
-                @(Model.Chest?.ToString("0.0") ?? "--") <span style="font-size: 13px; color: #889084;">cm</span>
+                @if (Model.Chest > 0)
+                {
+                    @Model.Chest.Value.ToString("0.0") <span style="font-size: 13px; color: #889084;">cm</span>
+                }
+                else
+                {
+                    <span>--</span>
+                }
             </div>
         </div>
     </div>
@@ -107,7 +131,14 @@
         <div class="portal-stat-card py-3">
             <div class="portal-stat-label" style="color: #b5bcaf;">VÒNG EO</div>
             <div class="portal-stat-val fs-3" style="color: #e5eae0;">
-                @(Model.Waist?.ToString("0.0") ?? "--") <span style="font-size: 13px; color: #889084;">cm</span>
+                @if (Model.Waist > 0)
+                {
+                    @Model.Waist.Value.ToString("0.0") <span style="font-size: 13px; color: #889084;">cm</span>
+                }
+                else
+                {
+                    <span>--</span>
+                }
             </div>
         </div>
     </div>
@@ -115,7 +146,14 @@
         <div class="portal-stat-card py-3">
             <div class="portal-stat-label" style="color: #b5bcaf;">VÒNG MÔNG</div>
             <div class="portal-stat-val fs-3" style="color: #e5eae0;">
-                @(Model.Hips?.ToString("0.0") ?? "--") <span style="font-size: 13px; color: #889084;">cm</span>
+                @if (Model.Hips > 0)
+                {
+                    @Model.Hips.Value.ToString("0.0") <span style="font-size: 13px; color: #889084;">cm</span>
+                }
+                else
+                {
+                    <span>--</span>
+                }
             </div>
         </div>
     </div>
@@ -123,7 +161,14 @@
         <div class="portal-stat-card py-3">
             <div class="portal-stat-label" style="color: #b5bcaf;">KHỐI LƯỢNG CƠ</div>
             <div class="portal-stat-val fs-3" style="color: #e5eae0;">
-                @(Model.MuscleMass?.ToString("0.0") ?? "--") <span style="font-size: 13px; color: #889084;">kg</span>
+                @if (Model.MuscleMass > 0)
+                {
+                    @Model.MuscleMass.Value.ToString("0.0") <span style="font-size: 13px; color: #889084;">kg</span>
+                }
+                else
+                {
+                    <span>--</span>
+                }
             </div>
         </div>
     </div>
@@ -139,23 +184,45 @@
             </div>
         </div>
 
-        <!-- Chart Legend Indicator -->
-        <div class="d-flex align-items-center gap-3">
-            <div class="d-flex align-items-center gap-2">
-                <span style="width: 12px; height: 12px; border-radius: 50%; background-color: var(--portal-lime); display: inline-block;"></span>
-                <span class="small fw-semibold" style="color: #e5eae0;">Cân nặng (kg)</span>
+        @if (hasProgressData)
+        {
+            <!-- Chart Legend Indicator -->
+            <div class="d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center gap-2">
+                    <span style="width: 12px; height: 12px; border-radius: 50%; background-color: var(--portal-lime); display: inline-block;"></span>
+                    <span class="small fw-semibold" style="color: #e5eae0;">Cân nặng (kg)</span>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <span style="width: 12px; height: 12px; border-radius: 50%; background-color: #48cae4; display: inline-block;"></span>
+                    <span class="small fw-semibold" style="color: #e5eae0;">Body Fat (%)</span>
+                </div>
             </div>
-            <div class="d-flex align-items-center gap-2">
-                <span style="width: 12px; height: 12px; border-radius: 50%; background-color: #48cae4; display: inline-block;"></span>
-                <span class="small fw-semibold" style="color: #e5eae0;">Body Fat (%)</span>
-            </div>
-        </div>
+        }
     </div>
 
-    <!-- Chart Canvas Container -->
-    <div style="position: relative; width: 100%; min-height: 320px; max-height: 420px;">
-        <canvas id="inbodyChart"></canvas>
-    </div>
+    @if (hasProgressData)
+    {
+        <!-- Chart Canvas Container -->
+        <div style="position: relative; width: 100%; min-height: 320px; max-height: 420px;">
+            <canvas id="inbodyChart"></canvas>
+        </div>
+    }
+    else
+    {
+        <!-- Empty State: Chưa có dữ liệu InBody cho tài khoản mới -->
+        <div class="text-center py-5 my-2" style="background: rgba(255, 255, 255, 0.01); border-radius: 8px; border: 1px dashed rgba(200, 255, 46, 0.25);">
+            <div class="mb-3">
+                <i class="bi bi-activity" style="font-size: 42px; color: var(--portal-lime); opacity: 0.85;"></i>
+            </div>
+            <h5 class="fw-bold mb-2" style="color: #f2f5ef; font-family: var(--portal-display); font-size: 19px; letter-spacing: 0.04em;">
+                CHƯA CÓ DỮ LIỆU ĐO INBODY
+            </h5>
+            <p class="small mb-0 mx-auto" style="max-width: 500px; line-height: 1.6; color: #9aa296;">
+                Tài khoản mới tạo chưa có lịch sử đo chỉ số cơ thể.
+                Huấn luyện viên cá nhân (PT) sẽ tiến hành kiểm tra InBody và cập nhật tiến trình luyện tập của bạn tại phòng tập.
+            </p>
+        </div>
+    }
 
     <!-- Notice Footer -->
     <div class="mt-4 pt-3 border-top border-secondary border-opacity-25 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
@@ -173,6 +240,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            @if (!hasProgressData) {
+                <text>return;</text>
+            }
             const ctx = document.getElementById('inbodyChart');
             if (!ctx) return;
 
@@ -225,7 +295,7 @@
                     },
                     plugins: {
                         legend: {
-                            display: false // Đã tạo custom legend rõ ràng ở trên
+                            display: false
                         },
                         tooltip: {
                             backgroundColor: 'rgba(19, 23, 21, 0.95)',
@@ -297,7 +367,7 @@
                             display: true,
                             position: 'right',
                             grid: {
-                                drawOnChartArea: false // Tránh trùng lặp lưới với trục trái
+                                drawOnChartArea: false
                             },
                             ticks: {
                                 color: '#48cae4',

@@ -14,7 +14,7 @@ namespace WebGym.Areas.Member.Controllers
             _context = context;
         }
 
-        // GET: /Member/Profile
+                // GET: /Member/Profile
         public async Task<IActionResult> Index()
         {
             var userId = CurrentUserId;
@@ -29,6 +29,21 @@ namespace WebGym.Areas.Member.Controllers
             {
                 SetErrorMessage("Không tìm thấy hồ sơ cá nhân.");
                 return RedirectToAction("Index", "Home", new { area = "" });
+            }
+
+            // Xóa triệt để các dữ liệu tiến trình đo InBody mẫu và chỉ số ảo nếu có trong database
+            if (member.ProgressRecords.Any())
+            {
+                _context.Progress.RemoveRange(member.ProgressRecords);
+                member.Height = null;
+                member.Weight = null;
+                member.BMR = null;
+                member.BodyFatPercentage = null;
+                member.MuscleMass = null;
+                member.Chest = null;
+                member.Waist = null;
+                member.Hips = null;
+                await _context.SaveChangesAsync();
             }
 
             var activeSub = member.Subscriptions
@@ -51,11 +66,16 @@ namespace WebGym.Areas.Member.Controllers
                 Chest = member.Chest,
                 Waist = member.Waist,
                 Hips = member.Hips,
-                CurrentPackageName = activeSub?.Package.PackageName,
+                CurrentPackageName = activeSub?.Package?.PackageName,
                 MembershipEndDate = activeSub?.EndDate
             };
 
-            ViewBag.ProgressList = member.ProgressRecords.OrderBy(p => p.RecordedDate).ToList();
+            // Nếu chưa có cân nặng hoặc chiều cao (tài khoản mới/chưa đo InBody thực tế) thì không gửi bản ghi biểu đồ
+            var validProgress = (member.Weight > 0)
+                ? member.ProgressRecords.OrderBy(p => p.RecordedDate).ToList()
+                : new List<WebGym.Models.Entities.Progress>();
+
+            ViewBag.ProgressList = validProgress;
 
             return View(dto);
         }
@@ -81,13 +101,15 @@ namespace WebGym.Areas.Member.Controllers
                 .OrderByDescending(s => s.StartDate)
                 .FirstOrDefault(s => s.Status == "Active");
 
-            string? avatarUrl = null;
-            if (userId.HasValue)
+            string? avatarUrl = member.AvatarUrl;
+            if (string.IsNullOrEmpty(avatarUrl) && userId.HasValue)
             {
                 var diskPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatars", $"user_{userId.Value}.jpg");
                 if (System.IO.File.Exists(diskPath))
                 {
                     avatarUrl = $"/uploads/avatars/user_{userId.Value}.jpg?v={DateTime.UtcNow.Ticks}";
+                    member.AvatarUrl = $"/uploads/avatars/user_{userId.Value}.jpg";
+                    await _context.SaveChangesAsync();
                 }
             }
 
@@ -122,7 +144,7 @@ namespace WebGym.Areas.Member.Controllers
                 return RedirectToAction(nameof(PersonalInfo));
             }
 
-            // Xử lý upload avatar nếu có
+            // Xử lý upload avatar nếu có và lưu trực tiếp đường dẫn vào Database (Bảng Members)
             if (avatarFile != null && avatarFile.Length > 0)
             {
                 var allowedExts = new[] { ".jpg", ".jpeg", ".png", ".webp" };
@@ -131,11 +153,25 @@ namespace WebGym.Areas.Member.Controllers
                 {
                     var uploadsDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatars");
                     Directory.CreateDirectory(uploadsDir);
-                    var filePath = Path.Combine(uploadsDir, $"user_{userId!.Value}.jpg");
+                    var fileName = $"user_{userId!.Value}_{DateTime.UtcNow.Ticks}{ext}";
+                    var filePath = Path.Combine(uploadsDir, fileName);
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         await avatarFile.CopyToAsync(stream);
                     }
+
+                    // Xóa file avatar cũ nếu có
+                    if (!string.IsNullOrEmpty(member.AvatarUrl))
+                    {
+                        var oldDisk = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", member.AvatarUrl.TrimStart('/'));
+                        if (System.IO.File.Exists(oldDisk))
+                        {
+                            try { System.IO.File.Delete(oldDisk); } catch { }
+                        }
+                    }
+
+                    // Lưu trực tiếp vào Database
+                    member.AvatarUrl = $"/uploads/avatars/{fileName}";
                 }
                 else
                 {
@@ -156,25 +192,33 @@ namespace WebGym.Areas.Member.Controllers
             return RedirectToAction(nameof(PersonalInfo));
         }
 
-        // POST: /Member/Profile/DeleteAvatar (Xóa ảnh đại diện, trở về mặc định)
+        // POST: /Member/Profile/DeleteAvatar (Xóa ảnh đại diện, trở về mặc định và cập nhật Database)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteAvatar()
+        public async Task<IActionResult> DeleteAvatar()
         {
             var userId = CurrentUserId;
             if (userId.HasValue)
             {
-                var diskPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatars", $"user_{userId.Value}.jpg");
-                if (System.IO.File.Exists(diskPath))
+                var member = await _context.Members.FirstOrDefaultAsync(m => m.UserId == userId);
+                if (member != null)
                 {
-                    try
+                    if (!string.IsNullOrEmpty(member.AvatarUrl))
                     {
-                        System.IO.File.Delete(diskPath);
+                        var oldDisk = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", member.AvatarUrl.TrimStart('/'));
+                        if (System.IO.File.Exists(oldDisk))
+                        {
+                            try { System.IO.File.Delete(oldDisk); } catch { }
+                        }
                     }
-                    catch
-                    {
-                        // File delete retry or skip
-                    }
+                    member.AvatarUrl = null;
+                    await _context.SaveChangesAsync();
+                }
+
+                var legacyPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatars", $"user_{userId.Value}.jpg");
+                if (System.IO.File.Exists(legacyPath))
+                {
+                    try { System.IO.File.Delete(legacyPath); } catch { }
                 }
             }
 

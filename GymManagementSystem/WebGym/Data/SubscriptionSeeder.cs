@@ -53,9 +53,9 @@ namespace WebGym.Data
                 {
                     SubscriptionId = 4,
                     MemberId = 1, // Hải
-                    PackageId = 3, // Gói Vàng 4.5tr kèm PT
-                    OriginalPrice = 4500000m,
-                    PaidAmount = 4500000m,
+                    PackageId = 1, // Gói Đồng 500k (không kèm PT để kiểm tra tính năng khóa đặt lịch)
+                    OriginalPrice = 500000m,
+                    PaidAmount = 500000m,
                     StartDate = new DateTime(2026, 8, 1, 0, 0, 0, DateTimeKind.Utc),
                     EndDate = new DateTime(2027, 1, 28, 0, 0, 0, DateTimeKind.Utc),
                     Status = "Active"

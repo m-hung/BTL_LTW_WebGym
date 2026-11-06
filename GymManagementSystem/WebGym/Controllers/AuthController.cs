@@ -132,15 +132,12 @@ namespace WebGym.Controllers
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
 
-            // Khởi tạo Profile tương ứng
+            // Khởi tạo Profile tương ứng (Tài khoản mới tạo để các chỉ số về Null theo yêu cầu)
             if (role == "Member")
             {
                 _context.Members.Add(new Member
                 {
-                    UserId = newUser.UserId,
-                    Height = 170,
-                    Weight = 65,
-                    BMR = 1500
+                    UserId = newUser.UserId
                 });
             }
             else

@@ -45,4 +45,31 @@ namespace WebGym.Models.DTOs.Trainer
         public string RoutineDetails { get; set; } = string.Empty;
         public string NutritionAdvice { get; set; } = string.Empty;
     }
+
+    /// <summary>Hồ sơ HLV tự chỉnh sửa (bảng hồ sơ trong trang PT).</summary>
+    public class TrainerProfileDto
+    {
+        [Required(ErrorMessage = "Vui lòng nhập họ và tên")]
+        [StringLength(150, ErrorMessage = "Tối đa 150 ký tự")]
+        public string FullName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Vui lòng nhập email")]
+        [EmailAddress(ErrorMessage = "Email không hợp lệ")]
+        [StringLength(150, ErrorMessage = "Tối đa 150 ký tự")]
+        public string Email { get; set; } = string.Empty;
+
+        [Phone(ErrorMessage = "Số điện thoại không hợp lệ")]
+        [StringLength(20, ErrorMessage = "Tối đa 20 ký tự")]
+        public string? PhoneNumber { get; set; }
+
+        [Required(ErrorMessage = "Vui lòng nhập chuyên môn")]
+        [StringLength(200, ErrorMessage = "Tối đa 200 ký tự")]
+        public string Specialization { get; set; } = string.Empty;
+
+        [StringLength(1000, ErrorMessage = "Tối đa 1000 ký tự")]
+        public string? Bio { get; set; }
+
+        [StringLength(500, ErrorMessage = "Đường dẫn ảnh tối đa 500 ký tự")]
+        public string? AvatarUrl { get; set; }
+    }
 }

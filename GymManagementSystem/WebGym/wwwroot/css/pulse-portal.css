@@ -17,8 +17,8 @@
   --portal-danger: #ff6b6b;
   --portal-warning: #f5b041;
   --portal-info: #48cae4;
-  --portal-display: 'Anton', 'Bebas Neue', Impact, sans-serif;
-  --portal-label: 'Barlow Condensed', 'Anton', Impact, sans-serif;
+  --portal-display: 'Barlow Condensed', 'Oswald', 'Inter', sans-serif;
+  --portal-label: 'Barlow Condensed', 'Inter', sans-serif;
   --portal-body: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
@@ -288,17 +288,26 @@ body.portal-body {
 
 /* Topbar Header */
 .portal-topbar {
-  height: 68px;
-  background: rgba(19, 23, 21, 0.92);
+  height: 64px;
+  background: rgba(19, 23, 21, 0.95);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--portal-line);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 32px;
+  padding: 0 28px;
   position: sticky;
   top: 0;
   z-index: 90;
+  gap: 12px;
+}
+
+.portal-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
 }
 
 .portal-topbar .text-secondary {
@@ -308,26 +317,34 @@ body.portal-body {
 .portal-topbar-title {
   font-family: var(--portal-display);
   font-size: 24px;
-  letter-spacing: 0.03em;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: #f4f6f2;
   margin: 0;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  min-width: 0;
+  line-height: 1.2;
 }
 
 .portal-topbar-title::before {
   content: "";
   display: inline-block;
   width: 4px;
-  height: 22px;
+  height: 18px;
   background: var(--portal-lime);
   border-radius: 2px;
+  flex-shrink: 0;
 }
 
 .portal-topbar-title span {
   color: #f4f6f2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .portal-topbar-title em,
@@ -482,6 +499,18 @@ body.portal-body {
   color: var(--portal-text) !important;
   border-radius: 4px;
   padding: 10px 14px;
+  max-width: 100%;
+}
+
+.portal-content .form-select {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.portal-content .form-select option {
+  background-color: #131715;
+  color: #eef1eb;
+  padding: 6px 10px;
 }
 
 .portal-content .form-control:focus,
@@ -588,14 +617,17 @@ body.portal-body {
 .portal-badge {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   font-family: var(--portal-label);
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  padding: 4px 10px;
-  border-radius: 3px;
+  padding: 5px 12px;
+  border-radius: 4px;
+  white-space: nowrap;
+  line-height: 1.2;
 }
 
 .portal-badge-approved {
@@ -749,19 +781,294 @@ body.portal-body {
 }
 
 /* Responsive */
+/* Mobile Menu Toggle & Backdrop */
+.portal-menu-toggle {
+  background: transparent;
+  border: 1px solid var(--portal-line);
+  padding: 8px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.portal-menu-toggle:hover {
+  border-color: var(--portal-lime);
+}
+
+.portal-menu-toggle span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background-color: var(--portal-lime);
+  border-radius: 1px;
+  transition: all 0.2s ease;
+}
+
+.portal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 95;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.portal-backdrop.show {
+  opacity: 1;
+  visibility: visible;
+}
+
 @media (max-width: 992px) {
   .portal-sidebar {
     position: fixed;
     left: -280px;
+    top: 0;
+    bottom: 0;
+    height: 100vh;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.8);
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   .portal-sidebar.show {
     left: 0;
   }
   .portal-topbar {
     padding: 0 16px;
+    height: 60px;
   }
   .portal-content {
-    padding: 20px 16px;
+    padding: 20px 14px;
   }
 }
+
+@media (max-width: 768px) {
+  .portal-topbar {
+    height: 56px;
+    padding: 0 12px;
+    gap: 8px;
+  }
+  .portal-topbar-left {
+    gap: 10px;
+  }
+  .portal-topbar-title {
+    font-size: 16px;
+    letter-spacing: 0.01em;
+    gap: 8px;
+  }
+  .portal-topbar-title::before {
+    height: 14px;
+    width: 3px;
+  }
+  .portal-content {
+    padding: 16px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .portal-topbar-title {
+    font-size: 14.5px;
+  }
+  .digital-vip-card {
+    padding: 14px 16px !important;
+    max-height: none !important;
+    min-height: 165px !important;
+  }
+  .card-number-display {
+    font-size: 13.5px !important;
+    letter-spacing: 0.08em !important;
+  }
+  .card-holder-name {
+    font-size: 13.5px !important;
+  }
+}
+
+/* ==========================================================================
+   AVATAR EDIT BADGE (Yêu cầu ảnh 1)
+   ========================================================================== */
+.avatar-edit-badge {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--portal-lime);
+  border: 3px solid var(--portal-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.6);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  padding: 0;
+  z-index: 2;
+}
+
+.avatar-edit-badge:hover {
+  transform: scale(1.1);
+  background-color: #d8ff4e;
+}
+
+/* ==========================================================================
+   DIGITAL VIP MEMBERSHIP CARD (Yêu cầu 6: Nhỏ gọn, thanh thoát chuẩn ảnh mẫu)
+   ========================================================================== */
+.digital-vip-card {
+  width: 100%;
+  height: 100%;
+  min-height: 195px;
+  background: linear-gradient(135deg, #101612 0%, #19271e 50%, #0b110e 100%);
+  border: 1px solid rgba(200, 255, 46, 0.35);
+  border-radius: 10px;
+  padding: 16px 20px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.digital-vip-card::after {
+  content: '';
+  position: absolute;
+  top: -40%;
+  right: -20%;
+  width: 160px;
+  height: 160px;
+  background: radial-gradient(circle, rgba(200, 255, 46, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.card-chip {
+  width: 32px;
+  height: 22px;
+  background: linear-gradient(135deg, #e6c875 0%, #d4af37 50%, #aa8620 100%);
+  border-radius: 4px;
+  border: 1px solid #7a6015;
+  position: relative;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.card-chip::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.card-chip::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.card-number-display {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 15.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #f2f5ef;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+  line-height: 1.2;
+}
+
+.card-holder-name {
+  font-family: var(--portal-display);
+  font-size: 14.5px;
+  letter-spacing: 0.04em;
+  color: #ffffff;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+.card-expiry-badge {
+  font-family: var(--portal-label);
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  color: var(--portal-lime);
+  line-height: 1.1;
+}
+
+/* Card Action Buttons (Cân đối, thanh lịch) */
+.card-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--portal-label);
+  font-size: 12px !important;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 5px 16px !important;
+  border-radius: 4px;
+  text-decoration: none;
+  line-height: 1.3 !important;
+  transition: all 0.2s ease;
+}
+
+.card-action-btn-primary {
+  background: var(--portal-lime) !important;
+  color: #0a0a0a !important;
+  border: 1px solid var(--portal-lime) !important;
+}
+
+.card-action-btn-primary:hover {
+  background: var(--portal-lime-hover) !important;
+  color: #000000 !important;
+  box-shadow: 0 0 10px rgba(200, 255, 46, 0.3);
+}
+
+.card-action-btn-outline {
+  background: transparent !important;
+  color: #dce1d8 !important;
+  border: 1px solid #3d4540 !important;
+}
+
+.card-action-btn-outline:hover {
+  border-color: var(--portal-lime) !important;
+  color: var(--portal-lime) !important;
+}
+
+/* PT Selection Cards (Yêu cầu 5) */
+.pt-select-card {
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.pt-select-card:hover {
+  border-color: var(--portal-lime-soft) !important;
+  transform: translateY(-2px);
+}
+
+.pt-select-card.active {
+  border-color: var(--portal-lime) !important;
+  background-color: #17211a !important;
+}
+
+/* Perk item (Yêu cầu 6) */
+.perk-box {
+  background: var(--portal-bg2);
+  border: 1px solid var(--portal-line);
+  border-radius: 8px;
+  padding: 14px 16px;
+  transition: all 0.2s ease;
+}
+
+.perk-box:hover {
+  border-color: rgba(200, 255, 46, 0.4);
+  background-color: #18201b;
+}
+
 

@@ -1,6 +1,42 @@
+@inject WebGym.Data.ApplicationDbContext _context
+@using Microsoft.EntityFrameworkCore
 @{
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
     var userName = User.Identity?.Name ?? "Hội Viên";
+    
+    string currentPackageName = "Chưa có gói tập";
+    string? userAvatar = null;
+    var userIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    if (int.TryParse(userIdStr, out var uId))
+    {
+        var member = _context.Members
+            .Include(m => m.Subscriptions)
+                .ThenInclude(s => s.Package)
+            .Include(m => m.User)
+            .FirstOrDefault(m => m.UserId == uId);
+            
+        if (member != null)
+        {
+            if (!string.IsNullOrEmpty(member.User.FullName))
+            {
+                userName = member.User.FullName;
+            }
+            var activeSub = member.Subscriptions
+                .OrderByDescending(s => s.StartDate)
+                .FirstOrDefault(s => s.Status == "Active");
+            if (activeSub != null)
+            {
+                currentPackageName = activeSub.Package.PackageName;
+            }
+        }
+        
+        var avatarDiskPath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatars", $"user_{uId}.jpg");
+        if (System.IO.File.Exists(avatarDiskPath))
+        {
+            userAvatar = $"/uploads/avatars/user_{uId}.jpg";
+        }
+    }
 }
 <!DOCTYPE html>
 <html lang="vi">
@@ -8,7 +44,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Pulse Gym Member</title>
-    <!-- Fonts Pulse Gym -->
+    <!-- Fonts Pulse Gym (Hỗ trợ 100% tiếng Việt chuẩn có dấu: Barlow Condensed, Oswald, Inter) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -18,11 +54,14 @@
     <link rel="stylesheet" href="~/css/pulse-portal.css" asp-append-version="true" />
 </head>
 <body class="portal-body">
+    <!-- Backdrop for mobile sidebar -->
+    <div class="portal-backdrop" id="portalBackdrop"></div>
+
     <div class="portal-wrapper">
         <!-- Sidebar Navigation -->
-        <aside class="portal-sidebar">
-            <!-- Brand / Logo -->
-            <a asp-area="Member" asp-controller="Profile" asp-action="Index" class="portal-brand">
+        <aside class="portal-sidebar" id="portalSidebar">
+            <!-- Brand / Logo (Trang chủ portal dẫn về Thông Tin Cá Nhân) -->
+            <a asp-area="Member" asp-controller="Profile" asp-action="PersonalInfo" class="portal-brand">
                 <i class="portal-logo-bars"></i>
                 <div>
                     <div class="brand-title">PULSE <span>GYM</span></div>
@@ -30,24 +69,32 @@
                 </div>
             </a>
 
-            <!-- User Quick Snippet -->
+            <!-- User Quick Snippet (Yêu cầu 2: Dưới tên hiển thị tên gói tập) -->
             <div class="portal-user-card">
                 <div class="portal-user-avatar">
-                    <img src="~/images/default-avatar.svg" asp-append-version="true" alt="@userName" />
+                    <img src="@(userAvatar ?? Url.Content("~/images/default-avatar.svg"))" asp-append-version="true" alt="@userName" id="sidebarAvatarImg" />
                 </div>
                 <div class="portal-user-info">
                     <div class="portal-user-name" title="@userName">@userName</div>
-                    <div class="portal-user-sub">Hội viên chính thức</div>
+                    <div class="portal-user-sub" style="color: var(--portal-lime); font-weight: 600; font-size: 12px; line-height: 1.35; word-break: break-word;" title="@currentPackageName">
+                        @currentPackageName
+                    </div>
                 </div>
             </div>
 
-            <!-- Main Menu -->
+            <!-- Main Menu (Yêu cầu 3, 4, 6) -->
             <div class="portal-nav-group-title">Không gian tập luyện</div>
             <ul class="portal-nav-list">
                 <li>
+                    <a asp-area="Member" asp-controller="Profile" asp-action="PersonalInfo" 
+                       class="portal-nav-link @(currentController == "Profile" && currentAction == "PersonalInfo" ? "active" : "")">
+                        <span>Thông Tin Cá Nhân</span>
+                    </a>
+                </li>
+                <li>
                     <a asp-area="Member" asp-controller="Profile" asp-action="Index" 
-                       class="portal-nav-link @(currentController == "Profile" ? "active" : "")">
-                        <span>Hồ Sơ & Thể Lực InBody</span>
+                       class="portal-nav-link @(currentController == "Profile" && currentAction == "Index" ? "active" : "")">
+                        <span>Chỉ Số Cơ Thể</span>
                     </a>
                 </li>
                 <li>
@@ -59,7 +106,7 @@
                 <li>
                     <a asp-area="Member" asp-controller="WorkoutSchedule" asp-action="Index" 
                        class="portal-nav-link @(currentController == "WorkoutSchedule" ? "active" : "")">
-                        <span>Lộ Trình & Thực Đơn</span>
+                        <span>Gói Tập</span>
                     </a>
                 </li>
             </ul>
@@ -89,16 +136,23 @@
 
         <!-- Main Workspace -->
         <div class="portal-main">
-            <!-- Topbar Header -->
+            <!-- Topbar Header (Tối ưu responsive, tránh chạm chữ trên mobile) -->
             <header class="portal-topbar">
-                <h1 class="portal-topbar-title">
-                    <span>@ViewData["Title"]</span>
-                </h1>
+                <div class="portal-topbar-left">
+                    <button type="button" class="portal-menu-toggle d-lg-none" id="sidebarToggle" aria-label="Toggle navigation">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <h1 class="portal-topbar-title mb-0">
+                        <span>@ViewData["Title"]</span>
+                    </h1>
+                </div>
                 <div class="portal-topbar-actions">
                     <span class="text-secondary small d-none d-md-inline">
                         Hệ thống sẵn sàng
                     </span>
-                    <a asp-area="Member" asp-controller="Booking" asp-action="Index" class="btn-pulse-primary btn-sm">
+                    <a asp-area="Member" asp-controller="Booking" asp-action="Index" class="btn-pulse-primary btn-sm d-none d-sm-inline-flex">
                         Đặt lịch PT
                     </a>
                 </div>
@@ -133,6 +187,26 @@
     <!-- Scripts -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Xử lý Toggle Menu trên Mobile (Yêu cầu 1)
+        document.addEventListener('DOMContentLoaded', function () {
+            const sidebar = document.getElementById('portalSidebar');
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const backdrop = document.getElementById('portalBackdrop');
+
+            if (toggleBtn && sidebar && backdrop) {
+                toggleBtn.addEventListener('click', function () {
+                    sidebar.classList.toggle('show');
+                    backdrop.classList.toggle('show');
+                });
+
+                backdrop.addEventListener('click', function () {
+                    sidebar.classList.remove('show');
+                    backdrop.classList.remove('show');
+                });
+            }
+        });
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

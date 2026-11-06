@@ -27,7 +27,7 @@
 
   var COPY = {
     login: { title: "Chào mừng trở lại", sub: "Đăng nhập để tiếp tục hành trình tập luyện." },
-    register: { title: "Tạo tài khoản mới", sub: "Trở thành hội viên hoặc huấn luyện viên của Pulse Gym." },
+    register: { title: "Tạo tài khoản mới", sub: "Trở thành hội viên của Pulse Gym để đặt lịch với HLV và theo dõi tiến độ." },
     forgot: { title: "Quên mật khẩu", sub: "Nhập email đã đăng ký, chúng tôi sẽ gửi liên kết để đặt lại mật khẩu." },
     reset: { title: "Đặt mật khẩu mới", sub: "Tạo mật khẩu mới cho tài khoản Pulse Gym của bạn." }
   };

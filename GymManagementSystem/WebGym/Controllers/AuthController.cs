@@ -161,7 +161,8 @@ namespace WebGym.Controllers
                 return IsAjaxRequest ? AjaxValidationError() : View(model);
             }
 
-            var role = model.RegisterAsTrainer ? "PT" : "Member";
+            // Đăng ký công khai chỉ tạo tài khoản Hội viên. Tài khoản HLV (PT) do Admin tạo ở trang Quản lý HLV.
+            const string role = "Member";
             var username = model.Email.Split('@')[0] + "_" + new Random().Next(100, 999);
 
             var newUser = new User
@@ -178,26 +179,14 @@ namespace WebGym.Controllers
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
 
-            // Khởi tạo Profile tương ứng
-            if (role == "Member")
+            // Khởi tạo hồ sơ Hội viên
+            _context.Members.Add(new Member
             {
-                _context.Members.Add(new Member
-                {
-                    UserId = newUser.UserId,
-                    Height = 170,
-                    Weight = 65,
-                    BMR = 1500
-                });
-            }
-            else
-            {
-                _context.Trainers.Add(new Trainer
-                {
-                    UserId = newUser.UserId,
-                    Specialization = "Huấn luyện thể hình tổng quát",
-                    Bio = "HLV nhiệt tình, chuyên nghiệp."
-                });
-            }
+                UserId = newUser.UserId,
+                Height = 170,
+                Weight = 65,
+                BMR = 1500
+            });
 
             await _context.SaveChangesAsync();
 

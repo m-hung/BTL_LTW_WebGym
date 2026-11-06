@@ -28,8 +28,5 @@ namespace WebGym.Models.DTOs.Auth
         [DataType(DataType.Password)]
         [Display(Name = "Xác nhận mật khẩu")]
         public string ConfirmPassword { get; set; } = string.Empty;
-
-        [Display(Name = "Đăng ký làm Huấn Luyện Viên (PT)")]
-        public bool RegisterAsTrainer { get; set; } = false;
     }
 }

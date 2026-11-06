@@ -1,660 +1,667 @@
-@model WebGym.Models.Entities.Member
-@{
-    ViewData["Title"] = $"Hồ Sơ Hội Viên - {Model.User.FullName}";
-    var activeSub = Model.Subscriptions.OrderByDescending(s => s.StartDate).FirstOrDefault(s => s.Status == "Active");
-
-    // Lấy tiến trình theo thứ tự thời gian (từ cũ đến mới) để vẽ biểu đồ và phân tích
-    var progressAsc = Model.ProgressRecords.OrderBy(p => p.RecordedDate).ToList();
-    // Tiến trình mới nhất để lấy số đo gần nhất
-    var latestProgress = progressAsc.LastOrDefault();
-
-    // Các số đo hiện tại (ưu tiên lấy từ mốc InBody mới nhất, nếu chưa có thì lấy từ Member)
-    var curWeight = latestProgress?.Weight ?? Model.Weight ?? 0;
-    var curHeight = Model.Height ?? 0;
-    var curBodyFat = latestProgress?.BodyFatPercentage ?? Model.BodyFatPercentage;
-    var curMuscle = latestProgress?.MuscleMass ?? Model.MuscleMass;
-    var curChest = latestProgress?.Chest ?? Model.Chest;
-    var curWaist = latestProgress?.Waist ?? Model.Waist;
-    var curHips = latestProgress?.Hips ?? Model.Hips;
-
-    // Tính tuổi
-    var age = Model.DateOfBirth.HasValue ? (DateTime.UtcNow.Year - Model.DateOfBirth.Value.Year) : 25;
-
-    // Tính BMR
-    double curBmr = Model.BMR ?? 0;
-    if (curBmr == 0 && curWeight > 0 && curHeight > 0)
-    {
-        if (Model.Gender == "Nữ")
-        {
-            curBmr = Math.Round(655 + (9.6 * curWeight) + (1.8 * curHeight) - (4.7 * age));
-        }
-        else
-        {
-            curBmr = Math.Round(66 + (13.7 * curWeight) + (5.0 * curHeight) - (6.8 * age));
-        }
-    }
-
-    // Tính BMI
-    double curBmi = 0;
-    if (curHeight > 0 && curWeight > 0)
-    {
-        var hM = curHeight / 100.0;
-        curBmi = Math.Round(curWeight / (hM * hM), 1);
-    }
-
-    // Dữ liệu cho biểu đồ Chart.js
-    var chartLabels = new List<string>();
-    var chartWeights = new List<double>();
-    var chartFats = new List<double>();
-
-    for (int i = 0; i < progressAsc.Count; i++)
-    {
-        var p = progressAsc[i];
-        chartLabels.Add($"T{i + 1} ({p.RecordedDate:dd/MM})");
-        chartWeights.Add(p.Weight);
-        chartFats.Add(p.BodyFatPercentage ?? 0);
-    }
-}
-
-<div class="mb-4">
-    <a asp-action="Index" class="text-decoration-none text-muted small fw-semibold">
-        <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách hội viên
-    </a>
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mt-2">
-        <div>
-            <h3 class="fw-bold text-dark mb-0">Hồ Sơ Chi Tiết Hội Viên</h3>
-            <small class="text-muted">Mã hội viên: #MEM-@Model.MemberId • Ngày tham gia: @Model.User.CreatedAt.ToString("dd/MM/yyyy")</small>
-        </div>
-        <div class="d-flex gap-2">
-            <a asp-action="Edit" asp-route-id="@Model.MemberId" class="btn btn-primary btn-sm px-3 py-2 rounded-3 shadow-sm">
-                <i class="bi bi-pencil me-1"></i> Chỉnh sửa thông tin
-            </a>
-        </div>
-    </div>
-</div>
-
-<div class="row g-4">
-    <!-- Cột trái: Thông tin cá nhân & Thể chất gần nhất -->
-    <div class="col-12 col-lg-4">
-        <!-- Profile Card -->
-        <div class="card border-0 rounded-4 bg-white shadow-sm p-4 text-center mb-4">
-            <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold mx-auto mb-3 shadow" 
-                 style="width: 80px; height: 80px; font-size: 2rem;">
-                @(Model.User.FullName?.Substring(0, 1).ToUpper() ?? "M")
-            </div>
-            <h5 class="fw-bold text-dark mb-1">@Model.User.FullName</h5>
-            <div class="text-muted small mb-3">Tài khoản: <code>@Model.User.Username</code></div>
-            
-            <div class="d-flex justify-content-center gap-2 mb-3">
-                <span class="badge badge-soft-primary">@Model.User.Role</span>
-                @if (activeSub != null && activeSub.EndDate >= DateTime.UtcNow)
-                {
-                    <span class="badge badge-soft-success">Gói đang hiệu lực</span>
-                }
-                else
-                {
-                    <span class="badge badge-soft-secondary">Chưa kích hoạt gói</span>
-                }
-            </div>
-
-            <ul class="list-group list-group-flush text-start small mt-2">
-                <li class="list-group-item d-flex justify-content-between px-0 py-2">
-                    <span class="text-muted"><i class="bi bi-envelope me-2"></i>Email</span>
-                    <span class="fw-semibold text-dark text-truncate" style="max-width: 180px;">@Model.User.Email</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between px-0 py-2">
-                    <span class="text-muted"><i class="bi bi-telephone me-2"></i>Số điện thoại</span>
-                    <span class="fw-semibold text-dark">@(Model.User.PhoneNumber ?? "Chưa có")</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between px-0 py-2">
-                    <span class="text-muted"><i class="bi bi-gender-ambiguous me-2"></i>Giới tính</span>
-                    <span class="fw-semibold text-dark">@(Model.Gender ?? "Chưa rõ")</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between px-0 py-2">
-                    <span class="text-muted"><i class="bi bi-calendar-event me-2"></i>Ngày sinh</span>
-                    <span class="fw-semibold text-dark">@(Model.DateOfBirth?.ToString("dd/MM/yyyy") ?? "-") (@age tuổi)</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between px-0 py-2">
-                    <span class="text-muted"><i class="bi bi-clock-history me-2"></i>Ngày tham gia</span>
-                    <span class="fw-semibold text-dark">@Model.User.CreatedAt.ToString("dd/MM/yyyy")</span>
-                </li>
-            </ul>
-        </div>
-
-        <!-- 8 CHỈ SỐ THỂ CHẤT GẦN NHẤT (ĐẦY ĐỦ BMR, HIPS, CHEST, WAIST...) -->
-        <div class="card border-0 rounded-4 bg-white shadow-sm p-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h6 class="fw-bold text-dark mb-0">
-                    <i class="bi bi-speedometer2 text-danger me-2"></i>Chỉ Số Thể Chất Gần Nhất
-                </h6>
-                @if (latestProgress != null)
-                {
-                    <span class="badge badge-soft-info" style="font-size: 0.7rem;">
-                        Đo: @latestProgress.RecordedDate.ToString("dd/MM/yyyy")
-                    </span>
-                }
-            </div>
-
-            <!-- Lưới 8 chỉ số thể chất -->
-            <div class="row g-2 text-center">
-                <!-- 1. Chiều cao -->
-                <div class="col-6">
-                    <div class="p-2 bg-light rounded-3 h-100">
-                        <small class="text-muted d-block" style="font-size: 0.75rem;">Chiều cao</small>
-                        <strong class="fs-5 text-dark">@(curHeight > 0 ? $"{curHeight} cm" : "-")</strong>
-                    </div>
-                </div>
-
-                <!-- 2. Cân nặng -->
-                <div class="col-6">
-                    <div class="p-2 bg-light rounded-3 h-100">
-                        <small class="text-muted d-block" style="font-size: 0.75rem;">Cân nặng</small>
-                        <strong class="fs-5 text-primary">@(curWeight > 0 ? $"{curWeight} kg" : "-")</strong>
-                    </div>
-                </div>
-
-                <!-- 3. Tỷ lệ mỡ Body Fat -->
-                <div class="col-6">
-                    <div class="p-2 bg-light rounded-3 h-100">
-                        <small class="text-muted d-block" style="font-size: 0.75rem;">Tỷ lệ mỡ</small>
-                        <strong class="fs-5 text-warning">@(curBodyFat.HasValue ? $"{curBodyFat}%" : "-")</strong>
-                    </div>
-                </div>
-
-                <!-- 4. Khối lượng cơ Muscle Mass -->
-                <div class="col-6">
-                    <div class="p-2 bg-light rounded-3 h-100">
-                        <small class="text-muted d-block" style="font-size: 0.75rem;">Khối cơ bắp</small>
-                        <strong class="fs-5 text-success">@(curMuscle.HasValue ? $"{curMuscle} kg" : "-")</strong>
-                    </div>
-                </div>
-
-                <!-- 5. Chỉ số BMR -->
-                <div class="col-6">
-                    <div class="p-2 bg-light rounded-3 h-100">
-                        <small class="text-muted d-block" style="font-size: 0.75rem;">Chỉ số BMR</small>
-                        <strong class="fs-6 text-dark fw-bold">@(curBmr > 0 ? $"{curBmr:N0} kcal" : "-")</strong>
-                    </div>
-                </div>
-
-                <!-- 6. Chỉ số BMI -->
-                <div class="col-6">
-                    <div class="p-2 bg-light rounded-3 h-100">
-                        <small class="text-muted d-block" style="font-size: 0.75rem;">Chỉ số BMI</small>
-                        <strong class="fs-6 text-dark fw-bold">@(curBmi > 0 ? $"{curBmi}" : "-")</strong>
-                    </div>
-                </div>
-
-                <!-- 7. Vòng ngực (Chest) -->
-                <div class="col-4">
-                    <div class="p-2 bg-light rounded-3 h-100">
-                        <small class="text-muted d-block" style="font-size: 0.7rem;">Vòng ngực</small>
-                        <strong class="fs-6 text-secondary">@(curChest.HasValue ? $"{curChest} cm" : "-")</strong>
-                    </div>
-                </div>
-
-                <!-- 8. Vòng eo (Waist) -->
-                <div class="col-4">
-                    <div class="p-2 bg-light rounded-3 h-100">
-                        <small class="text-muted d-block" style="font-size: 0.7rem;">Vòng eo</small>
-                        <strong class="fs-6 text-danger">@(curWaist.HasValue ? $"{curWaist} cm" : "-")</strong>
-                    </div>
-                </div>
-
-                <!-- 9. Vòng hông (Hips) -->
-                <div class="col-4">
-                    <div class="p-2 bg-light rounded-3 h-100">
-                        <small class="text-muted d-block" style="font-size: 0.7rem;">Vòng hông</small>
-                        <strong class="fs-6 text-secondary">@(curHips.HasValue ? $"{curHips} cm" : "-")</strong>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Cột phải: Biểu đồ biến động InBody + Bảng chi tiết + Gói tập + Lịch PT -->
-    <div class="col-12 col-lg-8">
-
-        <!-- ============================================================== -->
-        <!-- BIỂU ĐỒ BIẾN ĐỘNG CÂN NẶNG & BODY FAT (THEO PHONG CÁCH DARK MẪU) -->
-        <!-- ============================================================== -->
-        <div class="card border-0 rounded-4 shadow-sm p-4 mb-4 text-white" 
-             style="background: linear-gradient(145deg, #090d16, #111827); border: 1px solid rgba(255,255,255,0.08) !important;">
-            
-            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3">
-                <div>
-                    <h5 class="fw-bold mb-1 text-white tracking-wide">
-                        <i class="bi bi-graph-up-arrow text-warning me-2"></i>BIẾN ĐỘNG CÂN NẶNG &amp; BODY FAT
-                    </h5>
-                    <small class="text-white-50" style="font-size: 0.8rem;">Theo dõi qua các lần đo InBody định kỳ của hội viên</small>
-                </div>
-                <!-- Custom Legend giống mẫu -->
-                <div class="d-flex align-items-center gap-3" style="font-size: 0.8rem;">
-                    <div class="d-flex align-items-center gap-1">
-                        <span class="d-inline-block rounded-circle" style="width: 10px; height: 10px; background-color: #bef264;"></span>
-                        <span class="text-white fw-semibold">Cân nặng (kg)</span>
-                    </div>
-                    <div class="d-flex align-items-center gap-1">
-                        <span class="d-inline-block rounded-circle" style="width: 10px; height: 10px; background-color: #38bdf8;"></span>
-                        <span class="text-white fw-semibold">Body Fat (%)</span>
-                    </div>
-                </div>
-            </div>
-
-            @if (!progressAsc.Any())
-            {
-                <div class="text-center text-white-50 py-5">
-                    <i class="bi bi-clipboard2-pulse fs-1 d-block mb-2 opacity-50"></i>
-                    Chưa có đủ dữ liệu InBody định kỳ để vẽ biểu đồ biến động.
-                </div>
-            }
-            else
-            {
-                <div style="position: relative; height: 290px; width: 100%;">
-                    <canvas id="inbodyChart"></canvas>
-                </div>
-            }
-        </div>
-
-        <!-- ============================================================== -->
-        <!-- BẢNG TIẾN TRÌNH INBODY ĐẦY ĐỦ CÁC CỘT (CHEST, WAIST, HIPS, BMR) -->
-        <!-- ============================================================== -->
-        <div class="card border-0 rounded-4 bg-white shadow-sm p-4 mb-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div>
-                    <h5 class="fw-bold text-dark mb-0">
-                        <i class="bi bi-journal-medical text-success me-2"></i>Tiến Trình Thay Đổi Thể Chất (InBody Logs)
-                    </h5>
-                    <small class="text-muted">Lịch sử toàn bộ các lần đo chỉ số chi tiết</small>
-                </div>
-                <span class="badge bg-light text-dark border">
-                    Tổng cộng: <strong>@Model.ProgressRecords.Count</strong> lần đo
-                </span>
-            </div>
-
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0" style="min-width: 780px;">
-                    <thead>
-                        <tr>
-                            <th style="width: 110px;">Ngày Ghi Nhận</th>
-                            <th class="text-center">Cân Nặng</th>
-                            <th class="text-center">% Mỡ</th>
-                            <th class="text-center">Khối Cơ</th>
-                            <th class="text-center">Vòng Ngực</th>
-                            <th class="text-center">Vòng Eo</th>
-                            <th class="text-center">Vòng Hông</th>
-                            <th class="text-center">BMR</th>
-                            <th>Đánh Giá / Ghi Chú</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (!progressAsc.Any())
-                        {
-                            <tr>
-                                <td colspan="9" class="text-center text-muted py-4">Chưa có mốc tiến trình InBody nào được ghi nhận.</td>
-                            </tr>
-                        }
-                        @for (int i = progressAsc.Count - 1; i >= 0; i--)
-                        {
-                            var p = progressAsc[i];
-                            var prevP = i > 0 ? progressAsc[i - 1] : null;
-
-                            // Tính BMR cho từng mốc
-                            double rowBmr = 0;
-                            if (curHeight > 0 && p.Weight > 0)
-                            {
-                                if (Model.Gender == "Nữ")
-                                {
-                                    rowBmr = Math.Round(655 + (9.6 * p.Weight) + (1.8 * curHeight) - (4.7 * age));
-                                }
-                                else
-                                {
-                                    rowBmr = Math.Round(66 + (13.7 * p.Weight) + (5.0 * curHeight) - (6.8 * age));
-                                }
-                            }
-
-                            <tr>
-                                <td>
-                                    <div class="fw-bold text-dark">@p.RecordedDate.ToString("dd/MM/yyyy")</div>
-                                    <small class="badge badge-soft-secondary" style="font-size: 0.65rem;">Mốc T@(i + 1)</small>
-                                </td>
-                                <td class="text-center">
-                                    <span class="fw-bold text-dark">@p.Weight.ToString("F1") kg</span>
-                                    @if (prevP != null)
-                                    {
-                                        var diffW = Math.Round(p.Weight - prevP.Weight, 1);
-                                        if (diffW < 0)
-                                        {
-                                            <small class="d-block text-success fw-semibold" style="font-size: 0.7rem;">
-                                                <i class="bi bi-arrow-down"></i>@Math.Abs(diffW) kg
-                                            </small>
-                                        }
-                                        else if (diffW > 0)
-                                        {
-                                            <small class="d-block text-danger fw-semibold" style="font-size: 0.7rem;">
-                                                <i class="bi bi-arrow-up"></i>+@diffW kg
-                                            </small>
-                                        }
-                                    }
-                                </td>
-                                <td class="text-center">
-                                    <span class="fw-semibold text-warning">@(p.BodyFatPercentage.HasValue ? $"{p.BodyFatPercentage:F1}%" : "-")</span>
-                                    @if (prevP != null && p.BodyFatPercentage.HasValue && prevP.BodyFatPercentage.HasValue)
-                                    {
-                                        var diffF = Math.Round(p.BodyFatPercentage.Value - prevP.BodyFatPercentage.Value, 1);
-                                        if (diffF < 0)
-                                        {
-                                            <small class="d-block text-success fw-semibold" style="font-size: 0.7rem;">
-                                                <i class="bi bi-arrow-down"></i>@Math.Abs(diffF)%
-                                            </small>
-                                        }
-                                    }
-                                </td>
-                                <td class="text-center">
-                                    <span class="fw-semibold text-success">@(p.MuscleMass.HasValue ? $"{p.MuscleMass:F1} kg" : "-")</span>
-                                </td>
-                                <td class="text-center">
-                                    <span class="text-secondary">@(p.Chest.HasValue ? $"{p.Chest:F1} cm" : "-")</span>
-                                </td>
-                                <td class="text-center">
-                                    <span class="fw-bold text-danger">@(p.Waist.HasValue ? $"{p.Waist:F1} cm" : "-")</span>
-                                    @if (prevP != null && p.Waist.HasValue && prevP.Waist.HasValue)
-                                    {
-                                        var diffWaist = Math.Round(p.Waist.Value - prevP.Waist.Value, 1);
-                                        if (diffWaist < 0)
-                                        {
-                                            <small class="d-block text-success fw-semibold" style="font-size: 0.7rem;">
-                                                <i class="bi bi-arrow-down"></i>@Math.Abs(diffWaist) cm
-                                            </small>
-                                        }
-                                    }
-                                </td>
-                                <td class="text-center">
-                                    <span class="text-secondary">@(p.Hips.HasValue ? $"{p.Hips:F1} cm" : "-")</span>
-                                </td>
-                                <td class="text-center">
-                                    <small class="text-muted fw-semibold">@(rowBmr > 0 ? $"{rowBmr:N0}" : "-")</small>
-                                </td>
-                                <td>
-                                    <small class="text-muted d-block" style="max-width: 250px; line-height: 1.4;">
-                                        @(p.Notes ?? "-")
-                                    </small>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- 3. Gói tập đã đăng ký (Subscriptions) -->
-        <div class="card border-0 rounded-4 bg-white shadow-sm p-4 mb-4">
-            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-box-seam text-primary me-2"></i>Lịch Sử Gói Tập (Subscriptions)</h5>
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead>
-                        <tr>
-                            <th>Gói Tập</th>
-                            <th>Ngày Bắt Đầu</th>
-                            <th>Ngày Hết Hạn</th>
-                            <th>Đã Đóng</th>
-                            <th>Trạng Thái</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (!Model.Subscriptions.Any())
-                        {
-                            <tr>
-                                <td colspan="5" class="text-center text-muted py-3">Hội viên chưa đăng ký gói tập nào.</td>
-                            </tr>
-                        }
-                        @foreach (var sub in Model.Subscriptions.OrderByDescending(s => s.StartDate))
-                        {
-                            <tr>
-                                <td class="fw-bold text-dark">@sub.Package.PackageName</td>
-                                <td>@sub.StartDate.ToString("dd/MM/yyyy")</td>
-                                <td>@sub.EndDate.ToString("dd/MM/yyyy")</td>
-                                <td class="fw-bold text-success">@sub.PaidAmount.ToString("N0") đ</td>
-                                <td>
-                                    @if (sub.Status == "Active" && sub.EndDate >= DateTime.UtcNow)
-                                    {
-                                        <span class="badge badge-soft-success">Đang dùng</span>
-                                    }
-                                    else if (sub.Status == "Cancelled")
-                                    {
-                                        <span class="badge badge-soft-danger">Đã hủy</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge badge-soft-secondary">Hết hạn</span>
-                                    }
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- 4. Lịch đặt PT (Bookings) -->
-        <div class="card border-0 rounded-4 bg-white shadow-sm p-4">
-            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-calendar2-check text-warning me-2"></i>Lịch Đặt Huấn Luyện Viên (Bookings)</h5>
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead>
-                        <tr>
-                            <th>Huấn Luyện Viên</th>
-                            <th>Ngày Tập</th>
-                            <th>Khung Giờ</th>
-                            <th>Trạng Thái</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (!Model.Bookings.Any())
-                        {
-                            <tr>
-                                <td colspan="4" class="text-center text-muted py-3">Chưa có lịch đặt PT nào.</td>
-                            </tr>
-                        }
-                        @foreach (var b in Model.Bookings.OrderByDescending(x => x.BookingDate))
-                        {
-                            <tr>
-                                <td class="fw-semibold text-dark">@b.Trainer.User.FullName</td>
-                                <td>@b.BookingDate.ToString("dd/MM/yyyy")</td>
-                                <td><span class="badge bg-light text-dark border">@b.TimeSlot</span></td>
-                                <td>
-                                    @if (b.Status == "Approved")
-                                    {
-                                        <span class="badge badge-soft-success">Đã duyệt</span>
-                                    }
-                                    else if (b.Status == "Pending")
-                                    {
-                                        <span class="badge badge-soft-warning">Chờ duyệt</span>
-                                    }
-                                    else if (b.Status == "Completed")
-                                    {
-                                        <span class="badge badge-soft-primary">Hoàn thành</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge badge-soft-secondary">Đã hủy</span>
-                                    }
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-    </div>
-</div>
-
-@section Scripts {
-    @if (progressAsc.Any())
-    {
-        <!-- Plugin datalabels để vẽ số đo trực tiếp trên điểm giống mẫu -->
-        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
-        <script>
-            const inbodyLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(chartLabels));
-            const inbodyWeights = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(chartWeights));
-            const inbodyFats = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(chartFats));
-
-            // Tính toán min/max động để tách 2 đường độc lập: Cân nặng ở nửa trên, Body Fat ở nửa dưới
-            const minW = Math.min(...inbodyWeights);
-            const maxW = Math.max(...inbodyWeights);
-            const rangeW = (maxW - minW) || 10;
-            // Cho Cân nặng dao động ở dải trên (55% - 85% chiều cao biểu đồ)
-            const yWeightMin = Math.max(0, minW - rangeW * 1.6);
-            const yWeightMax = maxW + rangeW * 0.45;
-
-            const minF = Math.min(...inbodyFats);
-            const maxF = Math.max(...inbodyFats);
-            const rangeF = (maxF - minF) || 8;
-            // Cho Body Fat dao động ở dải dưới (12% - 42% chiều cao biểu đồ)
-            const yFatMin = Math.max(0, minF - rangeF * 0.4);
-            const yFatMax = maxF + rangeF * 2.2;
-
-            const ctxInbody = document.getElementById('inbodyChart').getContext('2d');
-
-            new Chart(ctxInbody, {
-                type: 'line',
-                data: {
-                    labels: inbodyLabels,
-                    datasets: [
-                        {
-                            label: 'Cân nặng (kg)',
-                            data: inbodyWeights,
-                            borderColor: '#bef264', // Vàng chanh / Lime
-                            backgroundColor: '#bef264',
-                            pointBackgroundColor: '#bef264',
-                            pointBorderColor: '#090d16',
-                            pointBorderWidth: 2.5,
-                            pointRadius: 6,
-                            pointHoverRadius: 8,
-                            tension: 0.25,
-                            borderWidth: 2.5,
-                            yAxisID: 'yWeight',
-                            datalabels: {
-                                align: 'top',
-                                offset: 8,
-                                color: '#bef264',
-                                font: { weight: 'bold', size: 12 },
-                                formatter: function(value, context) {
-                                    return 'T' + (context.dataIndex + 1) + ' (' + value + 'k)';
-                                }
-                            }
-                        },
-                        {
-                            label: 'Body Fat (%)',
-                            data: inbodyFats,
-                            borderColor: '#38bdf8', // Cyan / Xanh biển
-                            backgroundColor: '#38bdf8',
-                            pointBackgroundColor: '#38bdf8',
-                            pointBorderColor: '#090d16',
-                            pointBorderWidth: 2,
-                            pointRadius: 6,
-                            pointHoverRadius: 8,
-                            borderDash: [5, 4],
-                            tension: 0.25,
-                            borderWidth: 2,
-                            yAxisID: 'yFat',
-                            datalabels: {
-                                align: 'bottom',
-                                offset: 8,
-                                color: '#38bdf8',
-                                font: { weight: 'bold', size: 12 },
-                                formatter: function(value) {
-                                    return value + '%';
-                                }
-                            }
-                        }
-                    ]
-                },
-                plugins: [ChartDataLabels],
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    layout: {
-                        padding: {
-                            left: 45,
-                            right: 45,
-                            top: 28,
-                            bottom: 12
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            enabled: true,
-                            mode: 'nearest',
-                            intersect: true,
-                            backgroundColor: 'rgba(15, 23, 42, 0.95)',
-                            titleColor: '#ffffff',
-                            bodyColor: '#e2e8f0',
-                            borderColor: 'rgba(255, 255, 255, 0.15)',
-                            borderWidth: 1,
-                            padding: 10,
-                            caretPadding: 10,
-                            callbacks: {
-                                title: function(items) {
-                                    return 'Mốc ' + items[0].label;
-                                },
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    if (context.parsed.y !== null) {
-                                        label += context.parsed.y + (context.dataset.yAxisID === 'yFat' ? '%' : ' kg');
-                                    }
-                                    return label;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.05)',
-                                borderDash: [4, 4],
-                                drawBorder: false
-                            },
-                            ticks: {
-                                color: '#94a3b8',
-                                font: { size: 11 },
-                                padding: 8
-                            }
-                        },
-                        yWeight: {
-                            type: 'linear',
-                            position: 'left',
-                            min: yWeightMin,
-                            max: yWeightMax,
-                            display: true,
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.05)',
-                                borderDash: [4, 4],
-                                drawBorder: false,
-                                drawTicks: false
-                            },
-                            ticks: {
-                                display: false // Ẩn nhãn số trục Y để tránh đè chữ lên điểm T1
-                            }
-                        },
-                        yFat: {
-                            type: 'linear',
-                            position: 'right',
-                            min: yFatMin,
-                            max: yFatMax,
-                            display: false // Ẩn trục Y bên phải để tránh đè chữ lên điểm T6
-                        }
-                    }
-                }
-            });
-        </script>
-    }
-}
-        </script>
-    }
-}
+@model WebGym.Models.Entities.Member
+@{
+    ViewData["Title"] = $"Hồ Sơ Hội Viên - {Model.User.FullName}";
+    var activeSub = Model.Subscriptions.OrderByDescending(s => s.StartDate).FirstOrDefault(s => s.Status == "Active");
+
+    // Lấy tiến trình theo thứ tự thời gian (từ cũ đến mới) để vẽ biểu đồ và phân tích
+    var progressAsc = Model.ProgressRecords.OrderBy(p => p.RecordedDate).ToList();
+    // Tiến trình mới nhất để lấy số đo gần nhất
+    var latestProgress = progressAsc.LastOrDefault();
+
+    // Các số đo hiện tại (ưu tiên lấy từ mốc InBody mới nhất, nếu chưa có thì lấy từ Member)
+    var curWeight = latestProgress?.Weight ?? Model.Weight ?? 0;
+    var curHeight = Model.Height ?? 0;
+    var curBodyFat = latestProgress?.BodyFatPercentage ?? Model.BodyFatPercentage;
+    var curMuscle = latestProgress?.MuscleMass ?? Model.MuscleMass;
+    var curChest = latestProgress?.Chest ?? Model.Chest;
+    var curWaist = latestProgress?.Waist ?? Model.Waist;
+    var curHips = latestProgress?.Hips ?? Model.Hips;
+
+    // Tính tuổi
+    var age = Model.DateOfBirth.HasValue ? (DateTime.UtcNow.Year - Model.DateOfBirth.Value.Year) : 25;
+
+    // Tính BMR
+    double curBmr = Model.BMR ?? 0;
+    if (curBmr == 0 && curWeight > 0 && curHeight > 0)
+    {
+        if (Model.Gender == "Nữ")
+        {
+            curBmr = Math.Round(655 + (9.6 * curWeight) + (1.8 * curHeight) - (4.7 * age));
+        }
+        else
+        {
+            curBmr = Math.Round(66 + (13.7 * curWeight) + (5.0 * curHeight) - (6.8 * age));
+        }
+    }
+
+    // Tính BMI
+    double curBmi = 0;
+    if (curHeight > 0 && curWeight > 0)
+    {
+        var hM = curHeight / 100.0;
+        curBmi = Math.Round(curWeight / (hM * hM), 1);
+    }
+
+    // Dữ liệu cho biểu đồ Chart.js
+    var chartLabels = new List<string>();
+    var chartWeights = new List<double>();
+    var chartFats = new List<double>();
+
+    for (int i = 0; i < progressAsc.Count; i++)
+    {
+        var p = progressAsc[i];
+        chartLabels.Add($"T{i + 1} ({p.RecordedDate:dd/MM})");
+        chartWeights.Add(p.Weight);
+        chartFats.Add(p.BodyFatPercentage ?? 0);
+    }
+}
+
+<div class="mb-4">
+    <a asp-action="Index" class="text-decoration-none text-muted small fw-semibold">
+        <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách hội viên
+    </a>
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mt-2">
+        <div>
+            <h3 class="fw-bold text-dark mb-0">Hồ Sơ Chi Tiết Hội Viên</h3>
+            <small class="text-muted">Mã hội viên: #MEM-@Model.MemberId • Ngày tham gia: @Model.User.CreatedAt.ToString("dd/MM/yyyy")</small>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.MemberId" class="btn btn-primary btn-sm px-3 py-2 rounded-3 shadow-sm">
+                <i class="bi bi-pencil me-1"></i> Chỉnh sửa thông tin
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Cột trái: Thông tin cá nhân & Thể chất gần nhất -->
+    <div class="col-12 col-lg-4">
+        <!-- Profile Card -->
+        <div class="card border-0 rounded-4 bg-white shadow-sm p-4 text-center mb-4">
+            @if (!string.IsNullOrEmpty(Model.AvatarUrl))
+            {
+                <img src="@Model.AvatarUrl" alt="@Model.User.FullName" class="rounded-circle object-fit-cover shadow mx-auto mb-3" style="width: 80px; height: 80px;" />
+            }
+            else
+            {
+                <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold mx-auto mb-3 shadow" 
+                     style="width: 80px; height: 80px; font-size: 2rem;">
+                    @(Model.User.FullName?.Substring(0, 1).ToUpper() ?? "M")
+                </div>
+            }
+            <h5 class="fw-bold text-dark mb-1">@Model.User.FullName</h5>
+            <div class="text-muted small mb-3">Tài khoản: <code>@Model.User.Username</code></div>
+            
+            <div class="d-flex justify-content-center gap-2 mb-3">
+                <span class="badge badge-soft-primary">@Model.User.Role</span>
+                @if (activeSub != null && activeSub.EndDate >= DateTime.UtcNow)
+                {
+                    <span class="badge badge-soft-success">Gói đang hiệu lực</span>
+                }
+                else
+                {
+                    <span class="badge badge-soft-secondary">Chưa kích hoạt gói</span>
+                }
+            </div>
+
+            <ul class="list-group list-group-flush text-start small mt-2">
+                <li class="list-group-item d-flex justify-content-between px-0 py-2">
+                    <span class="text-muted"><i class="bi bi-envelope me-2"></i>Email</span>
+                    <span class="fw-semibold text-dark text-truncate" style="max-width: 180px;">@Model.User.Email</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between px-0 py-2">
+                    <span class="text-muted"><i class="bi bi-telephone me-2"></i>Số điện thoại</span>
+                    <span class="fw-semibold text-dark">@(Model.User.PhoneNumber ?? "Chưa có")</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between px-0 py-2">
+                    <span class="text-muted"><i class="bi bi-gender-ambiguous me-2"></i>Giới tính</span>
+                    <span class="fw-semibold text-dark">@(Model.Gender ?? "Chưa rõ")</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between px-0 py-2">
+                    <span class="text-muted"><i class="bi bi-calendar-event me-2"></i>Ngày sinh</span>
+                    <span class="fw-semibold text-dark">@(Model.DateOfBirth?.ToString("dd/MM/yyyy") ?? "-") (@age tuổi)</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between px-0 py-2">
+                    <span class="text-muted"><i class="bi bi-clock-history me-2"></i>Ngày tham gia</span>
+                    <span class="fw-semibold text-dark">@Model.User.CreatedAt.ToString("dd/MM/yyyy")</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 8 CHỈ SỐ THỂ CHẤT GẦN NHẤT (ĐẦY ĐỦ BMR, HIPS, CHEST, WAIST...) -->
+        <div class="card border-0 rounded-4 bg-white shadow-sm p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-dark mb-0">
+                    <i class="bi bi-speedometer2 text-danger me-2"></i>Chỉ Số Thể Chất Gần Nhất
+                </h6>
+                @if (latestProgress != null)
+                {
+                    <span class="badge badge-soft-info" style="font-size: 0.7rem;">
+                        Đo: @latestProgress.RecordedDate.ToString("dd/MM/yyyy")
+                    </span>
+                }
+            </div>
+
+            <!-- Lưới 8 chỉ số thể chất -->
+            <div class="row g-2 text-center">
+                <!-- 1. Chiều cao -->
+                <div class="col-6">
+                    <div class="p-2 bg-light rounded-3 h-100">
+                        <small class="text-muted d-block" style="font-size: 0.75rem;">Chiều cao</small>
+                        <strong class="fs-5 text-dark">@(curHeight > 0 ? $"{curHeight} cm" : "-")</strong>
+                    </div>
+                </div>
+
+                <!-- 2. Cân nặng -->
+                <div class="col-6">
+                    <div class="p-2 bg-light rounded-3 h-100">
+                        <small class="text-muted d-block" style="font-size: 0.75rem;">Cân nặng</small>
+                        <strong class="fs-5 text-primary">@(curWeight > 0 ? $"{curWeight} kg" : "-")</strong>
+                    </div>
+                </div>
+
+                <!-- 3. Tỷ lệ mỡ Body Fat -->
+                <div class="col-6">
+                    <div class="p-2 bg-light rounded-3 h-100">
+                        <small class="text-muted d-block" style="font-size: 0.75rem;">Tỷ lệ mỡ</small>
+                        <strong class="fs-5 text-warning">@(curBodyFat.HasValue ? $"{curBodyFat}%" : "-")</strong>
+                    </div>
+                </div>
+
+                <!-- 4. Khối lượng cơ Muscle Mass -->
+                <div class="col-6">
+                    <div class="p-2 bg-light rounded-3 h-100">
+                        <small class="text-muted d-block" style="font-size: 0.75rem;">Khối cơ bắp</small>
+                        <strong class="fs-5 text-success">@(curMuscle.HasValue ? $"{curMuscle} kg" : "-")</strong>
+                    </div>
+                </div>
+
+                <!-- 5. Chỉ số BMR -->
+                <div class="col-6">
+                    <div class="p-2 bg-light rounded-3 h-100">
+                        <small class="text-muted d-block" style="font-size: 0.75rem;">Chỉ số BMR</small>
+                        <strong class="fs-6 text-dark fw-bold">@(curBmr > 0 ? $"{curBmr:N0} kcal" : "-")</strong>
+                    </div>
+                </div>
+
+                <!-- 6. Chỉ số BMI -->
+                <div class="col-6">
+                    <div class="p-2 bg-light rounded-3 h-100">
+                        <small class="text-muted d-block" style="font-size: 0.75rem;">Chỉ số BMI</small>
+                        <strong class="fs-6 text-dark fw-bold">@(curBmi > 0 ? $"{curBmi}" : "-")</strong>
+                    </div>
+                </div>
+
+                <!-- 7. Vòng ngực (Chest) -->
+                <div class="col-4">
+                    <div class="p-2 bg-light rounded-3 h-100">
+                        <small class="text-muted d-block" style="font-size: 0.7rem;">Vòng ngực</small>
+                        <strong class="fs-6 text-secondary">@(curChest.HasValue ? $"{curChest} cm" : "-")</strong>
+                    </div>
+                </div>
+
+                <!-- 8. Vòng eo (Waist) -->
+                <div class="col-4">
+                    <div class="p-2 bg-light rounded-3 h-100">
+                        <small class="text-muted d-block" style="font-size: 0.7rem;">Vòng eo</small>
+                        <strong class="fs-6 text-danger">@(curWaist.HasValue ? $"{curWaist} cm" : "-")</strong>
+                    </div>
+                </div>
+
+                <!-- 9. Vòng hông (Hips) -->
+                <div class="col-4">
+                    <div class="p-2 bg-light rounded-3 h-100">
+                        <small class="text-muted d-block" style="font-size: 0.7rem;">Vòng hông</small>
+                        <strong class="fs-6 text-secondary">@(curHips.HasValue ? $"{curHips} cm" : "-")</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cột phải: Biểu đồ biến động InBody + Bảng chi tiết + Gói tập + Lịch PT -->
+    <div class="col-12 col-lg-8">
+
+        <!-- ============================================================== -->
+        <!-- BIỂU ĐỒ BIẾN ĐỘNG CÂN NẶNG & BODY FAT (THEO PHONG CÁCH DARK MẪU) -->
+        <!-- ============================================================== -->
+        <div class="card border-0 rounded-4 shadow-sm p-4 mb-4 text-white" 
+             style="background: linear-gradient(145deg, #090d16, #111827); border: 1px solid rgba(255,255,255,0.08) !important;">
+            
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3">
+                <div>
+                    <h5 class="fw-bold mb-1 text-white tracking-wide">
+                        <i class="bi bi-graph-up-arrow text-warning me-2"></i>BIẾN ĐỘNG CÂN NẶNG &amp; BODY FAT
+                    </h5>
+                    <small class="text-white-50" style="font-size: 0.8rem;">Theo dõi qua các lần đo InBody định kỳ của hội viên</small>
+                </div>
+                <!-- Custom Legend giống mẫu -->
+                <div class="d-flex align-items-center gap-3" style="font-size: 0.8rem;">
+                    <div class="d-flex align-items-center gap-1">
+                        <span class="d-inline-block rounded-circle" style="width: 10px; height: 10px; background-color: #bef264;"></span>
+                        <span class="text-white fw-semibold">Cân nặng (kg)</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-1">
+                        <span class="d-inline-block rounded-circle" style="width: 10px; height: 10px; background-color: #38bdf8;"></span>
+                        <span class="text-white fw-semibold">Body Fat (%)</span>
+                    </div>
+                </div>
+            </div>
+
+            @if (!progressAsc.Any())
+            {
+                <div class="text-center text-white-50 py-5">
+                    <i class="bi bi-clipboard2-pulse fs-1 d-block mb-2 opacity-50"></i>
+                    Chưa có đủ dữ liệu InBody định kỳ để vẽ biểu đồ biến động.
+                </div>
+            }
+            else
+            {
+                <div style="position: relative; height: 290px; width: 100%;">
+                    <canvas id="inbodyChart"></canvas>
+                </div>
+            }
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- BẢNG TIẾN TRÌNH INBODY ĐẦY ĐỦ CÁC CỘT (CHEST, WAIST, HIPS, BMR) -->
+        <!-- ============================================================== -->
+        <div class="card border-0 rounded-4 bg-white shadow-sm p-4 mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="bi bi-journal-medical text-success me-2"></i>Tiến Trình Thay Đổi Thể Chất (InBody Logs)
+                    </h5>
+                    <small class="text-muted">Lịch sử toàn bộ các lần đo chỉ số chi tiết</small>
+                </div>
+                <span class="badge bg-light text-dark border">
+                    Tổng cộng: <strong>@Model.ProgressRecords.Count</strong> lần đo
+                </span>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" style="min-width: 780px;">
+                    <thead>
+                        <tr>
+                            <th style="width: 110px;">Ngày Ghi Nhận</th>
+                            <th class="text-center">Cân Nặng</th>
+                            <th class="text-center">% Mỡ</th>
+                            <th class="text-center">Khối Cơ</th>
+                            <th class="text-center">Vòng Ngực</th>
+                            <th class="text-center">Vòng Eo</th>
+                            <th class="text-center">Vòng Hông</th>
+                            <th class="text-center">BMR</th>
+                            <th>Đánh Giá / Ghi Chú</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!progressAsc.Any())
+                        {
+                            <tr>
+                                <td colspan="9" class="text-center text-muted py-4">Chưa có mốc tiến trình InBody nào được ghi nhận.</td>
+                            </tr>
+                        }
+                        @for (int i = progressAsc.Count - 1; i >= 0; i--)
+                        {
+                            var p = progressAsc[i];
+                            var prevP = i > 0 ? progressAsc[i - 1] : null;
+
+                            // Tính BMR cho từng mốc
+                            double rowBmr = 0;
+                            if (curHeight > 0 && p.Weight > 0)
+                            {
+                                if (Model.Gender == "Nữ")
+                                {
+                                    rowBmr = Math.Round(655 + (9.6 * p.Weight) + (1.8 * curHeight) - (4.7 * age));
+                                }
+                                else
+                                {
+                                    rowBmr = Math.Round(66 + (13.7 * p.Weight) + (5.0 * curHeight) - (6.8 * age));
+                                }
+                            }
+
+                            <tr>
+                                <td>
+                                    <div class="fw-bold text-dark">@p.RecordedDate.ToString("dd/MM/yyyy")</div>
+                                    <small class="badge badge-soft-secondary" style="font-size: 0.65rem;">Mốc T@(i + 1)</small>
+                                </td>
+                                <td class="text-center">
+                                    <span class="fw-bold text-dark">@p.Weight.ToString("F1") kg</span>
+                                    @if (prevP != null)
+                                    {
+                                        var diffW = Math.Round(p.Weight - prevP.Weight, 1);
+                                        if (diffW < 0)
+                                        {
+                                            <small class="d-block text-success fw-semibold" style="font-size: 0.7rem;">
+                                                <i class="bi bi-arrow-down"></i>@Math.Abs(diffW) kg
+                                            </small>
+                                        }
+                                        else if (diffW > 0)
+                                        {
+                                            <small class="d-block text-danger fw-semibold" style="font-size: 0.7rem;">
+                                                <i class="bi bi-arrow-up"></i>+@diffW kg
+                                            </small>
+                                        }
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <span class="fw-semibold text-warning">@(p.BodyFatPercentage.HasValue ? $"{p.BodyFatPercentage:F1}%" : "-")</span>
+                                    @if (prevP != null && p.BodyFatPercentage.HasValue && prevP.BodyFatPercentage.HasValue)
+                                    {
+                                        var diffF = Math.Round(p.BodyFatPercentage.Value - prevP.BodyFatPercentage.Value, 1);
+                                        if (diffF < 0)
+                                        {
+                                            <small class="d-block text-success fw-semibold" style="font-size: 0.7rem;">
+                                                <i class="bi bi-arrow-down"></i>@Math.Abs(diffF)%
+                                            </small>
+                                        }
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <span class="fw-semibold text-success">@(p.MuscleMass.HasValue ? $"{p.MuscleMass:F1} kg" : "-")</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="text-secondary">@(p.Chest.HasValue ? $"{p.Chest:F1} cm" : "-")</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="fw-bold text-danger">@(p.Waist.HasValue ? $"{p.Waist:F1} cm" : "-")</span>
+                                    @if (prevP != null && p.Waist.HasValue && prevP.Waist.HasValue)
+                                    {
+                                        var diffWaist = Math.Round(p.Waist.Value - prevP.Waist.Value, 1);
+                                        if (diffWaist < 0)
+                                        {
+                                            <small class="d-block text-success fw-semibold" style="font-size: 0.7rem;">
+                                                <i class="bi bi-arrow-down"></i>@Math.Abs(diffWaist) cm
+                                            </small>
+                                        }
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <span class="text-secondary">@(p.Hips.HasValue ? $"{p.Hips:F1} cm" : "-")</span>
+                                </td>
+                                <td class="text-center">
+                                    <small class="text-muted fw-semibold">@(rowBmr > 0 ? $"{rowBmr:N0}" : "-")</small>
+                                </td>
+                                <td>
+                                    <small class="text-muted d-block" style="max-width: 250px; line-height: 1.4;">
+                                        @(p.Notes ?? "-")
+                                    </small>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 3. Gói tập đã đăng ký (Subscriptions) -->
+        <div class="card border-0 rounded-4 bg-white shadow-sm p-4 mb-4">
+            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-box-seam text-primary me-2"></i>Lịch Sử Gói Tập (Subscriptions)</h5>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Gói Tập</th>
+                            <th>Ngày Bắt Đầu</th>
+                            <th>Ngày Hết Hạn</th>
+                            <th>Đã Đóng</th>
+                            <th>Trạng Thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Subscriptions.Any())
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-3">Hội viên chưa đăng ký gói tập nào.</td>
+                            </tr>
+                        }
+                        @foreach (var sub in Model.Subscriptions.OrderByDescending(s => s.StartDate))
+                        {
+                            <tr>
+                                <td class="fw-bold text-dark">@sub.Package.PackageName</td>
+                                <td>@sub.StartDate.ToString("dd/MM/yyyy")</td>
+                                <td>@sub.EndDate.ToString("dd/MM/yyyy")</td>
+                                <td class="fw-bold text-success">@sub.PaidAmount.ToString("N0") đ</td>
+                                <td>
+                                    @if (sub.Status == "Active" && sub.EndDate >= DateTime.UtcNow)
+                                    {
+                                        <span class="badge badge-soft-success">Đang dùng</span>
+                                    }
+                                    else if (sub.Status == "Cancelled")
+                                    {
+                                        <span class="badge badge-soft-danger">Đã hủy</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-soft-secondary">Hết hạn</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 4. Lịch đặt PT (Bookings) -->
+        <div class="card border-0 rounded-4 bg-white shadow-sm p-4">
+            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-calendar2-check text-warning me-2"></i>Lịch Đặt Huấn Luyện Viên (Bookings)</h5>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Huấn Luyện Viên</th>
+                            <th>Ngày Tập</th>
+                            <th>Khung Giờ</th>
+                            <th>Trạng Thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Bookings.Any())
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center text-muted py-3">Chưa có lịch đặt PT nào.</td>
+                            </tr>
+                        }
+                        @foreach (var b in Model.Bookings.OrderByDescending(x => x.BookingDate))
+                        {
+                            <tr>
+                                <td class="fw-semibold text-dark">@b.Trainer.User.FullName</td>
+                                <td>@b.BookingDate.ToString("dd/MM/yyyy")</td>
+                                <td><span class="badge bg-light text-dark border">@b.TimeSlot</span></td>
+                                <td>
+                                    @if (b.Status == "Approved")
+                                    {
+                                        <span class="badge badge-soft-success">Đã duyệt</span>
+                                    }
+                                    else if (b.Status == "Pending")
+                                    {
+                                        <span class="badge badge-soft-warning">Chờ duyệt</span>
+                                    }
+                                    else if (b.Status == "Completed")
+                                    {
+                                        <span class="badge badge-soft-primary">Hoàn thành</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-soft-secondary">Đã hủy</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    @if (progressAsc.Any())
+    {
+        <!-- Plugin datalabels để vẽ số đo trực tiếp trên điểm giống mẫu -->
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+        <script>
+            const inbodyLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(chartLabels));
+            const inbodyWeights = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(chartWeights));
+            const inbodyFats = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(chartFats));
+
+            // Tính toán min/max động để tách 2 đường độc lập: Cân nặng ở nửa trên, Body Fat ở nửa dưới
+            const minW = Math.min(...inbodyWeights);
+            const maxW = Math.max(...inbodyWeights);
+            const rangeW = (maxW - minW) || 10;
+            // Cho Cân nặng dao động ở dải trên (55% - 85% chiều cao biểu đồ)
+            const yWeightMin = Math.max(0, minW - rangeW * 1.6);
+            const yWeightMax = maxW + rangeW * 0.45;
+
+            const minF = Math.min(...inbodyFats);
+            const maxF = Math.max(...inbodyFats);
+            const rangeF = (maxF - minF) || 8;
+            // Cho Body Fat dao động ở dải dưới (12% - 42% chiều cao biểu đồ)
+            const yFatMin = Math.max(0, minF - rangeF * 0.4);
+            const yFatMax = maxF + rangeF * 2.2;
+
+            const ctxInbody = document.getElementById('inbodyChart').getContext('2d');
+
+            new Chart(ctxInbody, {
+                type: 'line',
+                data: {
+                    labels: inbodyLabels,
+                    datasets: [
+                        {
+                            label: 'Cân nặng (kg)',
+                            data: inbodyWeights,
+                            borderColor: '#bef264', // Vàng chanh / Lime
+                            backgroundColor: '#bef264',
+                            pointBackgroundColor: '#bef264',
+                            pointBorderColor: '#090d16',
+                            pointBorderWidth: 2.5,
+                            pointRadius: 6,
+                            pointHoverRadius: 8,
+                            tension: 0.25,
+                            borderWidth: 2.5,
+                            yAxisID: 'yWeight',
+                            datalabels: {
+                                align: 'top',
+                                offset: 8,
+                                color: '#bef264',
+                                font: { weight: 'bold', size: 12 },
+                                formatter: function(value, context) {
+                                    return 'T' + (context.dataIndex + 1) + ' (' + value + 'k)';
+                                }
+                            }
+                        },
+                        {
+                            label: 'Body Fat (%)',
+                            data: inbodyFats,
+                            borderColor: '#38bdf8', // Cyan / Xanh biển
+                            backgroundColor: '#38bdf8',
+                            pointBackgroundColor: '#38bdf8',
+                            pointBorderColor: '#090d16',
+                            pointBorderWidth: 2,
+                            pointRadius: 6,
+                            pointHoverRadius: 8,
+                            borderDash: [5, 4],
+                            tension: 0.25,
+                            borderWidth: 2,
+                            yAxisID: 'yFat',
+                            datalabels: {
+                                align: 'bottom',
+                                offset: 8,
+                                color: '#38bdf8',
+                                font: { weight: 'bold', size: 12 },
+                                formatter: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    ]
+                },
+                plugins: [ChartDataLabels],
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            left: 45,
+                            right: 45,
+                            top: 28,
+                            bottom: 12
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            enabled: true,
+                            mode: 'nearest',
+                            intersect: true,
+                            backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#e2e8f0',
+                            borderColor: 'rgba(255, 255, 255, 0.15)',
+                            borderWidth: 1,
+                            padding: 10,
+                            caretPadding: 10,
+                            callbacks: {
+                                title: function(items) {
+                                    return 'Mốc ' + items[0].label;
+                                },
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y + (context.dataset.yAxisID === 'yFat' ? '%' : ' kg');
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.05)',
+                                borderDash: [4, 4],
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#94a3b8',
+                                font: { size: 11 },
+                                padding: 8
+                            }
+                        },
+                        yWeight: {
+                            type: 'linear',
+                            position: 'left',
+                            min: yWeightMin,
+                            max: yWeightMax,
+                            display: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.05)',
+                                borderDash: [4, 4],
+                                drawBorder: false,
+                                drawTicks: false
+                            },
+                            ticks: {
+                                display: false // Ẩn nhãn số trục Y để tránh đè chữ lên điểm T1
+                            }
+                        },
+                        yFat: {
+                            type: 'linear',
+                            position: 'right',
+                            min: yFatMin,
+                            max: yFatMax,
+                            display: false // Ẩn trục Y bên phải để tránh đè chữ lên điểm T6
+                        }
+                    }
+                }
+            });
+        </script>
+    }
+}
+        </script>
+    }
+}

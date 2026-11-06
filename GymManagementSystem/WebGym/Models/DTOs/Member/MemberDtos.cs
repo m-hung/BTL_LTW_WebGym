@@ -9,7 +9,8 @@ namespace WebGym.Models.DTOs.Member
         public string Email { get; set; } = string.Empty;
         public string? PhoneNumber { get; set; }
         public string? Gender { get; set; }
-        public DateTime? DateOfBirth { get; set; }
+                public DateTime? DateOfBirth { get; set; }
+        public string? AvatarUrl { get; set; }
 
         // Các chỉ số thể hình
         public double? Height { get; set; }

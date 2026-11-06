@@ -31,28 +31,19 @@ namespace WebGym.Areas.Member.Controllers
                 return RedirectToAction("Index", "Home", new { area = "" });
             }
 
-            // Đồng bộ tài khoản MemberId = 1: Nếu còn subscription Gói Vàng/Kim Cương và booking mẫu,
-            // chuyển sang Gói Đồng (không có PT) và xóa booking mẫu để hiển thị màn hình khóa toàn trang theo yêu cầu kiểm thử
-            var ptSub = member.Subscriptions.FirstOrDefault(s => s.PackageId == 3 && s.MemberId == 1);
-            if (ptSub != null)
-            {
-                ptSub.PackageId = 1; // Gói Đồng (Basic - Không kèm PT)
-                var mockBookings = await _context.Bookings.Where(b => b.MemberId == member.MemberId).ToListAsync();
-                if (mockBookings.Any())
-                {
-                    _context.Bookings.RemoveRange(mockBookings);
-                }
-                await _context.SaveChangesAsync();
-                await _context.Entry(ptSub).Reference(s => s.Package).LoadAsync();
-            }
+
 
             // Kiểm tra xem hội viên có gói tập kèm PT đang hoạt động không
             var activeSub = member.Subscriptions
                 .Where(s => s.Status == "Active" && s.EndDate >= DateTime.Today)
                 .OrderByDescending(s => s.StartDate)
+                .ThenByDescending(s => s.SubscriptionId)
                 .FirstOrDefault();
 
-            bool hasPTPackage = activeSub != null && activeSub.Package != null && (activeSub.Package.IncludesPT || activeSub.Package.PackageName.Contains("PT", StringComparison.OrdinalIgnoreCase));
+            bool hasPTPackage = activeSub != null && activeSub.Package != null && 
+                (activeSub.Package.IncludesPT || 
+                 activeSub.Package.PackageName.Contains("PT", StringComparison.OrdinalIgnoreCase) || 
+                 activeSub.PackageId >= 3);
             ViewBag.HasPTPackage = hasPTPackage;
             ViewBag.ActivePackageName = activeSub?.Package?.PackageName;
 
@@ -91,7 +82,7 @@ namespace WebGym.Areas.Member.Controllers
                 .OrderByDescending(s => s.StartDate)
                 .FirstOrDefault();
 
-            bool hasPTPackage = activeSub != null && (activeSub.Package.IncludesPT || activeSub.Package.PackageName.Contains("PT", StringComparison.OrdinalIgnoreCase));
+            bool hasPTPackage = activeSub != null && (activeSub.Package.IncludesPT || activeSub.Package.PackageName.Contains("PT", StringComparison.OrdinalIgnoreCase) || activeSub.PackageId >= 3);
             if (!hasPTPackage)
             {
                 SetErrorMessage("Bạn chưa có gói tập kèm Huấn luyện viên (PT) đang hoạt động. Vui lòng nâng cấp gói tập có PT để đặt lịch.");

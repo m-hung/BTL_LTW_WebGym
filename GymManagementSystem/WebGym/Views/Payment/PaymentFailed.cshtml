@@ -2,18 +2,26 @@
     ViewData["Title"] = "Thanh Toán Không Thành Công";
 }
 
-<div class="row justify-content-center">
+<div class="row justify-content-center my-5">
     <div class="col-md-6 text-center">
-        <div class="card border-0 shadow rounded-4 p-5">
+        <div class="card border-0 shadow rounded-4 p-5" style="background: #141916; border: 1px solid rgba(255, 92, 92, 0.35)!important; color: #f2f5ef;">
             <div class="text-danger mb-3">
-                <i class="bi bi-x-circle-fill" style="font-size: 5rem;"></i>
+                <i class="bi bi-x-circle-fill" style="font-size: 4.5rem; color: #ff5c5c;"></i>
             </div>
-            <h2 class="fw-bold text-danger mb-3">Giao Dịch Bị Hủy Hoặc Thất Bại</h2>
-            <p class="text-muted">Đã có lỗi xảy ra hoặc bạn đã hủy giao dịch trên cổng thanh toán. Tài khoản của bạn chưa bị trừ tiền.</p>
+            <h2 class="fw-bold mb-3" style="color: #ff5c5c; font-family: var(--portal-display, sans-serif); letter-spacing: 0.03em;">
+                GIAO DỊCH BỊ HỦY HOẶC THẤT BẠI
+            </h2>
+            <p style="color: #a2aba0; line-height: 1.6;">
+                @(ViewBag.Message ?? "Đã có lỗi xảy ra hoặc bạn đã hủy giao dịch trên cổng thanh toán. Tài khoản của bạn chưa bị trừ tiền.")
+            </p>
 
-            <div class="mt-4">
-                <a href="/#bang-gia" class="btn btn-warning px-4 py-2 me-2">Thử Lại</a>
-                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary px-4 py-2">Về Trang Chủ</a>
+            <div class="mt-4 d-flex justify-content-center gap-3">
+                <a href="/thanh-toan" class="btn px-4 py-2 fw-bold" style="background: var(--portal-lime, #c8ff2e); color: #000; text-decoration: none; border-radius: 6px;">
+                    <i class="bi bi-arrow-repeat me-1"></i> Quay Lại Thanh Toán
+                </a>
+                <a href="~/" class="btn btn-outline-secondary px-4 py-2" style="color: #dce1d8; border-color: rgba(255,255,255,0.2); text-decoration: none; border-radius: 6px;">
+                    Về Trang Chủ
+                </a>
             </div>
         </div>
     </div>

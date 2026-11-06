@@ -67,7 +67,8 @@ namespace WebGym.Areas.Member.Controllers
                 Waist = member.Waist,
                 Hips = member.Hips,
                 CurrentPackageName = activeSub?.Package?.PackageName,
-                MembershipEndDate = activeSub?.EndDate
+                MembershipEndDate = activeSub?.EndDate,
+                AvatarUrl = member.AvatarUrl
             };
 
             // Nếu chưa có cân nặng hoặc chiều cao (tài khoản mới/chưa đo InBody thực tế) thì không gửi bản ghi biểu đồ
@@ -190,6 +191,61 @@ namespace WebGym.Areas.Member.Controllers
 
             SetSuccessMessage("Cập nhật thông tin cá nhân thành công!");
             return RedirectToAction(nameof(PersonalInfo));
+        }
+
+        // POST: /Member/Profile/UploadAvatarAjax (Hỗ trợ học viên tải ảnh trực tiếp không cần reload)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UploadAvatarAjax(IFormFile? avatarFile)
+        {
+            var userId = CurrentUserId;
+            if (!userId.HasValue || avatarFile == null || avatarFile.Length == 0)
+            {
+                return Json(new { success = false, message = "Vui lòng chọn file ảnh hợp lệ." });
+            }
+
+            var member = await _context.Members.FirstOrDefaultAsync(m => m.UserId == userId);
+            if (member == null)
+            {
+                return Json(new { success = false, message = "Không tìm thấy thông tin hội viên." });
+            }
+
+            var allowedExts = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+            var ext = Path.GetExtension(avatarFile.FileName).ToLowerInvariant();
+            if (!allowedExts.Contains(ext))
+            {
+                return Json(new { success = false, message = "Định dạng ảnh không hợp lệ (chỉ hỗ trợ JPG, PNG, WEBP)." });
+            }
+
+            if (avatarFile.Length > 5 * 1024 * 1024)
+            {
+                return Json(new { success = false, message = "Dung lượng file ảnh không được vượt quá 5MB." });
+            }
+
+            var uploadsDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatars");
+            Directory.CreateDirectory(uploadsDir);
+            var fileName = $"user_{userId.Value}_{DateTime.UtcNow.Ticks}{ext}";
+            var filePath = Path.Combine(uploadsDir, fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await avatarFile.CopyToAsync(stream);
+            }
+
+            // Xóa file avatar cũ nếu có
+            if (!string.IsNullOrEmpty(member.AvatarUrl))
+            {
+                var oldDisk = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", member.AvatarUrl.TrimStart('/'));
+                if (System.IO.File.Exists(oldDisk))
+                {
+                    try { System.IO.File.Delete(oldDisk); } catch { }
+                }
+            }
+
+            var newUrl = $"/uploads/avatars/{fileName}";
+            member.AvatarUrl = newUrl;
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true, avatarUrl = newUrl, message = "Tải ảnh đại diện lên thành công!" });
         }
 
         // POST: /Member/Profile/DeleteAvatar (Xóa ảnh đại diện, trở về mặc định và cập nhật Database)

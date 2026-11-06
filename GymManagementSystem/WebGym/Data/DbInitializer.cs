@@ -6,9 +6,9 @@ namespace WebGym.Data
     {
         public static void Initialize(ApplicationDbContext context)
         {
-            // Tự động áp dụng Migration và Seed Data an toàn
             try
             {
+                // Thực hiện migrate database nếu có migration mới
                 context.Database.Migrate();
             }
             catch
@@ -35,22 +35,20 @@ namespace WebGym.Data
                 // Bỏ qua nếu đang chạy in-memory hoặc lỗi kết nối
             }
 
-                        // Xóa các dữ liệu chỉ số cơ thể ảo để tài khoản mới tạo / chưa đo InBody hiển thị trống (--) theo yêu cầu
+            // Khôi phục gói tập và đảm bảo không ghi đè gói tập nâng cấp của hội viên
             try
             {
                 context.Database.ExecuteSqlRaw(@"
-                    UPDATE Subscriptions SET PackageId = 1, OriginalPrice = 500000, PaidAmount = 500000, StartDate = '2026-11-01', EndDate = '2026-12-01' WHERE MemberId = 1;
-                    DELETE FROM Bookings WHERE MemberId = 1;
-                    DELETE FROM Progress;
-                    UPDATE Members 
-                    SET Height = NULL, 
-                        Weight = NULL, 
-                        BMR = NULL, 
-                        BodyFatPercentage = NULL, 
-                        MuscleMass = NULL, 
-                        Chest = NULL, 
-                        Waist = NULL, 
-                        Hips = NULL;
+                    -- Nếu Member 1 có gói tập giá trị 4.500.000đ (Gói Vàng), đảm bảo PackageId = 3 đúng gói
+                    UPDATE Subscriptions 
+                    SET PackageId = 3, 
+                        Status = 'Active'
+                    WHERE MemberId = 1 AND (PaidAmount >= 4500000 OR OriginalPrice >= 4500000 OR EndDate > '2027-01-01');
+
+                    UPDATE Payments 
+                    SET PackageId = 3, 
+                        Status = 'Success'
+                    WHERE MemberId = 1 AND Amount >= 4500000;
                 ");
             }
             catch

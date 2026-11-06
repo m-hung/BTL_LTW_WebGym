@@ -215,12 +215,7 @@ namespace WebGym.Controllers
                 MemberId = member.MemberId,
                 PackageId = package.PackageId,
                 Amount = totalAmount,
-                PaymentMethod = model.PaymentMethod switch
-                {
-                    "vnpay" => "VNPay",
-                    "bank" => "BankTransfer",
-                    _ => "Cash"
-                },
+                PaymentMethod = model.PaymentMethod == "vnpay" ? "VNPay" : "Cash",
                 TransactionCode = orderId,
                 PaymentDate = DateTime.UtcNow,
                 Status = model.PaymentMethod == "vnpay" ? "Pending" : "Completed"
@@ -285,12 +280,7 @@ namespace WebGym.Controllers
             TempData["Start"] = (model.StartDate ?? DateTime.UtcNow).ToString("dd/MM/yyyy");
             TempData["Time"] = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
             TempData["TxnCode"] = orderId;
-            TempData["Method"] = model.PaymentMethod switch
-            {
-                "vnpay" => "VNPay",
-                "bank" => "Chuyển khoản ngân hàng",
-                _ => "Thanh toán tại quầy"
-            };
+            TempData["Method"] = model.PaymentMethod == "vnpay" ? "VNPay" : "Thanh toán tại quầy";
 
             return RedirectToAction(nameof(Success));
         }

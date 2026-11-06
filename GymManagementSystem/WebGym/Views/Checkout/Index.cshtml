@@ -89,8 +89,6 @@
                     <div class="co-methods">
                         <input type="radio" name="PaymentMethod" id="pm-vnpay" value="vnpay" checked="@(Model.PaymentMethod == "vnpay")" />
                         <label for="pm-vnpay"><b>VNPay</b><small>Thẻ ATM, Visa, QR ngân hàng</small></label>
-                        <input type="radio" name="PaymentMethod" id="pm-bank" value="bank" checked="@(Model.PaymentMethod == "bank")" />
-                        <label for="pm-bank"><b>Chuyển khoản</b><small>Chuyển thủ công theo hướng dẫn</small></label>
                         <input type="radio" name="PaymentMethod" id="pm-counter" value="counter" checked="@(Model.PaymentMethod == "counter")" />
                         <label for="pm-counter"><b>Tại quầy</b><small>Thanh toán khi đến phòng tập</small></label>
                     </div>
@@ -158,10 +156,9 @@
             </aside>
         </form>
     </main>
-
     <partial name="_PulseFooter" />
     <partial name="_AuthModal" />
-    <script src="~/js/checkout.js" asp-append-version="true"></script>
     <script src="~/js/auth-modal.js" asp-append-version="true"></script>
+    <script src="~/js/pulse.js" asp-append-version="true"></script>
 </body>
 </html>

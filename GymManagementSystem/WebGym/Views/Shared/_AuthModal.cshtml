@@ -1,5 +1,6 @@
-@* Modal đăng nhập / đăng ký — hiện ngay trên trang hiện tại, không chuyển trang.
-   Chỉ render khi chưa đăng nhập. Form tag helper tự chèn antiforgery token. Mở bằng bất kỳ phần tử nào có data-auth-open="login|register". *@
+@* Modal đăng nhập / đăng ký / quên mật khẩu — hiện ngay trên trang hiện tại, không chuyển trang.
+   Chỉ render khi chưa đăng nhập. Form tag helper tự chèn antiforgery token.
+   Mở bằng bất kỳ phần tử nào có data-auth-open="login|register|forgot". *@
 @if (User.Identity == null || !User.Identity.IsAuthenticated)
 {
     <div class="am" id="authModal" role="dialog" aria-modal="true" aria-labelledby="amTitle" aria-hidden="true" data-tab="login">
@@ -72,7 +73,7 @@
                             <span class="am-box-ck" aria-hidden="true"></span>
                             Ghi nhớ đăng nhập
                         </label>
-                        <a class="am-link" asp-controller="Auth" asp-action="ForgotPassword">Quên mật khẩu?</a>
+                        <a class="am-link" asp-controller="Auth" asp-action="ForgotPassword" data-am-tab="forgot">Quên mật khẩu?</a>
                     </div>
 
                     <button type="submit" class="am-submit"><span class="am-submit-in"><span class="am-submit-label">Đăng nhập</span><i class="am-arrow">→</i><i class="am-spin" aria-hidden="true"></i></span></button>
@@ -154,6 +155,57 @@
                     <button type="submit" class="am-submit"><span class="am-submit-in"><span class="am-submit-label">Tạo tài khoản</span><i class="am-arrow">→</i><i class="am-spin" aria-hidden="true"></i></span></button>
 
                     <p class="am-foot">Đã có tài khoản? <button type="button" class="am-link am-link-btn" data-am-tab="login">Đăng nhập</button></p>
+                </form>
+
+                <!-- QUÊN MẬT KHẨU: nhập email để nhận liên kết đặt lại -->
+                <form class="am-form" id="amForgot" asp-controller="Auth" asp-action="ForgotPassword" method="post" novalidate hidden>
+                    <div class="am-field">
+                        <label for="amForgotEmail">Email đã đăng ký</label>
+                        <div class="am-input">
+                            <svg class="am-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 7l9 6 9-6" /></svg>
+                            <input id="amForgotEmail" name="Email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" />
+                        </div>
+                        <p class="am-err" data-err-for="Email" role="alert"></p>
+                    </div>
+
+                    <button type="submit" class="am-submit"><span class="am-submit-in"><span class="am-submit-label">Gửi liên kết</span><i class="am-arrow">→</i><i class="am-spin" aria-hidden="true"></i></span></button>
+
+                    <div class="am-devlink" id="amDevLink" hidden>
+                        <p><b>Chế độ phát triển</b> · Nếu chưa cấu hình gửi email, bấm liên kết dưới đây để tiếp tục:</p>
+                        <a href="#" id="amDevLinkA">Mở liên kết đặt lại mật khẩu →</a>
+                    </div>
+
+                    <p class="am-foot">Nhớ ra mật khẩu? <button type="button" class="am-link am-link-btn" data-am-tab="login">Quay lại đăng nhập</button></p>
+                </form>
+
+                <!-- ĐẶT MẬT KHẨU MỚI: mở từ liên kết trong email (?auth=reset&token=...) -->
+                <form class="am-form" id="amReset" asp-controller="Auth" asp-action="ResetPassword" method="post" novalidate hidden>
+                    <input type="hidden" name="Token" value="" />
+
+                    <div class="am-field">
+                        <label for="amResetPass">Mật khẩu mới</label>
+                        <div class="am-input">
+                            <svg class="am-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2" /><path d="M8 10V7a4 4 0 018 0v3" /></svg>
+                            <input id="amResetPass" name="Password" type="password" autocomplete="new-password" placeholder="Từ 6 ký tự" />
+                            <button type="button" class="am-eye" data-am-toggle aria-label="Hiện mật khẩu" aria-pressed="false">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+                            </button>
+                        </div>
+                        <p class="am-err" data-err-for="Password" role="alert"></p>
+                    </div>
+
+                    <div class="am-field">
+                        <label for="amResetConfirm">Xác nhận mật khẩu mới</label>
+                        <div class="am-input">
+                            <svg class="am-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2" /><path d="M8 10V7a4 4 0 018 0v3" /></svg>
+                            <input id="amResetConfirm" name="ConfirmPassword" type="password" autocomplete="new-password" placeholder="Nhập lại mật khẩu mới" />
+                        </div>
+                        <p class="am-err" data-err-for="ConfirmPassword" role="alert"></p>
+                    </div>
+
+                    <button type="submit" class="am-submit"><span class="am-submit-in"><span class="am-submit-label">Đặt lại mật khẩu</span><i class="am-arrow">→</i><i class="am-spin" aria-hidden="true"></i></span></button>
+
+                    <p class="am-foot"><button type="button" class="am-link am-link-btn" data-am-tab="login">Quay lại đăng nhập</button></p>
                 </form>
             </div>
         </div>

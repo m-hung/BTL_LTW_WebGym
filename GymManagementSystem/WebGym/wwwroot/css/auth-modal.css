@@ -159,6 +159,15 @@
 
 .am-foot{text-align:center;color:var(--am-muted);font-size:14px;margin:18px 0 0}
 
+/* quên mật khẩu / đặt mật khẩu mới: màn hình phụ, ẩn thanh tab */
+.am[data-tab="forgot"] .am-tabs,.am[data-tab="reset"] .am-tabs{display:none}
+.am-devlink{margin-top:16px;padding:12px 14px;border:1px dashed var(--am-line2);background:var(--am-bg2);font-size:13px;color:var(--am-muted);animation:amIn .3s ease}
+.am-devlink[hidden]{display:none}
+.am-devlink p{margin:0 0 8px}
+.am-devlink b{color:var(--am-text);font-weight:600}
+.am-devlink a{color:var(--am-lime);font-weight:600;text-decoration:none;border-bottom:1px solid rgba(200,255,46,.4)}
+.am-devlink a:hover{border-bottom-color:var(--am-lime)}
+
 /* tài khoản mẫu */
 .am-demo{margin-top:18px;border:1px dashed var(--am-line2);padding:0}
 .am-demo summary{cursor:pointer;list-style:none;padding:11px 14px;font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--am-muted);display:flex;justify-content:space-between;align-items:center;transition:color .2s}

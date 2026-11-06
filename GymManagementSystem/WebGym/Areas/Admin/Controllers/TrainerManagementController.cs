@@ -1,8 +1,7 @@
-using System.Security.Cryptography;
-using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebGym.Data;
+using WebGym.Helpers;
 using WebGym.Models.DTOs.Admin;
 using WebGym.Models.Entities;
 
@@ -88,7 +87,7 @@ namespace WebGym.Areas.Admin.Controllers
             var user = new User
             {
                 Username = model.Username.Trim(),
-                PasswordHash = HashPassword(model.Password),
+                PasswordHash = PasswordHelper.Hash(model.Password),
                 FullName = model.FullName.Trim(),
                 Email = model.Email.Trim(),
                 PhoneNumber = model.PhoneNumber?.Trim(),
@@ -174,7 +173,7 @@ namespace WebGym.Areas.Admin.Controllers
 
             if (!string.IsNullOrWhiteSpace(model.NewPassword))
             {
-                trainer.User.PasswordHash = HashPassword(model.NewPassword);
+                trainer.User.PasswordHash = PasswordHelper.Hash(model.NewPassword);
             }
 
             trainer.Specialization = model.Specialization.Trim();
@@ -215,13 +214,6 @@ namespace WebGym.Areas.Admin.Controllers
 
             SetSuccessMessage($"Đã xóa HLV '{trainer.User.FullName}' khỏi hệ thống.");
             return RedirectToAction(nameof(Index));
-        }
-
-        private static string HashPassword(string password)
-        {
-            using var sha256 = SHA256.Create();
-            var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-            return Convert.ToBase64String(bytes);
         }
     }
 }

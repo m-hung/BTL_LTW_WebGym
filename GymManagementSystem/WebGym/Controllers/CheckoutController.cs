@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebGym.Data;
+using WebGym.Helpers;
 using WebGym.Models;
 using WebGym.Models.DTOs.Payment;
 using WebGym.Models.Entities;
@@ -178,8 +179,8 @@ namespace WebGym.Controllers
                 }
                 else
                 {
-                    // Tạo tài khoản Member mới
-                    var defaultPassHash = AuthController.HashPassword("Member@123");
+                    // Tạo tài khoản User mới với mật khẩu mặc định (Member@123), hội viên có thể đổi qua "Quên mật khẩu"
+                    var defaultPassHash = PasswordHelper.Hash("Member@123");
                     var emailPrefix = model.Email.Split('@')[0];
                     var uniqueUsername = $"{emailPrefix}_{DateTime.UtcNow.Ticks.ToString()[^4..]}";
 

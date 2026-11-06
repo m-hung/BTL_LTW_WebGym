@@ -105,8 +105,11 @@
     $("bmiProtein").textContent = r.protein;
 
     $("bmiStatus").textContent = STATUS[r.k];
-    $("bmiRange").textContent = "Cân nặng hợp lý cho chiều cao của bạn là khoảng " +
-      num(r.low, 1) + " đến " + num(r.high, 1) + " kg.";
+    var range = $("bmiRange"); // bỏ qua nếu giao diện không có ô này, tránh làm dừng cả phần kết quả
+    if (range) {
+      range.textContent = "Cân nặng hợp lý cho chiều cao của bạn là khoảng " +
+        num(r.low, 1) + " đến " + num(r.high, 1) + " kg.";
+    }
 
     var note = $("bmiNote");
     note.hidden = !r.note;

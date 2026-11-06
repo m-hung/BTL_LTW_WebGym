@@ -417,6 +417,7 @@ a.trainer{display:block}
 .bmi-nums em{font-style:normal;color:var(--muted);font-size:11px}
 .bmi-sub{font-family:var(--label);font-weight:700;color:var(--lime);letter-spacing:.2em;font-size:14px;text-transform:uppercase;margin:28px 0 12px}
 .bmi-status{color:#cfd3cc;font-size:15px}
+.bmi-range{color:var(--muted);font-size:14px;margin-top:8px}
 .bmi-note{margin-top:14px;padding:12px 16px;border-left:3px solid var(--lime);background:rgba(200,255,46,.06);font-size:13px;color:#e4e8df}
 .bmi-result .check{margin-top:0;gap:12px;font-size:14px}
 .bmi-result .chips li a{display:block}

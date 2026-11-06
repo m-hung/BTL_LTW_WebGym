@@ -27,7 +27,7 @@
 
   var COPY = {
     login: { title: "Chào mừng trở lại", sub: "Đăng nhập để tiếp tục hành trình tập luyện." },
-    register: { title: "Tạo tài khoản mới", sub: "Trở thành hội viên hoặc huấn luyện viên của Pulse Gym." },
+    register: { title: "Tạo tài khoản mới", sub: "Trở thành hội viên của Pulse Gym để đặt lịch với HLV và theo dõi tiến độ." },
     forgot: { title: "Quên mật khẩu", sub: "Nhập email đã đăng ký, chúng tôi sẽ gửi liên kết để đặt lại mật khẩu." },
     reset: { title: "Đặt mật khẩu mới", sub: "Tạo mật khẩu mới cho tài khoản Pulse Gym của bạn." }
   };
@@ -387,10 +387,21 @@
       if (q === "forgot" && params.get("reset") === "invalid") {
         showNotice("error", "Liên kết đặt lại mật khẩu không hợp lệ, đã hết hạn hoặc đã được dùng. Vui lòng gửi lại yêu cầu.");
       }
-      // Xoá auth/token khỏi thanh địa chỉ (không để token nằm lại trong lịch sử trình duyệt)
+      // ?auth=login&returnUrl=/thanh-toan/... (server chuyển về khi chưa đăng nhập):
+      // đăng nhập xong quay lại đúng trang đó. Chỉ nhận đường dẫn nội bộ.
+      var ret = params.get("returnUrl");
+      if (ret && ret.charAt(0) === "/" && ret.charAt(1) !== "/" && ret.charAt(1) !== "\\" && forms.login && forms.login.elements["ReturnUrl"]) {
+        forms.login.elements["ReturnUrl"].value = ret;
+        if (q === "login") {
+          showNotice("error", ret.indexOf("/thanh-toan") === 0
+            ? "Vui lòng đăng nhập hoặc đăng ký tài khoản để tiếp tục mua gói tập."
+            : "Vui lòng đăng nhập để tiếp tục.");
+        }
+      }
+      // Xoá auth/token/returnUrl khỏi thanh địa chỉ (không để token nằm lại trong lịch sử trình duyệt)
       if (window.history && history.replaceState) {
         var u = new URL(window.location.href);
-        ["auth", "token", "reset"].forEach(function (k) { u.searchParams.delete(k); });
+        ["auth", "token", "reset", "returnUrl"].forEach(function (k) { u.searchParams.delete(k); });
         history.replaceState(null, "", u.pathname + u.search + u.hash);
       }
     }

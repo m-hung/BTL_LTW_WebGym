@@ -39,6 +39,8 @@ namespace WebGym.Models.Entities
         // Navigation Properties
         public virtual Member? Member { get; set; }
         public virtual Trainer? Trainer { get; set; }
+        public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+        public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
         // Helper alias for backward compatibility
         [NotMapped]

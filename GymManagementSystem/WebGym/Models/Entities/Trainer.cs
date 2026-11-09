@@ -26,6 +26,8 @@ namespace WebGym.Models.Entities
 
         // Navigation Properties
         public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+        public virtual ICollection<GymClass> GymClasses { get; set; } = new List<GymClass>();
+        public virtual ICollection<WorkoutPlan> WorkoutPlans { get; set; } = new List<WorkoutPlan>();
 
         // Backward compatibility helpers
         [NotMapped]

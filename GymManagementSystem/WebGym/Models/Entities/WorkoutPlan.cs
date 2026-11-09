@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebGym.Models.Entities
 {
+    [Table("WorkoutPlans")]
     public class WorkoutPlan : BaseEntity
     {
         [Required]
@@ -27,9 +28,16 @@ namespace WebGym.Models.Entities
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
 
-        public string RoutineDetails { get; set; } = string.Empty; // JSON or markdown of weekly exercises
-        public string NutritionAdvice { get; set; } = string.Empty;
+        [Column(TypeName = "nvarchar(max)")]
+        public string RoutineDetails { get; set; } = string.Empty; // Lịch tập & chi tiết bài tập theo tuần
+
+        [Column(TypeName = "nvarchar(max)")]
+        public string NutritionAdvice { get; set; } = string.Empty; // Lời khuyên chế độ dinh dưỡng
 
         public bool IsActive { get; set; } = true;
+
+        // Backward compatibility helper
+        [NotMapped]
+        public int PlanId => Id;
     }
 }

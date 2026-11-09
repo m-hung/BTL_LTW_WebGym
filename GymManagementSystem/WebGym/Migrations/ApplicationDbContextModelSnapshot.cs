@@ -304,6 +304,599 @@ namespace WebGym.Migrations
                         });
                 });
 
+            modelBuilder.Entity("WebGym.Models.Entities.CheckIn", b =>
+                {
+                    b.Property<int>("CheckInId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CheckInId"));
+
+                    b.Property<DateTime>("CheckInTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("CheckOutTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MemberId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Method")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.HasKey("CheckInId");
+
+                    b.HasIndex("MemberId");
+
+                    b.ToTable("CheckIns");
+
+                    b.HasData(
+                        new
+                        {
+                            CheckInId = 1,
+                            CheckInTime = new DateTime(2026, 11, 1, 6, 30, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 11, 1, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            MemberId = 1,
+                            Method = "Mã QR Code",
+                            Notes = "Quét mã QR tại cổng kiểm soát. Buổi tập ngực sáng sớm."
+                        },
+                        new
+                        {
+                            CheckInId = 2,
+                            CheckInTime = new DateTime(2026, 11, 3, 17, 45, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 11, 3, 19, 15, 0, 0, DateTimeKind.Unspecified),
+                            MemberId = 1,
+                            Method = "Mã QR Code",
+                            Notes = "Quét mã QR từ ứng dụng WebGym. Tập cùng HLV Trần Minh Nhật."
+                        },
+                        new
+                        {
+                            CheckInId = 3,
+                            CheckInTime = new DateTime(2026, 11, 5, 18, 0, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 11, 5, 19, 30, 0, 0, DateTimeKind.Unspecified),
+                            MemberId = 1,
+                            Method = "Mã QR Code",
+                            Notes = "Quét mã QR tại cổng quay tự động. Tập chân và bụng."
+                        },
+                        new
+                        {
+                            CheckInId = 4,
+                            CheckInTime = new DateTime(2026, 11, 2, 7, 0, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 11, 2, 8, 15, 0, 0, DateTimeKind.Unspecified),
+                            MemberId = 2,
+                            Method = "Mã QR Code",
+                            Notes = "Quét mã QR tham gia lớp Yoga sáng."
+                        },
+                        new
+                        {
+                            CheckInId = 5,
+                            CheckInTime = new DateTime(2026, 11, 4, 18, 15, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 11, 4, 19, 45, 0, 0, DateTimeKind.Unspecified),
+                            MemberId = 2,
+                            Method = "Mã QR Code",
+                            Notes = "Quét mã QR vào phòng Cardio đạp xe Spinning."
+                        },
+                        new
+                        {
+                            CheckInId = 6,
+                            CheckInTime = new DateTime(2026, 11, 2, 16, 30, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 11, 2, 18, 0, 0, 0, DateTimeKind.Unspecified),
+                            MemberId = 3,
+                            Method = "Mã QR Code",
+                            Notes = "Quét mã QR check-in cổng số 1. Tập xô và lưng dưới."
+                        },
+                        new
+                        {
+                            CheckInId = 7,
+                            CheckInTime = new DateTime(2026, 11, 5, 17, 0, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 11, 5, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            MemberId = 3,
+                            Method = "Mã QR Code",
+                            Notes = "Quét mã QR từ điện thoại cá nhân. Tập vai và bắp tay trước."
+                        },
+                        new
+                        {
+                            CheckInId = 8,
+                            CheckInTime = new DateTime(2026, 11, 3, 19, 0, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 11, 3, 20, 30, 0, 0, DateTimeKind.Unspecified),
+                            MemberId = 4,
+                            Method = "Mã QR Code",
+                            Notes = "Quét mã QR thành viên hợp lệ trên hệ thống."
+                        },
+                        new
+                        {
+                            CheckInId = 9,
+                            CheckInTime = new DateTime(2026, 11, 4, 6, 45, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 11, 4, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            MemberId = 5,
+                            Method = "Mã QR Code",
+                            Notes = "Quét mã QR check-in ca sáng. Tập toàn thân Full Body."
+                        },
+                        new
+                        {
+                            CheckInId = 10,
+                            CheckInTime = new DateTime(2026, 11, 6, 17, 30, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 11, 6, 19, 0, 0, 0, DateTimeKind.Unspecified),
+                            MemberId = 21,
+                            Method = "Mã QR Code",
+                            Notes = "Quét mã QR cổng vào. Cardio máy chạy và xông hơi."
+                        },
+                        new
+                        {
+                            CheckInId = 11,
+                            CheckInTime = new DateTime(2026, 11, 7, 17, 30, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutTime = new DateTime(2026, 11, 7, 19, 0, 0, 0, DateTimeKind.Unspecified),
+                            MemberId = 1,
+                            Method = "Mã QR Code",
+                            Notes = "Quét mã QR cổng turnstile. Tập ngực nâng cao."
+                        },
+                        new
+                        {
+                            CheckInId = 12,
+                            CheckInTime = new DateTime(2026, 11, 8, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            MemberId = 2,
+                            Method = "Mã QR Code",
+                            Notes = "Quét mã QR vào phòng Yoga, hiện đang trong buổi tập."
+                        });
+                });
+
+            modelBuilder.Entity("WebGym.Models.Entities.ClassBooking", b =>
+                {
+                    b.Property<int>("ClassBookingId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ClassBookingId"));
+
+                    b.Property<DateTime>("BookingDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ClassId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MemberId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("ClassBookingId");
+
+                    b.HasIndex("ClassId");
+
+                    b.HasIndex("MemberId");
+
+                    b.ToTable("ClassBookings");
+
+                    b.HasData(
+                        new
+                        {
+                            ClassBookingId = 1,
+                            BookingDate = new DateTime(2026, 11, 2, 6, 0, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 1,
+                            MemberId = 2,
+                            Notes = "Hội viên tham gia đầy đủ buổi tập Yoga sáng.",
+                            Status = "Attended"
+                        },
+                        new
+                        {
+                            ClassBookingId = 2,
+                            BookingDate = new DateTime(2026, 11, 2, 6, 0, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 1,
+                            MemberId = 4,
+                            Notes = "Mượn thảm tập cao su non của phòng.",
+                            Status = "Attended"
+                        },
+                        new
+                        {
+                            ClassBookingId = 3,
+                            BookingDate = new DateTime(2026, 11, 3, 17, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 2,
+                            MemberId = 1,
+                            Notes = "Đạt mục tiêu đốt 650 kcal.",
+                            Status = "Attended"
+                        },
+                        new
+                        {
+                            ClassBookingId = 4,
+                            BookingDate = new DateTime(2026, 11, 3, 17, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 2,
+                            MemberId = 3,
+                            Notes = "Báo bận lịch công tác đột xuất lúc 15:00.",
+                            Status = "Cancelled"
+                        },
+                        new
+                        {
+                            ClassBookingId = 5,
+                            BookingDate = new DateTime(2026, 11, 4, 18, 0, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 3,
+                            MemberId = 1,
+                            Notes = "Mức tạ gánh 25kg mỗi bên.",
+                            Status = "Attended"
+                        },
+                        new
+                        {
+                            ClassBookingId = 6,
+                            BookingDate = new DateTime(2026, 11, 4, 18, 0, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 3,
+                            MemberId = 5,
+                            Notes = "Tập rất sung sức.",
+                            Status = "Attended"
+                        },
+                        new
+                        {
+                            ClassBookingId = 7,
+                            BookingDate = new DateTime(2026, 11, 5, 19, 0, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 4,
+                            MemberId = 3,
+                            Notes = "Đã xác nhận giữ chỗ lớp đấm bốc.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 8,
+                            BookingDate = new DateTime(2026, 11, 7, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 5,
+                            MemberId = 2,
+                            Notes = "Học viên yêu cầu điều chỉnh tư thế thắt lưng.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 9,
+                            BookingDate = new DateTime(2026, 11, 7, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 5,
+                            MemberId = 4,
+                            Notes = "Đã xếp máy Reformer số 3.",
+                            Status = "Confirmed"
+                        });
+                });
+
+            modelBuilder.Entity("WebGym.Models.Entities.Equipment", b =>
+                {
+                    b.Property<int>("EquipmentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EquipmentId"));
+
+                    b.Property<string>("Area")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Brand")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("EquipmentName")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime?>("LastMaintenanceDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("PurchaseDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("RoomId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SerialNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("EquipmentId");
+
+                    b.HasIndex("RoomId");
+
+                    b.ToTable("Equipments");
+
+                    b.HasData(
+                        new
+                        {
+                            EquipmentId = 1,
+                            Area = "Khu cardio",
+                            Brand = "Technogym",
+                            EquipmentName = "Máy chạy bộ Technogym Skillrun Unity 7000",
+                            ImageUrl = "~/images/equipment/treadmill-technogym.jpg",
+                            LastMaintenanceDate = new DateTime(2026, 10, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Màn hình cảm ứng 19 inch, tích hợp bài tập leo dốc và chạy sức cản.",
+                            PurchaseDate = new DateTime(2025, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RoomId = 2,
+                            SerialNumber = "TG-SR7000-01",
+                            Status = "Hoạt động tốt"
+                        },
+                        new
+                        {
+                            EquipmentId = 2,
+                            Area = "Khu cardio",
+                            Brand = "Life Fitness",
+                            EquipmentName = "Máy chạy bộ Life Fitness Elevation Series Discover SE3",
+                            ImageUrl = "~/images/equipment/treadmill-lifefitness.jpg",
+                            LastMaintenanceDate = new DateTime(2026, 9, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Băng chuyền phát tiếng kêu nhỏ khi nâng độ dốc trên 8%.",
+                            PurchaseDate = new DateTime(2024, 8, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RoomId = 2,
+                            SerialNumber = "LF-SE3-02",
+                            Status = "Cần bảo trì"
+                        },
+                        new
+                        {
+                            EquipmentId = 3,
+                            Area = "Khu cardio",
+                            Brand = "Matrix Fitness",
+                            EquipmentName = "Xe đạp tập địa hình Matrix Fitness CXP Target Training",
+                            ImageUrl = "~/images/equipment/spinning-bike.jpg",
+                            LastMaintenanceDate = new DateTime(2026, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Xe đạp bánh đà kháng lực từ tính êm ái, đo công suất watt.",
+                            PurchaseDate = new DateTime(2025, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RoomId = 2,
+                            SerialNumber = "MX-CXP-03",
+                            Status = "Hoạt động tốt"
+                        },
+                        new
+                        {
+                            EquipmentId = 4,
+                            Area = "Khu cardio",
+                            Brand = "Concept2",
+                            EquipmentName = "Máy chèo thuyền nước Concept2 Model D Rower",
+                            ImageUrl = "~/images/equipment/rower-concept2.jpg",
+                            LastMaintenanceDate = new DateTime(2026, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Dây kéo xích bị kẹt puly trục cuốn, đang chờ linh kiện thay thế.",
+                            PurchaseDate = new DateTime(2024, 11, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RoomId = 2,
+                            SerialNumber = "C2-ROW-04",
+                            Status = "Đang hỏng"
+                        },
+                        new
+                        {
+                            EquipmentId = 5,
+                            Area = "Khu tạ tự do",
+                            Brand = "Impulse Fitness",
+                            EquipmentName = "Khung gánh tạ trợ lực 3D Smith Machine",
+                            ImageUrl = "~/images/equipment/smith-machine.jpg",
+                            LastMaintenanceDate = new DateTime(2026, 10, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Trục dẫn hướng chuyển động mượt mà, chốt khóa an toàn đa điểm.",
+                            PurchaseDate = new DateTime(2024, 6, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RoomId = 1,
+                            SerialNumber = "IMP-SM3D-05",
+                            Status = "Hoạt động tốt"
+                        },
+                        new
+                        {
+                            EquipmentId = 6,
+                            Area = "Khu tạ tự do",
+                            Brand = "Rogue Fitness",
+                            EquipmentName = "Giàn tập Power Rack & Tạ đòn Olympic Rogue Monster Lite",
+                            ImageUrl = "~/images/equipment/power-rack.jpg",
+                            LastMaintenanceDate = new DateTime(2026, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Thép chịu lực tải trọng 500kg, kèm thanh xà đơn và chốt an toàn J-Cups.",
+                            PurchaseDate = new DateTime(2025, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RoomId = 1,
+                            SerialNumber = "ROG-PR-06",
+                            Status = "Hoạt động tốt"
+                        },
+                        new
+                        {
+                            EquipmentId = 7,
+                            Area = "Khu tạ tự do",
+                            Brand = "Rogue Fitness",
+                            EquipmentName = "Bộ giàn tạ tay Dumbbell Rogue Urethane 2.5kg - 50kg",
+                            ImageUrl = "~/images/equipment/dumbbells-set.jpg",
+                            LastMaintenanceDate = new DateTime(2026, 9, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Bọc Urethane chống ồn, tay cầm mạ chrome vân kim cương chống trượt.",
+                            PurchaseDate = new DateTime(2025, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RoomId = 1,
+                            SerialNumber = "ROG-DB-07",
+                            Status = "Hoạt động tốt"
+                        },
+                        new
+                        {
+                            EquipmentId = 8,
+                            Area = "Khu máy khối",
+                            Brand = "Technogym",
+                            EquipmentName = "Máy ép ngực & Kéo vai sau Pectoral Fly / Rear Deltoid",
+                            ImageUrl = "~/images/equipment/pec-fly.jpg",
+                            LastMaintenanceDate = new DateTime(2026, 10, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Hệ thống tạ tháp Selection Pro, chuyển đổi linh hoạt giữa ép ngực và kéo vai.",
+                            PurchaseDate = new DateTime(2024, 9, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RoomId = 1,
+                            SerialNumber = "TG-SEL-08",
+                            Status = "Hoạt động tốt"
+                        },
+                        new
+                        {
+                            EquipmentId = 9,
+                            Area = "Khu máy khối",
+                            Brand = "Life Fitness",
+                            EquipmentName = "Máy đạp đùi nghiêng 45 độ Linear Leg Press",
+                            ImageUrl = "~/images/equipment/leg-press.jpg",
+                            LastMaintenanceDate = new DateTime(2026, 8, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Đệm lưng bị trầy rách góc dưới, ray trượt cần tra thêm mỡ bôi trơn công nghiệp.",
+                            PurchaseDate = new DateTime(2024, 7, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RoomId = 1,
+                            SerialNumber = "LF-LP45-09",
+                            Status = "Cần bảo trì"
+                        },
+                        new
+                        {
+                            EquipmentId = 10,
+                            Area = "Khu chức năng",
+                            Brand = "Matrix Fitness",
+                            EquipmentName = "Giàn cáp kéo xô đôi đa năng Dual Adjustable Pulley",
+                            ImageUrl = "~/images/equipment/dual-pulley.jpg",
+                            LastMaintenanceDate = new DateTime(2026, 10, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Hai cột tạ độc lập, ròng rọc xoay 360 độ điều chỉnh độ cao nhiều mức.",
+                            PurchaseDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RoomId = 1,
+                            SerialNumber = "MX-DAP-10",
+                            Status = "Hoạt động tốt"
+                        });
+                });
+
+            modelBuilder.Entity("WebGym.Models.Entities.GymClass", b =>
+                {
+                    b.Property<int>("ClassId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ClassId"));
+
+                    b.Property<string>("ClassName")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("CurrentCapacity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ImageUrl")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<int>("MaxCapacity")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RoomId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Schedule")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("TrainerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ClassId");
+
+                    b.HasIndex("RoomId");
+
+                    b.HasIndex("TrainerId");
+
+                    b.ToTable("GymClasses");
+
+                    b.HasData(
+                        new
+                        {
+                            ClassId = 1,
+                            ClassName = "Hatha Yoga & Thiền Định Phục Hồi Năng Lượng",
+                            CurrentCapacity = 15,
+                            Description = "Lớp học giúp cân bằng thân - tâm - trí, kéo giãn cơ bắp, giải tỏa căng thẳng và cải thiện hệ hô hấp cho người bận rộn.",
+                            EndDate = new DateTime(2026, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ImageUrl = "~/images/classes/class-yoga.jpg",
+                            MaxCapacity = 20,
+                            RoomId = 3,
+                            Schedule = "Thứ 2 - 4 - 6 (06:30 - 07:45)",
+                            StartDate = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = "Open",
+                            TrainerId = 3
+                        },
+                        new
+                        {
+                            ClassId = 2,
+                            ClassName = "Spinning RPM - Đua Xe Đạp Trong Nhà Đốt Mỡ Cấp Tốc",
+                            CurrentCapacity = 20,
+                            Description = "Âm nhạc bùng nổ kết hợp các bài leo dốc, chạy nước rút cường độ cao giúp tiêu hao 600 - 800 kcal mỗi buổi tập.",
+                            EndDate = new DateTime(2026, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ImageUrl = "~/images/classes/class-spinning.jpg",
+                            MaxCapacity = 25,
+                            RoomId = 2,
+                            Schedule = "Thứ 3 - 5 - 7 (18:00 - 19:15)",
+                            StartDate = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = "Open",
+                            TrainerId = 2
+                        },
+                        new
+                        {
+                            ClassId = 3,
+                            ClassName = "BodyPump - Rèn Luyện Sức Bền Cơ Bắp Toàn Thân",
+                            CurrentCapacity = 25,
+                            Description = "Tập luyện với thanh đòn tạ theo giai điệu bài hát sôi động, tăng mật độ xương và săn chắc toàn bộ nhóm cơ.",
+                            EndDate = new DateTime(2026, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ImageUrl = "~/images/classes/class-bodypump.jpg",
+                            MaxCapacity = 25,
+                            RoomId = 1,
+                            Schedule = "Thứ 2 - 4 - 6 (18:30 - 19:45)",
+                            StartDate = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = "Full",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            ClassId = 4,
+                            ClassName = "Kickfit Tự Vệ & Cardio Boxing (Combat Zone)",
+                            CurrentCapacity = 10,
+                            Description = "Sự kết hợp hoàn hảo giữa đấm bốc boxing, cùi chỏ muay thai và bài tập thể lực rèn luyện phản xạ nhanh nhẹn.",
+                            EndDate = new DateTime(2026, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ImageUrl = "~/images/classes/class-kickfit.jpg",
+                            MaxCapacity = 15,
+                            RoomId = 4,
+                            Schedule = "Thứ 3 - 5 - CN (19:30 - 20:45)",
+                            StartDate = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = "Open",
+                            TrainerId = 2
+                        },
+                        new
+                        {
+                            ClassId = 5,
+                            ClassName = "Pilates Trị Liệu Tư Thế & Giảm Đau Cột Sống",
+                            CurrentCapacity = 12,
+                            Description = "Phương pháp căn chỉnh khung xương chậu, cải thiện gù lưng cổ rùa và làm săn chắc cơ bụng cốt lõi Core.",
+                            EndDate = new DateTime(2026, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ImageUrl = "~/images/classes/class-pilates.jpg",
+                            MaxCapacity = 12,
+                            RoomId = 3,
+                            Schedule = "Thứ 7 - Chủ Nhật (08:30 - 10:00)",
+                            StartDate = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = "Full",
+                            TrainerId = 3
+                        });
+                });
+
             modelBuilder.Entity("WebGym.Models.Entities.GymPackage", b =>
                 {
                     b.Property<int>("PackageId")
@@ -369,6 +962,218 @@ namespace WebGym.Migrations
                             IncludesPT = true,
                             PackageName = "Gói Kim Cương (VVIP 1 Năm kèm PT)",
                             Price = 8000000m
+                        });
+                });
+
+            modelBuilder.Entity("WebGym.Models.Entities.GymRoom", b =>
+                {
+                    b.Property<int>("RoomId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoomId"));
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("RoomName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("RoomId");
+
+                    b.ToTable("GymRooms");
+
+                    b.HasData(
+                        new
+                        {
+                            RoomId = 1,
+                            Capacity = 50,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Khu vực tập luyện chính gồm giàn tạ rời (Free Weights), rack gánh tạ và các máy tập khối chuyên dụng.",
+                            Location = "Tầng 1 - Khu A",
+                            RoomName = "Phòng Gym Trung Tâm (Khu Tạ & Kháng Lực)",
+                            Status = "Hoạt động"
+                        },
+                        new
+                        {
+                            RoomId = 2,
+                            Capacity = 35,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Trang bị dàn máy chạy bộ thông minh, xe đạp địa hình spinning và máy trượt tuyết elliptical.",
+                            Location = "Tầng 2 - Khu B",
+                            RoomName = "Phòng Cardio & Đạp Xe Trong Nhà (Spinning Studio)",
+                            Status = "Hoạt động"
+                        },
+                        new
+                        {
+                            RoomId = 3,
+                            Capacity = 25,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Không gian yên tĩnh, sàn gỗ thông tự nhiên, gương ốp tường toàn cảnh và hệ thống thảm tập cao cấp.",
+                            Location = "Tầng 3 - Studio 1",
+                            RoomName = "Phòng Tập Nhóm Yoga & Pilates Studio",
+                            Status = "Hoạt động"
+                        },
+                        new
+                        {
+                            RoomId = 4,
+                            Capacity = 20,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Khu vực chuyên sâu boxing, kickfit với bao cát treo, thảm giảm chấn và găng đấm tiêu chuẩn thi đấu.",
+                            Location = "Tầng 3 - Studio 2",
+                            RoomName = "Phòng Huấn Luyện Boxing & Kickfit (Combat Zone)",
+                            Status = "Hoạt động"
+                        },
+                        new
+                        {
+                            RoomId = 5,
+                            Capacity = 10,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Không gian riêng tư cao cấp dành riêng cho học viên tập 1-1 cùng Huấn luyện viên thể hình chuyên nghiệp.",
+                            Location = "Tầng 2 - Phòng VIP",
+                            RoomName = "Phòng Huấn Luyện Cá Nhân VIP (PT Private Studio)",
+                            Status = "Hoạt động"
+                        });
+                });
+
+            modelBuilder.Entity("WebGym.Models.Entities.MaintenanceLog", b =>
+                {
+                    b.Property<int>("LogId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LogId"));
+
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("EquipmentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("MaintenanceDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("PerformedBy")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("LogId");
+
+                    b.HasIndex("EquipmentId");
+
+                    b.ToTable("MaintenanceLogs");
+
+                    b.HasData(
+                        new
+                        {
+                            LogId = 1,
+                            Cost = 850000m,
+                            Description = "Bảo dưỡng định kỳ 6 tháng: kiểm tra motor 4.0 HP, vệ sinh bo mạch và tra dầu silicon chuyên dụng băng tải.",
+                            EquipmentId = 1,
+                            MaintenanceDate = new DateTime(2026, 10, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Thiết bị vận hành êm ái, đạt chuẩn thông số kỹ thuật xuất xưởng.",
+                            PerformedBy = "Technogym Vietnam Services",
+                            Status = "Hoàn thành"
+                        },
+                        new
+                        {
+                            LogId = 2,
+                            Cost = 600000m,
+                            Description = "Kiểm tra độ chùng thảm chạy, cân chỉnh lực căng 2 trục con lăn và vệ sinh cảm biến nhịp tim cầm tay.",
+                            EquipmentId = 2,
+                            MaintenanceDate = new DateTime(2026, 9, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Khuyến nghị thay băng tải trong đợt bảo dưỡng tới do mài mòn lớp cao su.",
+                            PerformedBy = "Kỹ thuật viên phòng máy (Nguyễn Văn Bình)",
+                            Status = "Hoàn thành"
+                        },
+                        new
+                        {
+                            LogId = 3,
+                            Cost = 1450000m,
+                            Description = "Sự cố kẹt xích kéo máy chèo thuyền Concept2: tháo dỡ cụm bánh đà quạt gió, kiểm tra lò xo hồi xích.",
+                            EquipmentId = 4,
+                            MaintenanceDate = new DateTime(2026, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Đã đặt mua lò xo cuộn và xích mạ niken chính hãng từ Mỹ, dự kiến hoàn tất trong 5 ngày.",
+                            PerformedBy = "Trung tâm sửa chữa thiết bị thể thao Việt Á",
+                            Status = "Đang bảo dưỡng"
+                        },
+                        new
+                        {
+                            LogId = 4,
+                            Cost = 350000m,
+                            Description = "Bôi trơn 2 thanh ray trục Smith bằng mỡ trắng lithium, kiểm tra các chốt hãm lò xo an toàn chống rơi.",
+                            EquipmentId = 5,
+                            MaintenanceDate = new DateTime(2026, 10, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Không có hư hỏng cơ khí. Cân bằng trọng lực đòn tạ chuẩn.",
+                            PerformedBy = "Bảo trì nội bộ Gym",
+                            Status = "Hoàn thành"
+                        },
+                        new
+                        {
+                            LogId = 5,
+                            Cost = 750000m,
+                            Description = "Thay thế dây cáp bọc nhựa đường kính 5mm của tháp tạ ép ngực do bị xước lớp vỏ bảo vệ bên ngoài.",
+                            EquipmentId = 8,
+                            MaintenanceDate = new DateTime(2026, 10, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Dây cáp mới chịu tải 1500kg, đã test tải trọng tối đa 100kg an toàn.",
+                            PerformedBy = "Kỹ thuật viên Lê Quốc Dũng",
+                            Status = "Hoàn thành"
+                        },
+                        new
+                        {
+                            LogId = 6,
+                            Cost = 1200000m,
+                            Description = "Bọc lại lớp da simili cao cấp cho đệm tựa lưng máy đạp đùi và thay thế 2 bạc đạn trượt linear bearing.",
+                            EquipmentId = 9,
+                            MaintenanceDate = new DateTime(2026, 8, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Mặt đệm êm, đường may đôi chắc chắn, khả năng chịu mồ hôi tốt.",
+                            PerformedBy = "Xưởng cơ khí & da thể thao Thành Phát",
+                            Status = "Hoàn thành"
+                        },
+                        new
+                        {
+                            LogId = 7,
+                            Cost = 400000m,
+                            Description = "Cân chỉnh rãnh xoay ròng rọc 360 độ, kiểm tra chốt chọn tạ từ tính và siết ốc cố định chân đế sàn bê tông.",
+                            EquipmentId = 10,
+                            MaintenanceDate = new DateTime(2026, 10, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Tất cả các nấc nạp cáp trượt trơn tru.",
+                            PerformedBy = "Bảo trì nội bộ Gym",
+                            Status = "Hoàn thành"
                         });
                 });
 
@@ -556,6 +1361,383 @@ namespace WebGym.Migrations
                             UserId = 24,
                             Waist = 82.0,
                             Weight = 75.0
+                        });
+                });
+
+            modelBuilder.Entity("WebGym.Models.Entities.Notification", b =>
+                {
+                    b.Property<int>("NotificationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NotificationId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("TargetUrl")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("NotificationId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notifications");
+
+                    b.HasData(
+                        new
+                        {
+                            NotificationId = 1,
+                            CreatedAt = new DateTime(2026, 11, 1, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsRead = false,
+                            Message = "Máy chèo thuyền nước Concept2 (Khu cardio - Tầng 2) đang gặp sự cố kẹt xích kéo, đã tạo phiếu bảo trì.",
+                            TargetUrl = "/Admin/Equipment",
+                            Title = "Thông báo sự cố thiết bị cần xử lý",
+                            Type = "Maintenance",
+                            UserId = 1
+                        },
+                        new
+                        {
+                            NotificationId = 2,
+                            CreatedAt = new DateTime(2026, 11, 6, 18, 25, 0, 0, DateTimeKind.Unspecified),
+                            IsRead = true,
+                            Message = "Hội viên Lê Hoàng Nam vừa đặt mua Đơn hàng #5 trị giá 2,470,000đ cần kiểm tra xuất kho.",
+                            TargetUrl = "/Admin/Order",
+                            Title = "Đơn hàng sản phẩm mới phát sinh",
+                            Type = "System",
+                            UserId = 1
+                        },
+                        new
+                        {
+                            NotificationId = 3,
+                            CreatedAt = new DateTime(2026, 11, 2, 14, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsRead = true,
+                            Message = "Hội viên Nguyễn Quang Hải đã đặt lịch tập ngực & thể lực vào ngày mai lúc 18:00.",
+                            TargetUrl = "/Trainer/Bookings",
+                            Title = "Lịch đặt tập PT 1:1 mới",
+                            Type = "Booking",
+                            UserId = 2
+                        },
+                        new
+                        {
+                            NotificationId = 4,
+                            CreatedAt = new DateTime(2026, 11, 4, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsRead = false,
+                            Message = "Lớp BodyPump Thứ 4 (18:30) của bạn đã đạt tối đa 25/25 học viên đăng ký giữ chỗ.",
+                            TargetUrl = "/Trainer/Classes",
+                            Title = "Lớp học BodyPump đã đủ sĩ số tối đa",
+                            Type = "Class",
+                            UserId = 2
+                        },
+                        new
+                        {
+                            NotificationId = 5,
+                            CreatedAt = new DateTime(2026, 10, 30, 20, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsRead = true,
+                            Message = "Chỉ số mỡ cơ thể của bạn đã giảm xuống 18.5%, giảm 7.0% so với ngày bắt đầu. Hãy tiếp tục phát huy!",
+                            TargetUrl = "/Member/Progress",
+                            Title = "Chúc mừng! Bạn đã hoàn thành mốc InBody mới",
+                            Type = "System",
+                            UserId = 5
+                        },
+                        new
+                        {
+                            NotificationId = 6,
+                            CreatedAt = new DateTime(2026, 11, 5, 8, 30, 0, 0, DateTimeKind.Unspecified),
+                            IsRead = false,
+                            Message = "HLV Trần Minh Nhật vừa cập nhật giáo án tập luyện 4 buổi/tuần và thực đơn tăng cơ nạc cho bạn.",
+                            TargetUrl = "/Member/WorkoutPlan",
+                            Title = "Kế hoạch tập luyện tuần mới sẵn sàng",
+                            Type = "System",
+                            UserId = 5
+                        },
+                        new
+                        {
+                            NotificationId = 7,
+                            CreatedAt = new DateTime(2026, 11, 7, 20, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsRead = false,
+                            Message = "Bạn có lịch tham gia lớp Hatha Yoga & Thiền Định lúc 06:30 sáng mai tại Studio 1.",
+                            TargetUrl = "/Member/ClassBooking",
+                            Title = "Nhắc nhở lịch học Yoga ngày mai",
+                            Type = "Class",
+                            UserId = 6
+                        },
+                        new
+                        {
+                            NotificationId = 8,
+                            CreatedAt = new DateTime(2026, 11, 5, 15, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsRead = true,
+                            Message = "Bạn đã đăng ký thành công lớp Kickfit lúc 19:30 Thứ 5. Vui lòng mang găng tay và khăn tập cá nhân.",
+                            TargetUrl = "/Member/ClassBooking",
+                            Title = "Đăng ký thành công lớp Kickfit Combat",
+                            Type = "Class",
+                            UserId = 7
+                        },
+                        new
+                        {
+                            NotificationId = 9,
+                            CreatedAt = new DateTime(2026, 11, 3, 11, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsRead = false,
+                            Message = "Đơn hàng phụ kiện Gym của bạn đã được xuất kho và đang trên đường giao tới địa chỉ đăng ký.",
+                            TargetUrl = "/Member/Orders",
+                            Title = "Đơn hàng #4 đang được vận chuyển",
+                            Type = "System",
+                            UserId = 8
+                        });
+                });
+
+            modelBuilder.Entity("WebGym.Models.Entities.Order", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
+
+                    b.Property<int?>("MemberId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("ShippingAddress")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("OrderId");
+
+                    b.HasIndex("MemberId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Orders");
+
+                    b.HasData(
+                        new
+                        {
+                            OrderId = 1,
+                            MemberId = 1,
+                            Notes = "Đã thanh toán qua cổng VNPay thành công.",
+                            OrderDate = new DateTime(2026, 10, 15, 14, 30, 0, 0, DateTimeKind.Unspecified),
+                            PaymentMethod = "VNPay",
+                            PhoneNumber = "0987654321",
+                            ShippingAddress = "Nhận trực tiếp tại quầy Lễ tân Gym",
+                            Status = "Hoàn thành",
+                            TotalAmount = 2030000m,
+                            UserId = 5
+                        },
+                        new
+                        {
+                            OrderId = 2,
+                            MemberId = 2,
+                            Notes = "Giao hàng giờ hành chính.",
+                            OrderDate = new DateTime(2026, 10, 20, 9, 15, 0, 0, DateTimeKind.Unspecified),
+                            PaymentMethod = "Chuyển khoản",
+                            PhoneNumber = "0987654322",
+                            ShippingAddress = "123 Hoàng Quốc Việt, Cầu Giấy, Hà Nội",
+                            Status = "Hoàn thành",
+                            TotalAmount = 1150000m,
+                            UserId = 6
+                        },
+                        new
+                        {
+                            OrderId = 3,
+                            MemberId = 3,
+                            Notes = "Thanh toán tiền mặt cho thu ngân.",
+                            OrderDate = new DateTime(2026, 10, 28, 16, 45, 0, 0, DateTimeKind.Unspecified),
+                            PaymentMethod = "Tiền mặt",
+                            PhoneNumber = "0987654323",
+                            ShippingAddress = "Nhận trực tiếp tại quầy Lễ tân Gym",
+                            Status = "Hoàn thành",
+                            TotalAmount = 1240000m,
+                            UserId = 7
+                        },
+                        new
+                        {
+                            OrderId = 4,
+                            MemberId = 4,
+                            Notes = "Đóng gói bọc xốp cẩn thận.",
+                            OrderDate = new DateTime(2026, 11, 2, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentMethod = "Momo",
+                            PhoneNumber = "0987654324",
+                            ShippingAddress = "Số 45 Trần Phú, Ba Đình, Hà Nội",
+                            Status = "Đang giao",
+                            TotalAmount = 950000m,
+                            UserId = 8
+                        },
+                        new
+                        {
+                            OrderId = 5,
+                            MemberId = 5,
+                            Notes = "Hội viên đặt mua combo tăng cơ nhanh.",
+                            OrderDate = new DateTime(2026, 11, 6, 18, 20, 0, 0, DateTimeKind.Unspecified),
+                            PaymentMethod = "VNPay",
+                            PhoneNumber = "0987654325",
+                            ShippingAddress = "Số 88 Lê Duẩn, Hoàn Kiếm, Hà Nội",
+                            Status = "Chờ xác nhận",
+                            TotalAmount = 2470000m,
+                            UserId = 9
+                        });
+                });
+
+            modelBuilder.Entity("WebGym.Models.Entities.OrderDetail", b =>
+                {
+                    b.Property<int>("OrderDetailId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderDetailId"));
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("OrderDetailId");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrderDetails");
+
+                    b.HasData(
+                        new
+                        {
+                            OrderDetailId = 1,
+                            OrderId = 1,
+                            ProductId = 1,
+                            Quantity = 1,
+                            TotalPrice = 1750000m,
+                            UnitPrice = 1750000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 2,
+                            OrderId = 1,
+                            ProductId = 8,
+                            Quantity = 1,
+                            TotalPrice = 280000m,
+                            UnitPrice = 280000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 3,
+                            OrderId = 2,
+                            ProductId = 5,
+                            Quantity = 1,
+                            TotalPrice = 1150000m,
+                            UnitPrice = 1150000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 4,
+                            OrderId = 3,
+                            ProductId = 6,
+                            Quantity = 1,
+                            TotalPrice = 850000m,
+                            UnitPrice = 850000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 5,
+                            OrderId = 3,
+                            ProductId = 7,
+                            Quantity = 1,
+                            TotalPrice = 390000m,
+                            UnitPrice = 390000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 6,
+                            OrderId = 4,
+                            ProductId = 9,
+                            Quantity = 1,
+                            TotalPrice = 260000m,
+                            UnitPrice = 260000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 7,
+                            OrderId = 4,
+                            ProductId = 10,
+                            Quantity = 1,
+                            TotalPrice = 690000m,
+                            UnitPrice = 690000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 8,
+                            OrderId = 5,
+                            ProductId = 2,
+                            Quantity = 1,
+                            TotalPrice = 1890000m,
+                            UnitPrice = 1890000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 9,
+                            OrderId = 5,
+                            ProductId = 3,
+                            Quantity = 1,
+                            TotalPrice = 580000m,
+                            UnitPrice = 580000m
                         });
                 });
 
@@ -1042,6 +2224,233 @@ namespace WebGym.Migrations
                             PaymentMethod = "VNPay",
                             Status = "Success",
                             TransactionCode = "VNP20261105154500"
+                        });
+                });
+
+            modelBuilder.Entity("WebGym.Models.Entities.Product", b =>
+                {
+                    b.Property<int>("ProductId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"));
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("StockQuantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProductId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("Products");
+
+                    b.HasData(
+                        new
+                        {
+                            ProductId = 1,
+                            CategoryId = 1,
+                            CreatedAt = new DateTime(2026, 1, 15, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Sữa tăng cơ huyền thoại thế giới với 24g Protein mỗi lần dùng, 5.5g BCAA tự nhiên, ít đường và chất béo.",
+                            ImageUrl = "~/images/products/whey-gold-standard.jpg",
+                            IsActive = true,
+                            Price = 1750000m,
+                            ProductName = "Whey Gold Standard 100% Protein (Optimum Nutrition - 5 Lbs)",
+                            StockQuantity = 45
+                        },
+                        new
+                        {
+                            ProductId = 2,
+                            CategoryId = 1,
+                            CreatedAt = new DateTime(2026, 1, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "100% Whey Isolate và Hydrolyzed siêu tinh khiết, 0 đường, 0 fat, hấp thu cực nhanh sau khi tập nặng.",
+                            ImageUrl = "~/images/products/rule1-isolate.jpg",
+                            IsActive = true,
+                            Price = 1890000m,
+                            ProductName = "Rule 1 Protein Isolate & Hydrolyzed (Rule One - 5 Lbs)",
+                            StockQuantity = 38
+                        },
+                        new
+                        {
+                            ProductId = 3,
+                            CategoryId = 2,
+                            CreatedAt = new DateTime(2026, 2, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Bổ sung 5g Creatine siêu mịn Micronized mỗi muỗng, tăng thể tích tế bào cơ, bộc phát sức mạnh tối đa.",
+                            ImageUrl = "~/images/products/muscletech-creatine.jpg",
+                            IsActive = true,
+                            Price = 580000m,
+                            ProductName = "Creatine Monohydrate Platinum 400g (MuscleTech)",
+                            StockQuantity = 60
+                        },
+                        new
+                        {
+                            ProductId = 4,
+                            CategoryId = 2,
+                            CreatedAt = new DateTime(2026, 2, 10, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Tăng tỉnh táo tập trung và sung mãn năng lượng với Beta-Alanine, Creatine Nitrate và 150mg Caffeine.",
+                            ImageUrl = "~/images/products/c4-preworkout.jpg",
+                            IsActive = true,
+                            Price = 790000m,
+                            ProductName = "C4 Original Pre-Workout Năng Lượng Đỉnh Cao (Cellucor - 60 Servings)",
+                            StockQuantity = 25
+                        },
+                        new
+                        {
+                            ProductId = 5,
+                            CategoryId = 2,
+                            CreatedAt = new DateTime(2026, 2, 15, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "7g BCAA tỉ lệ vàng 2:1:1 kết hợp điện giải dừa tươi, chống dị hóa cơ và giảm đau nhức sau tập.",
+                            ImageUrl = "~/images/products/xtend-bcaa.jpg",
+                            IsActive = true,
+                            Price = 1150000m,
+                            ProductName = "BCAA Xtend Bù Khoáng Điện Giải (Scivation - 90 Servings)",
+                            StockQuantity = 30
+                        },
+                        new
+                        {
+                            ProductId = 6,
+                            CategoryId = 3,
+                            CreatedAt = new DateTime(2026, 3, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Đai lưng da thật dày 10mm với khóa đòn bẩy thép nguyên khối, bảo vệ cột sống thắt lưng khi gánh tạ nặng.",
+                            ImageUrl = "~/images/products/lever-belt.jpg",
+                            IsActive = true,
+                            Price = 850000m,
+                            ProductName = "Đai Lưng Tập Gym Da Bò Thật Khóa Đòn Bẩy (Lever Belt 10mm)",
+                            StockQuantity = 20
+                        },
+                        new
+                        {
+                            ProductId = 7,
+                            CategoryId = 3,
+                            CreatedAt = new DateTime(2026, 3, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Lớp đệm lòng bàn tay chống chai tay, đai quấn cổ tay dài 45cm bảo vệ khớp khi đẩy ngực nặng.",
+                            ImageUrl = "~/images/products/harbinger-gloves.jpg",
+                            IsActive = true,
+                            Price = 390000m,
+                            ProductName = "Găng Tay Tập Gym Thoáng Khí Kèm Quấn Cổ Tay (Harbinger Pro)",
+                            StockQuantity = 50
+                        },
+                        new
+                        {
+                            ProductId = 8,
+                            CategoryId = 3,
+                            CreatedAt = new DateTime(2026, 3, 10, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Chất liệu nhựa Tritan kháng khuẩn không mùi BPA Free, kèm quả cầu xoắn inox đánh tan bột whey siêu mịn.",
+                            ImageUrl = "~/images/products/blender-bottle.jpg",
+                            IsActive = true,
+                            Price = 280000m,
+                            ProductName = "Bình Lắc Shaker BlenderBottle Pro45 (Dung tích 1300ml)",
+                            StockQuantity = 75
+                        },
+                        new
+                        {
+                            ProductId = 9,
+                            CategoryId = 4,
+                            CreatedAt = new DateTime(2026, 3, 15, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Vải Spandex pha Polyester thể thao thấm hút mồ hôi nhanh, tôn dáng cơ bắp và chống nhăn co rút.",
+                            ImageUrl = "~/images/products/gymtech-shirt.jpg",
+                            IsActive = true,
+                            Price = 260000m,
+                            ProductName = "Áo Thun Tập Gym Nam Co Giãn 4 Chiều GymTech Pro",
+                            StockQuantity = 40
+                        },
+                        new
+                        {
+                            ProductId = 10,
+                            CategoryId = 5,
+                            CreatedAt = new DateTime(2026, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "21g Protein chất lượng cao mỗi thanh, chỉ 1g đường và dồi dào chất xơ prebiotic, bữa phụ hoàn hảo lành mạnh.",
+                            ImageUrl = "~/images/products/quest-bar.jpg",
+                            IsActive = true,
+                            Price = 690000m,
+                            ProductName = "Hộp Bánh Protein Bar Quest Nutrition (Hộp 12 Thanh x 60g)",
+                            StockQuantity = 35
+                        });
+                });
+
+            modelBuilder.Entity("WebGym.Models.Entities.ProductCategory", b =>
+                {
+                    b.Property<int>("CategoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryId"));
+
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.HasKey("CategoryId");
+
+                    b.ToTable("ProductCategories");
+
+                    b.HasData(
+                        new
+                        {
+                            CategoryId = 1,
+                            CategoryName = "Thực phẩm bổ sung & Whey Protein",
+                            Description = "Sữa tăng cơ Whey Isolate, Hydrolyzed, Mass Gainer hỗ trợ phục hồi và phát triển cơ bắp tối ưu.",
+                            IsActive = true
+                        },
+                        new
+                        {
+                            CategoryId = 2,
+                            CategoryName = "Tăng sức mạnh & Năng lượng (Pre-Workout & BCAA)",
+                            Description = "Thức uống bùng nổ sức mạnh Pre-Workout, Creatine Monohydrate và điện giải BCAA chống mỏi cơ.",
+                            IsActive = true
+                        },
+                        new
+                        {
+                            CategoryId = 3,
+                            CategoryName = "Dụng cụ & Phụ kiện tập Gym",
+                            Description = "Găng tay, đai lưng nâng tạ bọc da, dây kéo lưng Lifting Straps, bình lắc Shaker và băng quấn cổ tay.",
+                            IsActive = true
+                        },
+                        new
+                        {
+                            CategoryId = 4,
+                            CategoryName = "Trang phục thể thao Gym & Athleisure",
+                            Description = "Áo thun co giãn thoáng khí, quần legging, áo Tanktop khoét nách và trang phục tập luyện cao cấp.",
+                            IsActive = true
+                        },
+                        new
+                        {
+                            CategoryId = 5,
+                            CategoryName = "Nước giải khát thể thao & Bữa phụ dinh dưỡng",
+                            Description = "Thanh Protein Bar ít đường, nước bù khoáng điện giải Isotonic và hạt sấy khô bổ sung năng lượng nhanh.",
+                            IsActive = true
                         });
                 });
 
@@ -2021,6 +3430,112 @@ namespace WebGym.Migrations
                         });
                 });
 
+            modelBuilder.Entity("WebGym.Models.Entities.WorkoutPlan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Goal")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MemberId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NutritionAdvice")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoutineDetails")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("TrainerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MemberId");
+
+                    b.HasIndex("TrainerId");
+
+                    b.ToTable("WorkoutPlans");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2026, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            EndDate = new DateTime(2026, 10, 31, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Goal = "Giảm từ 78.5kg xuống 70kg, giảm tỷ lệ mỡ cơ thể về dưới 18%, tăng khối lượng cơ bắp thân trên.",
+                            IsActive = true,
+                            IsDeleted = false,
+                            MemberId = 1,
+                            NutritionAdvice = "- Calo mục tiêu: 2.100 kcal/ngày (Deficit 300 kcal).\n- Đạm (Protein): 160g - 170g/ngày (~2.2g/kg thể trọng), ưu tiên ức gà, cá ngừ, trứng, Whey Isolate.\n- Tinh bột (Carb): 200g/ngày (khoai lang, yến mạch, cơm gạo lứt).\n- Chất béo tốt: 50g/ngày (dầu ô liu, quả bơ, hạt hạnh nhân).\n- Uống đủ 3 - 3.5 lít nước mỗi ngày, hạn chế tối đa bia rượu và đồ ngọt đóng chai.",
+                            RoutineDetails = "- Thứ 2 (Ngực & Tay sau): Bench Press 4x8, Incline Dumbbell Press 4x10, Cable Fly 3x12, Tricep Pushdown 4x12.\n- Thứ 3 (Lưng xô & Tay trước): Deadlift 4x6, Lat Pulldown 4x10, Barbell Row 4x8, Bicep Curls 3x12.\n- Thứ 4: Nghỉ ngơi tích cực hoặc Cardio nhẹ 30 phút đi bộ dốc.\n- Thứ 5 (Chân & Bắp chân): Barbell Squat 4x8, Leg Press 4x12, Leg Curl 3x15, Calf Raise 4x20.\n- Thứ 6 (Vai & Bụng): Overhead Press 4x8, Lateral Raise 4x15, Face Pull 3x15, Hanging Leg Raise 4x15.\n- Thứ 7: HIIT Cardio chạy bộ máy Technogym 25 phút.\n- Chủ nhật: Nghỉ phục hồi toàn diện.",
+                            StartDate = new DateTime(2026, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Title = "Kế Hoạch Tăng Cơ Giảm Mỡ Cấp Tốc 12 Tuần (Hypertrophy & Shredding)",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2026, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            EndDate = new DateTime(2026, 11, 30, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Goal = "Giảm mỡ vòng eo từ 68cm xuống 62cm, cải thiện đường cong hông đùi và độ dẻo dai cơ thể.",
+                            IsActive = true,
+                            IsDeleted = false,
+                            MemberId = 2,
+                            NutritionAdvice = "- Calo mục tiêu: 1.450 kcal/ngày.\n- Ưu tiên rau xanh nhiều chất xơ, cá hồi, tôm, sữa chua Hy Lạp và sinh tố hoa quả mọng (berries).\n- Hạn chế gia vị nêm mặn nhằm tránh tích nước dưới da vùng bụng.\n- Uống trà hoa cúc hoặc trà xanh ấm buổi tối.",
+                            RoutineDetails = "- Thứ 2: Tập mông đùi Glute Focus: Hip Thrust 4x12, Romanian Deadlift 4x10, Bulgarian Split Squat 3x12 mỗi bên.\n- Thứ 3: Lớp Hatha Yoga phục hồi & giãn cơ chuyên sâu 75 phút.\n- Thứ 4: Thân trên nữ & Lưng xô: Lat Pulldown 3x12, Dumbbell Shoulder Press 3x12, Plank 4x45s.\n- Thứ 5: Nghỉ ngơi hoặc đạp xe Spinning kháng lực vừa phải 40 phút.\n- Thứ 6: Pilates thảm Matwork & Core Cốt Lõi: Động tác The Hundred, Criss Cross, Teaser.\n- Thứ 7 & CN: Đi dạo ngoài trời, thiền định.",
+                            StartDate = new DateTime(2026, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Title = "Giáo Án Siết Eo Săn Chắc Vóc Dáng & Yoga Nữ (Tone & Flexibility)",
+                            TrainerId = 3
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            EndDate = new DateTime(2026, 12, 31, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Goal = "Tăng sức mạnh Big 3 (Squat, Bench, Deadlift) thêm 20%, tăng 3kg khối lượng cơ nạc sạch.",
+                            IsActive = true,
+                            IsDeleted = false,
+                            MemberId = 3,
+                            NutritionAdvice = "- Calo mục tiêu: 2.800 - 3.000 kcal/ngày (Surplus calo tăng cơ).\n- Bổ sung 5g Creatine Monohydrate mỗi ngày vào buổi sáng hoặc ngay sau tập.\n- Chia nhỏ 5 bữa ăn/ngày, giàu đạm thịt bò, ức gà, cơm trắng và sữa tươi thanh trùng.",
+                            RoutineDetails = "- Thứ 2: Heavy Squat 5x5 (80% 1RM), Pause Squat 3x5, Bulgarian Split Squat 3x8.\n- Thứ 4: Heavy Bench Press 5x5, Close-Grip Bench 3x8, Incline Dumbbell Bench 3x10.\n- Thứ 6: Conventional Deadlift 5x3, Barbell Row 4x6, Farmer Walk 3 hiệp nặng.\n- Thứ 7: Phụ trợ vai tay, bài tập bụng chống xoay vòng Paloff Press.",
+                            StartDate = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Title = "Chương Trình Sức Mạnh Nền Tảng Powerlifting & Khối Lượng Cơ Lớn",
+                            TrainerId = 1
+                        });
+                });
+
             modelBuilder.Entity("WebGym.Models.Entities.Booking", b =>
                 {
                     b.HasOne("WebGym.Models.Entities.Member", "Member")
@@ -2040,6 +3555,75 @@ namespace WebGym.Migrations
                     b.Navigation("Trainer");
                 });
 
+            modelBuilder.Entity("WebGym.Models.Entities.CheckIn", b =>
+                {
+                    b.HasOne("WebGym.Models.Entities.Member", "Member")
+                        .WithMany("CheckIns")
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Member");
+                });
+
+            modelBuilder.Entity("WebGym.Models.Entities.ClassBooking", b =>
+                {
+                    b.HasOne("WebGym.Models.Entities.GymClass", "GymClass")
+                        .WithMany("ClassBookings")
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebGym.Models.Entities.Member", "Member")
+                        .WithMany("ClassBookings")
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("GymClass");
+
+                    b.Navigation("Member");
+                });
+
+            modelBuilder.Entity("WebGym.Models.Entities.Equipment", b =>
+                {
+                    b.HasOne("WebGym.Models.Entities.GymRoom", "GymRoom")
+                        .WithMany("Equipments")
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("GymRoom");
+                });
+
+            modelBuilder.Entity("WebGym.Models.Entities.GymClass", b =>
+                {
+                    b.HasOne("WebGym.Models.Entities.GymRoom", "Room")
+                        .WithMany("GymClasses")
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("WebGym.Models.Entities.Trainer", "Trainer")
+                        .WithMany("GymClasses")
+                        .HasForeignKey("TrainerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Room");
+
+                    b.Navigation("Trainer");
+                });
+
+            modelBuilder.Entity("WebGym.Models.Entities.MaintenanceLog", b =>
+                {
+                    b.HasOne("WebGym.Models.Entities.Equipment", "Equipment")
+                        .WithMany("MaintenanceLogs")
+                        .HasForeignKey("EquipmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Equipment");
+                });
+
             modelBuilder.Entity("WebGym.Models.Entities.Member", b =>
                 {
                     b.HasOne("WebGym.Models.Entities.User", "User")
@@ -2049,6 +3633,53 @@ namespace WebGym.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WebGym.Models.Entities.Notification", b =>
+                {
+                    b.HasOne("WebGym.Models.Entities.User", "User")
+                        .WithMany("Notifications")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WebGym.Models.Entities.Order", b =>
+                {
+                    b.HasOne("WebGym.Models.Entities.Member", "Member")
+                        .WithMany("Orders")
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("WebGym.Models.Entities.User", "User")
+                        .WithMany("Orders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Member");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WebGym.Models.Entities.OrderDetail", b =>
+                {
+                    b.HasOne("WebGym.Models.Entities.Order", "Order")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebGym.Models.Entities.Product", "Product")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("WebGym.Models.Entities.Payment", b =>
@@ -2068,6 +3699,17 @@ namespace WebGym.Migrations
                     b.Navigation("Member");
 
                     b.Navigation("Package");
+                });
+
+            modelBuilder.Entity("WebGym.Models.Entities.Product", b =>
+                {
+                    b.HasOne("WebGym.Models.Entities.ProductCategory", "Category")
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("WebGym.Models.Entities.Progress", b =>
@@ -2111,6 +3753,35 @@ namespace WebGym.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("WebGym.Models.Entities.WorkoutPlan", b =>
+                {
+                    b.HasOne("WebGym.Models.Entities.Member", "Member")
+                        .WithMany("WorkoutPlans")
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("WebGym.Models.Entities.Trainer", "Trainer")
+                        .WithMany("WorkoutPlans")
+                        .HasForeignKey("TrainerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Member");
+
+                    b.Navigation("Trainer");
+                });
+
+            modelBuilder.Entity("WebGym.Models.Entities.Equipment", b =>
+                {
+                    b.Navigation("MaintenanceLogs");
+                });
+
+            modelBuilder.Entity("WebGym.Models.Entities.GymClass", b =>
+                {
+                    b.Navigation("ClassBookings");
+                });
+
             modelBuilder.Entity("WebGym.Models.Entities.GymPackage", b =>
                 {
                     b.Navigation("Payments");
@@ -2118,25 +3789,63 @@ namespace WebGym.Migrations
                     b.Navigation("Subscriptions");
                 });
 
+            modelBuilder.Entity("WebGym.Models.Entities.GymRoom", b =>
+                {
+                    b.Navigation("Equipments");
+
+                    b.Navigation("GymClasses");
+                });
+
             modelBuilder.Entity("WebGym.Models.Entities.Member", b =>
                 {
                     b.Navigation("Bookings");
+
+                    b.Navigation("CheckIns");
+
+                    b.Navigation("ClassBookings");
+
+                    b.Navigation("Orders");
 
                     b.Navigation("Payments");
 
                     b.Navigation("ProgressRecords");
 
                     b.Navigation("Subscriptions");
+
+                    b.Navigation("WorkoutPlans");
+                });
+
+            modelBuilder.Entity("WebGym.Models.Entities.Order", b =>
+                {
+                    b.Navigation("OrderDetails");
+                });
+
+            modelBuilder.Entity("WebGym.Models.Entities.Product", b =>
+                {
+                    b.Navigation("OrderDetails");
+                });
+
+            modelBuilder.Entity("WebGym.Models.Entities.ProductCategory", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("WebGym.Models.Entities.Trainer", b =>
                 {
                     b.Navigation("Bookings");
+
+                    b.Navigation("GymClasses");
+
+                    b.Navigation("WorkoutPlans");
                 });
 
             modelBuilder.Entity("WebGym.Models.Entities.User", b =>
                 {
                     b.Navigation("Member");
+
+                    b.Navigation("Notifications");
+
+                    b.Navigation("Orders");
 
                     b.Navigation("Trainer");
                 });

@@ -35,6 +35,10 @@ namespace WebGym.Models.Entities
         public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
         public virtual ICollection<Progress> ProgressRecords { get; set; } = new List<Progress>();
         public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
+        public virtual ICollection<CheckIn> CheckIns { get; set; } = new List<CheckIn>();
+        public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+        public virtual ICollection<ClassBooking> ClassBookings { get; set; } = new List<ClassBooking>();
+        public virtual ICollection<WorkoutPlan> WorkoutPlans { get; set; } = new List<WorkoutPlan>();
 
         // Backward compatibility helpers
         [NotMapped]

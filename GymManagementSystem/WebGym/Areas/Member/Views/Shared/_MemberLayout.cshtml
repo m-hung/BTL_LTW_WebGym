@@ -66,7 +66,9 @@
     
     <!-- CSS Libs -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/pulse-portal.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="portal-body">
     <!-- Backdrop for mobile sidebar -->
@@ -116,6 +118,18 @@
                     <a asp-area="Member" asp-controller="Booking" asp-action="Index" 
                        class="portal-nav-link @(currentController == "Booking" ? "active" : "")">
                         <span>Đặt Lịch Huấn Luyện Viên</span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="Member" asp-controller="ClassBooking" asp-action="Index" 
+                       class="portal-nav-link @(currentController == "ClassBooking" && currentAction == "Index" && Context.Request.Query["tab"] != "my-classes" ? "active" : "")">
+                        <span>Đăng Ký Lớp Tập</span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="Member" asp-controller="ClassBooking" asp-action="MySchedule" 
+                       class="portal-nav-link @(currentController == "ClassBooking" && (currentAction == "MySchedule" || Context.Request.Query["tab"] == "my-classes") ? "active" : "")">
+                        <span>Lịch Tập Của Tôi</span>
                     </a>
                 </li>
                 <li>

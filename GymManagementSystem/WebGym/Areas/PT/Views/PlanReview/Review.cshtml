@@ -1,0 +1,117 @@
+@using WebGym.Models.DTOs.AiPlan
+@model PlanViewModel
+@{
+    var plan = (WorkoutPlan)ViewBag.Plan;
+    var survey = ViewBag.Survey as PlanSurveyDto;
+    var t = Model.Doc.Targets;
+    ViewData["Title"] = "Duyệt giáo án";
+    var i = 0;
+}
+
+@section TopActions {
+    <a class="cx-btn cx-btn--ghost" asp-action="Index">Danh sách chờ duyệt</a>
+}
+
+<form asp-action="Approve" asp-route-id="@plan.Id" method="post">
+    <section class="cx-panel" aria-labelledby="cxRvTitle">
+        <header class="cx-panel-head">
+            <div>
+                <h2 class="cx-h2" id="cxRvTitle">@plan.Member.User.FullName</h2>
+                <p class="cx-sub">@plan.Title · @Model.Doc.SplitName</p>
+                @if (survey != null)
+                {
+                    <div class="cx-rv-meta">
+                        <span class="cx-tag">@PlanOptions.Label(PlanOptions.Experiences, survey.Experience)</span>
+                        <span class="cx-tag">@survey.SessionMinutes phút/buổi</span>
+                        <span class="cx-tag">@PlanOptions.Label(PlanOptions.Diets, survey.Diet)</span>
+                        @foreach (var inj in survey.Injuries)
+                        {
+                            <span class="cx-tag">@PlanOptions.Label(PlanOptions.Injuries, inj)</span>
+                        }
+                        @foreach (var a in survey.Allergies)
+                        {
+                            <span class="cx-tag">Dị ứng @PlanOptions.Label(PlanOptions.Allergies, a).ToLowerInvariant()</span>
+                        }
+                    </div>
+                }
+            </div>
+        </header>
+
+        <div class="cx-rv-targets">
+            <div><small>Mục tiêu</small><b>@PlanOptions.Label(PlanOptions.Goals, t.Goal)</b></div>
+            <div><small>Calo/ngày</small><b>@t.TargetKcal.ToString("N0")</b></div>
+            <div><small>Đạm · Tinh bột · Béo</small><b>@(t.ProteinG)/@(t.CarbG)/@(t.FatG)g</b></div>
+            <div><small>BMR (@t.BmrSource)</small><b>@t.Bmr.ToString("N0")</b></div>
+            <div><small>BMI</small><b>@t.Bmi.ToString("0.0")</b></div>
+        </div>
+    </section>
+
+    <section class="cx-panel" aria-labelledby="cxRvWeek">
+        <header class="cx-panel-head">
+            <div>
+                <h2 class="cx-h2" id="cxRvWeek">Lịch tập</h2>
+                <p class="cx-sub">Sửa số hiệp, số lần, thời gian nghỉ hoặc thêm ghi chú cho học viên nếu cần.</p>
+            </div>
+        </header>
+
+        @foreach (var day in Model.Doc.Days.OrderBy(d => d.Weekday))
+        {
+            <div class="cx-rv-day">
+                <h3>@PlanOptions.WeekdayLabel(day.Weekday)<span>@day.Focus</span></h3>
+                <table class="cx-rv-table">
+                    <thead>
+                        <tr><th>Bài tập</th><th>Hiệp</th><th>Số lần</th><th>Nghỉ (giây)</th><th>Ghi chú cho học viên</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var x in day.Exercises)
+                        {
+                            Model.Exercises.TryGetValue(x.ExerciseId, out var ex);
+                            <tr>
+                                <td>
+                                    @(ex?.Name ?? "Bài #" + x.ExerciseId)
+                                    <small>@(ex?.Equipment?.EquipmentName ?? "Không cần máy")</small>
+                                    <input type="hidden" name="items[@i].Weekday" value="@day.Weekday" />
+                                    <input type="hidden" name="items[@i].ExerciseId" value="@x.ExerciseId" />
+                                </td>
+                                <td><input class="cx-rv-num" type="number" min="1" max="8" name="items[@i].Sets" value="@x.Sets" aria-label="Số hiệp" /></td>
+                                <td><input class="cx-rv-num" type="text" maxlength="20" name="items[@i].Reps" value="@x.Reps" aria-label="Số lần" /></td>
+                                <td><input class="cx-rv-num" type="number" min="0" max="300" step="15" name="items[@i].RestSec" value="@x.RestSec" aria-label="Thời gian nghỉ" /></td>
+                                <td><input type="text" maxlength="140" name="items[@i].Note" value="@x.Note" placeholder="Không bắt buộc" aria-label="Ghi chú" /></td>
+                            </tr>
+                            i++;
+                        }
+                    </tbody>
+                </table>
+                @if (!string.IsNullOrWhiteSpace(day.Cardio))
+                {
+                    <p class="cx-rv-cardio">Cardio: @day.Cardio</p>
+                }
+            </div>
+        }
+    </section>
+
+    <section class="cx-panel" aria-labelledby="cxRvMeals">
+        <header class="cx-panel-head">
+            <div>
+                <h2 class="cx-h2" id="cxRvMeals">Thực đơn</h2>
+                <p class="cx-sub">Tổng @Model.Doc.Meals.Sum(m => m.Kcal).ToString("N0") / @t.TargetKcal.ToString("N0") kcal.</p>
+            </div>
+        </header>
+        <ul class="cx-rv-meals">
+            @foreach (var m in Model.Doc.Meals)
+            {
+                <li><span>@m.Slot</span><span style="flex:1">@m.Dish</span><span>@m.Kcal kcal · @(m.ProteinG)g đạm</span></li>
+            }
+        </ul>
+
+        <div class="cx-field" style="margin-top: 18px">
+            <label for="cxRvMsg">Lời nhắn cho học viên (không bắt buộc)</label>
+            <textarea id="cxRvMsg" name="message" rows="3" maxlength="500" placeholder="Ví dụ: Tuần đầu tập nhẹ 70% mức tạ, thứ 4 qua phòng mình chỉnh lại form squat nhé."></textarea>
+        </div>
+
+        <div class="cx-form-bar">
+            <button type="submit" class="cx-btn">Đã duyệt</button>
+            <a class="cx-btn cx-btn--ghost" asp-action="Index">Để sau</a>
+        </div>
+    </section>
+</form>

@@ -410,3 +410,30 @@ body.cx{margin:0;background:var(--cx-ink);color:var(--cx-text);font:15px/1.55 va
 @media (prefers-reduced-motion:reduce){
   .cx *{animation:none!important;transition:none!important}
 }
+
+/* ---------- Duyệt giáo án AI (PT/PlanReview) ---------- */
+.cx-plans{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.cx-plan{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:16px;align-items:center;padding:16px;background:var(--cx-panel2);border:1px solid var(--cx-line)}
+.cx-plan-main strong{display:block;font-size:16px}
+.cx-plan-main small{color:var(--cx-muted)}
+.cx-plan-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.cx-rv-meta{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}
+.cx-rv-targets{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:14px}
+.cx-rv-targets div{padding:12px;background:var(--cx-panel2);border:1px solid var(--cx-line)}
+.cx-rv-targets b{display:block;font:400 24px/1.1 var(--cx-display);color:var(--cx-lime)}
+.cx-rv-targets small{color:var(--cx-muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.cx-rv-day{margin-top:18px}
+.cx-rv-day h3{font:700 18px/1.2 var(--cx-label);text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px}
+.cx-rv-day h3 span{color:var(--cx-lime);font-weight:600;margin-left:8px;text-transform:none;letter-spacing:0;font-family:var(--cx-body);font-size:14px}
+.cx-rv-table{width:100%;border-collapse:collapse}
+.cx-rv-table th{text-align:left;font:700 12px/1 var(--cx-label);letter-spacing:.08em;text-transform:uppercase;color:var(--cx-muted);padding:8px 6px;border-bottom:1px solid var(--cx-line)}
+.cx-rv-table td{padding:8px 6px;border-bottom:1px solid var(--cx-line);vertical-align:middle}
+.cx-rv-table td small{display:block;color:var(--cx-muted);font-size:12px}
+.cx-rv-table input{width:100%;height:38px;padding:0 10px;background:var(--cx-ink);border:1px solid var(--cx-line2);color:var(--cx-text);font-size:14px}
+.cx-rv-table input:focus{outline:0;border-color:var(--cx-lime)}
+.cx-rv-table .cx-rv-num{width:76px}
+.cx-rv-cardio{margin-top:8px;color:var(--cx-soft);font-size:13px}
+.cx-rv-meals{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:6px}
+.cx-rv-meals li{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;background:var(--cx-panel2);border:1px solid var(--cx-line);font-size:14px}
+.cx-rv-meals li span:first-child{color:var(--cx-muted);min-width:150px}
+@media (max-width:760px){.cx-plan{grid-template-columns:1fr}.cx-rv-table thead{display:none}.cx-rv-table tr{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px 0;border-bottom:1px solid var(--cx-line)}.cx-rv-table td{border:0;padding:2px 0}.cx-rv-table td:first-child,.cx-rv-table td:last-child{grid-column:1/-1}.cx-rv-table .cx-rv-num{width:100%}}

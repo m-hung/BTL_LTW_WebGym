@@ -1,0 +1,44 @@
+@model List<WorkoutPlan>
+@{
+    ViewData["Title"] = "Giáo án chờ duyệt";
+}
+
+@section TopActions {
+    <a class="cx-btn cx-btn--ghost" asp-controller="AssignedMembers" asp-action="Index">Xem học viên</a>
+}
+
+<section class="cx-panel" aria-labelledby="cxPlanTitle">
+    <header class="cx-panel-head">
+        <div>
+            <h2 class="cx-h2" id="cxPlanTitle">@(Model.Count == 0 ? "Không có giáo án nào chờ duyệt" : $"{Model.Count} giáo án AI chờ bạn xem")</h2>
+            <p class="cx-sub">Học viên có gói kèm PT tạo giáo án bằng AI sẽ xuất hiện ở đây. Học viên vẫn dùng được giáo án trong lúc chờ.</p>
+        </div>
+    </header>
+
+    @if (Model.Count == 0)
+    {
+        <div class="cx-empty">
+            <p><strong>Chưa có giáo án nào.</strong> Khi học viên của bạn lưu giáo án AI, bạn sẽ nhận được thông báo.</p>
+        </div>
+    }
+    else
+    {
+        <ul class="cx-plans">
+            @foreach (var p in Model)
+            {
+                <li class="cx-plan">
+                    <span class="cx-avatar" aria-hidden="true">@CoachUi.Initials(p.Member.User.FullName)</span>
+                    <div class="cx-plan-main">
+                        <strong>@p.Member.User.FullName</strong>
+                        <small>@p.Title · tạo lúc @p.CreatedAt.AddHours(7).ToString("HH:mm dd/MM/yyyy")</small>
+                        <div class="cx-plan-tags">
+                            <span class="cx-tag">@(p.TargetKcal?.ToString("N0") ?? "--") kcal</span>
+                            <span class="cx-tag">Đạm @(p.ProteinG ?? 0)g</span>
+                        </div>
+                    </div>
+                    <a class="cx-btn" asp-action="Review" asp-route-id="@p.Id">Xem và duyệt</a>
+                </li>
+            }
+        </ul>
+    }
+</section>

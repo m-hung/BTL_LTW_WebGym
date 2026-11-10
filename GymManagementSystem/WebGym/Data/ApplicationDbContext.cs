@@ -46,6 +46,12 @@ namespace WebGym.Data
         public DbSet<Notification> Notifications => Set<Notification>();
         public DbSet<WorkoutPlan> WorkoutPlans => Set<WorkoutPlan>();
 
+        // ==========================================
+        // 5. GIÁO ÁN AI: DANH MỤC BÀI TẬP & NHẬT KÝ TẬP
+        // ==========================================
+        public DbSet<Exercise> Exercises => Set<Exercise>();
+        public DbSet<WorkoutLog> WorkoutLogs => Set<WorkoutLog>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -223,6 +229,37 @@ namespace WebGym.Data
                 .HasForeignKey(wp => wp.TrainerId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // Exercises: gắn với thiết bị (bỏ thiết bị thì bài tập vẫn còn, chỉ mất liên kết)
+            modelBuilder.Entity<Exercise>()
+                .HasOne(e => e.Equipment)
+                .WithMany()
+                .HasForeignKey(e => e.EquipmentId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            // WorkoutLogs: xoá giáo án thì xoá nhật ký của giáo án đó
+            modelBuilder.Entity<WorkoutLog>()
+                .HasOne(l => l.Plan)
+                .WithMany(p => p.Logs)
+                .HasForeignKey(l => l.PlanId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<WorkoutLog>()
+                .HasOne(l => l.Member)
+                .WithMany()
+                .HasForeignKey(l => l.MemberId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<WorkoutLog>()
+                .HasOne(l => l.Exercise)
+                .WithMany()
+                .HasForeignKey(l => l.ExerciseId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Mỗi bài chỉ được tích một lần trong một ngày của một giáo án
+            modelBuilder.Entity<WorkoutLog>()
+                .HasIndex(l => new { l.PlanId, l.Date, l.ExerciseId })
+                .IsUnique();
+
             // ==========================================
             // SEED DATA - TỔ CHỨC THEO TỪNG BẢNG
             // ==========================================
@@ -248,6 +285,7 @@ namespace WebGym.Data
             modelBuilder.SeedClassBookings();
             modelBuilder.SeedNotifications();
             modelBuilder.SeedWorkoutPlans();
+            modelBuilder.SeedExercises();
         }
     }
 }

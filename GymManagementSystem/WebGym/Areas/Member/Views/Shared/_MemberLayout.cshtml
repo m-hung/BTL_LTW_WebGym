@@ -104,6 +104,12 @@
                     </a>
                 </li>
                 <li>
+                    <a asp-area="Member" asp-controller="Plan" asp-action="Index" 
+                       class="portal-nav-link @(currentController == "Plan" ? "active" : "")">
+                        <span>Giáo Án Của Tôi</span>
+                    </a>
+                </li>
+                <li>
                     <a asp-area="Member" asp-controller="WorkoutSchedule" asp-action="Index" 
                        class="portal-nav-link @(currentController == "WorkoutSchedule" ? "active" : "")">
                         <span>Gói Tập</span>

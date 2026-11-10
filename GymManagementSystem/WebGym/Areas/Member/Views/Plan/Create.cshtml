@@ -1,0 +1,258 @@
+@using WebGym.Models.DTOs.AiPlan
+@using System.Globalization
+@model PlanCreateViewModel
+@{
+    ViewData["Title"] = "Tạo lộ trình cùng AI";
+    var s = Model.Survey;
+    var m = Model.Measurement;
+    var inv = CultureInfo.InvariantCulture;
+    string Num(double? v, string fmt = "0.#") => v.HasValue ? v.Value.ToString(fmt, inv) : string.Empty;
+    var goalHints = new Dictionary<string, string>
+    {
+        ["fat_loss"] = "Giảm mỡ, giữ cơ",
+        ["muscle_gain"] = "Tăng khối cơ",
+        ["maintain"] = "Duy trì, săn chắc",
+        ["endurance"] = "Bền bỉ, khoẻ tim"
+    };
+}
+
+<link rel="stylesheet" href="~/css/ai-plan.css" asp-append-version="true" />
+
+<div class="ap" id="apCreate">
+    <ol class="ap-steps" aria-label="Các bước tạo giáo án">
+        <li class="is-current" data-step="1">Thông tin</li>
+        <li data-step="2">AI phân tích</li>
+        <li data-step="3">Kết quả</li>
+        <li data-step="4">Lưu & áp dụng</li>
+    </ol>
+
+    @if (!Model.HasActiveSubscription)
+    {
+        <div class="ap-notice ap-notice--warn" role="alert">
+            <div><strong>Tính năng dành cho hội viên có gói tập còn hạn.</strong> Bạn có thể xem trước các câu hỏi bên dưới, nhưng cần <a href="/#bang-gia">đăng ký hoặc gia hạn gói tập</a> để tạo giáo án.</div>
+        </div>
+    }
+    @if (Model.ActivePlanFromTrainer)
+    {
+        <div class="ap-notice ap-notice--info" role="status">
+            <div><strong>Bạn đang có giáo án do HLV soạn.</strong> Nếu lưu giáo án mới, giáo án của HLV sẽ chuyển vào lịch sử (hệ thống sẽ hỏi lại trước khi lưu).</div>
+        </div>
+    }
+
+    <form asp-action="Generate" method="post" id="apForm" novalidate>
+        <!-- 1a. Số đo -->
+        <section class="ap-card" aria-labelledby="apMeasureTitle">
+            <div class="ap-card-head">
+                <div>
+                    <p class="ap-eyebrow">Bước 1a</p>
+                    <h3 id="apMeasureTitle">Xác nhận <span>số đo</span></h3>
+                    <p class="ap-sub">Hệ thống đã điền sẵn từ hồ sơ. Kiểm tra và sửa nếu chưa đúng.</p>
+                </div>
+            </div>
+
+            <div class="ap-source">
+                @if (m.IsDefault)
+                {
+                    <span class="ap-badge ap-badge--wait">Cần nhập</span><span>@m.Label</span>
+                }
+                else
+                {
+                    <span>Nguồn: <b>@m.Label</b></span>
+                    @if (m.IsStale)
+                    {
+                        <span>Số đo đã cũ, nên <a asp-controller="Booking" asp-action="Index" style="color: var(--portal-lime)">đặt lịch đo InBody với HLV</a> để kết quả chính xác hơn.</span>
+                    }
+                }
+            </div>
+
+            <div class="ap-grid">
+                <div class="ap-field" data-field="HeightCm">
+                    <label for="apHeight">Chiều cao *</label>
+                    <div class="ap-unit"><input type="number" id="apHeight" name="HeightCm" min="120" max="230" step="0.5" inputmode="decimal" value="@Num(s.HeightCm)" required /><em>cm</em></div>
+                    <div class="ap-err"></div>
+                </div>
+                <div class="ap-field" data-field="WeightKg">
+                    <label for="apWeight">Cân nặng *</label>
+                    <div class="ap-unit"><input type="number" id="apWeight" name="WeightKg" min="30" max="250" step="0.1" inputmode="decimal" value="@Num(s.WeightKg)" required /><em>kg</em></div>
+                    <div class="ap-err"></div>
+                </div>
+                <div class="ap-field" data-field="BodyFatPercent">
+                    <label for="apFat">Tỷ lệ mỡ</label>
+                    <div class="ap-unit"><input type="number" id="apFat" name="BodyFatPercent" min="3" max="60" step="0.1" inputmode="decimal" value="@Num(s.BodyFatPercent)" placeholder="Không bắt buộc" /><em>%</em></div>
+                    <div class="ap-err"></div>
+                </div>
+                <div class="ap-field" data-field="MuscleMassKg">
+                    <label for="apMuscle">Khối lượng cơ</label>
+                    <div class="ap-unit"><input type="number" id="apMuscle" name="MuscleMassKg" min="10" max="120" step="0.1" inputmode="decimal" value="@Num(s.MuscleMassKg)" placeholder="Không bắt buộc" /><em>kg</em></div>
+                    <div class="ap-err"></div>
+                </div>
+                <div class="ap-field" data-field="DateOfBirth">
+                    <label for="apDob">Ngày sinh *</label>
+                    <input type="date" id="apDob" name="DateOfBirth" value="@(s.DateOfBirth?.ToString("yyyy-MM-dd"))" max="@DateTime.Today.AddYears(-16).ToString("yyyy-MM-dd")" required />
+                    <div class="ap-err"></div>
+                </div>
+                <div class="ap-field" data-field="Gender">
+                    <span class="ap-q-title">Giới tính *</span>
+                    <div class="ap-chips">
+                        <label class="ap-chip"><input type="radio" name="Gender" value="Nam" @(s.Gender == "Nam" ? "checked" : "") /><span>Nam</span></label>
+                        <label class="ap-chip"><input type="radio" name="Gender" value="Nữ" @(s.Gender == "Nữ" ? "checked" : "") /><span>Nữ</span></label>
+                    </div>
+                    <div class="ap-err"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 1b. Khảo sát -->
+        <section class="ap-card" aria-labelledby="apSurveyTitle">
+            <div class="ap-card-head">
+                <div>
+                    <p class="ap-eyebrow">Bước 1b</p>
+                    <h3 id="apSurveyTitle">Khảo sát <span>30 giây</span></h3>
+                    <p class="ap-sub">Chỉ cần bấm chọn. Đã có sẵn lựa chọn mặc định.</p>
+                </div>
+            </div>
+
+            <div class="ap-q ap-field" data-field="Goal" style="margin-top: 0">
+                <span class="ap-q-title">Mục tiêu chính</span>
+                <div class="ap-chips ap-chips--goal">
+                    @foreach (var g in PlanOptions.Goals)
+                    {
+                        <label class="ap-chip"><input type="radio" name="Goal" value="@g.Key" @(s.Goal == g.Key ? "checked" : "") /><span><b>@g.Value</b><small>@goalHints[g.Key]</small></span></label>
+                    }
+                </div>
+                <div class="ap-err"></div>
+            </div>
+
+            <div class="ap-grid" style="margin-top: 20px">
+                <div>
+                    <span class="ap-q-title">Số buổi mỗi tuần</span>
+                    <div class="ap-chips">
+                        @foreach (var n in PlanOptions.SessionChoices)
+                        {
+                            <label class="ap-chip"><input type="radio" name="SessionsPerWeek" value="@n" @(s.SessionsPerWeek == n ? "checked" : "") /><span>@n buổi</span></label>
+                        }
+                    </div>
+                </div>
+                <div>
+                    <span class="ap-q-title">Thời lượng mỗi buổi</span>
+                    <div class="ap-chips">
+                        @foreach (var n in PlanOptions.MinuteChoices)
+                        {
+                            <label class="ap-chip"><input type="radio" name="SessionMinutes" value="@n" @(s.SessionMinutes == n ? "checked" : "") /><span>@n phút</span></label>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="ap-q ap-field" data-field="Weekdays">
+                <span class="ap-q-title">Những ngày bạn có thể tập</span>
+                <div class="ap-chips ap-chips--days">
+                    @for (var wd = 1; wd <= 7; wd++)
+                    {
+                        <label class="ap-chip"><input type="checkbox" name="Weekdays" value="@wd" @(s.Weekdays.Contains(wd) ? "checked" : "") /><span>@PlanOptions.WeekdayShort(wd)</span></label>
+                    }
+                </div>
+                <div class="ap-hint">Chọn nhiều hơn số buổi để hệ thống tự xếp các buổi cách nhau đều.</div>
+                <div class="ap-err"></div>
+            </div>
+
+            <div class="ap-grid" style="margin-top: 20px">
+                <div>
+                    <span class="ap-q-title">Kinh nghiệm</span>
+                    <div class="ap-chips">
+                        @foreach (var e in PlanOptions.Experiences)
+                        {
+                            <label class="ap-chip"><input type="radio" name="Experience" value="@e.Key" @(s.Experience == e.Key ? "checked" : "") /><span>@e.Value</span></label>
+                        }
+                    </div>
+                </div>
+                <div>
+                    <span class="ap-q-title">Mức vận động ngoài giờ tập</span>
+                    <div class="ap-chips">
+                        @foreach (var a in PlanOptions.Activities)
+                        {
+                            <label class="ap-chip"><input type="radio" name="Activity" value="@a.Key" @(s.Activity == a.Key ? "checked" : "") /><span>@a.Value</span></label>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="ap-grid" style="margin-top: 20px">
+                <div>
+                    <span class="ap-q-title">Chế độ ăn</span>
+                    <div class="ap-chips">
+                        @foreach (var d in PlanOptions.Diets)
+                        {
+                            <label class="ap-chip"><input type="radio" name="Diet" value="@d.Key" @(s.Diet == d.Key ? "checked" : "") /><span>@d.Value</span></label>
+                        }
+                    </div>
+                </div>
+                <div>
+                    <span class="ap-q-title">Dị ứng thực phẩm (chọn nhiều)</span>
+                    <div class="ap-chips">
+                        @foreach (var a in PlanOptions.Allergies)
+                        {
+                            <label class="ap-chip"><input type="checkbox" name="Allergies" value="@a.Key" @(s.Allergies.Contains(a.Key) ? "checked" : "") /><span>@a.Value</span></label>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="ap-grid" style="margin-top: 20px">
+                <div>
+                    <span class="ap-q-title">Chấn thương (bỏ các bài ảnh hưởng vùng này)</span>
+                    <div class="ap-chips">
+                        @foreach (var i in PlanOptions.Injuries)
+                        {
+                            <label class="ap-chip"><input type="checkbox" name="Injuries" value="@i.Key" @(s.Injuries.Contains(i.Key) ? "checked" : "") /><span>@i.Value</span></label>
+                        }
+                    </div>
+                </div>
+                <div>
+                    <span class="ap-q-title">Tình trạng sức khoẻ</span>
+                    <div class="ap-chips">
+                        @foreach (var c in PlanOptions.Conditions)
+                        {
+                            <label class="ap-chip @(c.Key == "none" ? "" : "ap-chip--danger")"><input type="radio" name="Condition" value="@c.Key" @(s.Condition == c.Key ? "checked" : "") /><span>@c.Value</span></label>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <label class="ap-consent ap-field" data-field="Consent">
+                <input type="checkbox" name="Consent" value="true" @(s.Consent ? "checked" : "") />
+                <span>Tôi đồng ý gửi số đo cơ thể và câu trả lời khảo sát (không kèm họ tên, email) cho AI để tạo gợi ý. <span class="ap-err" style="display:block"></span></span>
+            </label>
+
+            <div class="ap-notice ap-notice--error" id="apFormError" role="alert" hidden></div>
+
+            <div class="ap-actions">
+                <button type="submit" class="ap-btn" id="apSubmit" @(Model.HasActiveSubscription ? "" : "disabled")>Bắt đầu phân tích</button>
+                <a class="ap-btn ap-btn--ghost" asp-action="Index">Huỷ</a>
+                <span class="ap-quota">Còn <b id="apQuota">@Model.RemainingToday</b> lượt tạo bằng AI hôm nay</span>
+            </div>
+        </section>
+    </form>
+
+    <!-- Bước 2: chờ AI -->
+    <section class="ap-card ap-loading" id="apLoading" hidden aria-live="polite">
+        <div class="ap-pulse" aria-hidden="true"></div>
+        <ol>
+            <li data-phase="0">Đang tính calo và chỉ số mục tiêu…</li>
+            <li data-phase="1">Đang xếp lịch tập theo máy của phòng…</li>
+            <li data-phase="2">Đang soạn thực đơn món Việt…</li>
+        </ol>
+        <p>Thường mất 20–45 giây. Vui lòng không đóng trang.</p>
+    </section>
+
+    <!-- Bước 3: kết quả -->
+    <div id="apResult" aria-live="polite"></div>
+
+    <div class="ap-actions" id="apEditAgain" hidden>
+        <button type="button" class="ap-btn ap-btn--ghost" id="apBackToForm">Sửa thông tin và phân tích lại</button>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/ai-plan.js" asp-append-version="true"></script>
+}

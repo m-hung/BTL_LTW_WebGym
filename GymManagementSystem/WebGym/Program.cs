@@ -40,6 +40,10 @@ namespace WebGym
             builder.Services.AddScoped<IGymKnowledgeService, GymKnowledgeService>();
             builder.Services.AddScoped<IAIService, GeminiAIService>();
 
+            // Giáo án AI: bản nháp và giới hạn lượt gọi AI lưu trong bộ nhớ
+            builder.Services.AddMemoryCache();
+            builder.Services.AddScoped<IAiPlanService, AiPlanService>();
+
             // 4. Add MVC Controllers and Views
             builder.Services.AddControllersWithViews();
 

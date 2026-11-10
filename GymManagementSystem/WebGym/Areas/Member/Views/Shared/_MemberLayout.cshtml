@@ -29,14 +29,29 @@
             {
                 currentPackageName = activeSub.Package.PackageName;
             }
+
+            if (!string.IsNullOrEmpty(member.AvatarUrl))
+            {
+                userAvatar = member.AvatarUrl;
+            }
         }
         
-        var avatarDiskPath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatars", $"user_{uId}.jpg");
-        if (System.IO.File.Exists(avatarDiskPath))
+        if (string.IsNullOrEmpty(userAvatar))
         {
-            userAvatar = $"/uploads/avatars/user_{uId}.jpg";
+            var avatarDiskPath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatars", $"user_{uId}.jpg");
+            if (System.IO.File.Exists(avatarDiskPath))
+            {
+                userAvatar = $"/uploads/avatars/user_{uId}.jpg";
+            }
         }
     }
+
+    var defaultAvatar = Url.Content("~/images/default-avatar.svg");
+    var resolvedAvatar = !string.IsNullOrWhiteSpace(userAvatar)
+        ? (userAvatar.StartsWith("http", StringComparison.OrdinalIgnoreCase) 
+            ? userAvatar 
+            : Url.Content(userAvatar.StartsWith("~") ? userAvatar : (userAvatar.StartsWith("/") ? userAvatar : "~/images/" + userAvatar)))
+        : defaultAvatar;
 }
 <!DOCTYPE html>
 <html lang="vi">
@@ -72,7 +87,7 @@
             <!-- User Quick Snippet (Yêu cầu 2: Dưới tên hiển thị tên gói tập) -->
             <div class="portal-user-card">
                 <div class="portal-user-avatar">
-                    <img src="@(userAvatar ?? Url.Content("~/images/default-avatar.svg"))" asp-append-version="true" alt="@userName" id="sidebarAvatarImg" />
+                    <img src="@resolvedAvatar" asp-append-version="true" alt="@userName" id="sidebarAvatarImg" />
                 </div>
                 <div class="portal-user-info">
                     <div class="portal-user-name" title="@userName">@userName</div>

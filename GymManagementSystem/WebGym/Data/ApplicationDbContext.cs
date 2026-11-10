@@ -46,6 +46,12 @@ namespace WebGym.Data
         public DbSet<Notification> Notifications => Set<Notification>();
         public DbSet<WorkoutPlan> WorkoutPlans => Set<WorkoutPlan>();
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
+            optionsBuilder.ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

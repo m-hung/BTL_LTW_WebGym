@@ -1,0 +1,165 @@
+@model WebGym.Models.Entities.Equipment
+@{
+    ViewData["Title"] = $"Chi Tiết Thiết Bị - {Model.EquipmentName}";
+}
+
+<!-- Breadcrumb -->
+<div class="mb-3">
+    <a asp-action="Index" class="text-decoration-none text-muted small">
+        <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách thiết bị
+    </a>
+</div>
+
+<!-- Header Card -->
+<div class="card border-0 rounded-4 shadow-sm bg-white p-4 mb-4">
+    <div class="row align-items-center g-4">
+        <div class="col-12 col-md-auto text-center">
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <img src="@Model.ImageUrl" alt="@Model.EquipmentName" class="rounded-4 border object-fit-cover shadow-sm" style="width: 140px; height: 140px;" 
+                     onerror="this.onerror=null; this.src='/images/default-equipment.png';" />
+            }
+            else
+            {
+                <div class="bg-light rounded-4 d-flex align-items-center justify-content-center text-muted border shadow-sm mx-auto" style="width: 140px; height: 140px;">
+                    <i class="bi bi-cpu fs-1"></i>
+                </div>
+            }
+        </div>
+        <div class="col-12 col-md">
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                <h3 class="fw-bold text-dark mb-0">@Model.EquipmentName</h3>
+                @if (Model.Status == "Hoạt động tốt")
+                {
+                    <span class="badge badge-soft-success rounded-pill px-3 py-2 small">Hoạt động tốt</span>
+                }
+                else if (Model.Status == "Cần bảo trì")
+                {
+                    <span class="badge badge-soft-warning rounded-pill px-3 py-2 small">Cần bảo trì</span>
+                }
+                else
+                {
+                    <span class="badge badge-soft-danger rounded-pill px-3 py-2 small">Đang hỏng</span>
+                }
+            </div>
+
+            <div class="row g-2 text-muted small mb-3">
+                <div class="col-sm-6 col-lg-3">
+                    <i class="bi bi-upc-scan text-secondary me-1"></i> Mã Serial: <strong>@(Model.SerialNumber ?? "N/A")</strong>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <i class="bi bi-tag-fill text-primary me-1"></i> Hãng SX: <strong>@Model.Brand</strong>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <i class="bi bi-geo-alt-fill text-danger me-1"></i> Khu vực: <strong>@Model.Area</strong>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <i class="bi bi-door-open-fill text-info me-1"></i> Phòng: <strong>@(Model.GymRoom != null ? Model.GymRoom.RoomName : "Chưa gán")</strong>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(Model.Notes))
+            {
+                <div class="alert alert-light border small text-secondary py-2 px-3 rounded-3 mb-0">
+                    <i class="bi bi-sticky me-1 text-warning"></i> @Model.Notes
+                </div>
+            }
+        </div>
+        <div class="col-12 col-md-auto d-flex flex-md-column gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.EquipmentId" class="btn btn-outline-warning rounded-3 btn-sm">
+                <i class="bi bi-pencil-square me-1"></i> Sửa thiết bị
+            </a>
+            <a asp-controller="MaintenanceManagement" asp-action="Create" asp-route-equipmentId="@Model.EquipmentId" 
+               class="btn btn-primary rounded-3 btn-sm">
+                <i class="bi bi-tools me-1"></i> Lập phiếu bảo trì
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Lịch Sử Bảo Dưỡng & Sửa Chữa (Maintenance History) -->
+<div class="card border-0 rounded-4 shadow-sm bg-white p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h5 class="fw-bold text-dark mb-1">
+                <i class="bi bi-clock-history text-primary me-2"></i>Lịch Sử Bảo Dưỡng & Sửa Chữa (@Model.MaintenanceLogs.Count)
+            </h5>
+            <p class="text-muted small mb-0">Theo dõi toàn bộ nhật ký hỏng hóc, chi phí bảo trì và nghiệm thu của thiết bị này.</p>
+        </div>
+        <a asp-controller="MaintenanceManagement" asp-action="Create" asp-route-equipmentId="@Model.EquipmentId" 
+           class="btn btn-outline-primary btn-sm rounded-3">
+            <i class="bi bi-plus-lg me-1"></i> Thêm phiếu mới
+        </a>
+    </div>
+
+    @if (!Model.MaintenanceLogs.Any())
+    {
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-shield-check fs-1 text-success d-block mb-2"></i>
+            <h6 class="fw-bold text-dark">Thiết bị chưa có ghi nhận bảo trì nào</h6>
+            <p class="small text-muted mb-0">Máy đang trong tình trạng hoạt động ổn định kể từ ngày mua (@Model.PurchaseDate.ToString("dd/MM/yyyy")).</p>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Ngày Bảo Trì</th>
+                        <th>Nội Dung Sự Cố / Bảo Dưỡng</th>
+                        <th>Chi Phí (VNĐ)</th>
+                        <th>Người / Đơn Vị Thực Hiện</th>
+                        <th>Trạng Thái</th>
+                        <th>Ghi Chú</th>
+                        <th class="text-end">Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var log in Model.MaintenanceLogs)
+                    {
+                        <tr>
+                            <td>
+                                <div class="fw-bold text-dark">@log.MaintenanceDate.ToString("dd/MM/yyyy")</div>
+                                <small class="text-muted">Mã phiếu #@log.LogId</small>
+                            </td>
+                            <td>
+                                <span class="fw-semibold text-secondary">@log.Description</span>
+                            </td>
+                            <td>
+                                <span class="fw-bold text-danger">@log.Cost.ToString("N0") VNĐ</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark border">@log.PerformedBy</span>
+                            </td>
+                            <td>
+                                @if (log.Status == "Hoàn thành")
+                                {
+                                    <span class="badge badge-soft-success rounded-pill px-3 py-2 small">Hoàn thành</span>
+                                }
+                                else if (log.Status == "Đang bảo dưỡng")
+                                {
+                                    <span class="badge badge-soft-warning rounded-pill px-3 py-2 small">Đang bảo dưỡng</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-soft-danger rounded-pill px-3 py-2 small">Chờ linh kiện</span>
+                                }
+                            </td>
+                            <td>
+                                <small class="text-muted">@(log.Notes ?? "Không có")</small>
+                            </td>
+                            <td class="text-end">
+                                <a asp-controller="MaintenanceManagement" asp-action="Edit" asp-route-id="@log.LogId" 
+                                   class="btn btn-sm btn-light border rounded-2" title="Chỉnh sửa phiếu">
+                                    <i class="bi bi-pencil-square text-warning"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+

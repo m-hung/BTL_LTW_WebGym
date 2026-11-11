@@ -1,0 +1,244 @@
+@model List<WebGym.Models.Entities.ProductCategory>
+@{
+    ViewData["Title"] = "Quản Lý Danh Mục Nhóm Hàng";
+}
+
+<div class="container-fluid px-0">
+    <!-- Page Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+        <div>
+            <h3 class="fw-bold text-dark mb-1 d-flex align-items-center">
+                <span class="badge bg-secondary bg-opacity-10 text-secondary p-2 me-2 rounded-3">
+                    <i class="bi bi-tags-fill"></i>
+                </span>
+                Quản Lý Danh Mục Sản Phẩm
+            </h3>
+            <p class="text-muted mb-0 small">Phân loại nhóm hàng: Thực phẩm bổ sung (Whey, Creatine, Pre-workout), Phụ kiện tập, Đồ uống...</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-3 shadow-sm">
+                <i class="bi bi-arrow-left me-1"></i> Quay lại Sản phẩm
+            </a>
+            <button type="button" class="btn btn-primary rounded-pill px-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
+                <i class="bi bi-plus-circle me-1"></i> Thêm Danh Mục
+            </button>
+        </div>
+    </div>
+
+    <!-- Category Table -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table align-middle mb-0 table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4" style="width: 80px;">MÃ ID</th>
+                        <th>TÊN DANH MỤC</th>
+                        <th>MÔ TẢ CHI TIẾT</th>
+                        <th>SỐ LƯỢNG SẢN PHẨM</th>
+                        <th>TRẠNG THÁI</th>
+                        <th class="text-end pe-4" style="width: 120px;">THAO TÁC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                Chưa có danh mục sản phẩm nào.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var cat in Model)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-bold text-muted">#CAT-@cat.CategoryId</td>
+                                <td>
+                                    <div class="fw-bold text-dark fs-6">@cat.CategoryName</div>
+                                </td>
+                                <td>
+                                    <div class="text-muted small" style="max-width: 450px;">
+                                        @(cat.Description ?? "Chưa có mô tả")
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2 py-1 rounded-pill">
+                                        <i class="bi bi-box-seam me-1"></i> @cat.Products.Count sản phẩm
+                                    </span>
+                                </td>
+                                <td>
+                                    @if (cat.IsActive)
+                                    {
+                                        <span class="badge bg-success bg-opacity-15 text-success rounded-pill px-2 py-1">Đang hoạt động</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary bg-opacity-25 text-secondary rounded-pill px-2 py-1">Tạm khóa</span>
+                                    }
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="btn-group btn-group-sm">
+                                        <button type="button" class="btn btn-outline-primary btn-edit-category"
+                                                data-id="@cat.CategoryId"
+                                                data-name="@cat.CategoryName"
+                                                data-desc="@cat.Description"
+                                                data-active="@cat.IsActive.ToString().ToLower()"
+                                                title="Sửa danh mục">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-danger btn-delete-category"
+                                                data-id="@cat.CategoryId"
+                                                data-name="@cat.CategoryName"
+                                                data-count="@cat.Products.Count"
+                                                title="Xóa danh mục">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Thêm Danh Mục -->
+<div class="modal fade" id="createCategoryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <form asp-action="CreateCategory" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold">Thêm Danh Mục Sản Phẩm</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-3">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Tên danh mục <span class="text-danger">*</span></label>
+                        <input type="text" name="CategoryName" required class="form-control rounded-3" placeholder="VD: Thực phẩm bổ sung & Whey..." />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Mô tả nhóm hàng</label>
+                        <textarea name="Description" class="form-control rounded-3" rows="3" placeholder="Mô tả tóm tắt các sản phẩm thuộc danh mục này..."></textarea>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="IsActive" value="true" checked id="createIsActive" />
+                        <input type="hidden" name="IsActive" value="false" />
+                        <label class="form-check-label fw-semibold" for="createIsActive">Kích hoạt danh mục này</label>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm">Lưu Danh Mục</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Sửa Danh Mục -->
+<div class="modal fade" id="editCategoryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <form asp-action="EditCategory" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="CategoryId" id="editCategoryId" />
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold">Chỉnh Sửa Danh Mục</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-3">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Tên danh mục <span class="text-danger">*</span></label>
+                        <input type="text" name="CategoryName" id="editCategoryName" required class="form-control rounded-3" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Mô tả nhóm hàng</label>
+                        <textarea name="Description" id="editCategoryDesc" class="form-control rounded-3" rows="3"></textarea>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="IsActive" value="true" id="editIsActive" />
+                        <input type="hidden" name="IsActive" value="false" />
+                        <label class="form-check-label fw-semibold" for="editIsActive">Kích hoạt danh mục này</label>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm">Lưu Thay Đổi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden Delete Form -->
+<form id="deleteCategoryForm" method="post" asp-action="DeleteCategory" style="display:none;">
+    @Html.AntiForgeryToken()
+    <input type="hidden" id="deleteCategoryId" name="id" value="" />
+</form>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Edit modal setup
+            const editButtons = document.querySelectorAll('.btn-edit-category');
+            editButtons.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const id = this.getAttribute('data-id');
+                    const name = this.getAttribute('data-name');
+                    const desc = this.getAttribute('data-desc');
+                    const active = this.getAttribute('data-active') === 'true';
+
+                    document.getElementById('editCategoryId').value = id;
+                    document.getElementById('editCategoryName').value = name;
+                    document.getElementById('editCategoryDesc').value = desc || '';
+                    document.getElementById('editIsActive').checked = active;
+
+                    const modal = new bootstrap.Modal(document.getElementById('editCategoryModal'));
+                    modal.show();
+                });
+            });
+
+            // Delete confirm
+            const deleteButtons = document.querySelectorAll('.btn-delete-category');
+            deleteButtons.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const id = this.getAttribute('data-id');
+                    const name = this.getAttribute('data-name');
+                    const count = parseInt(this.getAttribute('data-count') || '0');
+
+                    if (count > 0) {
+                        Swal.fire({
+                            title: 'Không thể xóa!',
+                            text: `Danh mục "${name}" hiện đang có ${count} sản phẩm trực thuộc. Vui lòng chuyển các sản phẩm sang danh mục khác trước khi xóa.`,
+                            icon: 'error',
+                            confirmButtonColor: '#2563eb'
+                        });
+                        return;
+                    }
+
+                    Swal.fire({
+                        title: 'Xác nhận xóa danh mục?',
+                        text: `Bạn có chắc chắn muốn xóa danh mục "${name}"?`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#64748b',
+                        confirmButtonText: 'Đồng ý xóa',
+                        cancelButtonText: 'Hủy'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const form = document.getElementById('deleteCategoryForm');
+                            document.getElementById('deleteCategoryId').value = id;
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+}
+

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using WebGym.Data;
 using WebGym.Services.Implementations;
@@ -11,6 +12,11 @@ namespace WebGym
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            // 0. Data Protection (persist keys locally)
+            var keysFolder = Path.Combine(builder.Environment.ContentRootPath, "App_Data", "DataProtectionKeys");
+            builder.Services.AddDataProtection()
+                .PersistKeysToFileSystem(new DirectoryInfo(keysFolder));
 
             // 1. Database Connection
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 

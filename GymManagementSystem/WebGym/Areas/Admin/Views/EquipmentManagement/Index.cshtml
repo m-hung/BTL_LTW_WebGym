@@ -1,0 +1,292 @@
+@model IEnumerable<WebGym.Models.Entities.Equipment>
+@{
+    ViewData["Title"] = "Quản Lý Thiết Bị & Máy Móc";
+}
+
+<!-- Page Header -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold text-dark mb-1">
+            <i class="bi bi-cpu-fill text-primary me-2"></i>Quản Lý Thiết Bị & Máy Móc
+        </h3>
+        <p class="text-muted small mb-0">Theo dõi danh mục máy tập, tình trạng kỹ thuật, vị trí lắp đặt và lịch bảo dưỡng định kỳ.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="Create" class="btn btn-primary d-flex align-items-center gap-2 px-3 py-2 rounded-3 shadow-sm">
+            <i class="bi bi-plus-circle-fill"></i>
+            <span class="fw-semibold">Thêm Thiết Bị Mới</span>
+        </a>
+    </div>
+</div>
+
+<!-- Stats Cards Row -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted small fw-semibold">Tổng máy móc</span>
+                    <h3 class="fw-bold text-dark mb-0 mt-1">@ViewBag.TotalCount</h3>
+                </div>
+                <div class="p-3 bg-primary bg-opacity-10 rounded-3 text-primary">
+                    <i class="bi bi-gear-fill fs-4"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted small fw-semibold">Hoạt động tốt</span>
+                    <h3 class="fw-bold text-success mb-0 mt-1">@ViewBag.GoodCount</h3>
+                </div>
+                <div class="p-3 bg-success bg-opacity-10 rounded-3 text-success">
+                    <i class="bi bi-check-circle-fill fs-4"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted small fw-semibold">Cần bảo trì</span>
+                    <h3 class="fw-bold text-warning mb-0 mt-1">@ViewBag.WarningCount</h3>
+                </div>
+                <div class="p-3 bg-warning bg-opacity-10 rounded-3 text-warning">
+                    <i class="bi bi-wrench-adjustable-circle-fill fs-4"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted small fw-semibold">Đang hỏng / Chờ sửa</span>
+                    <h3 class="fw-bold text-danger mb-0 mt-1">@ViewBag.BrokenCount</h3>
+                </div>
+                <div class="p-3 bg-danger bg-opacity-10 rounded-3 text-danger">
+                    <i class="bi bi-exclamation-octagon-fill fs-4"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Smart Filters Card -->
+<div class="card border-0 bg-white p-3 mb-4 rounded-4 shadow-sm">
+    <form method="get" class="row g-2 align-items-center">
+        <div class="col-md-3">
+            <div class="input-group">
+                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                <input type="text" name="searchKeyword" class="form-control bg-light border-start-0" 
+                       placeholder="Tìm tên máy hoặc serial..." value="@ViewBag.SearchKeyword" />
+            </div>
+        </div>
+        <div class="col-md-2">
+            <select name="roomId" class="form-select bg-light" asp-items="ViewBag.RoomsList">
+                <option value="">-- Tất cả phòng tập --</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="areaFilter" class="form-select bg-light" asp-items="ViewBag.AreaList">
+                <option value="">-- Tất cả phân khu --</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="brand" class="form-select bg-light" asp-items="ViewBag.BrandList">
+                <option value="">-- Hãng sản xuất --</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="status" class="form-select bg-light">
+                <option value="">-- Tình trạng --</option>
+                <option value="Hoạt động tốt" selected="@(ViewBag.SelectedStatus == "Hoạt động tốt")">Hoạt động tốt</option>
+                <option value="Cần bảo trì" selected="@(ViewBag.SelectedStatus == "Cần bảo trì")">Cần bảo trì</option>
+                <option value="Đang hỏng" selected="@(ViewBag.SelectedStatus == "Đang hỏng")">Đang hỏng</option>
+            </select>
+        </div>
+        <div class="col-md-1 d-flex gap-1">
+            <button type="submit" class="btn btn-dark w-100 rounded-3" title="Lọc dữ liệu">
+                <i class="bi bi-funnel"></i>
+            </button>
+            @if (!string.IsNullOrWhiteSpace(ViewBag.SearchKeyword as string) || 
+                 ViewBag.SelectedRoomId != null || 
+                 !string.IsNullOrWhiteSpace(ViewBag.SelectedArea as string) || 
+                 !string.IsNullOrWhiteSpace(ViewBag.SelectedBrand as string) || 
+                 !string.IsNullOrWhiteSpace(ViewBag.SelectedStatus as string))
+            {
+                <a asp-action="Index" class="btn btn-outline-secondary rounded-3" title="Xóa bộ lọc">
+                    <i class="bi bi-arrow-clockwise"></i>
+                </a>
+            }
+        </div>
+    </form>
+</div>
+
+<!-- Equipments Table Card -->
+<div class="card border-0 rounded-4 shadow-sm bg-white overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th style="width: 70px;">Hình ảnh</th>
+                    <th>Tên Thiết Bị / Máy Móc</th>
+                    <th>Vị Trí & Phân Khu</th>
+                    <th>Hãng SX</th>
+                    <th>Ngày Mua / Bảo Dưỡng</th>
+                    <th>Tình Trạng</th>
+                    <th class="text-center" style="min-width: 170px;">Đổi Nhanh Trạng Thái (1-Click)</th>
+                    <th class="text-end" style="min-width: 140px;">Thao Tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="bi bi-search fs-2 d-block mb-2"></i>
+                            Không tìm thấy thiết bị nào phù hợp với bộ lọc.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var eq in Model)
+                    {
+                        <tr>
+                            <td>
+                                @if (!string.IsNullOrEmpty(eq.ImageUrl))
+                                {
+                                    <img src="@eq.ImageUrl" alt="@eq.EquipmentName" class="rounded-3 border object-fit-cover" style="width: 50px; height: 50px;" 
+                                         onerror="this.onerror=null; this.src='/images/default-equipment.png';" />
+                                }
+                                else
+                                {
+                                    <div class="bg-light rounded-3 d-flex align-items-center justify-content-center text-muted border" style="width: 50px; height: 50px;">
+                                        <i class="bi bi-cpu fs-4"></i>
+                                    </div>
+                                }
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">@eq.EquipmentName</div>
+                                <small class="text-muted">
+                                    <span class="badge bg-light text-secondary border">SN: @(eq.SerialNumber ?? "Chưa rõ")</span>
+                                </small>
+                            </td>
+                            <td>
+                                <div class="fw-semibold text-secondary small">
+                                    <i class="bi bi-door-open me-1 text-primary"></i>@(eq.GymRoom != null ? eq.GymRoom.RoomName : "Chưa gắn phòng")
+                                </div>
+                                <small class="text-muted">Khu: @eq.Area</small>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark border fw-bold">@eq.Brand</span>
+                            </td>
+                            <td>
+                                <div class="small text-muted">Mua: @eq.PurchaseDate.ToString("dd/MM/yyyy")</div>
+                                <div class="small text-secondary">
+                                    Bảo dưỡng: @(eq.LastMaintenanceDate.HasValue ? eq.LastMaintenanceDate.Value.ToString("dd/MM/yyyy") : "Chưa có")
+                                </div>
+                            </td>
+                            <td>
+                                @if (eq.Status == "Hoạt động tốt")
+                                {
+                                    <span class="badge badge-soft-success rounded-pill px-3 py-2 small">
+                                        <i class="bi bi-check-circle me-1"></i> Tốt
+                                    </span>
+                                }
+                                else if (eq.Status == "Cần bảo trì")
+                                {
+                                    <span class="badge badge-soft-warning rounded-pill px-3 py-2 small">
+                                        <i class="bi bi-tools me-1"></i> Cần bảo trì
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-soft-danger rounded-pill px-3 py-2 small">
+                                        <i class="bi bi-exclamation-triangle-fill me-1"></i> Đang hỏng
+                                    </span>
+                                }
+                            </td>
+                            <!-- 1-Click Quick Change Status -->
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <!-- Nút 1-click Báo Hỏng -->
+                                    <form asp-action="QuickChangeStatus" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@eq.EquipmentId" />
+                                        <input type="hidden" name="newStatus" value="Đang hỏng" />
+                                        <button type="submit" class="btn btn-outline-danger btn-sm @(eq.Status == "Đang hỏng" ? "active fw-bold" : "")" 
+                                                title="Đổi ngay sang Đang hỏng">
+                                            <i class="bi bi-exclamation-circle me-1"></i> Báo hỏng
+                                        </button>
+                                    </form>
+
+                                    <!-- Nút 1-click Cần bảo trì -->
+                                    <form asp-action="QuickChangeStatus" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@eq.EquipmentId" />
+                                        <input type="hidden" name="newStatus" value="Cần bảo trì" />
+                                        <button type="submit" class="btn btn-outline-warning btn-sm @(eq.Status == "Cần bảo trì" ? "active fw-bold" : "")"
+                                                title="Đổi ngay sang Cần bảo dưỡng">
+                                            <i class="bi bi-wrench me-1"></i> Bảo trì
+                                        </button>
+                                    </form>
+
+                                    <!-- Nút 1-click Hoạt động tốt -->
+                                    <form asp-action="QuickChangeStatus" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@eq.EquipmentId" />
+                                        <input type="hidden" name="newStatus" value="Hoạt động tốt" />
+                                        <button type="submit" class="btn btn-outline-success btn-sm @(eq.Status == "Hoạt động tốt" ? "active fw-bold" : "")"
+                                                title="Đổi ngay sang Hoạt động tốt">
+                                            <i class="bi bi-check2"></i> Tốt
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                            <!-- Actions -->
+                            <td class="text-end">
+                                <div class="d-flex justify-content-end gap-1">
+                                    <a asp-action="Details" asp-route-id="@eq.EquipmentId" 
+                                       class="btn btn-sm btn-light border rounded-2" title="Xem thông số & Lịch sử bảo dưỡng">
+                                        <i class="bi bi-clock-history text-primary"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@eq.EquipmentId" 
+                                       class="btn btn-sm btn-light border rounded-2" title="Chỉnh sửa">
+                                        <i class="bi bi-pencil-square text-warning"></i>
+                                    </a>
+                                    <form asp-action="Delete" asp-route-id="@eq.EquipmentId" method="post" id="deleteEq-@eq.EquipmentId" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="button" class="btn btn-sm btn-light border rounded-2 text-danger btn-delete-eq" 
+                                                data-form-id="deleteEq-@eq.EquipmentId"
+                                                data-eq-name="@eq.EquipmentName"
+                                                title="Xóa máy">
+                                            <i class="bi bi-trash3"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.btn-delete-eq').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const formId = this.getAttribute('data-form-id');
+                const eqName = this.getAttribute('data-eq-name') || 'này';
+                confirmAction(formId, 'Bạn có chắc chắn muốn xóa máy "' + eqName + '"?');
+            });
+        });
+    </script>
+}
+

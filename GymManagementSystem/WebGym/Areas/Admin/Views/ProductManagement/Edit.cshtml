@@ -1,0 +1,153 @@
+@model WebGym.Models.DTOs.Admin.ProductFormViewModel
+@{
+    ViewData["Title"] = "Chỉnh Sửa Sản Phẩm";
+}
+
+<div class="container-fluid px-0" style="max-width: 900px;">
+    <!-- Page Header -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h3 class="fw-bold text-dark mb-1 d-flex align-items-center">
+                <span class="badge bg-primary bg-opacity-10 text-primary p-2 me-2 rounded-3">
+                    <i class="bi bi-pencil-square"></i>
+                </span>
+                Chỉnh Sửa Sản Phẩm
+            </h3>
+            <p class="text-muted mb-0 small">Cập nhật thông tin giá, danh mục, tồn kho và hình ảnh sản phẩm.</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-3 shadow-sm">
+            <i class="bi bi-arrow-left me-1"></i> Quay lại
+        </a>
+    </div>
+
+    <!-- Form Card -->
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-4">
+            <form asp-action="Edit" asp-route-id="@Model.ProductId" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="ProductId" />
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4 rounded-3"></div>
+
+                <div class="row g-3">
+                    <!-- Tên sản phẩm -->
+                    <div class="col-12 col-md-8">
+                        <label asp-for="ProductName" class="form-label fw-semibold text-dark">
+                            Tên sản phẩm <span class="text-danger">*</span>
+                        </label>
+                        <input asp-for="ProductName" class="form-control rounded-3" />
+                        <span asp-validation-for="ProductName" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Danh mục -->
+                    <div class="col-12 col-md-4">
+                        <label asp-for="CategoryId" class="form-label fw-semibold text-dark">
+                            Danh mục <span class="text-danger">*</span>
+                        </label>
+                        <select asp-for="CategoryId" asp-items="ViewBag.CategoriesList" class="form-select rounded-3">
+                            <option value="">-- Chọn danh mục --</option>
+                        </select>
+                        <span asp-validation-for="CategoryId" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Giá bán -->
+                    <div class="col-12 col-md-6">
+                        <label asp-for="Price" class="form-label fw-semibold text-dark">
+                            Giá bán niêm yết (VNĐ) <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <input asp-for="Price" type="number" step="1000" min="0" class="form-control rounded-start-3" />
+                            <span class="input-group-text bg-light border">VNĐ</span>
+                        </div>
+                        <span asp-validation-for="Price" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Tồn kho -->
+                    <div class="col-12 col-md-6">
+                        <label asp-for="StockQuantity" class="form-label fw-semibold text-dark">
+                            Số lượng tồn kho <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <input asp-for="StockQuantity" type="number" min="0" class="form-control rounded-start-3" />
+                            <span class="input-group-text bg-light border">Cái / Hộp</span>
+                        </div>
+                        <span asp-validation-for="StockQuantity" class="text-danger small"></span>
+                        @if (Model.StockQuantity < 5)
+                        {
+                            <div class="text-danger small fw-semibold mt-1">
+                                <i class="bi bi-exclamation-triangle-fill"></i> Tồn kho hiện tại đang dưới mức an toàn (&lt; 5 cái).
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Hình ảnh sản phẩm -->
+                    <div class="col-12 col-md-8">
+                        <label class="form-label fw-semibold text-dark">Thay đổi ảnh từ máy tính</label>
+                        <input asp-for="ImageFile" type="file" class="form-control rounded-3 mb-2" accept="image/*" id="productImageInput" />
+                        
+                        <label asp-for="ImageUrl" class="form-label fw-semibold text-muted small">Hoặc đường dẫn ảnh (URL)</label>
+                        <input asp-for="ImageUrl" class="form-control rounded-3" id="productImageUrlInput" />
+                    </div>
+
+                    <!-- Preview ảnh -->
+                    <div class="col-12 col-md-4 text-center">
+                        <label class="form-label fw-semibold text-dark d-block">Xem trước ảnh</label>
+                        <div class="border rounded-4 bg-light d-flex align-items-center justify-content-center overflow-hidden mx-auto" style="width: 140px; height: 140px;">
+                            <img id="imagePreview" src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "/images/default-product.svg" : Url.Content(Model.ImageUrl))" alt="Preview" class="img-fluid object-fit-cover w-100 h-100" onerror="this.onerror=null; this.src='/images/default-product.svg';" />
+                        </div>
+                    </div>
+
+                    <!-- Mô tả sản phẩm -->
+                    <div class="col-12">
+                        <label asp-for="Description" class="form-label fw-semibold text-dark">Mô tả chi tiết & Công dụng</label>
+                        <textarea asp-for="Description" class="form-control rounded-3" rows="3"></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Trạng thái kinh doanh -->
+                    <div class="col-12">
+                        <div class="form-check form-switch fs-6">
+                            <input asp-for="IsActive" class="form-check-input" type="checkbox" id="isActiveSwitch" />
+                            <label class="form-check-label fw-semibold text-dark" for="isActiveSwitch">
+                                Đang mở bán (Hiển thị tại quầy POS và Shop)
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="col-12 d-flex justify-content-end gap-2 pt-3 border-top">
+                        <a asp-action="Index" class="btn btn-light rounded-pill px-4">Hủy bỏ</a>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm">
+                            <i class="bi bi-save me-1"></i> Cập Nhật Thay Đổi
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        const imageInput = document.getElementById('productImageInput');
+        const urlInput = document.getElementById('productImageUrlInput');
+        const preview = document.getElementById('imagePreview');
+
+        imageInput.addEventListener('change', function () {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+
+        urlInput.addEventListener('input', function () {
+            if (this.value.trim().length > 5) {
+                preview.src = this.value.trim();
+            }
+        });
+    </script>
+}
+

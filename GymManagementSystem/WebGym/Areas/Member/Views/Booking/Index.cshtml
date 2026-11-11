@@ -3,125 +3,301 @@
     ViewData["Title"] = "Đặt Lịch Huấn Luyện Viên (PT)";
     var trainers = ViewBag.Trainers as List<WebGym.Models.Entities.Trainer> ?? new List<WebGym.Models.Entities.Trainer>();
     var bookings = Model?.ToList() ?? new List<WebGym.Models.Entities.Booking>();
+
+    var activeSub = ViewBag.ActiveSub as WebGym.Models.Entities.Subscription;
+    bool hasActiveSub = ViewBag.HasActiveSub == true;
+    bool hasPTPackage = ViewBag.HasPTPackage == true;
+    string packageEndDate = ViewBag.PackageEndDate as string ?? "";
+    string packageEndDateFormatted = activeSub?.EndDate.ToString("dd/MM/yyyy") ?? "";
+
+    var defaultBookingDate = DateTime.Today.AddDays(1);
+    if (activeSub != null && defaultBookingDate > activeSub.EndDate.Date)
+    {
+        defaultBookingDate = activeSub.EndDate.Date;
+    }
 }
 
-<!-- KHỐI 1 (TRÊN): ĐĂNG KÝ CA TẬP MỚI (Yêu cầu 5) -->
-<div class="portal-card p-4 mb-4">
-    <div class="mb-4 pb-3 border-bottom border-secondary border-opacity-25">
-        <h3 class="portal-title-accent mb-1 fs-3">ĐĂNG KÝ <span>CA TẬP MỚI</span></h3>
-        <div style="color: #a6ada2; font-size: 13.5px;">
-            Nhập thời gian bạn rảnh, hệ thống sẽ đề xuất danh sách Huấn luyện viên (PT) phù hợp nhất
+<style>
+    /* Đổi icon lịch thành màu trắng tinh khiết sáng rõ trên nền tối */
+    #bookingDateInput {
+        color-scheme: dark;
+    }
+    #bookingDateInput::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='%23ffffff' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z'/%3E%3Cpath d='M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z'/%3E%3C/svg%3E") !important;
+        background-size: 18px 18px !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+        opacity: 1 !important;
+        padding: 6px;
+        border-radius: 4px;
+        transform: scale(1.2);
+        transition: all 0.2s ease;
+    }
+    #bookingDateInput::-webkit-calendar-picker-indicator:hover {
+        transform: scale(1.35);
+        filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.95)) !important;
+    }
+</style>
+
+@if (hasPTPackage)
+{
+    <!-- KHỐI 1 (TRÊN): ĐĂNG KÝ CA TẬP MỚI DÀNH CHO HỘI VIÊN CÓ GÓI PT (Yêu cầu 5 & Bước 3) -->
+    <div class="portal-card p-4 mb-4">
+        <!-- Banner xác nhận quyền lợi PT 1-1 -->
+        <div class="d-flex flex-wrap align-items-center justify-content-between p-3 rounded mb-4" 
+             style="background: linear-gradient(135deg, rgba(204, 255, 0, 0.08) 0%, rgba(20, 26, 22, 0.95) 100%); border: 1px solid rgba(204, 255, 0, 0.25);">
+            <div class="d-flex align-items-center gap-3">
+                <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(204, 255, 0, 0.15); display: flex; align-items: center; justify-content: center; color: var(--portal-lime); font-size: 22px; flex-shrink: 0;">
+                    <i class="bi bi-patch-check-fill"></i>
+                </div>
+                <div>
+                    <div class="fw-bold" style="color: #f2f5ef; font-size: 15px;">
+                        ĐẶC QUYỀN PT 1-1 ĐANG KÍCH HOẠT &bull; <span style="color: var(--portal-lime);">@activeSub?.Package?.PackageName</span>
+                    </div>
+                    <div class="small" style="color: #a6ada2;">
+                        Thời hạn gói tập đến ngày: <strong style="color: #e5eae0;">@packageEndDateFormatted</strong>. Bạn có thể tự do đặt lịch trong thời hạn này.
+                    </div>
+                </div>
+            </div>
+            <div class="mt-2 mt-sm-0">
+                <span class="badge" style="background: rgba(46, 213, 115, 0.15); color: #2ed573; border: 1px solid rgba(46, 213, 115, 0.35); font-size: 13px; padding: 7px 12px;">
+                    <i class="bi bi-shield-check me-1"></i>Đủ điều kiện đặt PT
+                </span>
+            </div>
+        </div>
+
+        <div class="mb-4 pb-3 border-bottom border-secondary border-opacity-25">
+            <h3 class="portal-title-accent mb-1 fs-3">ĐĂNG KÝ <span>CA TẬP MỚI</span></h3>
+            <div style="color: #a6ada2; font-size: 13.5px;">
+                Nhập thời gian bạn rảnh, hệ thống sẽ đề xuất danh sách Huấn luyện viên (PT) phù hợp nhất
+            </div>
+        </div>
+
+        <form asp-action="Create" method="post" id="bookingForm">
+            @Html.AntiForgeryToken()
+
+            <!-- BƯỚC 1: THỜI GIAN RẢNH CỦA HỘI VIÊN -->
+            <div class="mb-4">
+                <div class="portal-section-eyebrow">
+                    01. THỜI GIAN BẠN CÓ THỂ TẬP LUYỆN
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Ngày tập luyện <span style="color: var(--portal-danger);">*</span></label>
+                        <input type="date" name="BookingDate" id="bookingDateInput" class="form-control" 
+                               value="@defaultBookingDate.ToString("yyyy-MM-dd")" 
+                               min="@DateTime.Today.ToString("yyyy-MM-dd")" 
+                               max="@packageEndDate" required />
+                        <div class="form-text mt-1" style="color: #9aa296; font-size: 12px;">
+                            <i class="bi bi-calendar3 me-1"></i>Hạn gói tập: <strong>@packageEndDateFormatted</strong> (chỉ được đặt lịch trong thời hạn gói)
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Khung giờ rảnh mong muốn <span style="color: var(--portal-danger);">*</span></label>
+                        <select name="TimeSlot" id="timeSlotSelect" class="form-select" required>
+                            <option value="06:00 - 07:30">06:00 - 07:30 | Sáng sớm (Cardio)</option>
+                            <option value="08:00 - 09:30">08:00 - 09:30 | Buổi Sáng (Tăng cơ)</option>
+                            <option value="09:30 - 11:00">09:30 - 11:00 | Buổi Sáng (Thể lực)</option>
+                            <option value="14:00 - 15:30">14:00 - 15:30 | Buổi Chiều (Kỹ thuật)</option>
+                            <option value="16:00 - 17:30">16:00 - 17:30 | Buổi Chiều (HIIT)</option>
+                            <option value="17:30 - 19:00" selected>17:30 - 19:00 | Giờ Vàng (Full Body)</option>
+                            <option value="19:00 - 20:30">19:00 - 20:30 | Buổi Tối (Giãn cơ)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BƯỚC 2: HỆ THỐNG ĐỀ XUẤT HUẤN LUYỆN VIÊN (PT) -->
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="portal-section-eyebrow mb-0">
+                        02. ĐỀ XUẤT HUẤN LUYỆN VIÊN (PT) PHÙ HỢP
+                    </div>
+                    <span class="small" style="color: #9aa296;">Chọn 1 HLV đồng hành cùng bạn</span>
+                </div>
+
+                @if (trainers.Any())
+                {
+                    <div class="row g-3" id="trainerCardsContainer">
+                        @for (int i = 0; i < trainers.Count; i++)
+                        {
+                            var t = trainers[i];
+                            var isChecked = (i == 0); // Mặc định chọn HLV đầu tiên
+                            <div class="col-md-6 col-lg-4">
+                                <label class="pt-select-card @(isChecked ? "active" : "") d-block position-relative p-3 rounded" 
+                                       style="cursor: pointer; background-color: var(--portal-bg2); border: 2px solid @(isChecked ? "var(--portal-lime)" : "var(--portal-line)"); transition: all 0.25s ease;">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div style="width: 48px; height: 48px; border-radius: 50%; background: #1f2722; border: 1px solid var(--portal-line); display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--portal-lime); font-size: 18px; flex-shrink: 0;">
+                                            @(string.IsNullOrEmpty(t.User.FullName) ? "PT" : t.User.FullName.Substring(0, 1).ToUpper())
+                                        </div>
+                                        <div class="flex-grow-1 overflow-hidden">
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <div class="fw-bold text-truncate" style="color: #f2f5ef; font-size: 15px;">
+                                                    @t.User.FullName
+                                                </div>
+                                                <input type="radio" name="TrainerId" value="@t.TrainerId" class="pt-radio-input" 
+                                                       @(isChecked ? "checked" : "") required style="accent-color: var(--portal-lime); transform: scale(1.2);" />
+                                            </div>
+                                            <div class="small text-truncate" style="color: var(--portal-lime); font-weight: 500;">
+                                                @(string.IsNullOrEmpty(t.Specialization) ? "HLV Thể Hình Cá Nhân" : t.Specialization)
+                                            </div>
+                                            <div class="small text-truncate mt-1" style="color: #9aa296; font-size: 12px;">
+                                                Sẵn sàng nhận lịch tập
+                                            </div>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="p-3 text-center rounded" style="background: var(--portal-bg2); border: 1px solid var(--portal-line); color: #b0b7ad;">
+                        Hiện chưa có huấn luyện viên nào khả dụng. Vui lòng quay lại sau.
+                    </div>
+                }
+            </div>
+
+            <!-- BƯỚC 3: GHI CHÚ MỤC TIÊU -->
+            <div class="mb-4">
+                <div class="portal-section-eyebrow">
+                    03. GHI CHÚ MỤC TIÊU CHO HLV
+                </div>
+                <textarea name="Notes" class="form-control" rows="2" 
+                          placeholder="Ví dụ: Tập trung phát triển ngực trên, đau nhẹ cổ tay cần chú ý form, hướng dẫn bài mới..."></textarea>
+            </div>
+
+            <!-- BUTTON GỬI LỊCH -->
+            <div class="pt-3 border-top border-secondary border-opacity-25 d-flex flex-wrap gap-2 gap-sm-3">
+                <button type="submit" class="btn-pulse-primary">
+                    GỬI YÊU CẦU ĐẶT LỊCH
+                </button>
+                <button type="reset" class="btn-pulse-outline">
+                    Nhập lại
+                </button>
+            </div>
+        </form>
+    </div>
+}
+else
+{
+    <!-- KHỐI 1: MÀN HÌNH KHÓA TÍNH NĂNG (LOCK SCREEN - ĐẶC QUYỀN GÓI VÀNG & KIM CƯƠNG) -->
+    <div class="portal-card p-4 p-md-5 mb-4 text-center position-relative overflow-hidden">
+        <div class="mb-4">
+            <div style="width: 86px; height: 86px; margin: 0 auto; border-radius: 24px; background: radial-gradient(circle at 30% 30%, #252f28 0%, #121714 100%); border: 1.5px solid rgba(245, 176, 65, 0.45); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 25px rgba(245, 176, 65, 0.2); display: flex; align-items: center; justify-content: center; position: relative;">
+                <!-- Đèn tín hiệu góc sang trọng -->
+                <div style="position: absolute; top: -4px; right: -4px; width: 14px; height: 14px; border-radius: 50%; background: #f5b041; border: 2px solid #0e110f; box-shadow: 0 0 10px #f5b041;"></div>
+                
+                <!-- Biểu tượng Khiên Khóa Đặc Quyền VIP mạ vàng -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="46" height="46" viewBox="0 0 24 24" fill="none">
+                    <!-- Khung Khiên ngoài -->
+                    <path d="M12 2L4 5.2V11.8C4 16.9 7.4 21.6 12 22.8C16.6 21.6 20 16.9 20 11.8V5.2L12 2Z" fill="url(#lockShieldGrad)" stroke="#f5b041" stroke-width="1.6" stroke-linejoin="round"/>
+                    <!-- Lòng Khiên nền tối thể thao -->
+                    <path d="M12 4.2L6 6.6V11.8C6 15.6 8.5 19.2 12 20.3C15.5 19.2 18 15.6 18 11.8V6.6L12 4.2Z" fill="rgba(14, 17, 15, 0.78)"/>
+                    <!-- Càng Khóa -->
+                    <path d="M9.8 11V9.2C9.8 7.98 10.78 7 12 7C13.22 7 14.2 7.98 14.2 9.2V11" stroke="#f5b041" stroke-width="1.8" stroke-linecap="round"/>
+                    <!-- Thân Ổ Khóa Vàng -->
+                    <rect x="8.5" y="10.8" width="7" height="5.4" rx="1.4" fill="#f5b041"/>
+                    <!-- Lỗ Khóa -->
+                    <circle cx="12" cy="13" r="0.75" fill="#121714"/>
+                    <path d="M12 13.6V14.6" stroke="#121714" stroke-width="1" stroke-linecap="round"/>
+                    
+                    <defs>
+                        <linearGradient id="lockShieldGrad" x1="4" y1="2" x2="20" y2="22.8" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#ffeaa7"/>
+                            <stop offset="0.5" stop-color="#f5b041"/>
+                            <stop offset="1" stop-color="#e67e22"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+        </div>
+
+        <h3 class="portal-title-accent mb-2 fs-3">TÍNH NĂNG <span>ĐẶT LỊCH PT 1-1 BỊ KHÓA</span></h3>
+
+        @if (hasActiveSub)
+        {
+            <div class="mx-auto mb-4" style="max-width: 680px; color: #cfd5ca; font-size: 15px; line-height: 1.6;">
+                Bạn hiện đang sở hữu <strong style="color: var(--portal-lime);">@activeSub?.Package?.PackageName</strong> (hết hạn ngày @packageEndDateFormatted).
+                <div class="mt-3 p-3 rounded" style="background: rgba(245, 176, 65, 0.1); border: 1px solid rgba(245, 176, 65, 0.3); color: #f5b041; font-size: 14px;">
+                    <i class="bi bi-exclamation-triangle-fill me-1"></i> Gói tập của bạn <strong>chưa bao gồm đặc quyền tập cùng Huấn luyện viên cá nhân (PT 1-1)</strong>. Đặc quyền này được tích hợp sẵn trong <strong>Gói Vàng (VIP)</strong> và <strong>Gói Kim Cương (VVIP)</strong>.
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="mx-auto mb-4" style="max-width: 680px; color: #cfd5ca; font-size: 15px; line-height: 1.6;">
+                Bạn hiện <strong style="color: #ff7675;">chưa đăng ký gói tập</strong> hoặc gói tập trước đây đã hết hạn.
+                <div class="mt-3 p-3 rounded" style="background: rgba(255, 118, 117, 0.1); border: 1px solid rgba(255, 118, 117, 0.3); color: #ff7675; font-size: 14px;">
+                    <i class="bi bi-exclamation-circle-fill me-1"></i> Vui lòng đăng ký gói tập đang hoạt động để sử dụng các tiện ích phòng tập và đặc quyền đặt lịch Huấn luyện viên.
+                </div>
+            </div>
+        }
+
+        <!-- 3 THẺ LỢI ÍCH VIP CỦA PT -->
+        <div class="row g-3 justify-content-center mb-4 text-start" style="max-width: 860px; margin: 0 auto;">
+            <div class="col-md-4">
+                <div class="p-3 rounded h-100" style="background: var(--portal-bg2); border: 1px solid var(--portal-line);">
+                    <div style="color: var(--portal-lime); font-size: 22px;" class="mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="var(--portal-lime)" viewBox="0 0 16 16">
+                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                            <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+                        </svg>
+                    </div>
+                    <div class="fw-bold mb-1" style="color: #f2f5ef; font-size: 14.5px;">Kèm riêng 1-1 Chuyên Sâu</div>
+                    <div class="small" style="color: #9aa296; line-height: 1.5;">HLV theo sát từng buổi, chỉnh sửa form dáng chuẩn xác, bảo đảm an toàn và tránh chấn thương.</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-3 rounded h-100" style="background: var(--portal-bg2); border: 1px solid var(--portal-line);">
+                    <div style="color: var(--portal-lime); font-size: 22px;" class="mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="var(--portal-lime)" viewBox="0 0 16 16">
+                            <path d="M4 0h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm0 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H4z"/>
+                            <path d="M4.5 10.5A.5.5 0 0 1 5 10h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zm0-2A.5.5 0 0 1 5 8h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zm0-2A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zm0-2A.5.5 0 0 1 5 4h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5z"/>
+                        </svg>
+                    </div>
+                    <div class="fw-bold mb-1" style="color: #f2f5ef; font-size: 14.5px;">Giáo Án & Dinh Dưỡng Riêng</div>
+                    <div class="small" style="color: #9aa296; line-height: 1.5;">Thiết kế lộ trình tập luyện và thực đơn dinh dưỡng khoa học tối ưu riêng cho thể trạng của bạn.</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-3 rounded h-100" style="background: var(--portal-bg2); border: 1px solid var(--portal-line);">
+                    <div style="color: var(--portal-lime); font-size: 22px;" class="mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="var(--portal-lime)" viewBox="0 0 16 16">
+                            <path d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5c0 .538-.012 1.05-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.774-3.333 3.024v2.05h2a.5.5 0 0 1 0 1h-6a.5.5 0 0 1 0-1h2v-2.05c-1.455-.25-2.543-1.159-3.333-3.024a3 3 0 1 1-1.133-5.89A31.644 31.644 0 0 1 2.5.5z"/>
+                        </svg>
+                    </div>
+                    <div class="fw-bold mb-1" style="color: #f2f5ef; font-size: 14.5px;">Cam Kết Đạt Mục Tiêu</div>
+                    <div class="small" style="color: #9aa296; line-height: 1.5;">Đo chỉ số InBody định kỳ, truyền cảm hứng tập luyện bền bỉ và hiện thực hóa vóc dáng mơ ước.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CÁC NÚT ĐIỀU HƯỚNG CTA -->
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+            <a href="/#bang-gia" class="btn-pulse-primary px-4 py-2" style="text-decoration: none;">
+                <i class="bi bi-stars me-1"></i> NÂNG CẤP GÓI VÀNG / KIM CƯƠNG
+            </a>
+            <a asp-controller="WorkoutSchedule" asp-action="Index" class="btn-pulse-outline px-4 py-2" style="text-decoration: none;">
+                <i class="bi bi-calendar-check me-1"></i> XEM LỊCH TỰ TẬP (LỊCH PHÒNG)
+            </a>
         </div>
     </div>
-
-    <form asp-action="Create" method="post" id="bookingForm">
-        @Html.AntiForgeryToken()
-
-        <!-- BƯỚC 1: THỜI GIAN RẢNH CỦA HỘI VIÊN -->
-        <div class="mb-4">
-            <div class="portal-section-eyebrow">
-                01. THỜI GIAN BẠN CÓ THỂ TẬP LUYỆN
-            </div>
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label">Ngày tập luyện <span style="color: var(--portal-danger);">*</span></label>
-                    <input type="date" name="BookingDate" id="bookingDateInput" class="form-control" 
-                           value="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" 
-                           min="@DateTime.Today.ToString("yyyy-MM-dd")" required />
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Khung giờ rảnh mong muốn <span style="color: var(--portal-danger);">*</span></label>
-                    <select name="TimeSlot" id="timeSlotSelect" class="form-select" required>
-                        <option value="06:00 - 07:30">06:00 - 07:30 | Sáng sớm (Cardio)</option>
-                        <option value="08:00 - 09:30">08:00 - 09:30 | Buổi Sáng (Tăng cơ)</option>
-                        <option value="09:30 - 11:00">09:30 - 11:00 | Buổi Sáng (Thể lực)</option>
-                        <option value="14:00 - 15:30">14:00 - 15:30 | Buổi Chiều (Kỹ thuật)</option>
-                        <option value="16:00 - 17:30">16:00 - 17:30 | Buổi Chiều (HIIT)</option>
-                        <option value="17:30 - 19:00" selected>17:30 - 19:00 | Giờ Vàng (Full Body)</option>
-                        <option value="19:00 - 20:30">19:00 - 20:30 | Buổi Tối (Giãn cơ)</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <!-- BƯỚC 2: HỆ THỐNG ĐỀ XUẤT HUẤN LUYỆN VIÊN (PT) -->
-        <div class="mb-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div class="portal-section-eyebrow mb-0">
-                    02. ĐỀ XUẤT HUẤN LUYỆN VIÊN (PT) PHÙ HỢP
-                </div>
-                <span class="small" style="color: #9aa296;">Chọn 1 HLV đồng hành cùng bạn</span>
-            </div>
-
-            @if (trainers.Any())
-            {
-                <div class="row g-3" id="trainerCardsContainer">
-                    @for (int i = 0; i < trainers.Count; i++)
-                    {
-                        var t = trainers[i];
-                        var isChecked = (i == 0); // Mặc định chọn HLV đầu tiên
-                        <div class="col-md-6 col-lg-4">
-                            <label class="pt-select-card @(isChecked ? "active" : "") d-block position-relative p-3 rounded" 
-                                   style="cursor: pointer; background-color: var(--portal-bg2); border: 2px solid @(isChecked ? "var(--portal-lime)" : "var(--portal-line)"); transition: all 0.25s ease;">
-                                <div class="d-flex align-items-center gap-3">
-                                    <div style="width: 48px; height: 48px; border-radius: 50%; background: #1f2722; border: 1px solid var(--portal-line); display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--portal-lime); font-size: 18px; flex-shrink: 0;">
-                                        @(string.IsNullOrEmpty(t.User.FullName) ? "PT" : t.User.FullName.Substring(0, 1).ToUpper())
-                                    </div>
-                                    <div class="flex-grow-1 overflow-hidden">
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <div class="fw-bold text-truncate" style="color: #f2f5ef; font-size: 15px;">
-                                                @t.User.FullName
-                                            </div>
-                                            <input type="radio" name="TrainerId" value="@t.TrainerId" class="pt-radio-input" 
-                                                   @(isChecked ? "checked" : "") required style="accent-color: var(--portal-lime); transform: scale(1.2);" />
-                                        </div>
-                                        <div class="small text-truncate" style="color: var(--portal-lime); font-weight: 500;">
-                                            @(string.IsNullOrEmpty(t.Specialization) ? "HLV Thể Hình Cá Nhân" : t.Specialization)
-                                        </div>
-                                        <div class="small text-truncate mt-1" style="color: #9aa296; font-size: 12px;">
-                                            Sẵn sàng nhận lịch tập
-                                        </div>
-                                    </div>
-                                </div>
-                            </label>
-                        </div>
-                    }
-                </div>
-            }
-            else
-            {
-                <div class="p-3 text-center rounded" style="background: var(--portal-bg2); border: 1px solid var(--portal-line); color: #b0b7ad;">
-                    Hiện chưa có huấn luyện viên nào khả dụng. Vui lòng quay lại sau.
-                </div>
-            }
-        </div>
-
-        <!-- BƯỚC 3: GHI CHÚ MỤC TIÊU -->
-        <div class="mb-4">
-            <div class="portal-section-eyebrow">
-                03. GHI CHÚ MỤC TIÊU CHO HLV
-            </div>
-            <textarea name="Notes" class="form-control" rows="2" 
-                      placeholder="Ví dụ: Tập trung phát triển ngực trên, đau nhẹ cổ tay cần chú ý form, hướng dẫn bài mới..."></textarea>
-        </div>
-
-        <!-- BUTTON GỬI LỊCH -->
-        <div class="pt-3 border-top border-secondary border-opacity-25 d-flex flex-wrap gap-2 gap-sm-3">
-            <button type="submit" class="btn-pulse-primary">
-                GỬI YÊU CẦU ĐẶT LỊCH
-            </button>
-            <button type="reset" class="btn-pulse-outline">
-                Nhập lại
-            </button>
-        </div>
-    </form>
-</div>
+}
 
 <!-- KHỐI 2 (DƯỚI): LỊCH SỬ ĐẶT CA TẬP (Yêu cầu 5) -->
 <div class="portal-card p-4">
     <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-secondary border-opacity-25">
         <div>
             <h3 class="portal-title-accent fs-4 mb-0">LỊCH SỬ <span>ĐẶT CA TẬP</span></h3>
+            @if (!hasPTPackage && bookings.Any())
+            {
+                <div class="small mt-1" style="color: #9aa296;">
+                    <i class="bi bi-clock-history me-1"></i> Nhật ký các ca tập đã đặt trước đây (chế độ xem lại)
+                </div>
+            }
         </div>
         <span style="color: #b0b7ad; font-size: 13.5px;">Tổng cộng: @bookings.Count buổi</span>
     </div>
@@ -194,14 +370,32 @@
                                 </span>
                             </td>
                             <td class="text-end">
-                                @if (b.Status == "Pending")
+                                @{
+                                    bool canCancel = false;
+                                    if ((b.Status == "Pending" || b.Status == "Approved") && b.BookingDate.Date >= DateTime.Today)
+                                    {
+                                        if (b.BookingDate.Date > DateTime.Today)
+                                        {
+                                            canCancel = true;
+                                        }
+                                        else
+                                        {
+                                            var timeParts = b.TimeSlot.Split(new[] { '-', '|' }, StringSplitOptions.RemoveEmptyEntries);
+                                            if (timeParts.Length > 0 && TimeSpan.TryParse(timeParts[0].Trim(), out var slotStartTime))
+                                            {
+                                                canCancel = (DateTime.Now.TimeOfDay < slotStartTime);
+                                            }
+                                        }
+                                    }
+                                }
+                                @if (canCancel)
                                 {
                                     <form asp-action="Cancel" asp-route-id="@b.BookingId" method="post" class="d-inline">
                                         @Html.AntiForgeryToken()
                                         <button type="submit" class="btn-pulse-outline btn-sm" 
                                                 style="color: #ff7675; border-color: rgba(255, 118, 117, 0.4); padding: 5px 12px; font-size: 13px;"
-                                                onclick="return confirm('Bạn có chắc chắn muốn hủy yêu cầu buổi tập này?');"
-                                                title="Hủy buổi tập">
+                                                onclick="return confirm('Bạn có chắc chắn muốn hủy ca tập với HLV @(b.Trainer?.User?.FullName ?? "PT") vào ngày @b.BookingDate.ToString("dd/MM/yyyy") (@b.TimeSlot)?');"
+                                                title="Hủy ca tập">
                                             Hủy lịch
                                         </button>
                                     </form>
@@ -247,9 +441,56 @@
                 });
             });
 
-            // Khi thay đổi ngày/khung giờ, có thể giả lập refresh danh sách PT
             const timeSlot = document.getElementById('timeSlotSelect');
             const bookingDate = document.getElementById('bookingDateInput');
+            const packageEndDate = '@packageEndDate';
+            const packageEndDateFormatted = '@packageEndDateFormatted';
+
+            function getTodayDateStr() {
+                const now = new Date();
+                const y = now.getFullYear();
+                const m = String(now.getMonth() + 1).padStart(2, '0');
+                const d = String(now.getDate()).padStart(2, '0');
+                return `${y}-${m}-${d}`;
+            }
+
+            function updateTimeSlotOptions() {
+                if (!timeSlot || !bookingDate) return;
+                const todayStr = getTodayDateStr();
+                const isToday = (bookingDate.value === todayStr);
+                const now = new Date();
+                const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+                let hasValidSelection = false;
+                Array.from(timeSlot.options).forEach(opt => {
+                    const parts = opt.value.split(/[-|]/);
+                    const timePart = parts[0].trim();
+                    const hm = timePart.split(':');
+                    const slotMinutes = parseInt(hm[0], 10) * 60 + parseInt(hm[1], 10);
+                    const cleanText = opt.text.replace(' (Đã qua giờ)', '');
+
+                    if (isToday && slotMinutes <= currentMinutes) {
+                        opt.disabled = true;
+                        opt.text = cleanText + ' (Đã qua giờ)';
+                        if (opt.selected) {
+                            opt.selected = false;
+                        }
+                    } else {
+                        opt.disabled = false;
+                        opt.text = cleanText;
+                        if (!hasValidSelection && !opt.disabled && opt.selected) {
+                            hasValidSelection = true;
+                        }
+                    }
+                });
+
+                // Nếu tùy chọn hiện tại bị disable, chọn option hợp lệ đầu tiên
+                if (!hasValidSelection) {
+                    const firstValid = Array.from(timeSlot.options).find(o => !o.disabled);
+                    if (firstValid) firstValid.selected = true;
+                }
+            }
+
             function highlightAvailable() {
                 // Hiệu ứng nhẹ khi chọn thời gian rảnh
                 const container = document.getElementById('trainerCardsContainer');
@@ -260,8 +501,64 @@
                     }, 150);
                 }
             }
+
             if (timeSlot) timeSlot.addEventListener('change', highlightAvailable);
-            if (bookingDate) bookingDate.addEventListener('change', highlightAvailable);
+
+            if (bookingDate) {
+                bookingDate.addEventListener('change', function () {
+                    const todayStr = getTodayDateStr();
+                    if (this.value < todayStr) {
+                        alert('Không thể đặt lịch vào các ngày trong quá khứ! Hệ thống đã chuyển về ngày hôm nay.');
+                        this.value = todayStr;
+                    } else if (packageEndDate && this.value > packageEndDate) {
+                        alert('Ngày đặt lịch không được vượt quá thời hạn gói tập của bạn (' + packageEndDateFormatted + ')!');
+                        this.value = packageEndDate;
+                    }
+                    updateTimeSlotOptions();
+                    highlightAvailable();
+                });
+            }
+
+            // Gọi kiểm tra ngay khi tải trang
+            updateTimeSlotOptions();
+
+            // Chặn submit nếu dữ liệu không hợp lệ
+            const form = document.getElementById('bookingForm');
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                    const todayStr = getTodayDateStr();
+                    if (bookingDate && bookingDate.value < todayStr) {
+                        e.preventDefault();
+                        alert('Không thể đặt lịch vào các ngày trong quá khứ!');
+                        bookingDate.focus();
+                        return false;
+                    }
+
+                    if (bookingDate && packageEndDate && bookingDate.value > packageEndDate) {
+                        e.preventDefault();
+                        alert('Ngày đặt lịch không được vượt quá thời hạn gói tập của bạn (' + packageEndDateFormatted + ')!');
+                        bookingDate.focus();
+                        return false;
+                    }
+
+                    if (bookingDate && bookingDate.value === todayStr && timeSlot) {
+                        const selectedOpt = timeSlot.options[timeSlot.selectedIndex];
+                        if (selectedOpt && selectedOpt.disabled) {
+                            e.preventDefault();
+                            alert('Khung giờ bạn chọn hôm nay đã qua thời gian bắt đầu. Vui lòng chọn khung giờ khác!');
+                            timeSlot.focus();
+                            return false;
+                        }
+                    }
+
+                    const selectedTrainer = document.querySelector('input[name="TrainerId"]:checked');
+                    if (!selectedTrainer) {
+                        e.preventDefault();
+                        alert('Vui lòng chọn một Huấn luyện viên đồng hành!');
+                        return false;
+                    }
+                });
+            }
         });
     </script>
 }

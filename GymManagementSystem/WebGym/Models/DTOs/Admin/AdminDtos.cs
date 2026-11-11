@@ -180,6 +180,9 @@ namespace WebGym.Models.DTOs.Admin
         [DataType(DataType.Date)]
         public DateTime? DateOfBirth { get; set; }
 
+        [Display(Name = "Ảnh đại diện (Avatar URL)")]
+        public string? AvatarUrl { get; set; }
+
         [Display(Name = "Chiều cao (cm)")]
         public double? Height { get; set; }
 

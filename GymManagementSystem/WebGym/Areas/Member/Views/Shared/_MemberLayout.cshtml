@@ -31,10 +31,17 @@
             }
         }
         
-        var avatarDiskPath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatars", $"user_{uId}.jpg");
-        if (System.IO.File.Exists(avatarDiskPath))
+        if (!string.IsNullOrEmpty(member?.AvatarUrl))
         {
-            userAvatar = $"/uploads/avatars/user_{uId}.jpg";
+            userAvatar = member.AvatarUrl;
+        }
+        else
+        {
+            var avatarDiskPath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatars", $"user_{uId}.jpg");
+            if (System.IO.File.Exists(avatarDiskPath))
+            {
+                userAvatar = $"/uploads/avatars/user_{uId}.jpg";
+            }
         }
     }
 }
@@ -51,6 +58,7 @@
     
     <!-- CSS Libs -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/pulse-portal.css" asp-append-version="true" />
 </head>
 <body class="portal-body">

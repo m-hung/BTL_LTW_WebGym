@@ -49,6 +49,26 @@ namespace WebGym.Areas.PT.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            if (booking.Status != "Pending")
+            {
+                SetErrorMessage("Chỉ có thể duyệt các ca tập đang ở trạng thái chờ duyệt.");
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Chống trùng lịch: Kiểm tra HLV đã có ca tập khác đã duyệt trong khung giờ này chưa
+            bool hasConflict = await _context.Bookings.AnyAsync(b =>
+                b.BookingId != id &&
+                b.TrainerId == booking.TrainerId &&
+                b.BookingDate.Date == booking.BookingDate.Date &&
+                b.TimeSlot == booking.TimeSlot &&
+                b.Status == "Approved");
+
+            if (hasConflict)
+            {
+                SetErrorMessage($"Bạn đã duyệt một ca dạy khác vào khung giờ {booking.TimeSlot} ngày {booking.BookingDate:dd/MM/yyyy} rồi. Không thể duyệt trùng.");
+                return RedirectToAction(nameof(Index));
+            }
+
             booking.Status = "Approved";
             await _context.SaveChangesAsync();
 
@@ -69,6 +89,12 @@ namespace WebGym.Areas.PT.Controllers
             if (booking == null)
             {
                 SetErrorMessage("Không tìm thấy ca tập.");
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (booking.Status != "Pending")
+            {
+                SetErrorMessage("Chỉ có thể từ chối các yêu cầu đang ở trạng thái chờ duyệt.");
                 return RedirectToAction(nameof(Index));
             }
 

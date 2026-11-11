@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebGym.Data;
+using WebGym.Helpers;
 
 namespace WebGym.Areas.Admin.Controllers
 {
@@ -17,6 +18,27 @@ namespace WebGym.Areas.Admin.Controllers
         // GET: /Admin/BookingManagement
         public async Task<IActionResult> Index(string? statusFilter, int? trainerId, DateTime? bookingDate)
         {
+            // Tự động chuyển các ca Approved đã quá 24h thành Completed
+            var approvedOverdue = await _context.Bookings
+                .Where(b => b.Status == "Approved")
+                .ToListAsync();
+
+            bool hasChanges = false;
+            foreach (var b in approvedOverdue)
+            {
+                if (CoachUi.IsOver24Hours(b.BookingDate, b.TimeSlot))
+                {
+                    b.Status = "Completed";
+                    var autoNote = "Hệ thống tự động xác nhận hoàn thành sau 24h";
+                    b.Notes = string.IsNullOrWhiteSpace(b.Notes) ? autoNote : $"{b.Notes} | {autoNote}";
+                    hasChanges = true;
+                }
+            }
+            if (hasChanges)
+            {
+                await _context.SaveChangesAsync();
+            }
+
             var query = _context.Bookings
                 .Include(b => b.Member).ThenInclude(m => m.User)
                 .Include(b => b.Trainer).ThenInclude(t => t.User)
@@ -64,6 +86,30 @@ namespace WebGym.Areas.Admin.Controllers
             if (booking == null)
             {
                 SetErrorMessage("Không tìm thấy thông tin ca tập.");
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Chống trùng lịch: Nếu Admin duyệt ca tập, kiểm tra HLV đã có ca nào khác đã duyệt chưa
+            if (status == "Approved")
+            {
+                bool hasConflict = await _context.Bookings.AnyAsync(b =>
+                    b.BookingId != id &&
+                    b.TrainerId == booking.TrainerId &&
+                    b.BookingDate.Date == booking.BookingDate.Date &&
+                    b.TimeSlot == booking.TimeSlot &&
+                    b.Status == "Approved");
+
+                if (hasConflict)
+                {
+                    SetErrorMessage($"HLV này đã có ca dạy khác đã duyệt vào khung giờ {booking.TimeSlot} ngày {booking.BookingDate:dd/MM/yyyy}. Không thể duyệt trùng.");
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+
+            // Chặn hủy ca tập đã hoàn thành
+            if (status == "Cancelled" && booking.Status == "Completed")
+            {
+                SetErrorMessage("Không thể hủy ca tập đã hoàn thành.");
                 return RedirectToAction(nameof(Index));
             }
 

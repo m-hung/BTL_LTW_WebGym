@@ -42,12 +42,9 @@
                                 <button type="submit" form="deleteAvatarForm" class="btn-pulse-outline btn-sm py-1 px-2" 
                                         style="color: #ff7675; border-color: rgba(255, 118, 117, 0.35); font-size: 12px;"
                                         onclick="return confirm('Bạn có chắc muốn xóa ảnh đại diện và thiết lập lại ảnh mặc định?');">
-                                    Xóa ảnh đại diện
+                                    Xóa ảnh
                                 </button>
                             }
-                            <button type="button" class="btn-pulse-outline btn-sm py-1 px-2" id="btnResetAvatar" style="display: none; font-size: 12px;">
-                                Hủy ảnh vừa chọn
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -121,42 +118,73 @@
         document.addEventListener('DOMContentLoaded', function () {
             const fileInput = document.getElementById('avatarFileInput');
             const previewImg = document.getElementById('avatarPreview');
-            const btnReset = document.getElementById('btnResetAvatar');
-            const originalSrc = previewImg.src;
+            const editBadge = document.querySelector('.avatar-edit-badge');
+            const originalSrc = previewImg ? previewImg.src : '';
 
             if (fileInput && previewImg) {
-                fileInput.addEventListener('change', function () {
+                fileInput.addEventListener('change', async function () {
                     const file = this.files[0];
-                    if (file) {
-                        const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
-                        if (!validTypes.includes(file.type)) {
-                            alert('Vui lòng chọn file ảnh định dạng JPG, PNG hoặc WEBP.');
-                            this.value = '';
-                            return;
-                        }
+                    if (!file) return;
 
-                        if (file.size > 5 * 1024 * 1024) {
-                            alert('Dung lượng file ảnh không được vượt quá 5MB.');
-                            this.value = '';
-                            return;
-                        }
+                    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+                    if (!validTypes.includes(file.type)) {
+                        alert('Vui lòng chọn file ảnh định dạng JPG, PNG hoặc WEBP.');
+                        this.value = '';
+                        return;
+                    }
 
-                        const reader = new FileReader();
-                        reader.onload = function (e) {
-                            previewImg.src = e.target.result;
-                            if (btnReset) btnReset.style.display = 'inline-block';
-                        };
-                        reader.readAsDataURL(file);
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('Dung lượng file ảnh không được vượt quá 5MB.');
+                        this.value = '';
+                        return;
+                    }
+
+                    // Xem trước ảnh ngay lập tức
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        previewImg.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+
+                    if (editBadge) {
+                        editBadge.style.opacity = '0.6';
+                        editBadge.style.pointerEvents = 'none';
+                    }
+
+                    const formData = new FormData();
+                    formData.append('avatarFile', file);
+
+                    const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+                    if (tokenInput) {
+                        formData.append('__RequestVerificationToken', tokenInput.value);
+                    }
+
+                    try {
+                        const res = await fetch('@Url.Action("UploadAvatarAjax", "Profile", new { area = "Member" })', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                            previewImg.src = data.avatarUrl;
+                            const sidebarImg = document.getElementById('sidebarAvatarImg');
+                            if (sidebarImg) sidebarImg.src = data.avatarUrl;
+                            setTimeout(() => { window.location.reload(); }, 600);
+                        } else {
+                            alert(data.message || 'Lỗi lưu ảnh.');
+                            previewImg.src = originalSrc;
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        alert('Đã xảy ra lỗi khi lưu ảnh.');
+                        previewImg.src = originalSrc;
+                    } finally {
+                        if (editBadge) {
+                            editBadge.style.opacity = '1';
+                            editBadge.style.pointerEvents = 'auto';
+                        }
                     }
                 });
-
-                if (btnReset) {
-                    btnReset.addEventListener('click', function () {
-                        fileInput.value = '';
-                        previewImg.src = originalSrc;
-                        btnReset.style.display = 'none';
-                    });
-                }
             }
         });
     </script>

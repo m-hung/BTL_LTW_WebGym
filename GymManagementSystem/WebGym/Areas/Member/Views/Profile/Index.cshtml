@@ -1,17 +1,18 @@
 @model WebGym.Models.DTOs.Member.MemberProfileDto
 @{
-    ViewData["Title"] = "Chỉ Số Cơ Thể";
+    ViewData["Title"] = "Chỉ Số Cơ Thể & Thẻ Hội Viên";
     var progressList = ViewBag.ProgressList as List<WebGym.Models.Entities.Progress> ?? new List<WebGym.Models.Entities.Progress>();
     double? bmi = (Model.Height > 0 && Model.Weight > 0) 
         ? Math.Round((double)Model.Weight.Value / Math.Pow((double)Model.Height.Value / 100, 2), 1) 
         : null;
 
-    // Chuẩn bị dữ liệu cho Chart.js
+    // Chuẩn bị dữ liệu cho Chart.js (Không dùng dữ liệu ảo cho tài khoản mới)
     var chartLabels = new List<string>();
     var weightData = new List<double>();
     var bodyFatData = new List<double>();
+    bool hasProgressData = progressList.Any() && Model.Weight.HasValue && Model.Weight > 0;
 
-    if (progressList.Any())
+    if (hasProgressData)
     {
         int step = 1;
         foreach (var p in progressList.OrderBy(x => x.RecordedDate))
@@ -21,15 +22,6 @@
             bodyFatData.Add(p.BodyFatPercentage ?? 0);
             step++;
         }
-    }
-    else
-    {
-        // Dữ liệu mẫu minh họa tiến trình nếu chưa có lịch sử đo
-        var currentW = Model.Weight ?? 72.0;
-        var currentF = Model.BodyFatPercentage ?? 16.5;
-        chartLabels.AddRange(new[] { "T1 (Tháng 1)", "T2 (Tháng 2)", "T3 (Tháng 3)", "T4 (Tháng 4)", "T5 (Tháng 5)", "T6 (Hiện tại)" });
-        weightData.AddRange(new[] { currentW + 6.0, currentW + 5.0, currentW + 4.0, currentW + 2.8, currentW + 1.5, currentW });
-        bodyFatData.AddRange(new[] { currentF + 5.5, currentF + 4.0, currentF + 2.5, currentF + 1.7, currentF + 0.5, currentF });
     }
 }
 
@@ -44,6 +36,45 @@
         <a asp-area="Member" asp-controller="Plan" asp-action="Index" class="btn-pulse-outline">Giáo án của tôi</a>
     </div>
 </div>
+<!-- SECTION: THẺ HỘI VIÊN ĐIỆN TỬ DẠNG ATM SANG TRỌNG TRÊN TRANG CÁ NHÂN -->
+<div class="portal-card p-3 p-md-4 mb-4">
+    <div class="row g-4 align-items-center">
+        <!-- Cột trái: Thẻ ATM điện tử sang trọng -->
+        <div class="col-lg-5 col-xl-5 text-center">
+            <partial name="_DigitalMemberCard" model="Model.ToCardModel()" />
+        </div>
+
+        <!-- Cột phải: Lời chào và tóm tắt thông tin hội viên -->
+        <div class="col-lg-7 col-xl-7">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="portal-badge" style="background: rgba(200, 255, 46, 0.12); color: var(--portal-lime); border: 1px solid rgba(200, 255, 46, 0.3);">
+                    HỘI VIÊN CHÍNH THỨC
+                </span>
+                <a asp-action="PersonalInfo" class="small fw-semibold link-ul" style="color: var(--portal-lime); text-decoration: none;">
+                    Hồ sơ chi tiết & Cài đặt ➔
+                </a>
+            </div>
+            <h2 class="portal-title-accent mb-2 fs-3">XIN CHÀO, <span>@Model.FullName</span></h2>
+            <p class="small text-muted mb-3" style="line-height: 1.6;">
+                Thẻ hội viên điện tử tích hợp mã QR cá nhân đã sẵn sàng. Bạn có thể xuất trình trực tiếp trên điện thoại để Admin / Lễ tân quét điểm danh vào phòng tập nhanh chóng.
+            </p>
+            <div class="d-flex flex-wrap gap-2 pt-1">
+                <div class="p-2 px-3 rounded-3" style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08);">
+                    <small class="d-block text-muted" style="font-size: 10.5px;">MÃ THẺ HỘI VIÊN</small>
+                    <strong style="color: var(--portal-lime); font-family: monospace; font-size: 13.5px;">@(Model.CardCode ?? $"GYM-MB-{Model.Id:D4}")</strong>
+                </div>
+                <div class="p-2 px-3 rounded-3" style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08);">
+                    <small class="d-block text-muted" style="font-size: 10.5px;">GÓI TẬP HIỆN TẠI</small>
+                    <strong style="color: #ffffff; font-size: 13.5px;">@(Model.CurrentPackageName ?? "Chưa đăng ký gói")</strong>
+                </div>
+                <div class="p-2 px-3 rounded-3" style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08);">
+                    <small class="d-block text-muted" style="font-size: 10.5px;">NGÀY HẾT HẠN</small>
+                    <strong style="color: #ffffff; font-size: 13.5px;">@(Model.MembershipEndDate?.ToString("dd/MM/yyyy") ?? "Vô thời hạn")</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- 4 Key InBody Stat Cards -->
 <div class="row g-3 mb-4">
@@ -53,9 +84,18 @@
                 <span>CÂN NẶNG</span>
             </div>
             <div class="portal-stat-val" style="color: #f2f5ef;">
-                @(Model.Weight?.ToString("0.0") ?? "--") <span style="font-size: 15px; color: #9aa296; font-family: var(--portal-body); font-weight: normal;">kg</span>
+                @if (Model.Weight > 0)
+                {
+                    @Model.Weight.Value.ToString("0.0") <span style="font-size: 15px; color: #9aa296; font-family: var(--portal-body); font-weight: normal;">kg</span>
+                }
+                else
+                {
+                    <span>--</span>
+                }
             </div>
-            <div class="portal-stat-sub" style="color: #a0a79c;">Chiều cao: @(Model.Height?.ToString("0") ?? "--") cm</div>
+            <div class="portal-stat-sub" style="color: #a0a79c;">
+                Chiều cao: @(Model.Height > 0 ? $"{Model.Height.Value:0} cm" : "--")
+            </div>
         </div>
     </div>
     <div class="col-sm-6 col-lg-3">
@@ -69,14 +109,14 @@
             <div class="portal-stat-sub">
                 @if (bmi.HasValue)
                 {
-                    if (bmi < 18.5) { <span style="color: #8ed0e8;">Hơi gầy (Underweight)</span>; }
-                    else if (bmi < 24.9) { <span style="color: #9dd872;">Chuẩn thể hình (Normal)</span>; }
-                    else if (bmi < 29.9) { <span style="color: #f3c274;">Thừa cân (Overweight)</span>; }
-                    else { <span style="color: #f38b8b;">Béo phì (Obese)</span>; }
+                    if (bmi < 18.5) { <span style="color: #48cae4;">Thiếu cân</span>; }
+                    else if (bmi < 24.9) { <span style="color: var(--portal-lime); font-weight: 600;">Cân đối (Chuẩn)</span>; }
+                    else if (bmi < 29.9) { <span style="color: #f5b041;">Thừa cân</span>; }
+                    else { <span style="color: #ff7675;">Béo phì</span>; }
                 }
                 else
                 {
-                    <span style="color: #a0a79c;">Cần đủ chiều cao & cân nặng</span>
+                    <span style="color: #a0a79c;">Chưa có dữ liệu InBody</span>
                 }
             </div>
         </div>
@@ -87,9 +127,18 @@
                 <span>TỶ LỆ MỠ CƠ THỂ</span>
             </div>
             <div class="portal-stat-val" style="color: #f2f5ef;">
-                @(Model.BodyFatPercentage?.ToString("0.0") ?? "--") <span style="font-size: 15px; color: #9aa296; font-family: var(--portal-body); font-weight: normal;">%</span>
+                @if (Model.BodyFatPercentage > 0)
+                {
+                    @Model.BodyFatPercentage.Value.ToString("0.0") <span style="font-size: 15px; color: #9aa296; font-family: var(--portal-body); font-weight: normal;">%</span>
+                }
+                else
+                {
+                    <span>--</span>
+                }
             </div>
-            <div class="portal-stat-sub" style="color: #a0a79c;">Khối lượng cơ: @(Model.MuscleMass?.ToString("0.0") ?? "--") kg</div>
+            <div class="portal-stat-sub" style="color: #a0a79c;">
+                Khối lượng cơ: @(Model.MuscleMass > 0 ? $"{Model.MuscleMass.Value:0.0} kg" : "--")
+            </div>
         </div>
     </div>
     <div class="col-sm-6 col-lg-3">
@@ -98,99 +147,163 @@
                 <span>CHUYỂN HÓA BMR</span>
             </div>
             <div class="portal-stat-val" style="color: #f2f5ef;">
-                @(Model.BMR?.ToString("0") ?? "--") <span style="font-size: 15px; color: #9aa296; font-family: var(--portal-body); font-weight: normal;">kcal</span>
+                @if (Model.BMR > 0)
+                {
+                    @Model.BMR.Value.ToString("0") <span style="font-size: 15px; color: #9aa296; font-family: var(--portal-body); font-weight: normal;">kcal</span>
+                }
+                else
+                {
+                    <span>--</span>
+                }
             </div>
-            <div class="portal-stat-sub" style="color: #a0a79c;">Tiêu hao năng lượng tối thiểu/ngày</div>
+            <div class="portal-stat-sub" style="color: #a0a79c;">Năng lượng tiêu hao cơ bản</div>
         </div>
     </div>
 </div>
 
-<!-- Detailed Body Measurements Grid (Vòng ngực, eo, mông, cơ bắp) -->
-<div class="row g-3 mb-4">
-    <div class="col-md-3 col-6">
-        <div class="portal-stat-card py-3">
-            <div class="portal-stat-label" style="color: #b5bcaf;">VÒNG NGỰC</div>
-            <div class="portal-stat-val fs-3" style="color: #e5eae0;">
-                @(Model.Chest?.ToString("0.0") ?? "--") <span style="font-size: 13px; color: #889084;">cm</span>
+<!-- Detailed Body Circumference Measurements -->
+<div class="portal-card p-4 mb-4">
+    <div class="mb-3 pb-2 border-bottom border-secondary border-opacity-25">
+        <h3 class="portal-title-accent fs-4 mb-0">SỐ ĐO HÌNH THỂ <span>CHI TIẾT</span></h3>
+    </div>
+    <div class="row g-3 text-center">
+        <div class="col-6 col-md-3">
+            <div class="p-3 rounded" style="background-color: var(--portal-bg2); border: 1px solid var(--portal-line);">
+                <div class="small mb-1" style="color: #9aa296;">Vòng Ngực</div>
+                <div class="fs-4 fw-bold" style="color: #e5eae0;">
+                    @if (Model.Chest > 0)
+                    {
+                        @Model.Chest.Value.ToString("0.0") <span style="font-size: 13px; color: #889084;">cm</span>
+                    }
+                    else
+                    {
+                        <span>--</span>
+                    }
+                </div>
             </div>
         </div>
-    </div>
-    <div class="col-md-3 col-6">
-        <div class="portal-stat-card py-3">
-            <div class="portal-stat-label" style="color: #b5bcaf;">VÒNG EO</div>
-            <div class="portal-stat-val fs-3" style="color: #e5eae0;">
-                @(Model.Waist?.ToString("0.0") ?? "--") <span style="font-size: 13px; color: #889084;">cm</span>
+        <div class="col-6 col-md-3">
+            <div class="p-3 rounded" style="background-color: var(--portal-bg2); border: 1px solid var(--portal-line);">
+                <div class="small mb-1" style="color: #9aa296;">Vòng Eo</div>
+                <div class="fs-4 fw-bold" style="color: #e5eae0;">
+                    @if (Model.Waist > 0)
+                    {
+                        @Model.Waist.Value.ToString("0.0") <span style="font-size: 13px; color: #889084;">cm</span>
+                    }
+                    else
+                    {
+                        <span>--</span>
+                    }
+                </div>
             </div>
         </div>
-    </div>
-    <div class="col-md-3 col-6">
-        <div class="portal-stat-card py-3">
-            <div class="portal-stat-label" style="color: #b5bcaf;">VÒNG MÔNG</div>
-            <div class="portal-stat-val fs-3" style="color: #e5eae0;">
-                @(Model.Hips?.ToString("0.0") ?? "--") <span style="font-size: 13px; color: #889084;">cm</span>
+        <div class="col-6 col-md-3">
+            <div class="p-3 rounded" style="background-color: var(--portal-bg2); border: 1px solid var(--portal-line);">
+                <div class="small mb-1" style="color: #9aa296;">Vòng Hông</div>
+                <div class="fs-4 fw-bold" style="color: #e5eae0;">
+                    @if (Model.Hips > 0)
+                    {
+                        @Model.Hips.Value.ToString("0.0") <span style="font-size: 13px; color: #889084;">cm</span>
+                    }
+                    else
+                    {
+                        <span>--</span>
+                    }
+                </div>
             </div>
         </div>
-    </div>
-    <div class="col-md-3 col-6">
-        <div class="portal-stat-card py-3">
-            <div class="portal-stat-label" style="color: #b5bcaf;">KHỐI LƯỢNG CƠ</div>
-            <div class="portal-stat-val fs-3" style="color: #e5eae0;">
-                @(Model.MuscleMass?.ToString("0.0") ?? "--") <span style="font-size: 13px; color: #889084;">kg</span>
+        <div class="col-6 col-md-3">
+            <div class="p-3 rounded" style="background-color: var(--portal-bg2); border: 1px solid var(--portal-line);">
+                <div class="small mb-1" style="color: #9aa296;">Khối Lượng Cơ</div>
+                <div class="fs-4 fw-bold" style="color: #e5eae0;">
+                    @if (Model.MuscleMass > 0)
+                    {
+                        @Model.MuscleMass.Value.ToString("0.0") <span style="font-size: 13px; color: #889084;">kg</span>
+                    }
+                    else
+                    {
+                        <span>--</span>
+                    }
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Evolution Line Chart (Yêu cầu 4 - Đồ thị biến thiên cân nặng & Body Fat) -->
+<!-- Evolution Line Chart (Đồ thị biến thiên cân nặng & Body Fat) -->
 <div class="portal-card p-4 mb-4">
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4 pb-3 border-bottom border-secondary border-opacity-25">
         <div>
-            <h3 class="portal-title-accent mb-1 fs-3">BIẾN THIÊN <span>CÂN NẶNG & BODY FAT</span></h3>
+            <h3 class="portal-title-accent fs-4 mb-0">BIỂU ĐỒ THEO DÕI <span>TIẾN TRÌNH LUYỆN TẬP</span></h3>
             <div style="color: #a6ada2; font-size: 13.5px;">
-                Theo dõi qua các lần đo InBody định kỳ
+                Theo dõi sự thay đổi của Cân nặng và Tỷ lệ mỡ cơ thể qua các lần kiểm tra InBody
             </div>
         </div>
 
-        <!-- Chart Legend Indicator -->
-        <div class="d-flex align-items-center gap-3">
-            <div class="d-flex align-items-center gap-2">
-                <span style="width: 12px; height: 12px; border-radius: 50%; background-color: var(--portal-lime); display: inline-block;"></span>
-                <span class="small fw-semibold" style="color: #e5eae0;">Cân nặng (kg)</span>
+        @if (hasProgressData)
+        {
+            <!-- Chart Legend Indicator -->
+            <div class="d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center gap-2">
+                    <span style="width: 12px; height: 12px; border-radius: 50%; background-color: var(--portal-lime); display: inline-block;"></span>
+                    <span class="small fw-semibold" style="color: #e5eae0;">Cân nặng (kg)</span>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <span style="width: 12px; height: 12px; border-radius: 50%; background-color: #48cae4; display: inline-block;"></span>
+                    <span class="small fw-semibold" style="color: #e5eae0;">Body Fat (%)</span>
+                </div>
             </div>
-            <div class="d-flex align-items-center gap-2">
-                <span style="width: 12px; height: 12px; border-radius: 50%; background-color: #48cae4; display: inline-block;"></span>
-                <span class="small fw-semibold" style="color: #e5eae0;">Body Fat (%)</span>
-            </div>
-        </div>
+        }
     </div>
 
-    <!-- Chart Canvas Container -->
-    <div style="position: relative; width: 100%; min-height: 320px; max-height: 420px;">
-        <canvas id="inbodyChart"></canvas>
-    </div>
+    @if (hasProgressData)
+    {
+        <!-- Chart Canvas Container -->
+        <div style="position: relative; width: 100%; min-height: 320px; max-height: 420px;">
+            <canvas id="inbodyChart"></canvas>
+        </div>
+    }
+    else
+    {
+        <!-- Empty State: Chưa có dữ liệu InBody cho tài khoản mới -->
+        <div class="text-center py-5 my-2" style="background: rgba(255, 255, 255, 0.01); border-radius: 8px; border: 1px dashed rgba(200, 255, 46, 0.25);">
+            <div class="mb-3">
+                <i class="bi bi-activity" style="font-size: 42px; color: var(--portal-lime); opacity: 0.85;"></i>
+            </div>
+            <h5 class="fw-bold mb-2" style="color: #f2f5ef; font-family: var(--portal-display); font-size: 19px; letter-spacing: 0.04em;">
+                CHƯA CÓ DỮ LIỆU ĐO INBODY
+            </h5>
+            <p class="small mb-0 mx-auto" style="max-width: 500px; line-height: 1.6; color: #9aa296;">
+                Tài khoản mới tạo chưa có lịch sử đo chỉ số cơ thể.
+                Huấn luyện viên cá nhân (PT) sẽ tiến hành kiểm tra InBody và cập nhật tiến trình luyện tập của bạn tại phòng tập.
+            </p>
+        </div>
+    }
 
     <!-- Notice Footer -->
     <div class="mt-4 pt-3 border-top border-secondary border-opacity-25 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
-        <span class="small" style="color: #9aa296;">
-            Ghi chú: Chỉ số được đo và cập nhật chuẩn xác bởi Huấn luyện viên (PT) thông qua thiết bị phân tích InBody chuyên dụng.
-        </span>
-        <a asp-area="Member" asp-controller="Booking" asp-action="Index" class="btn-pulse-outline btn-sm align-self-start align-self-md-auto text-nowrap">
-            Đặt lịch đo lại chỉ số với PT
+        <div class="small" style="color: #9aa296;">
+            <i class="bi bi-info-circle me-1" style="color: var(--portal-lime);"></i> Chỉ số hình thể được cập nhật chính xác nhất bởi Huấn luyện viên (PT) thông qua máy đo InBody chuyên dụng.
+        </div>
+        <a asp-action="PersonalInfo" class="btn-pulse-outline btn-sm py-1 px-3">
+            Chỉnh sửa thông tin liên hệ
         </a>
     </div>
 </div>
 
 @section Scripts {
-    <!-- Load Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            @if (!hasProgressData) {
+                <text>return;</text>
+            }
             const ctx = document.getElementById('inbodyChart');
             if (!ctx) return;
 
             const labels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(chartLabels));
-            const weightData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(weightData));
-            const bodyFatData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(bodyFatData));
+            const weights = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(weightData));
+            const bodyFats = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(bodyFatData));
 
             new Chart(ctx, {
                 type: 'line',
@@ -199,127 +312,101 @@
                     datasets: [
                         {
                             label: 'Cân nặng (kg)',
-                            data: weightData,
+                            data: weights,
                             borderColor: '#c8ff2e',
-                            backgroundColor: 'rgba(200, 255, 46, 0.12)',
+                            backgroundColor: 'rgba(200, 255, 46, 0.08)',
+                            borderWidth: 2.5,
+                            fill: true,
+                            tension: 0.3,
                             pointBackgroundColor: '#c8ff2e',
-                            pointBorderColor: '#0a0a0a',
+                            pointBorderColor: '#121714',
                             pointBorderWidth: 2,
-                            pointRadius: 6,
-                            pointHoverRadius: 8,
-                            tension: 0.25,
-                            borderWidth: 3,
+                            pointRadius: 5,
+                            pointHoverRadius: 7,
                             yAxisID: 'yWeight'
                         },
                         {
-                            label: 'Body Fat (%)',
-                            data: bodyFatData,
+                            label: 'Tỷ lệ mỡ (%)',
+                            data: bodyFats,
                             borderColor: '#48cae4',
-                            backgroundColor: 'rgba(72, 202, 228, 0.08)',
+                            backgroundColor: 'rgba(72, 202, 228, 0.05)',
+                            borderWidth: 2,
+                            borderDash: [4, 4],
+                            fill: false,
+                            tension: 0.3,
                             pointBackgroundColor: '#48cae4',
-                            pointBorderColor: '#0a0a0a',
+                            pointBorderColor: '#121714',
                             pointBorderWidth: 2,
-                            pointRadius: 6,
-                            pointHoverRadius: 8,
-                            borderDash: [6, 6],
-                            tension: 0.25,
-                            borderWidth: 2.5,
-                            yAxisID: 'yFat'
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            yAxisID: 'yBodyFat'
                         }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    interaction: {
-                        mode: 'index',
-                        intersect: false
-                    },
                     plugins: {
                         legend: {
-                            display: false // Đã tạo custom legend rõ ràng ở trên
+                            display: false
                         },
                         tooltip: {
                             backgroundColor: 'rgba(19, 23, 21, 0.95)',
                             titleColor: '#ffffff',
-                            bodyColor: '#eef1eb',
-                            borderColor: '#262e28',
+                            bodyColor: '#e5eae0',
+                            borderColor: 'rgba(255, 255, 255, 0.1)',
                             borderWidth: 1,
                             padding: 12,
                             boxPadding: 6,
-                            titleFont: {
-                                family: 'Inter',
-                                size: 14,
-                                weight: '600'
-                            },
-                            bodyFont: {
-                                family: 'Inter',
-                                size: 13
-                            },
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    if (context.parsed.y !== null) {
-                                        label += context.parsed.y + (context.datasetIndex === 0 ? ' kg' : ' %');
-                                    }
-                                    return label;
-                                }
-                            }
+                            usePointStyle: true
                         }
                     },
                     scales: {
                         x: {
                             grid: {
-                                color: 'rgba(255, 255, 255, 0.05)',
+                                color: 'rgba(255, 255, 255, 0.04)',
                                 drawBorder: false
                             },
                             ticks: {
-                                color: '#b0b7ad',
+                                color: '#9aa296',
                                 font: {
-                                    family: 'Inter',
+                                    family: 'Inter, sans-serif',
                                     size: 12
                                 }
                             }
                         },
                         yWeight: {
                             type: 'linear',
-                            display: true,
                             position: 'left',
                             grid: {
-                                color: 'rgba(255, 255, 255, 0.05)',
+                                color: 'rgba(255, 255, 255, 0.04)',
                                 drawBorder: false
                             },
                             ticks: {
                                 color: '#c8ff2e',
                                 font: {
-                                    family: 'Inter',
-                                    size: 12,
-                                    weight: '600'
+                                    family: 'Inter, sans-serif',
+                                    size: 12
                                 },
-                                callback: function(value) {
-                                    return value + ' kg';
+                                callback: function (val) {
+                                    return val + ' kg';
                                 }
                             }
                         },
-                        yFat: {
+                        yBodyFat: {
                             type: 'linear',
-                            display: true,
                             position: 'right',
                             grid: {
-                                drawOnChartArea: false // Tránh trùng lặp lưới với trục trái
+                                drawOnChartArea: false
                             },
                             ticks: {
                                 color: '#48cae4',
                                 font: {
-                                    family: 'Inter',
-                                    size: 12,
-                                    weight: '600'
+                                    family: 'Inter, sans-serif',
+                                    size: 12
                                 },
-                                callback: function(value) {
-                                    return value + ' %';
+                                callback: function (val) {
+                                    return val + ' %';
                                 }
                             }
                         }

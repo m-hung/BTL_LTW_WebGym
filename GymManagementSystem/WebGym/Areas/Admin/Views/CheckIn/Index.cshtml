@@ -1,0 +1,1068 @@
+@model WebGym.Models.DTOs.Admin.CheckInAdminViewModel
+@{
+    ViewData["Title"] = "Điểm Danh & Soát Vé QR";
+}
+
+<div class="container-fluid px-0">
+    <!-- 1. HEADER SECTION -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+        <div>
+            <div class="d-flex align-items-center gap-2">
+                <div class="badge bg-primary bg-opacity-10 text-primary p-2 rounded-3">
+                    <i class="bi bi-qr-code-scan fs-4"></i>
+                </div>
+                <div>
+                    <h3 class="fw-bold mb-0 text-dark">Hệ Thống Điểm Danh & Check-in</h3>
+                    <p class="text-muted small mb-0">Quét mã QR từ Thẻ hội viên điện tử hoặc nhập mã thẻ trực tiếp tại quầy</p>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <!-- Đồng hồ thời gian thực -->
+            <div class="bg-white border rounded-3 px-3 py-2 shadow-sm text-center">
+                <small class="text-muted d-block" style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase;">Thời Gian Thực</small>
+                <span id="liveClock" class="fw-bold text-dark font-monospace fs-6">--:--:--</span>
+            </div>
+            <!-- Bộ đếm lượt check-in hôm nay -->
+            <div class="bg-primary text-white rounded-3 px-3 py-2 shadow-sm text-center">
+                <small class="d-block opacity-75" style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase;">Lượt Vào Hôm Nay</small>
+                <span id="statTodayCount" class="fw-bold fs-6">@Model.TodayCount</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. MAIN LAYOUT: 2 CỘT -->
+    <div class="row g-4">
+        <!-- CỘT TRÁI (5 Cols): KHUNG CAMERA + Ô NHẬP MÃ THẺ TAY / SÚNG MÃ VẠCH -->
+        <div class="col-lg-5">
+            <!-- PHẦN 1: KHUNG QUÉT CAMERA -->
+            <div class="card shadow-sm border-0 mb-4 overflow-hidden">
+                <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-camera-video-fill text-primary fs-5"></i>
+                        <span class="fw-bold text-dark">1. Khung Quét Camera QR</span>
+                    </div>
+                    <span id="cameraStatusBadge" class="badge badge-soft-secondary">
+                        <span class="spinner-grow spinner-grow-sm me-1" style="width: 0.5rem; height: 0.5rem;"></span>Đang khởi tạo...
+                    </span>
+                </div>
+                <div class="card-body p-3">
+                    <!-- Khu vực chọn Camera & Nút Bật/Tắt -->
+                    <div class="row g-2 mb-3">
+                        <div class="col-8">
+                            <select id="cameraSelect" class="form-select form-select-sm" title="Chọn thiết bị camera">
+                                <option value="">Đang tìm thiết bị camera...</option>
+                            </select>
+                        </div>
+                        <div class="col-4">
+                            <button id="btnToggleCamera" class="btn btn-sm btn-outline-primary w-100 fw-semibold" type="button">
+                                <i class="bi bi-camera-fill me-1"></i> Bật/Tắt
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Khung Viewport Video Camera -->
+                    <div class="scanner-viewport-wrapper position-relative rounded-3 overflow-hidden bg-dark d-flex align-items-center justify-content-center" style="min-height: 290px;">
+                        <div id="qr-reader" style="width: 100%; border: none;"></div>
+                        
+                        <!-- Lớp phủ Laser quét QR -->
+                        <div id="scanLaserOverlay" class="scan-laser-box position-absolute inset-0 pointer-events-none d-none">
+                            <div class="laser-frame">
+                                <div class="laser-corner tl"></div>
+                                <div class="laser-corner tr"></div>
+                                <div class="laser-corner bl"></div>
+                                <div class="laser-corner br"></div>
+                                <div class="laser-line"></div>
+                            </div>
+                        </div>
+
+                        <!-- Lớp phủ báo khi Camera tắt hoặc đang tải -->
+                        <div id="cameraPlaceholder" class="text-center text-white-50 p-4">
+                            <i class="bi bi-qr-code text-light opacity-50 display-3 d-block mb-2"></i>
+                            <div class="fw-semibold text-white mb-1">Camera Sẵn Sàng</div>
+                            <small class="d-block text-white-50">Nhấn nút "Bật Camera" hoặc chọn camera để quét trực tiếp</small>
+                            <button type="button" class="btn btn-sm btn-primary mt-3 px-3" onclick="startScanner()">
+                                <i class="bi bi-play-fill me-1"></i> Khởi Động Camera
+                            </button>
+                        </div>
+
+                        <!-- Cooldown overlay thông báo đã quét -->
+                        <div id="scanSuccessOverlay" class="position-absolute top-0 start-0 w-100 h-100 d-none flex-column align-items-center justify-content-center bg-dark bg-opacity-75 text-white" style="z-index: 10;">
+                            <div class="badge bg-success p-3 rounded-circle mb-2 shadow">
+                                <i class="bi bi-check-lg fs-2"></i>
+                            </div>
+                            <h6 class="fw-bold mb-0">ĐÃ NHẬN MÃ QR!</h6>
+                            <small class="text-white-50">Đang kiểm tra dữ liệu hội viên...</small>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-2 px-1 text-muted" style="font-size: 0.75rem;">
+                        <span><i class="bi bi-info-circle me-1"></i>Hỗ trợ quét trên máy tính & điện thoại</span>
+                        <span id="soundStatus" class="cursor-pointer" onclick="toggleSound()" title="Bật/Tắt âm thanh bíp">
+                            <i class="bi bi-volume-up-fill text-success"></i> Âm thanh: Bật
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PHẦN 2: Ô NHẬP MÃ THỦ CÔNG & SÚNG MÃ VẠCH USB -->
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-keyboard-fill text-primary fs-5"></i>
+                        <span class="fw-bold text-dark">2. Nhập Mã Thẻ Hoặc Quét Súng Barcode</span>
+                    </div>
+                </div>
+                <div class="card-body p-3">
+                    <form id="manualCheckInForm" onsubmit="handleManualSubmit(event)">
+                        <label class="form-label text-muted small fw-semibold">Mã thẻ hội viên (GYM-MB-xxxx), ID hoặc Số điện thoại:</label>
+                        <div class="input-group input-group-lg mb-2 shadow-sm">
+                            <span class="input-group-text bg-white border-end-0 text-primary">
+                                <i class="bi bi-upc-scan fs-5"></i>
+                            </span>
+                            <input type="text" id="manualInputCode" class="form-control border-start-0 text-uppercase fw-bold text-dark font-monospace" 
+                                   placeholder="VD: GYM-MB-0001" autocomplete="off" autofocus />
+                            <button class="btn btn-primary px-3 fw-bold d-flex align-items-center gap-1" type="submit" id="btnManualSubmit">
+                                <span class="spinner-border spinner-border-sm d-none" id="manualSpinner"></span>
+                                <i class="bi bi-box-arrow-in-right" id="manualBtnIcon"></i>
+                                <span>Check-in</span>
+                            </button>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center text-muted" style="font-size: 0.75rem;">
+                            <span><i class="bi bi-lightning-charge me-1"></i>Súng quét USB cắm vào sẽ tự động Enter</span>
+                            <a href="javascript:void(0)" class="text-decoration-none text-muted" onclick="clearManualInput()">Xóa ô</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- CỘT PHẢI (7 Cols): KẾT QUẢ QUÉT TỨC THÌ + BẢNG LỊCH SỬ CHECK-IN HÔM NAY -->
+        <div class="col-lg-7">
+            <!-- PHẦN 3.1: KHUNG HIỂN THỊ LỚN KẾT QUẢ QUÉT TỨC THÌ -->
+            <div class="card shadow-sm border-0 mb-4 overflow-hidden" id="resultCardContainer">
+                <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-person-badge-fill text-primary fs-5"></i>
+                        <span class="fw-bold text-dark">3. Kết Quả Điểm Danh Tức Thì</span>
+                    </div>
+                    <span id="resultTimeBadge" class="badge bg-light text-muted border">Chờ quét thẻ...</span>
+                </div>
+
+                <div class="card-body p-4 text-center" id="resultCardBody">
+                    <!-- TRẠNG THÁI CHỜ (INITIAL STATE) -->
+                    <div id="resultStateEmpty" class="py-4">
+                        <div class="avatar-placeholder-box mx-auto mb-3 d-flex align-items-center justify-content-center rounded-circle bg-light border border-2 border-dashed" style="width: 100px; height: 100px;">
+                            <i class="bi bi-person-bounding-box display-5 text-muted opacity-50"></i>
+                        </div>
+                        <h5 class="fw-bold text-secondary mb-1">SẴN SÀNG TIẾP NHẬN HỘI VIÊN</h5>
+                        <p class="text-muted small mx-auto mb-0" style="max-width: 420px;">
+                            Đưa mã QR trên màn hình điện thoại của khách vào khung camera, hoặc gõ mã thẻ bên trái rồi bấm Enter để thực hiện điểm danh.
+                        </p>
+                    </div>
+
+                    <!-- TRẠNG THÁI HIỂN THỊ KẾT QUẢ QUÉT (SCAN RESULT DISPLAY) -->
+                    <div id="resultStateActive" class="d-none text-start">
+                        <!-- Banner trạng thái lớn phía trên -->
+                        <div id="resultStatusBanner" class="alert alert-success d-flex align-items-center gap-3 py-3 px-3 mb-4 rounded-3 shadow-sm border-0">
+                            <div class="alert-icon-box rounded-circle bg-white p-2 d-flex align-items-center justify-content-center shadow-sm" style="width: 44px; height: 44px;">
+                                <i class="bi bi-check-circle-fill text-success fs-3" id="resultBannerIcon"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h5 class="fw-bold mb-0 text-success" id="resultBannerTitle">Check-in thành công</h5>
+                                <div class="small text-muted" id="resultBannerMessage">Hội viên có gói tập đang kích hoạt. Cửa soát vé mở.</div>
+                            </div>
+                        </div>
+
+                        <!-- Thông tin thẻ hội viên chi tiết -->
+                        <div class="row align-items-center g-4">
+                            <!-- Ảnh đại diện lớn -->
+                            <div class="col-sm-4 text-center">
+                                <div class="position-relative d-inline-block">
+                                    <img id="resAvatar" src="~/images/default-avatar.svg" alt="Avatar Hội Viên" 
+                                         class="rounded-circle shadow border border-3 border-success object-fit-cover" 
+                                         style="width: 130px; height: 130px;" />
+                                    <span id="resStatusBadge" class="position-absolute bottom-0 end-0 badge rounded-pill bg-success border border-2 border-white px-2 py-1 shadow-sm">
+                                        <i class="bi bi-patch-check-fill me-1"></i>ACTIVE
+                                    </span>
+                                </div>
+                                <div class="mt-2 font-monospace fw-bold text-primary fs-6" id="resCardCode">GYM-MB-0001</div>
+                            </div>
+
+                            <!-- Chi tiết Họ tên, Gói tập, Ngày còn lại -->
+                            <div class="col-sm-8">
+                                <h3 class="fw-bold text-dark mb-1" id="resFullName">Nguyễn Quang Hải</h3>
+                                <div class="text-muted small mb-3">
+                                    <i class="bi bi-clock-history me-1"></i>Thời gian vào: <strong class="text-dark" id="resCheckInTime">--:--:--</strong>
+                                    <span class="mx-2">•</span>
+                                    <i class="bi bi-qr-code me-1"></i>Phương thức: <span class="badge badge-soft-primary" id="resMethod">Mã QR Code</span>
+                                </div>
+
+                                <div class="bg-light p-3 rounded-3 border">
+                                    <div class="row g-2">
+                                        <div class="col-12">
+                                            <small class="text-muted d-block" style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700;">Gói tập hiện tại</small>
+                                            <span class="fw-bold text-dark fs-6" id="resPackageName">Gói Kim Cương (VVIP 1 Năm kèm PT)</span>
+                                        </div>
+                                        <div class="col-6 mt-2">
+                                            <small class="text-muted d-block" style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700;">Số ngày tập còn lại</small>
+                                            <span class="badge bg-success fs-6 fw-bold px-2 py-1" id="resDaysRemaining">Còn 185 ngày</span>
+                                        </div>
+                                        <div class="col-6 mt-2">
+                                            <small class="text-muted d-block" style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700;">Hạn sử dụng</small>
+                                            <span class="fw-bold text-secondary" id="resExpiryDate">10/05/2027</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PHẦN 3.2: BẢNG DANH SÁCH CÁC LƯỢT KHÁCH VỪA CHECK-IN HÔM NAY -->
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-list-check text-primary fs-5"></i>
+                        <span class="fw-bold text-dark">Lịch Sử Khách Check-in Hôm Nay</span>
+                        <span class="badge bg-primary rounded-pill ms-1" id="historyCountBadge">@Model.TodayCount</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <input type="text" id="historySearchInput" class="form-control form-control-sm" placeholder="Tìm tên/mã thẻ..." style="max-width: 170px;" oninput="filterHistoryTable()" />
+                        <button class="btn btn-sm btn-outline-secondary" onclick="loadTodayHistory()" title="Tải lại danh sách">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="table-responsive" style="max-height: 380px;">
+                        <table class="table table-hover align-middle mb-0" id="checkInHistoryTable">
+                            <thead class="table-light sticky-top">
+                                <tr>
+                                    <th class="ps-3" style="width: 50px;">#</th>
+                                    <th>Hội Viên</th>
+                                    <th>Mã Thẻ</th>
+                                    <th>Gói Tập</th>
+                                    <th class="text-center">Giờ Vào</th>
+                                    <th>Phương Thức</th>
+                                    <th class="text-center pe-3">Trạng Thái</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody">
+                                @if (Model.TodayHistory != null && Model.TodayHistory.Any())
+                                {
+                                    var index = 1;
+                                    foreach (var item in Model.TodayHistory)
+                                    {
+                                        <tr id="row-checkin-@item.CheckInId">
+                                            <td class="ps-3 text-muted small">@(index++)</td>
+                                            <td>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <img src="@(item.AvatarUrl ?? "/images/default-avatar.svg")" 
+                                                         alt="@item.FullName" class="rounded-circle object-fit-cover border" 
+                                                         style="width: 34px; height: 34px;" />
+                                                    <div class="fw-bold text-dark">@item.FullName</div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-light text-primary border font-monospace">@item.CardCode</span>
+                                            </td>
+                                            <td class="small text-truncate" style="max-width: 180px;" title="@item.PackageName">
+                                                @item.PackageName
+                                            </td>
+                                            <td class="text-center font-monospace fw-bold text-dark">
+                                                @item.Time
+                                            </td>
+                                            <td>
+                                                <span class="badge @(item.Method.Contains("QR") ? "badge-soft-info" : "badge-soft-secondary")">
+                                                    @(item.Method.Contains("QR") ? "QR Code" : "Thủ công")
+                                                </span>
+                                            </td>
+                                            <td class="text-center pe-3">
+                                                @if (item.IsValid)
+                                                {
+                                                    <span class="badge badge-soft-success">
+                                                        <i class="bi bi-check-circle me-1"></i>Hợp lệ (@item.DaysRemaining d)
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-soft-danger">
+                                                        <i class="bi bi-exclamation-triangle me-1"></i>Hết hạn
+                                                    </span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr id="emptyHistoryRow">
+                                        <td colspan="7" class="text-center py-4 text-muted">
+                                            <i class="bi bi-inbox fs-2 d-block mb-1 text-muted opacity-50"></i>
+                                            Chưa có lượt check-in nào trong ngày hôm nay.
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        /* Card kết quả với viền động (Xanh lá / Đỏ) */
+        #resultCardContainer {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 16px;
+        }
+
+        .border-result-success {
+            border: 3.5px solid #22c55e !important;
+            box-shadow: 0 0 25px rgba(34, 197, 94, 0.45) !important;
+        }
+
+        .border-result-error {
+            border: 3.5px solid #ef4444 !important;
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.45) !important;
+        }
+
+        .border-result-warning {
+            border: 3.5px solid #f59e0b !important;
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.45) !important;
+        }
+
+        /* CSS cho Laser Frame Quét QR */
+        .scanner-viewport-wrapper {
+            background-color: #0b0f19;
+            box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.7);
+        }
+
+        #qr-reader video {
+            width: 100% !important;
+            height: auto !important;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        #qr-reader__scan_region {
+            background: transparent !important;
+        }
+        #qr-reader__dashboard {
+            display: none !important;
+        }
+
+        /* Khung quét Laser động */
+        .scan-laser-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .laser-frame {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            border: 2px solid rgba(37, 99, 235, 0.35);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .laser-corner {
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            border-color: #2563eb;
+            border-style: solid;
+        }
+        .laser-corner.tl { top: 0; left: 0; border-width: 4px 0 0 4px; border-top-left-radius: 10px; }
+        .laser-corner.tr { top: 0; right: 0; border-width: 4px 4px 0 0; border-top-right-radius: 10px; }
+        .laser-corner.bl { bottom: 0; left: 0; border-width: 0 0 4px 4px; border-bottom-left-radius: 10px; }
+        .laser-corner.br { bottom: 0; right: 0; border-width: 0 4px 4px 0; border-bottom-right-radius: 10px; }
+
+        .laser-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #38bdf8, #2563eb, #38bdf8, transparent);
+            box-shadow: 0 0 12px #38bdf8;
+            animation: scanLaser 2.2s ease-in-out infinite alternate;
+        }
+
+        @@keyframes scanLaser {
+            0% { top: 5%; }
+            100% { top: 92%; }
+        }
+
+        /* Animation khi có row mới */
+        .row-highlight-new {
+            animation: highlightFade 3s ease forwards;
+        }
+        @@keyframes highlightFade {
+            0% { background-color: rgba(34, 197, 94, 0.3); }
+            100% { background-color: transparent; }
+        }
+
+        .cursor-pointer { cursor: pointer; }
+    </style>
+}
+
+@section Scripts {
+    <!-- Thư viện quét camera html5-qrcode -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+    <script>
+        // ==========================================
+        // 1. BIẾN TOÀN CỤC & TRẠNG THÁI
+        // ==========================================
+        let html5QrCode = null;
+        let isScannerRunning = false;
+        let scanCooldown = false;
+        let soundEnabled = true;
+        let audioContext = null;
+
+        // Khởi tạo đồng hồ thời gian thực
+        function updateClock() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            const clockEl = document.getElementById('liveClock');
+            if (clockEl) clockEl.textContent = `${h}:${m}:${s}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // ==========================================
+        // 2. ÂM THANH BÍP (WEB AUDIO API TỰ ĐỘNG)
+        // ==========================================
+        function initAudio() {
+            if (!audioContext) {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (AudioCtx) audioContext = new AudioCtx();
+            }
+        }
+
+        function playBeep(type = 'success') {
+            if (!soundEnabled) return;
+            try {
+                initAudio();
+                if (audioContext && audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+
+                if (type === 'success') {
+                    // Beep kép vui tai (880Hz -> 1320Hz)
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(880, audioContext.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(1320, audioContext.currentTime + 0.12);
+                    gain.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.18);
+                    osc.start();
+                    osc.stop(audioContext.currentTime + 0.18);
+                } else {
+                    // Âm cảnh báo trầm (260Hz)
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(260, audioContext.currentTime);
+                    gain.gain.setValueAtTime(0.35, audioContext.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.35);
+                    osc.start();
+                    osc.stop(audioContext.currentTime + 0.35);
+                }
+            } catch (e) {
+                console.warn('Audio beep error:', e);
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const el = document.getElementById('soundStatus');
+            if (el) {
+                el.innerHTML = soundEnabled 
+                    ? '<i class="bi bi-volume-up-fill text-success"></i> Âm thanh: Bật' 
+                    : '<i class="bi bi-volume-mute-fill text-danger"></i> Âm thanh: Tắt';
+            }
+        }
+
+        // ==========================================
+        // 3. KHỞI TẠO VÀ ĐIỀU KHIỂN CAMERA (html5-qrcode)
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', async () => {
+            await populateCameras();
+            
+            document.getElementById('btnToggleCamera')?.addEventListener('click', () => {
+                if (isScannerRunning) {
+                    stopScanner();
+                } else {
+                    startScanner();
+                }
+            });
+
+            document.getElementById('cameraSelect')?.addEventListener('change', () => {
+                if (isScannerRunning) {
+                    stopScanner().then(() => startScanner());
+                }
+            });
+
+            // Tự động focus vào ô nhập mã tay
+            document.getElementById('manualInputCode')?.focus();
+        });
+
+        async function populateCameras() {
+            const selectEl = document.getElementById('cameraSelect');
+            const statusBadge = document.getElementById('cameraStatusBadge');
+
+            try {
+                const devices = await Html5Qrcode.getCameras();
+                selectEl.innerHTML = '';
+
+                if (devices && devices.length > 0) {
+                    devices.forEach((device, idx) => {
+                        const opt = document.createElement('option');
+                        opt.value = device.id;
+                        opt.text = device.label || `Camera ${idx + 1}`;
+                        selectEl.appendChild(opt);
+                    });
+
+                    // Ưu tiên camera sau (back/environment) nếu có
+                    const backCam = devices.find(d => d.label && (d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('sau') || d.label.toLowerCase().includes('environment')));
+                    if (backCam) {
+                        selectEl.value = backCam.id;
+                    }
+
+                    statusBadge.className = 'badge badge-soft-success';
+                    statusBadge.innerHTML = `<i class="bi bi-camera-video me-1"></i>Đã tìm thấy ${devices.length} Camera`;
+                } else {
+                    selectEl.innerHTML = '<option value="">Không tìm thấy camera</option>';
+                    statusBadge.className = 'badge badge-soft-warning';
+                    statusBadge.innerHTML = '<i class="bi bi-exclamation-triangle me-1"></i>Không có camera';
+                }
+            } catch (err) {
+                console.warn('Lỗi dò thiết bị camera:', err);
+                selectEl.innerHTML = '<option value="">Chưa cấp quyền camera</option>';
+                statusBadge.className = 'badge badge-soft-secondary';
+                statusBadge.innerHTML = '<i class="bi bi-shield-lock me-1"></i>Cần cấp quyền';
+            }
+        }
+
+        async function startScanner() {
+            initAudio();
+            const selectEl = document.getElementById('cameraSelect');
+            const cameraId = selectEl.value;
+            const placeholder = document.getElementById('cameraPlaceholder');
+            const laserOverlay = document.getElementById('scanLaserOverlay');
+            const statusBadge = document.getElementById('cameraStatusBadge');
+            const btnToggle = document.getElementById('btnToggleCamera');
+
+            if (!cameraId) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Chưa có camera',
+                    text: 'Không tìm thấy thiết bị camera hợp lệ. Bạn có thể dùng ô nhập mã thẻ hoặc cắm súng quét barcode USB.'
+                });
+                return;
+            }
+
+            try {
+                if (!html5QrCode) {
+                    html5QrCode = new Html5Qrcode("qr-reader");
+                }
+
+                placeholder.classList.add('d-none');
+                laserOverlay.classList.remove('d-none');
+
+                statusBadge.className = 'badge badge-soft-primary';
+                statusBadge.innerHTML = '<span class="spinner-grow spinner-grow-sm me-1"></span>Đang mở camera...';
+
+                await html5QrCode.start(
+                    cameraId,
+                    {
+                        fps: 15,
+                        qrbox: { width: 220, height: 220 },
+                        aspectRatio: 1.0
+                    },
+                    (decodedText, decodedResult) => {
+                        onScanSuccess(decodedText);
+                    },
+                    (errorMessage) => {
+                        // Bỏ qua frame không có mã
+                    }
+                );
+
+                isScannerRunning = true;
+                statusBadge.className = 'badge badge-soft-success';
+                statusBadge.innerHTML = '<i class="bi bi-record-circle-fill text-danger me-1"></i>Camera Đang Quét Live';
+                btnToggle.innerHTML = '<i class="bi bi-stop-fill me-1"></i> Dừng Cam';
+                btnToggle.className = 'btn btn-sm btn-outline-danger w-100 fw-semibold';
+            } catch (err) {
+                console.error("Không thể bật camera:", err);
+                placeholder.classList.remove('d-none');
+                laserOverlay.classList.add('d-none');
+                statusBadge.className = 'badge badge-soft-danger';
+                statusBadge.innerHTML = '<i class="bi bi-x-circle me-1"></i>Lỗi camera';
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi Camera',
+                    text: 'Trình duyệt chưa được cấp quyền truy cập Camera hoặc camera đang bị ứng dụng khác chiếm dụng.'
+                });
+            }
+        }
+
+        async function stopScanner() {
+            const placeholder = document.getElementById('cameraPlaceholder');
+            const laserOverlay = document.getElementById('scanLaserOverlay');
+            const statusBadge = document.getElementById('cameraStatusBadge');
+            const btnToggle = document.getElementById('btnToggleCamera');
+
+            if (html5QrCode && isScannerRunning) {
+                try {
+                    await html5QrCode.stop();
+                } catch (e) {
+                    console.warn(e);
+                }
+            }
+
+            isScannerRunning = false;
+            placeholder.classList.remove('d-none');
+            laserOverlay.classList.add('d-none');
+            statusBadge.className = 'badge badge-soft-secondary';
+            statusBadge.innerHTML = '<i class="bi bi-pause-circle me-1"></i>Camera Đang Tắt';
+            btnToggle.innerHTML = '<i class="bi bi-play-fill me-1"></i> Bật Cam';
+            btnToggle.className = 'btn btn-sm btn-outline-primary w-100 fw-semibold';
+        }
+
+        // ==========================================
+        // 4. XỬ LÝ KHI QUÉT ĐƯỢC MÃ (CAMERA HOẶC TAY)
+        // ==========================================
+        async function onScanSuccess(code) {
+            if (scanCooldown) return;
+            scanCooldown = true;
+
+            const successOverlay = document.getElementById('scanSuccessOverlay');
+            successOverlay?.classList.remove('d-none');
+            successOverlay?.classList.add('d-flex');
+
+            // Gửi xử lý check-in
+            await sendCheckInRequest(code, 'Mã QR Code');
+
+            // Cooldown 2.5 giây để tránh quét trùng camera
+            setTimeout(() => {
+                successOverlay?.classList.remove('d-flex');
+                successOverlay?.classList.add('d-none');
+                scanCooldown = false;
+            }, 2500);
+        }
+
+        async function handleManualSubmit(e) {
+            e.preventDefault();
+            const input = document.getElementById('manualInputCode');
+            const code = input?.value?.trim();
+            if (!code) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Chưa nhập mã',
+                    text: 'Vui lòng nhập mã thẻ hội viên, ID hoặc số điện thoại.'
+                });
+                return;
+            }
+
+            const btn = document.getElementById('btnManualSubmit');
+            const spinner = document.getElementById('manualSpinner');
+            const icon = document.getElementById('manualBtnIcon');
+
+            btn.disabled = true;
+            spinner.classList.remove('d-none');
+            icon.classList.add('d-none');
+
+            await sendCheckInRequest(code, 'Mã thẻ thủ công');
+
+            btn.disabled = false;
+            spinner.classList.add('d-none');
+            icon.classList.remove('d-none');
+
+            input.value = '';
+            input.focus();
+        }
+
+        function clearManualInput() {
+            const input = document.getElementById('manualInputCode');
+            if (input) {
+                input.value = '';
+                input.focus();
+            }
+        }
+
+        // ==========================================
+        // 5. GỬI AJAX CHECK-IN LÊN SERVER & XỬ LÝ 4 BƯỚC
+        // ==========================================
+        async function sendCheckInRequest(code, method) {
+            try {
+                const response = await fetch('/Admin/CheckIn/ProcessCheckIn', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        code: code,
+                        method: method
+                    })
+                });
+
+                const res = await response.json();
+
+                // BƯỚC 4: Phản hồi kết quả lên màn hình Admin
+                if (res.isValid && res.success) {
+                    // HỢP LỆ: Viền Xanh lá, báo "Check-in thành công", số ngày tập còn lại
+                    playBeep('success');
+                    renderScanResultSuccess(res);
+                    prependHistoryRow(res);
+                    incrementTodayStats();
+
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Check-in thành công! Còn ' + res.daysRemaining + ' ngày tập'
+                    });
+                } else {
+                    // KHÔNG HỢP LỆ: Viền Đỏ (hoặc Viền Vàng nếu quẹt trùng), cảnh báo rõ lý do
+                    playBeep('error');
+                    renderScanResultInvalid(res, code);
+
+                    Toast.fire({
+                        icon: res.isDuplicate ? 'warning' : 'error',
+                        title: res.message || 'Check-in không hợp lệ!'
+                    });
+                }
+
+            } catch (err) {
+                console.error('Check-in network error:', err);
+                playBeep('error');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi kết nối',
+                    text: 'Không thể kết nối tới máy chủ để xác thực check-in.'
+                });
+            }
+        }
+
+        // ==========================================
+        // 6. RENDER KẾT QUẢ QUÉT TỨC THÌ LÊN MÀN HÌNH ADMIN
+        // ==========================================
+        
+        // 6.1 Trường hợp HỢP LỆ -> Viền XANH LÁ + Báo "Check-in thành công" + Số ngày tập còn lại
+        function renderScanResultSuccess(data) {
+            document.getElementById('resultStateEmpty')?.classList.add('d-none');
+            const activeState = document.getElementById('resultStateActive');
+            activeState?.classList.remove('d-none');
+
+            // Set VIỀN XANH LÁ cho khung hiển thị lớn
+            const cardContainer = document.getElementById('resultCardContainer');
+            if (cardContainer) {
+                cardContainer.className = 'card shadow-sm mb-4 overflow-hidden border-result-success';
+            }
+
+            // Time badge
+            const timeBadge = document.getElementById('resultTimeBadge');
+            if (timeBadge) {
+                timeBadge.className = 'badge bg-success text-white border-0';
+                timeBadge.textContent = 'Check-in lúc ' + data.checkInHour;
+            }
+
+            // Banner trạng thái Xanh lá
+            const banner = document.getElementById('resultStatusBanner');
+            const bannerIcon = document.getElementById('resultBannerIcon');
+            const bannerTitle = document.getElementById('resultBannerTitle');
+            const bannerMsg = document.getElementById('resultBannerMessage');
+            const resStatusBadge = document.getElementById('resStatusBadge');
+            const resAvatar = document.getElementById('resAvatar');
+
+            banner.className = 'alert alert-success d-flex align-items-center gap-3 py-3 px-3 mb-4 rounded-3 shadow-sm border-0';
+            bannerIcon.className = 'bi bi-check-circle-fill text-success fs-3';
+            bannerTitle.className = 'fw-bold mb-0 text-success';
+            bannerTitle.textContent = 'Check-in thành công';
+            bannerMsg.textContent = `Hội viên có gói tập "${data.packageName}" còn hiệu lực. Cửa soát vé mở.`;
+
+            // Avatar & Badge
+            resAvatar.src = data.avatarUrl || '/images/default-avatar.svg';
+            resAvatar.className = 'rounded-circle shadow border border-3 border-success object-fit-cover';
+            resStatusBadge.className = 'position-absolute bottom-0 end-0 badge rounded-pill bg-success border border-2 border-white px-2 py-1 shadow-sm';
+            resStatusBadge.innerHTML = '<i class="bi bi-patch-check-fill me-1"></i>ACTIVE';
+
+            // Chi tiết thông tin
+            document.getElementById('resCardCode').textContent = data.cardCode || 'N/A';
+            document.getElementById('resFullName').textContent = data.fullName || 'Hội viên';
+            document.getElementById('resCheckInTime').textContent = data.checkInTime || data.checkInHour;
+            document.getElementById('resMethod').textContent = data.method || 'Mã QR Code';
+            document.getElementById('resPackageName').textContent = data.packageName || 'Chưa đăng ký gói';
+
+            // Hiển thị số ngày tập còn lại
+            const daysBadge = document.getElementById('resDaysRemaining');
+            daysBadge.className = 'badge bg-success fs-6 fw-bold px-2 py-1';
+            daysBadge.textContent = `Còn ${data.daysRemaining} ngày`;
+
+            document.getElementById('resExpiryDate').textContent = data.expiryDate || 'N/A';
+        }
+
+        // 6.2 Trường hợp KHÔNG HỢP LỆ -> Viền ĐỎ (hoặc VÀNG nếu trùng) + Cảnh báo rõ lý do
+        function renderScanResultInvalid(data, fallbackCode) {
+            document.getElementById('resultStateEmpty')?.classList.add('d-none');
+            const activeState = document.getElementById('resultStateActive');
+            activeState?.classList.remove('d-none');
+
+            const cardContainer = document.getElementById('resultCardContainer');
+            const timeBadge = document.getElementById('resultTimeBadge');
+            const banner = document.getElementById('resultStatusBanner');
+            const bannerIcon = document.getElementById('resultBannerIcon');
+            const bannerTitle = document.getElementById('resultBannerTitle');
+            const bannerMsg = document.getElementById('resultBannerMessage');
+            const resStatusBadge = document.getElementById('resStatusBadge');
+            const resAvatar = document.getElementById('resAvatar');
+
+            if (data.isDuplicate) {
+                // Quẹt trùng: Viền Vàng Cam
+                if (cardContainer) cardContainer.className = 'card shadow-sm mb-4 overflow-hidden border-result-warning';
+                if (timeBadge) {
+                    timeBadge.className = 'badge bg-warning text-dark border-0';
+                    timeBadge.textContent = 'Trùng lượt quét';
+                }
+
+                banner.className = 'alert alert-warning d-flex align-items-center gap-3 py-3 px-3 mb-4 rounded-3 shadow-sm border-0';
+                bannerIcon.className = 'bi bi-exclamation-triangle-fill text-warning fs-3';
+                bannerTitle.className = 'fw-bold mb-0 text-warning';
+                bannerTitle.textContent = 'CẢNH BÁO: QUẸT THẺ TRÙNG LẶP!';
+                bannerMsg.textContent = data.message;
+
+                resAvatar.src = data.avatarUrl || '/images/default-avatar.svg';
+                resAvatar.className = 'rounded-circle shadow border border-3 border-warning object-fit-cover';
+                resStatusBadge.className = 'position-absolute bottom-0 end-0 badge rounded-pill bg-warning text-dark border border-2 border-white px-2 py-1 shadow-sm';
+                resStatusBadge.innerHTML = '<i class="bi bi-clock-history me-1"></i>QUẸT TRÙNG';
+
+                document.getElementById('resCardCode').textContent = data.cardCode || fallbackCode;
+                document.getElementById('resFullName').textContent = data.fullName || 'Hội viên';
+                document.getElementById('resCheckInTime').textContent = data.checkInHour || '--:--:--';
+                document.getElementById('resMethod').textContent = data.method || 'Mã thẻ';
+                document.getElementById('resPackageName').textContent = data.packageName || 'Gói tập';
+
+                const daysBadge = document.getElementById('resDaysRemaining');
+                daysBadge.className = 'badge bg-warning text-dark fs-6 fw-bold px-2 py-1';
+                daysBadge.textContent = `Còn ${data.daysRemaining} ngày`;
+                document.getElementById('resExpiryDate').textContent = data.expiryDate || 'N/A';
+            } 
+            else if (data.errorCode === 'EXPIRED') {
+                // Gói tập đã hết hạn, cần gia hạn tại quầy: Viền ĐỎ
+                if (cardContainer) cardContainer.className = 'card shadow-sm mb-4 overflow-hidden border-result-error';
+                if (timeBadge) {
+                    timeBadge.className = 'badge bg-danger text-white border-0';
+                    timeBadge.textContent = 'Gói hết hạn';
+                }
+
+                banner.className = 'alert alert-danger d-flex align-items-center gap-3 py-3 px-3 mb-4 rounded-3 shadow-sm border-0';
+                bannerIcon.className = 'bi bi-x-circle-fill text-danger fs-3';
+                bannerTitle.className = 'fw-bold mb-0 text-danger';
+                bannerTitle.textContent = 'Gói tập đã hết hạn, cần gia hạn tại quầy';
+                bannerMsg.textContent = `Hạn dùng thẻ: ${data.expiryDate || 'Đã hết hạn'}. Vui lòng hướng dẫn khách gia hạn tại quầy tiếp tân.`;
+
+                resAvatar.src = data.avatarUrl || '/images/default-avatar.svg';
+                resAvatar.className = 'rounded-circle shadow border border-3 border-danger object-fit-cover';
+                resStatusBadge.className = 'position-absolute bottom-0 end-0 badge rounded-pill bg-danger border border-2 border-white px-2 py-1 shadow-sm';
+                resStatusBadge.innerHTML = '<i class="bi bi-x-circle-fill me-1"></i>EXPIRED';
+
+                document.getElementById('resCardCode').textContent = data.cardCode || fallbackCode;
+                document.getElementById('resFullName').textContent = data.fullName || 'Hội viên';
+                document.getElementById('resCheckInTime').textContent = '--:--:--';
+                document.getElementById('resMethod').textContent = data.method || 'Mã thẻ';
+                document.getElementById('resPackageName').textContent = data.packageName || 'Đã hết hạn';
+
+                const daysBadge = document.getElementById('resDaysRemaining');
+                daysBadge.className = 'badge bg-danger fs-6 fw-bold px-2 py-1';
+                daysBadge.textContent = 'Đã hết hạn (0 ngày)';
+                document.getElementById('resExpiryDate').textContent = data.expiryDate || 'N/A';
+            } 
+            else {
+                // Mã thẻ không tồn tại: Viền ĐỎ
+                if (cardContainer) cardContainer.className = 'card shadow-sm mb-4 overflow-hidden border-result-error';
+                if (timeBadge) {
+                    timeBadge.className = 'badge bg-danger text-white border-0';
+                    timeBadge.textContent = 'Không hợp lệ';
+                }
+
+                banner.className = 'alert alert-danger d-flex align-items-center gap-3 py-3 px-3 mb-4 rounded-3 shadow-sm border-0';
+                bannerIcon.className = 'bi bi-x-circle-fill text-danger fs-3';
+                bannerTitle.className = 'fw-bold mb-0 text-danger';
+                bannerTitle.textContent = 'Mã thẻ không tồn tại';
+                bannerMsg.textContent = data.message || `Mã "${fallbackCode}" không tồn tại trong hệ thống phòng gym. Vui lòng kiểm tra lại.`;
+
+                resAvatar.src = '/images/default-avatar.svg';
+                resAvatar.className = 'rounded-circle shadow border border-3 border-secondary object-fit-cover';
+                resStatusBadge.className = 'position-absolute bottom-0 end-0 badge rounded-pill bg-secondary border border-2 border-white px-2 py-1 shadow-sm';
+                resStatusBadge.innerHTML = '<i class="bi bi-question-circle me-1"></i>UNKNOWN';
+
+                document.getElementById('resCardCode').textContent = fallbackCode || 'INVALID';
+                document.getElementById('resFullName').textContent = 'Không tìm thấy hội viên';
+                document.getElementById('resCheckInTime').textContent = '--:--:--';
+                document.getElementById('resMethod').textContent = 'Không xác định';
+                document.getElementById('resPackageName').textContent = 'Không có dữ liệu';
+
+                const daysBadge = document.getElementById('resDaysRemaining');
+                daysBadge.className = 'badge bg-secondary fs-6 fw-bold px-2 py-1';
+                daysBadge.textContent = '0 ngày';
+                document.getElementById('resExpiryDate').textContent = 'N/A';
+            }
+        }
+
+        // ==========================================
+        // 7. CẬP NHẬT DỮ LIỆU BẢNG LỊCH SỬ THỜI GIAN THỰC
+        // ==========================================
+        function prependHistoryRow(data) {
+            const tbody = document.getElementById('historyTableBody');
+            const emptyRow = document.getElementById('emptyHistoryRow');
+            if (emptyRow) emptyRow.remove();
+
+            const tr = document.createElement('tr');
+            tr.id = `row-checkin-${data.checkInId || Date.now()}`;
+            tr.className = 'row-highlight-new';
+
+            const methodBadge = data.method && data.method.includes('QR')
+                ? '<span class="badge badge-soft-info">QR Code</span>'
+                : '<span class="badge badge-soft-secondary">Thủ công</span>';
+
+            const statusBadge = `<span class="badge badge-soft-success"><i class="bi bi-check-circle me-1"></i>Hợp lệ (${data.daysRemaining} d)</span>`;
+
+            tr.innerHTML = `
+                <td class="ps-3 text-muted small"><i class="bi bi-star-fill text-warning"></i></td>
+                <td>
+                    <div class="d-flex align-items-center gap-2">
+                        <img src="${data.avatarUrl || '/images/default-avatar.svg'}" 
+                             alt="${data.fullName}" class="rounded-circle object-fit-cover border" 
+                             style="width: 34px; height: 34px;" />
+                        <div class="fw-bold text-dark">${data.fullName}</div>
+                    </div>
+                </td>
+                <td>
+                    <span class="badge bg-light text-primary border font-monospace">${data.cardCode}</span>
+                </td>
+                <td class="small text-truncate" style="max-width: 180px;" title="${data.packageName}">
+                    ${data.packageName}
+                </td>
+                <td class="text-center font-monospace fw-bold text-dark">
+                    ${data.checkInHour}
+                </td>
+                <td>${methodBadge}</td>
+                <td class="text-center pe-3">${statusBadge}</td>
+            `;
+
+            tbody.insertBefore(tr, tbody.firstChild);
+
+            reindexHistoryTable();
+        }
+
+        function reindexHistoryTable() {
+            const rows = document.querySelectorAll('#historyTableBody tr');
+            rows.forEach((row, idx) => {
+                if (row.id !== 'emptyHistoryRow') {
+                    const firstTd = row.querySelector('td:first-child');
+                    if (firstTd && !row.classList.contains('row-highlight-new')) {
+                        firstTd.textContent = idx + 1;
+                    }
+                }
+            });
+        }
+
+        function incrementTodayStats() {
+            const countEl = document.getElementById('statTodayCount');
+            const badgeEl = document.getElementById('historyCountBadge');
+            let current = parseInt(countEl?.textContent || '0', 10);
+            current++;
+            if (countEl) countEl.textContent = current;
+            if (badgeEl) badgeEl.textContent = current;
+        }
+
+        async function loadTodayHistory() {
+            try {
+                const res = await fetch('/Admin/CheckIn/GetTodayHistory');
+                const data = await res.json();
+                
+                const countEl = document.getElementById('statTodayCount');
+                const badgeEl = document.getElementById('historyCountBadge');
+                if (countEl) countEl.textContent = data.total;
+                if (badgeEl) badgeEl.textContent = data.total;
+
+                const tbody = document.getElementById('historyTableBody');
+                tbody.innerHTML = '';
+
+                if (data.data && data.data.length > 0) {
+                    data.data.forEach((item, index) => {
+                        const tr = document.createElement('tr');
+                        tr.id = `row-checkin-${item.checkInId}`;
+                        const methodBadge = item.method.includes('QR')
+                            ? '<span class="badge badge-soft-info">QR Code</span>'
+                            : '<span class="badge badge-soft-secondary">Thủ công</span>';
+
+                        const statusBadge = item.isValid
+                            ? `<span class="badge badge-soft-success"><i class="bi bi-check-circle me-1"></i>Hợp lệ (${item.daysRemaining} d)</span>`
+                            : `<span class="badge badge-soft-danger"><i class="bi bi-exclamation-triangle me-1"></i>Hết hạn</span>`;
+
+                        tr.innerHTML = `
+                            <td class="ps-3 text-muted small">${index + 1}</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <img src="${item.avatarUrl || '/images/default-avatar.svg'}" 
+                                         alt="${item.fullName}" class="rounded-circle object-fit-cover border" 
+                                         style="width: 34px; height: 34px;" />
+                                    <div class="fw-bold text-dark">${item.fullName}</div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-primary border font-monospace">${item.cardCode}</span>
+                            </td>
+                            <td class="small text-truncate" style="max-width: 180px;" title="${item.PackageName}">
+                                ${item.packageName}
+                            </td>
+                            <td class="text-center font-monospace fw-bold text-dark">${item.time}</td>
+                            <td>${methodBadge}</td>
+                            <td class="text-center pe-3">${statusBadge}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                } else {
+                    tbody.innerHTML = `
+                        <tr id="emptyHistoryRow">
+                            <td colspan="7" class="text-center py-4 text-muted">
+                                <i class="bi bi-inbox fs-2 d-block mb-1 text-muted opacity-50"></i>
+                                Chưa có lượt check-in nào trong ngày hôm nay.
+                            </td>
+                        </tr>
+                    `;
+                }
+
+                Toast.fire({
+                    icon: 'info',
+                    title: 'Đã cập nhật lịch sử hôm nay!'
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function filterHistoryTable() {
+            const query = document.getElementById('historySearchInput')?.value?.toLowerCase()?.trim() || '';
+            const rows = document.querySelectorAll('#historyTableBody tr');
+            rows.forEach(row => {
+                if (row.id === 'emptyHistoryRow') return;
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+        }
+    </script>
+}

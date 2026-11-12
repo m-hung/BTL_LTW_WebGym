@@ -1775,11 +1775,19 @@ namespace WebGym.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MemberId"));
 
+                    b.Property<string>("AvatarUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<double?>("BMR")
                         .HasColumnType("float");
 
                     b.Property<double?>("BodyFatPercentage")
                         .HasColumnType("float");
+
+                    b.Property<string>("CardCode")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<double?>("Chest")
                         .HasColumnType("float");
@@ -1799,6 +1807,10 @@ namespace WebGym.Migrations
 
                     b.Property<double?>("MuscleMass")
                         .HasColumnType("float");
+
+                    b.Property<string>("QrCode")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -1820,14 +1832,17 @@ namespace WebGym.Migrations
                         new
                         {
                             MemberId = 1,
+                            AvatarUrl = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400",
                             BMR = 1720.0,
                             BodyFatPercentage = 25.5,
+                            CardCode = "GYM-MB-0001",
                             Chest = 98.0,
                             DateOfBirth = new DateTime(1997, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Gender = "Nam",
                             Height = 170.0,
                             Hips = 96.0,
                             MuscleMass = 32.0,
+                            QrCode = "GYM-MB-0001",
                             UserId = 5,
                             Waist = 88.0,
                             Weight = 78.5
@@ -1835,14 +1850,17 @@ namespace WebGym.Migrations
                         new
                         {
                             MemberId = 2,
+                            AvatarUrl = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
                             BMR = 1350.0,
                             BodyFatPercentage = 24.0,
+                            CardCode = "GYM-MB-0002",
                             Chest = 84.0,
                             DateOfBirth = new DateTime(2001, 8, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Gender = "Nữ",
                             Height = 162.0,
                             Hips = 91.0,
                             MuscleMass = 22.5,
+                            QrCode = "GYM-MB-0002",
                             UserId = 6,
                             Waist = 68.0,
                             Weight = 56.0
@@ -1850,14 +1868,17 @@ namespace WebGym.Migrations
                         new
                         {
                             MemberId = 3,
+                            AvatarUrl = "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=400",
                             BMR = 1850.0,
                             BodyFatPercentage = 26.0,
+                            CardCode = "GYM-MB-0003",
                             Chest = 102.0,
                             DateOfBirth = new DateTime(1995, 11, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Gender = "Nam",
                             Height = 176.0,
                             Hips = 100.0,
                             MuscleMass = 34.5,
+                            QrCode = "GYM-MB-0003",
                             UserId = 7,
                             Waist = 92.0,
                             Weight = 84.0
@@ -1865,14 +1886,17 @@ namespace WebGym.Migrations
                         new
                         {
                             MemberId = 4,
+                            AvatarUrl = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400",
                             BMR = 1280.0,
                             BodyFatPercentage = 21.5,
+                            CardCode = "GYM-MB-0004",
                             Chest = 82.0,
                             DateOfBirth = new DateTime(1999, 2, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Gender = "Nữ",
                             Height = 158.0,
                             Hips = 88.0,
                             MuscleMass = 20.0,
+                            QrCode = "GYM-MB-0004",
                             UserId = 8,
                             Waist = 64.0,
                             Weight = 49.0
@@ -1880,14 +1904,17 @@ namespace WebGym.Migrations
                         new
                         {
                             MemberId = 5,
+                            AvatarUrl = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400",
                             BMR = 1690.0,
                             BodyFatPercentage = 19.0,
+                            CardCode = "GYM-MB-0005",
                             Chest = 96.0,
                             DateOfBirth = new DateTime(1992, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Gender = "Nam",
                             Height = 174.0,
                             Hips = 94.0,
                             MuscleMass = 33.0,
+                            QrCode = "GYM-MB-0005",
                             UserId = 9,
                             Waist = 80.0,
                             Weight = 73.0
@@ -1895,14 +1922,17 @@ namespace WebGym.Migrations
                         new
                         {
                             MemberId = 21,
+                            AvatarUrl = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400",
                             BMR = 1320.0,
                             BodyFatPercentage = 23.5,
+                            CardCode = "GYM-MB-0021",
                             Chest = 85.0,
                             DateOfBirth = new DateTime(2000, 3, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Gender = "Nữ",
                             Height = 165.0,
                             Hips = 90.0,
                             MuscleMass = 21.800000000000001,
+                            QrCode = "GYM-MB-0021",
                             UserId = 21,
                             Waist = 65.0,
                             Weight = 54.0
@@ -1910,14 +1940,17 @@ namespace WebGym.Migrations
                         new
                         {
                             MemberId = 22,
+                            AvatarUrl = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
                             BMR = 1810.0,
                             BodyFatPercentage = 24.0,
+                            CardCode = "GYM-MB-0022",
                             Chest = 101.0,
                             DateOfBirth = new DateTime(1996, 7, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Gender = "Nam",
                             Height = 178.0,
                             Hips = 98.0,
                             MuscleMass = 35.0,
+                            QrCode = "GYM-MB-0022",
                             UserId = 22,
                             Waist = 86.0,
                             Weight = 82.0
@@ -1925,14 +1958,17 @@ namespace WebGym.Migrations
                         new
                         {
                             MemberId = 23,
+                            AvatarUrl = "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400",
                             BMR = 1290.0,
                             BodyFatPercentage = 22.0,
+                            CardCode = "GYM-MB-0023",
                             Chest = 83.0,
                             DateOfBirth = new DateTime(2002, 11, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Gender = "Nữ",
                             Height = 160.0,
                             Hips = 89.0,
                             MuscleMass = 20.5,
+                            QrCode = "GYM-MB-0023",
                             UserId = 23,
                             Waist = 63.0,
                             Weight = 52.5
@@ -1940,14 +1976,17 @@ namespace WebGym.Migrations
                         new
                         {
                             MemberId = 24,
+                            AvatarUrl = "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400",
                             BMR = 1700.0,
                             BodyFatPercentage = 21.0,
+                            CardCode = "GYM-MB-0024",
                             Chest = 97.0,
                             DateOfBirth = new DateTime(1994, 9, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Gender = "Nam",
                             Height = 172.0,
                             Hips = 95.0,
                             MuscleMass = 33.0,
+                            QrCode = "GYM-MB-0024",
                             UserId = 24,
                             Waist = 82.0,
                             Weight = 75.0

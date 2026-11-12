@@ -17,7 +17,8 @@ namespace WebGym
                 ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
+                options.UseSqlServer(connectionString)
+                       .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
 
             // 2. Cookie Authentication & Authorization
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

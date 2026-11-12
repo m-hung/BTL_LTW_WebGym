@@ -207,7 +207,8 @@ namespace WebGym.Areas.Admin.Controllers
                 MuscleMass = member.MuscleMass,
                 Chest = member.Chest,
                 Waist = member.Waist,
-                Hips = member.Hips
+                Hips = member.Hips,
+                AvatarUrl = member.AvatarUrl
             };
 
             return View(model);
@@ -262,6 +263,7 @@ namespace WebGym.Areas.Admin.Controllers
             member.Chest = model.Chest;
             member.Waist = model.Waist;
             member.Hips = model.Hips;
+            member.AvatarUrl = model.AvatarUrl?.Trim();
 
             await _context.SaveChangesAsync();
 

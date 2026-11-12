@@ -116,14 +116,14 @@
                 </div>
             </div>
 
-            <!-- Action Buttons (Cân đối, dễ bấm) -->
+            <!-- Action Buttons (Mở Pop-up Modal theo yêu cầu ảnh 4) -->
             <div class="pt-2 border-top border-secondary border-opacity-25 d-flex flex-wrap gap-2">
-                <a asp-area="" asp-controller="Home" asp-action="Packages" class="card-action-btn card-action-btn-primary">
-                    Gia hạn gói
-                </a>
-                <a asp-area="" asp-controller="Home" asp-action="Packages" class="card-action-btn card-action-btn-outline">
-                    Nâng cấp gói
-                </a>
+                <button type="button" class="card-action-btn card-action-btn-primary" data-bs-toggle="modal" data-bs-target="#renewPackageModal">
+                    <i class="bi bi-arrow-repeat me-1"></i> Gia hạn gói
+                </button>
+                <button type="button" class="card-action-btn card-action-btn-outline" data-bs-toggle="modal" data-bs-target="#upgradePackageModal">
+                    <i class="bi bi-lightning-charge-fill me-1"></i> Nâng cấp gói
+                </button>
             </div>
         </div>
     </div>
@@ -218,78 +218,432 @@
 
 <!-- SECTION 3: ĐẶC QUYỀN HỘI VIÊN -->
 <div class="portal-card p-4">
-    <div class="mb-3 pb-2 border-bottom border-secondary border-opacity-25">
-        <h3 class="portal-title-accent fs-4 mb-0">ĐẶC QUYỀN <span>HỘI VIÊN GÓI @Model.PackageTier</span></h3>
-        <div style="color: #a6ada2; font-size: 13.5px;">
-            Các quyền lợi và tiện ích đi kèm xuyên suốt thời gian hiệu lực của gói tập
+    <div class="mb-3 pb-2 border-bottom border-secondary border-opacity-25 d-flex flex-wrap align-items-center justify-content-between gap-2">
+        <div>
+            <h3 class="portal-title-accent fs-4 mb-0">ĐẶC QUYỀN <span>HỘI VIÊN GÓI @Model.PackageTier</span></h3>
+            <div style="color: #a6ada2; font-size: 13.5px;">
+                Các quyền lợi và tiện ích đi kèm xuyên suốt thời gian hiệu lực của gói tập (@Model.PackageName)
+            </div>
         </div>
+        <span class="portal-badge" style="background: rgba(200, 255, 46, 0.12); color: var(--portal-lime); border: 1px solid rgba(200, 255, 46, 0.3); font-size: 11px;">
+            @Model.PackageName
+        </span>
     </div>
 
-    <div class="row g-3">
-        <div class="col-md-6">
-            <div class="perk-box">
-                <div class="fw-semibold mb-1" style="color: #f2f5ef; font-size: 15px;">
-                    Tập luyện không giới hạn khung giờ
+    @if (Model.PackageName.Contains("Đồng", StringComparison.OrdinalIgnoreCase) || Model.PackageId == 1)
+    {
+        <!-- 6 Đặc quyền chuẩn của Gói Đồng (Basic) -->
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="perk-box">
+                    <div class="fw-semibold mb-1" style="color: #f2f5ef; font-size: 15px;">
+                        <i class="bi bi-clock-history me-1" style="color: var(--portal-lime);"></i> Tập luyện không giới hạn khung giờ
+                    </div>
+                    <div class="small" style="color: #9aa296; line-height: 1.5;">
+                        Toàn quyền sử dụng hệ thống máy tập Gym & Cardio chuẩn quốc tế tại mọi khung giờ mở cửa trong ngày (06:00 - 22:00).
+                    </div>
                 </div>
-                <div class="small" style="color: #9aa296; line-height: 1.5;">
-                    Toàn quyền sử dụng hệ thống máy tập chuẩn Olympic quốc tế tại mọi khung giờ mở cửa trong ngày.
+            </div>
+
+            <div class="col-md-6">
+                <div class="perk-box">
+                    <div class="fw-semibold mb-1" style="color: #f2f5ef; font-size: 15px;">
+                        <i class="bi bi-shield-lock me-1" style="color: var(--portal-lime);"></i> Smart Locker cá nhân an toàn
+                    </div>
+                    <div class="small" style="color: #9aa296; line-height: 1.5;">
+                        Sử dụng hệ thống tủ đồ cá nhân thông minh bảo mật cao bằng thẻ từ trong suốt thời gian tập luyện.
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="perk-box">
+                    <div class="fw-semibold mb-1" style="color: #f2f5ef; font-size: 15px;">
+                        <i class="bi bi-droplet-half me-1" style="color: var(--portal-lime);"></i> Phòng tắm nóng lạnh & Thay đồ chuẩn 5 sao
+                    </div>
+                    <div class="small" style="color: #9aa296; line-height: 1.5;">
+                        Khu vực vệ sinh, phòng thay đồ và phòng tắm nóng lạnh riêng biệt, sạch sẽ, máy sấy tóc tiện nghi.
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="perk-box">
+                    <div class="fw-semibold mb-1" style="color: #f2f5ef; font-size: 15px;">
+                        <i class="bi bi-cup-straw me-1" style="color: var(--portal-lime);"></i> Nước uống tinh khiết miễn phí
+                    </div>
+                    <div class="small" style="color: #9aa296; line-height: 1.5;">
+                        Hệ thống cây nước lọc tinh khiết tự động hai chế độ nóng/lạnh được trang bị tại các khu vực tập.
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="perk-box">
+                    <div class="fw-semibold mb-1" style="color: #f2f5ef; font-size: 15px;">
+                        <i class="bi bi-wifi me-1" style="color: var(--portal-lime);"></i> Wifi tốc độ cao & Âm nhạc truyền cảm hứng
+                    </div>
+                    <div class="small" style="color: #9aa296; line-height: 1.5;">
+                        Không gian tập luyện hiện đại với âm nhạc chuyên dụng kích thích năng lượng và internet không dây tốc độ cao.
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="perk-box">
+                    <div class="fw-semibold mb-1" style="color: #f2f5ef; font-size: 15px;">
+                        <i class="bi bi-person-arms-up me-1" style="color: var(--portal-lime);"></i> Hướng dẫn kỹ thuật thiết bị an toàn
+                    </div>
+                    <div class="small" style="color: #9aa296; line-height: 1.5;">
+                        Đội ngũ huấn luyện viên sàn luôn túc trực hỗ trợ hướng dẫn vận hành máy tập chuẩn form và an toàn.
+                    </div>
                 </div>
             </div>
         </div>
-
-        <div class="col-md-6">
-            <div class="perk-box">
-                <div class="fw-semibold mb-1" style="color: #f2f5ef; font-size: 15px;">
-                    Đo phân tích chỉ số InBody miễn phí
+    }
+    else if (Model.PackageName.Contains("Bạc", StringComparison.OrdinalIgnoreCase) || Model.PackageId == 2)
+    {
+        <!-- Đặc quyền Gói Bạc (Standard) -->
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="perk-box">
+                    <div class="fw-semibold mb-1" style="color: #f2f5ef; font-size: 15px;">
+                        <i class="bi bi-clock-history me-1" style="color: var(--portal-lime);"></i> Tập luyện không giới hạn khung giờ
+                    </div>
+                    <div class="small" style="color: #9aa296; line-height: 1.5;">
+                        Toàn quyền sử dụng hệ thống máy tập chuẩn Olympic quốc tế tại mọi khung giờ mở cửa trong ngày.
+                    </div>
                 </div>
-                <div class="small" style="color: #9aa296; line-height: 1.5;">
-                    Được đo và theo dõi các chỉ số cơ thể định kỳ 2 lần/tháng bằng máy InBody chuyên dụng.
+            </div>
+            <div class="col-md-6">
+                <div class="perk-box">
+                    <div class="fw-semibold mb-1" style="color: #f2f5ef; font-size: 15px;">
+                        <i class="bi bi-activity me-1" style="color: var(--portal-lime);"></i> Đo phân tích chỉ số InBody miễn phí
+                    </div>
+                    <div class="small" style="color: #9aa296; line-height: 1.5;">
+                        Được đo và theo dõi các chỉ số cơ thể định kỳ 2 lần/tháng bằng máy InBody chuyên dụng.
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="perk-box">
+                    <div class="fw-semibold mb-1" style="color: #f2f5ef; font-size: 15px;">
+                        <i class="bi bi-shield-lock me-1" style="color: var(--portal-lime);"></i> Smart Locker cá nhân & Khăn tập
+                    </div>
+                    <div class="small" style="color: #9aa296; line-height: 1.5;">
+                        Tủ đồ thông minh bảo mật cao và khăn tập kháng khuẩn sạch sẽ được cấp mỗi buổi tập.
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="perk-box">
+                    <div class="fw-semibold mb-1" style="color: #f2f5ef; font-size: 15px;">
+                        <i class="bi bi-droplet-half me-1" style="color: var(--portal-lime);"></i> Phòng tắm nước nóng & Khu vực thư giãn
+                    </div>
+                    <div class="small" style="color: #9aa296; line-height: 1.5;">
+                        Miễn phí phòng tắm nước nóng hiện đại, máy sấy tóc và khu vực thư giãn sau tập.
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="perk-box">
+                    <div class="fw-semibold mb-1" style="color: #f2f5ef; font-size: 15px;">
+                        <i class="bi bi-percent me-1" style="color: var(--portal-lime);"></i> Ưu đãi giảm giá 5% tại quầy Pulse Bar
+                    </div>
+                    <div class="small" style="color: #9aa296; line-height: 1.5;">
+                        Chiết khấu trực tiếp khi mua Whey Protein, BCAA, đồ uống bổ sung dinh dưỡng tại phòng tập.
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="perk-box">
+                    <div class="fw-semibold mb-1" style="color: #f2f5ef; font-size: 15px;">
+                        <i class="bi bi-person-arms-up me-1" style="color: var(--portal-lime);"></i> Hướng dẫn kỹ thuật thiết bị an toàn
+                    </div>
+                    <div class="small" style="color: #9aa296; line-height: 1.5;">
+                        Đội ngũ huấn luyện viên sàn luôn túc trực hỗ trợ hướng dẫn vận hành máy tập chuẩn form.
+                    </div>
                 </div>
             </div>
         </div>
-
-        <div class="col-md-6">
-            <div class="perk-box">
-                <div class="fw-semibold mb-1" style="color: #f2f5ef; font-size: 15px;">
-                    Phòng xông hơi & khu vực thư giãn cao cấp
+    }
+    else
+    {
+        <!-- Đặc quyền VIP (Gói Vàng & Kim Cương kèm PT) -->
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="perk-box">
+                    <div class="fw-semibold mb-1" style="color: #f2f5ef; font-size: 15px;">
+                        <i class="bi bi-clock-history me-1" style="color: var(--portal-lime);"></i> Tập luyện không giới hạn khung giờ
+                    </div>
+                    <div class="small" style="color: #9aa296; line-height: 1.5;">
+                        Toàn quyền sử dụng hệ thống máy tập chuẩn Olympic quốc tế tại mọi khung giờ mở cửa trong ngày.
+                    </div>
                 </div>
-                <div class="small" style="color: #9aa296; line-height: 1.5;">
-                    Miễn phí phòng xông hơi đá muối Himalaya, bể bơi 4 mùa và phòng tắm nóng lạnh hiện đại.
+            </div>
+
+            <div class="col-md-6">
+                <div class="perk-box">
+                    <div class="fw-semibold mb-1" style="color: #f2f5ef; font-size: 15px;">
+                        <i class="bi bi-activity me-1" style="color: var(--portal-lime);"></i> Đo phân tích chỉ số InBody miễn phí
+                    </div>
+                    <div class="small" style="color: #9aa296; line-height: 1.5;">
+                        Được đo và theo dõi các chỉ số cơ thể định kỳ 2 lần/tháng bằng máy InBody chuyên dụng.
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="perk-box">
+                    <div class="fw-semibold mb-1" style="color: #f2f5ef; font-size: 15px;">
+                        <i class="bi bi-water me-1" style="color: var(--portal-lime);"></i> Phòng xông hơi & khu vực thư giãn cao cấp
+                    </div>
+                    <div class="small" style="color: #9aa296; line-height: 1.5;">
+                        Miễn phí phòng xông hơi đá muối Himalaya, bể bơi 4 mùa và phòng tắm nóng lạnh hiện đại.
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="perk-box">
+                    <div class="fw-semibold mb-1" style="color: #f2f5ef; font-size: 15px;">
+                        <i class="bi bi-person-badge-fill me-1" style="color: var(--portal-lime);"></i> Kèm huấn luyện viên 1-1 chuyên nghiệp (PT)
+                    </div>
+                    <div class="small" style="color: #9aa296; line-height: 1.5;">
+                        Kèm theo các buổi hướng dẫn kỹ thuật bài tập, lên giáo án và chế độ dinh dưỡng tối ưu từ HLV.
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="perk-box">
+                    <div class="fw-semibold mb-1" style="color: #f2f5ef; font-size: 15px;">
+                        <i class="bi bi-shield-lock me-1" style="color: var(--portal-lime);"></i> Smart Locker cá nhân & khăn tập riêng
+                    </div>
+                    <div class="small" style="color: #9aa296; line-height: 1.5;">
+                        Tủ đồ thông minh bảo mật cao và khăn tập kháng khuẩn sạch sẽ được cấp mỗi buổi tập.
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="perk-box">
+                    <div class="fw-semibold mb-1" style="color: #f2f5ef; font-size: 15px;">
+                        <i class="bi bi-percent me-1" style="color: var(--portal-lime);"></i> Ưu đãi giảm giá 15% thực phẩm bổ sung
+                    </div>
+                    <div class="small" style="color: #9aa296; line-height: 1.5;">
+                        Chiết khấu trực tiếp khi mua Whey Protein, BCAA, Pre-workout và phụ kiện tập luyện tại quầy Pulse Bar.
+                    </div>
                 </div>
             </div>
         </div>
+    }
+</div>
 
-        <div class="col-md-6">
-            <div class="perk-box">
-                <div class="fw-semibold mb-1" style="color: #f2f5ef; font-size: 15px;">
-                    Kèm huấn luyện viên 1-1 chuyên nghiệp (PT)
-                </div>
-                <div class="small" style="color: #9aa296; line-height: 1.5;">
-                    Kèm theo các buổi hướng dẫn kỹ thuật bài tập, lên giáo án và chế độ dinh dưỡng tối ưu từ HLV.
-                </div>
+<!-- ==========================================
+     MODAL 1: GIA HẠN GÓI TẬP (Yêu cầu ảnh 4)
+     ========================================== -->
+<div class="modal fade" id="renewPackageModal" tabindex="-1" aria-labelledby="renewPackageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background: #141916; border: 1px solid rgba(200, 255, 46, 0.35); border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.7); color: #f2f5ef;">
+            <div class="modal-header border-bottom border-secondary border-opacity-25 pb-3">
+                <h5 class="modal-title d-flex align-items-center gap-2 fw-bold" id="renewPackageModalLabel" style="font-family: var(--portal-display); font-size: 19px; letter-spacing: 0.04em; color: #ffffff;">
+                    <i class="bi bi-arrow-repeat" style="color: var(--portal-lime); font-size: 20px;"></i>
+                    GIA HẠN <span style="color: var(--portal-lime);">GÓI TẬP HIỆN TẠI</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="perk-box">
-                <div class="fw-semibold mb-1" style="color: #f2f5ef; font-size: 15px;">
-                    Smart Locker cá nhân & khăn tập riêng
-                </div>
-                <div class="small" style="color: #9aa296; line-height: 1.5;">
-                    Tủ đồ thông minh bảo mật cao và khăn tập kháng khuẩn sạch sẽ được cấp mỗi buổi tập.
-                </div>
+            <div class="modal-body py-4">
+                @if (Model.HasActivePackage)
+                {
+                    <div class="p-3 mb-3 rounded" style="background: rgba(200, 255, 46, 0.06); border: 1px solid rgba(200, 255, 46, 0.2);">
+                        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom border-secondary border-opacity-25">
+                            <span class="small" style="color: #9aa296;">Gói tập đang dùng:</span>
+                            <strong class="text-white" style="font-size: 14.5px;">@Model.PackageName</strong>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom border-secondary border-opacity-25">
+                            <span class="small" style="color: #9aa296;">Hạn sử dụng hiện tại:</span>
+                            <strong style="color: #dce1d8;">@(Model.EndDate?.ToString("dd/MM/yyyy") ?? "--")</strong>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom border-secondary border-opacity-25">
+                            <span class="small" style="color: #9aa296;">Thời gian gia hạn thêm:</span>
+                            <strong style="color: #48cae4;">+ @Model.DurationDays ngày</strong>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="small" style="color: #9aa296;">Chi phí gia hạn:</span>
+                            <strong style="color: var(--portal-lime); font-family: var(--portal-display); font-size: 18px;">
+                                @(Model.Price > 0 ? Model.Price.ToString("N0") + " VNĐ" : "Miễn phí")
+                            </strong>
+                        </div>
+                    </div>
+                    <div class="small p-2 rounded" style="background: rgba(0,0,0,0.3); color: #8f968c; line-height: 1.5;">
+                        <i class="bi bi-shield-check me-1" style="color: var(--portal-lime);"></i>
+                        Hệ thống sẽ tự động cộng dồn thời hạn tiếp nối vào ngày kết thúc hiện tại sau khi thanh toán thành công qua cổng VNPAY an toàn.
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-3">
+                        <i class="bi bi-exclamation-circle text-warning fs-1 mb-2 d-block"></i>
+                        <h6 class="text-white mb-2">Bạn chưa có gói tập nào đang hoạt động</h6>
+                        <p class="small text-secondary mb-0">Vui lòng đăng ký gói tập mới hoặc chọn mục Nâng cấp gói để bắt đầu rèn luyện thể chất.</p>
+                    </div>
+                }
             </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="perk-box">
-                <div class="fw-semibold mb-1" style="color: #f2f5ef; font-size: 15px;">
-                    Ưu đãi giảm giá 15% thực phẩm bổ sung
-                </div>
-                <div class="small" style="color: #9aa296; line-height: 1.5;">
-                    Chiết khấu trực tiếp khi mua Whey Protein, BCAA, Pre-workout và phụ kiện tập luyện tại quầy Pulse Bar.
-                </div>
+            <div class="modal-footer border-top border-secondary border-opacity-25 pt-3">
+                <button type="button" class="btn-pulse-outline py-2 px-3" data-bs-dismiss="modal" style="font-size: 13px;">Đóng</button>
+                @if (Model.HasActivePackage)
+                {
+                    <a href="/thanh-toan/@(Model.PackageId ?? 1)" class="btn-pulse-primary py-2 px-3" style="font-size: 13px;">
+                        <i class="bi bi-credit-card me-1"></i> Xác Nhận Thanh Toán Gia Hạn
+                    </a>
+                }
+                else
+                {
+                    <button type="button" class="btn-pulse-primary py-2 px-3" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#upgradePackageModal" style="font-size: 13px;">
+                        Khám Phá Gói Tập
+                    </button>
+                }
             </div>
         </div>
     </div>
 </div>
+
+<!-- ==========================================
+     MODAL 2: NÂNG CẤP GÓI TẬP (Yêu cầu ảnh 4)
+     ========================================== -->
+<div class="modal fade" id="upgradePackageModal" tabindex="-1" aria-labelledby="upgradePackageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" style="background: #141916; border: 1px solid rgba(200, 255, 46, 0.35); border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.7); color: #f2f5ef;">
+            <div class="modal-header border-bottom border-secondary border-opacity-25 pb-3">
+                <h5 class="modal-title d-flex align-items-center gap-2 fw-bold" id="upgradePackageModalLabel" style="font-family: var(--portal-display); font-size: 20px; letter-spacing: 0.04em; color: #ffffff;">
+                    <i class="bi bi-lightning-charge-fill" style="color: var(--portal-lime); font-size: 21px;"></i>
+                    NÂNG CẤP <span style="color: var(--portal-lime);">GÓI TẬP VIP & HUẤN LUYỆN VIÊN (PT)</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body py-4">
+                <div class="mb-3 text-secondary small">
+                    Chọn gói tập phù hợp để nâng tầm vóc dáng, mở khóa đặc quyền phòng Sauna, bể bơi và Huấn luyện viên kèm 1-1 chuyên nghiệp:
+                </div>
+
+                @{
+                    var availablePackages = ViewBag.AvailablePackages as List<WebGym.Models.Entities.GymPackage> ?? new List<WebGym.Models.Entities.GymPackage>();
+                }
+
+                <div class="row g-3">
+                    @if (availablePackages.Any())
+                    {
+                        foreach (var pkg in availablePackages)
+                        {
+                            bool isCurrent = (Model.PackageId.HasValue && Model.PackageId == pkg.PackageId) || Model.PackageName == pkg.PackageName;
+                            bool isLowerTier = Model.HasActivePackage && !isCurrent && (pkg.Price < Model.Price || (Model.PackageId.HasValue && pkg.PackageId < Model.PackageId));
+                            bool isHigherTier = !Model.HasActivePackage || (pkg.Price > Model.Price && (!Model.PackageId.HasValue || pkg.PackageId > Model.PackageId));
+                            <div class="col-md-6">
+                                <div class="p-3 h-100 d-flex flex-column justify-content-between rounded position-relative" 
+                                     style="background: #18201b; 
+                                            border: 1px solid @(isCurrent ? "rgba(200, 255, 46, 0.45)" : (isLowerTier ? "rgba(255, 255, 255, 0.08)" : (pkg.IncludesPT ? "rgba(200, 255, 46, 0.45)" : "rgba(255, 255, 255, 0.1)"))); 
+                                            box-shadow: @(isCurrent || (pkg.IncludesPT && !isLowerTier) ? "0 4px 15px rgba(200, 255, 46, 0.08)" : "none"); 
+                                            @(isLowerTier ? "opacity: 0.45; filter: grayscale(0.65); cursor: not-allowed; user-select: none;" : "")">
+                                    <div>
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <h6 class="fw-bold @(isLowerTier ? "text-secondary" : "text-white") mb-0" style="font-size: 15px;">@pkg.PackageName</h6>
+                                            @if (isCurrent)
+                                            {
+                                                <span class="portal-badge" style="background: rgba(200, 255, 46, 0.18); color: var(--portal-lime); border: 1px solid rgba(200, 255, 46, 0.4); font-size: 9.5px; padding: 2px 7px;">
+                                                    <i class="bi bi-check-circle-fill me-1"></i> ĐANG DÙNG
+                                                </span>
+                                            }
+                                            else if (isLowerTier)
+                                            {
+                                                <span class="portal-badge" style="background: rgba(255, 118, 117, 0.12); color: #ff7675; border: 1px solid rgba(255, 118, 117, 0.25); font-size: 9.5px; padding: 2px 7px;">
+                                                    <i class="bi bi-lock-fill me-1"></i> ĐÃ KHÓA
+                                                </span>
+                                            }
+                                            else if (pkg.IncludesPT)
+                                            {
+                                                <span class="portal-badge" style="background: rgba(200, 255, 46, 0.18); color: var(--portal-lime); border: 1px solid rgba(200, 255, 46, 0.4); font-size: 9.5px; padding: 2px 7px;">
+                                                    <i class="bi bi-star-fill me-1"></i> KÈM PT 1-1
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="portal-badge" style="background: rgba(255, 255, 255, 0.08); color: #dce1d8; font-size: 9.5px; padding: 2px 7px;">
+                                                    CƠ BẢN
+                                                </span>
+                                            }
+                                        </div>
+
+                                        <div class="d-flex align-items-baseline gap-1 mb-2">
+                                            <span style="font-family: var(--portal-display); font-size: 20px; font-weight: 700; color: @(isLowerTier ? "#7b8377" : "var(--portal-lime)");">
+                                                @pkg.Price.ToString("N0") VNĐ
+                                            </span>
+                                            <span class="small" style="color: #9aa296;">/ @pkg.DurationDays ngày</span>
+                                        </div>
+
+                                        <p class="small mb-3" style="color: #a2a99e; line-height: 1.45; min-height: 42px;">
+                                            @(pkg.Description ?? "Sử dụng đầy đủ hệ thống máy tập chuẩn Olympic, tủ locker và tiện ích cao cấp.")
+                                        </p>
+                                    </div>
+
+                                    <div>
+                                        @if (isCurrent)
+                                        {
+                                            <button type="button" class="btn btn-sm w-100 disabled" disabled style="background: rgba(200, 255, 46, 0.08); color: #c8ff2e; border: 1px solid rgba(200, 255, 46, 0.3); font-size: 12.5px; cursor: not-allowed; padding: 8px 12px; font-weight: 600;">
+                                                <i class="bi bi-check2-circle me-1"></i> Gói Hiện Tại Đang Sử Dụng
+                                            </button>
+                                        }
+                                        else if (isLowerTier)
+                                        {
+                                            <button type="button" class="btn btn-sm w-100 disabled" disabled style="background: rgba(255, 255, 255, 0.04); color: #768073; border: 1px solid rgba(255, 255, 255, 0.08); font-size: 12.5px; cursor: not-allowed; padding: 8px 12px; font-weight: 500;">
+                                                <i class="bi bi-lock-fill me-1"></i> Không Thể Hạ Gói
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <a href="/thanh-toan/@pkg.PackageId" class="btn-pulse-primary btn-sm w-100 text-center py-2 d-inline-flex align-items-center justify-content-center" style="font-size: 12.5px; text-decoration: none;">
+                                                <i class="bi bi-arrow-up-right-circle me-1"></i> Nâng Cấp Ngay
+                                            </a>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="col-12 text-center py-3 text-secondary">
+                            Không có thông tin gói tập để hiển thị.
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="modal-footer border-top border-secondary border-opacity-25 pt-3">
+                <button type="button" class="btn-pulse-outline py-2 px-3" data-bs-dismiss="modal" style="font-size: 13px;">Đóng</button>
+                <a href="/#bang-gia" class="btn-pulse-primary py-2 px-3" style="font-size: 13px; text-decoration: none;">
+                    <i class="bi bi-grid-fill me-1"></i> Xem Chi Tiết Bảng Giá
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (window.location.hash === '#upgradePackageModal' || window.location.search.includes('action=upgrade')) {
+                const modalEl = document.getElementById('upgradePackageModal');
+                if (modalEl && typeof bootstrap !== 'undefined') {
+                    const m = new bootstrap.Modal(modalEl);
+                    m.show();
+                }
+            } else if (window.location.hash === '#renewPackageModal' || window.location.search.includes('action=renew')) {
+                const modalEl = document.getElementById('renewPackageModal');
+                if (modalEl && typeof bootstrap !== 'undefined') {
+                    const m = new bootstrap.Modal(modalEl);
+                    m.show();
+                }
+            }
+        });
+    </script>
+}

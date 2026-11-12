@@ -7,6 +7,13 @@
     var today = DateTime.Today;
     var coachFirstName = CoachUi.FirstName(User.Identity?.Name);
 
+    // Bước 5: Các ca trong cửa sổ 24h cần PT xác nhận kết quả (Approved + đã tới giờ tập + chưa quá 24h)
+    var actionWindowSessions = all
+        .Where(s => s.Status == "Approved" && CoachUi.IsIn24HourWindow(s.BookingDate, s.TimeSlot))
+        .OrderBy(s => CoachUi.StartAt(s.BookingDate, s.TimeSlot))
+        .ToList();
+    var actionWindowCount = actionWindowSessions.Count;
+
     // Ca chưa kết thúc (đã xác nhận hoặc đang chờ duyệt), sắp theo thời gian
     var upcoming = all
         .Where(s => (s.Status == "Approved" || s.Status == "Pending") && CoachUi.EndAt(s.BookingDate, s.TimeSlot) >= now)
@@ -14,13 +21,14 @@
         .ToList();
     var next = upcoming.FirstOrDefault(s => s.Status == "Approved");
     var nextPending = upcoming.FirstOrDefault(s => s.Status == "Pending");
+    var nextActionable = actionWindowSessions.FirstOrDefault();
 
     var upcomingApproved = upcoming.Count(s => s.Status == "Approved");
     var pendingTotal = all.Count(s => s.Status == "Pending");
     var completedTotal = all.Count(s => s.Status == "Completed");
     var memberTotal = all.Select(s => s.MemberName).Distinct().Count();
 
-    // Danh sách đầy đủ: ca sắp tới (gần nhất trước), rồi ca đã qua (mới nhất trước)
+    // Danh sách đầy đủ: ca trong cửa sổ 24h hoặc sắp tới (gần nhất trước), rồi ca đã qua (mới nhất trước)
     var ordered = upcoming
         .Concat(all.Except(upcoming).OrderByDescending(s => CoachUi.StartAt(s.BookingDate, s.TimeSlot)))
         .ToList();
@@ -78,18 +86,19 @@
 }
 
 <div class="cx-overview">
-<!-- Ca tiếp theo: thứ đầu tiên HLV cần biết khi mở trang -->
+<!-- Ca tiếp theo hoặc ca đang trong khung 24h cần xác nhận kết quả -->
 @if (next != null)
 {
     var start = CoachUi.StartAt(next.BookingDate, next.TimeSlot);
     var live = start <= now;
+    var inWindow = CoachUi.IsIn24HourWindow(next.BookingDate, next.TimeSlot);
     <section class="cx-next" aria-labelledby="cxNextTitle">
         <div class="cx-next-time">
             <span class="cx-next-clock">@CoachUi.SlotStart(next.TimeSlot).ToString("hh\\:mm")</span>
             <span class="cx-next-day">@CoachUi.RelativeDay(next.BookingDate)</span>
         </div>
         <div class="cx-next-body">
-            <p class="cx-next-kicker" id="cxNextTitle">@(live ? "Đang diễn ra" : "Ca dạy tiếp theo")</p>
+            <p class="cx-next-kicker" id="cxNextTitle">@(live ? "Đang diễn ra / Cần chốt" : "Ca dạy tiếp theo")</p>
             <h2 class="cx-next-name">@next.MemberName</h2>
             <p class="cx-next-meta">
                 @CoachUi.DayLong(next.BookingDate), @next.BookingDate.ToString("dd/MM")
@@ -105,8 +114,85 @@
             {
                 <p class="cx-next-note">“@next.Notes”</p>
             }
+
+            @if (inWindow)
+            {
+                <div class="cx-next-actions" style="margin-top: 14px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+                    <span class="cx-window-pill">
+                        <i class="bi bi-clock-history"></i> Cửa sổ 24h: @CoachUi.WindowCountdown(next.BookingDate, next.TimeSlot)
+                    </span>
+                    <form asp-action="Complete" asp-route-id="@next.BookingId" method="post" style="display:inline;margin:0;">
+                        <button type="submit" class="cx-btn-action cx-btn-action--ok">
+                            <i class="bi bi-check-circle-fill"></i> Hoàn thành
+                        </button>
+                    </form>
+                    <details class="cx-reject cx-inline-details">
+                        <summary class="cx-btn-action cx-btn-action--cancel">
+                            <i class="bi bi-x-circle"></i> Báo vắng / Hủy ca
+                        </summary>
+                        <form asp-action="Cancel" asp-route-id="@next.BookingId" method="post" class="cx-popover-form">
+                            <label>Lý do hủy hoặc báo vắng:</label>
+                            <input type="text" name="reason" placeholder="VD: Học viên bận đột xuất..." required maxlength="200" />
+                            <button type="submit" class="cx-btn-action cx-btn-action--danger-solid">Xác nhận</button>
+                        </form>
+                    </details>
+                </div>
+            }
         </div>
-        <p class="cx-next-count">@(live ? "Học viên đang tập" : CoachUi.Countdown(start))</p>
+        <p class="cx-next-count">@(live ? (inWindow ? "Đang trong 24h cập nhật" : "Học viên đang tập") : CoachUi.Countdown(start))</p>
+        @{ Dayline(); }
+    </section>
+}
+else if (nextActionable != null)
+{
+    var start = CoachUi.StartAt(nextActionable.BookingDate, nextActionable.TimeSlot);
+    <section class="cx-next" aria-labelledby="cxNextTitle" style="border-left: 4px solid #fbbf24;">
+        <div class="cx-next-time">
+            <span class="cx-next-clock">@CoachUi.SlotStart(nextActionable.TimeSlot).ToString("hh\\:mm")</span>
+            <span class="cx-next-day">@CoachUi.RelativeDay(nextActionable.BookingDate)</span>
+        </div>
+        <div class="cx-next-body">
+            <p class="cx-next-kicker" id="cxNextTitle" style="color: #fbbf24;">
+                <i class="bi bi-exclamation-circle-fill"></i> Cần xác nhận kết quả ca dạy
+            </p>
+            <h2 class="cx-next-name">@nextActionable.MemberName</h2>
+            <p class="cx-next-meta">
+                @CoachUi.DayLong(nextActionable.BookingDate), @nextActionable.BookingDate.ToString("dd/MM")
+                <span class="cx-sep" aria-hidden="true"></span>
+                @CoachUi.SlotText(nextActionable.TimeSlot)
+                @if (!string.IsNullOrEmpty(nextActionable.MemberPhone))
+                {
+                    <span class="cx-sep" aria-hidden="true"></span>
+                    <a href="tel:@nextActionable.MemberPhone">@nextActionable.MemberPhone</a>
+                }
+            </p>
+            @if (!string.IsNullOrWhiteSpace(nextActionable.Notes))
+            {
+                <p class="cx-next-note">“@nextActionable.Notes”</p>
+            }
+
+            <div class="cx-next-actions" style="margin-top: 14px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+                <span class="cx-window-pill">
+                    <i class="bi bi-clock-history"></i> Cửa sổ 24h: @CoachUi.WindowCountdown(nextActionable.BookingDate, nextActionable.TimeSlot)
+                </span>
+                <form asp-action="Complete" asp-route-id="@nextActionable.BookingId" method="post" style="display:inline;margin:0;">
+                    <button type="submit" class="cx-btn-action cx-btn-action--ok">
+                        <i class="bi bi-check-circle-fill"></i> Xác nhận Hoàn thành
+                    </button>
+                </form>
+                <details class="cx-reject cx-inline-details">
+                    <summary class="cx-btn-action cx-btn-action--cancel">
+                        <i class="bi bi-x-circle"></i> Báo vắng / Hủy ca
+                    </summary>
+                    <form asp-action="Cancel" asp-route-id="@nextActionable.BookingId" method="post" class="cx-popover-form">
+                        <label>Lý do học viên vắng / hủy:</label>
+                        <input type="text" name="reason" placeholder="VD: Học viên bận đột xuất..." required maxlength="200" />
+                        <button type="submit" class="cx-btn-action cx-btn-action--danger-solid">Xác nhận</button>
+                    </form>
+                </details>
+            </div>
+        </div>
+        <p class="cx-next-count" style="color: #fbbf24;">@CoachUi.WindowCountdown(nextActionable.BookingDate, nextActionable.TimeSlot)</p>
         @{ Dayline(); }
     </section>
 }
@@ -216,9 +302,15 @@ else
         <h2 class="cx-h2" id="cxListTitle">Tất cả ca dạy</h2>
         <div class="cx-filters" role="group" aria-label="Lọc ca dạy">
             <button type="button" class="cx-chip is-on" data-filter="all" aria-pressed="true">Tất cả <b>@all.Count</b></button>
+            @if (actionWindowCount > 0)
+            {
+                <button type="button" class="cx-chip" data-filter="actionable" aria-pressed="false" style="color:#fbbf24;border-color:rgba(251,191,36,0.4);">
+                    <i class="bi bi-clock-history"></i> Cần chốt 24h <b>@actionWindowCount</b>
+                </button>
+            }
             <button type="button" class="cx-chip" data-filter="upcoming" aria-pressed="false">Sắp tới <b>@upcoming.Count</b></button>
             <button type="button" class="cx-chip" data-filter="pending" aria-pressed="false">Chờ duyệt <b>@pendingTotal</b></button>
-            <button type="button" class="cx-chip" data-filter="done" aria-pressed="false">Đã dạy</button>
+            <button type="button" class="cx-chip" data-filter="done" aria-pressed="false">Đã dạy / Hoàn thành</button>
             <button type="button" class="cx-chip" data-filter="cancelled" aria-pressed="false">Đã huỷ</button>
         </div>
     </header>
@@ -229,6 +321,8 @@ else
             @foreach (var s in ordered)
             {
                 var st = CoachUi.SessionState(s.Status, s.BookingDate, s.TimeSlot);
+                var inWindow = s.Status == "Approved" && CoachUi.IsIn24HourWindow(s.BookingDate, s.TimeSlot);
+                var reasonId = $"reason-row-{s.BookingId}";
                 <li class="cx-row cx-row--@st.Css" data-groups="all @st.Groups">
                     <span class="cx-date">
                         <b>@s.BookingDate.ToString("dd")</b>
@@ -244,7 +338,38 @@ else
                         </span>
                     </span>
                     <span class="cx-row-note">@(string.IsNullOrWhiteSpace(s.Notes) ? "Không có ghi chú" : s.Notes)</span>
-                    <span class="cx-st cx-st--@st.Css">@st.Label</span>
+                    
+                    <div class="cx-row-status-col">
+                        @if (inWindow)
+                        {
+                            <div class="cx-act-cell">
+                                <span class="cx-window-pill" title="Trong khung 24h kể từ thời gian bắt đầu ca tập">
+                                    <i class="bi bi-clock-history"></i> @CoachUi.WindowCountdown(s.BookingDate, s.TimeSlot)
+                                </span>
+                                <div class="cx-act-buttons">
+                                    <form asp-action="Complete" asp-route-id="@s.BookingId" method="post" style="display:inline;margin:0;">
+                                        <button type="submit" class="cx-btn-action cx-btn-action--ok" title="Xác nhận hoàn thành buổi tập">
+                                            <i class="bi bi-check-lg"></i> Hoàn thành
+                                        </button>
+                                    </form>
+                                    <details class="cx-reject cx-inline-details">
+                                        <summary class="cx-btn-action cx-btn-action--cancel" title="Báo học viên vắng mặt hoặc hủy ca">
+                                            <i class="bi bi-x-lg"></i> Hủy / Vắng
+                                        </summary>
+                                        <form asp-action="Cancel" asp-route-id="@s.BookingId" method="post" class="cx-popover-form">
+                                            <label for="@reasonId">Lý do hủy / báo vắng:</label>
+                                            <input id="@reasonId" type="text" name="reason" placeholder="VD: Học viên bận đột xuất..." required maxlength="200" />
+                                            <button type="submit" class="cx-btn-action cx-btn-action--danger-solid">Xác nhận</button>
+                                        </form>
+                                    </details>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <span class="cx-st cx-st--@st.Css">@st.Label</span>
+                        }
+                    </div>
                 </li>
             }
         </ul>

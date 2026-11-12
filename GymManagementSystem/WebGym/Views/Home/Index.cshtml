@@ -4,6 +4,8 @@
     ViewData["Title"] = "Pulse Gym - Bứt phá giới hạn";
     var packages = Model ?? (IEnumerable<WebGym.Models.Entities.GymPackage>?)ViewBag.FeaturedPackages ?? Enumerable.Empty<WebGym.Models.Entities.GymPackage>();
     var trainers = (IEnumerable<WebGym.Models.Entities.Trainer>?)ViewBag.Trainers ?? Enumerable.Empty<WebGym.Models.Entities.Trainer>();
+    var groupClasses = (IEnumerable<WebGym.Models.Entities.GymClass>?)ViewBag.GroupClasses ?? Enumerable.Empty<WebGym.Models.Entities.GymClass>();
+
     var bmiConfig = new
     {
         plans = packages.OrderBy(p => p.Price).Select(p => new
@@ -34,6 +36,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/pulse.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/auth-modal.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/chat-widget.css" asp-append-version="true" />
@@ -43,6 +46,7 @@
         <a href="#top" class="logo"><i class="logo-bars"></i>PULSE <span>GYM</span></a>
         <nav class="nav-links">
             <a href="#khu-vuc">Khu vực tập</a>
+            <a href="#lop-nhom">Lớp học nhóm</a>
             <a href="#suc-khoe">Sức khỏe và tư vấn</a>
             <a href="#huan-luyen-vien">Huấn luyện viên</a>
             <a href="#bang-gia">Bảng giá</a>
@@ -97,6 +101,124 @@
                 <a asp-controller="Home" asp-action="FacilityDetail" asp-route-id="khu-cardio" class="program"><img src="~/images/hiit.jpg" asp-append-version="true" alt="" /><span class="num">02</span><div><small>Đốt mỡ • Sức bền</small><h3>Cardio</h3></div><span class="arrow-circle">↗</span></a>
                 <a asp-controller="Home" asp-action="FacilityDetail" asp-route-id="phong-boxing" class="program"><img src="~/images/boxing.jpg" asp-append-version="true" alt="" /><span class="num">03</span><div><small>Phản xạ • Bùng nổ</small><h3>Boxing</h3></div><span class="arrow-circle">↗</span></a>
                 <a asp-controller="Home" asp-action="FacilityDetail" asp-route-id="studio-yoga" class="program"><img src="~/images/yoga.jpg" asp-append-version="true" alt="" /><span class="num">04</span><div><small>Cân bằng • Linh hoạt</small><h3>Yoga</h3></div><span class="arrow-circle">↗</span></a>
+            </div>
+        </section>
+
+        <!-- LỚP HỌC NHÓM (GROUP CLASSES) -->
+        <section id="lop-nhom" class="section section-alt">
+            <div class="head">
+                <div>
+                    <p class="eyebrow">Năng lượng đồng đội</p>
+                    <h2 class="display">Lớp học nhóm<em class="outline">tại Pulse Gym</em></h2>
+                </div>
+                <p class="head-note">Khám phá các lớp Yoga, Zumba, Boxing, Spinning RPM và BodyPump sôi động dưới sự dẫn dắt của HLV chuyên nghiệp. Đặt chỗ trước để đảm bảo vị trí tập tốt nhất.</p>
+            </div>
+            
+            <div class="classes-grid">
+                @if (groupClasses.Any())
+                {
+                    foreach (var c in groupClasses)
+                    {
+                        var confirmedCount = c.ClassBookings?.Count(b => b.Status == "Confirmed") ?? c.CurrentCapacity;
+                        var maxCap = c.MaxCapacity > 0 ? c.MaxCapacity : 20;
+                        var available = Math.Max(0, maxCap - confirmedCount);
+                        var isFull = available <= 0 || c.Status == "Full";
+                        var percent = (int)Math.Min(100, Math.Round((double)confirmedCount / maxCap * 100));
+                        var imgUrl = WebGym.Areas.Member.Controllers.ClassBookingController.ResolveClassImage(c.ImageUrl, c.ClassName);
+                        var isAuth = User.Identity != null && User.Identity.IsAuthenticated;
+                        var isMember = isAuth && User.IsInRole("Member");
+                        var bookingUrl = isMember ? Url.Action("Index", "ClassBooking", new { area = "Member" }) : Url.Action("Index", "Profile", new { area = "Member" });
+
+                        var trainerAvatar = WebGym.Areas.Member.Controllers.ClassBookingController.ResolveAvatar(c.Trainer?.AvatarUrl, c.TrainerId, c.Trainer?.UserId ?? 0);
+
+                        <article class="class-card-home">
+                            <div class="class-card-home-img">
+                                <img src="@imgUrl" alt="@c.ClassName" loading="lazy" />
+                                
+                                <div class="bento-badges-row">
+                                    <span class="bento-room-badge">
+                                        <i class="bi bi-geo-alt-fill text-lime"></i>@(c.Room?.RoomName ?? "Studio Trung Tâm")
+                                    </span>
+                                    <span class="bento-slot-badge @(isFull ? "slot-full" : "slot-open")">
+                                        @if (!isFull)
+                                        {
+                                            <span class="slot-dot"></span>
+                                            <span>Còn @available slot</span>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-lock-fill"></i>
+                                            <span>Đã đầy sĩ số</span>
+                                        }
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="class-card-home-content">
+                                <span class="bento-category-tag">PULSE GROUP FITNESS</span>
+                                <h3 class="class-home-title">@c.ClassName</h3>
+                                <p class="class-home-desc">@(c.Description ?? "Lớp tập nhóm bùng nổ năng lượng tại Pulse Gym.")</p>
+                                
+                                <div class="bento-widgets-group">
+                                    <!-- Widget Lịch học -->
+                                    <div class="bento-info-box">
+                                        <div class="bento-info-icon">
+                                            <i class="bi bi-clock-history"></i>
+                                        </div>
+                                        <div class="bento-info-text">
+                                            <span class="info-label">LỊCH HỌC TRONG TUẦN</span>
+                                            <span class="info-value">@c.Schedule</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Widget HLV -->
+                                    <div class="bento-coach-box">
+                                        <img src="@trainerAvatar" alt="@(c.Trainer?.User?.FullName ?? "HLV")" class="bento-coach-avatar" onerror="this.onerror=null; this.src='/images/coach1.jpg';" />
+                                        <div class="bento-coach-info">
+                                            <span class="info-label">HLV HƯỚNG DẪN</span>
+                                            <span class="coach-name">@(c.Trainer?.User?.FullName ?? "HLV Pulse Gym")</span>
+                                        </div>
+                                        <span class="coach-role-pill">MASTER COACH</span>
+                                    </div>
+                                </div>
+
+                                <div class="bento-capacity-wrap">
+                                    <div class="bento-capacity-meta">
+                                        <span>Sĩ số: <strong>@confirmedCount</strong>/@maxCap học viên</span>
+                                        <span class="@(isFull ? "text-danger" : "text-lime") fw-semibold">
+                                            @(isFull ? "Đã kín chỗ" : $"{percent}% lấp đầy")
+                                        </span>
+                                    </div>
+                                    <div class="bento-progress-track">
+                                        <div class="bento-progress-bar @(isFull ? "bar-full" : "bar-open")" style="width: @percent%;"></div>
+                                    </div>
+                                </div>
+
+                                @if (isMember)
+                                {
+                                    <a href="@bookingUrl" class="bento-btn-action @(isFull ? "btn-full" : "btn-register")">
+                                        <span>@(isFull ? "Xem thời khóa biểu" : "Đăng ký tham gia ngay")</span>
+                                        <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                }
+                                else if (isAuth)
+                                {
+                                    <a href="@Url.Action("Index", "Home")" class="bento-btn-action btn-full">
+                                        <span>Dành cho Hội Viên Pulse</span>
+                                        <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="#lop-nhom" data-auth-login class="bento-btn-action @(isFull ? "btn-full" : "btn-register")">
+                                        <span>Đăng nhập để đăng ký</span>
+                                        <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                }
+                            </div>
+                        </article>
+                    }
+                }
             </div>
         </section>
 
@@ -293,7 +415,7 @@
                 <p class="eyebrow dark">Sẵn sàng chưa?</p>
                 <h2 class="display">Hôm nay là ngày<em class="outline dark">để bắt đầu.</em></h2>
             </div>
-            <a href="#" class="btn btn-dark">Nhận 7 ngày miễn phí <b>→</b></a>
+            <a href="#bang-gia" class="btn btn-dark">Nhận 7 ngày miễn phí <b>→</b></a>
             <span class="cta-watermark" aria-hidden="true">PULSE</span>
         </section>
     </main>
@@ -305,8 +427,21 @@
                 <p class="foot-note">Tập mạnh hơn. Sống chất hơn.<br />Bứt phá giới hạn mỗi ngày.</p>
                 <div class="social"><a href="#">IG</a><a href="#">FB</a><a href="#">YT</a><a href="#">TK</a></div>
             </div>
-            <div><h4>Khám phá</h4><a href="#khu-vuc">Khu vực tập</a><a href="#suc-khoe">Tính BMI</a><a href="#huan-luyen-vien">Huấn luyện viên</a><a href="#bang-gia">Bảng giá</a></div>
-            <div><h4>Hỗ trợ</h4><a href="#">Về chúng tôi</a><a href="#">Câu hỏi thường gặp</a><a href="#">Liên hệ</a><a href="#">Tuyển dụng</a></div>
+            <div>
+                <h4>Khám phá</h4>
+                <a href="#khu-vuc">Khu vực tập</a>
+                <a href="#lop-nhom">Lớp học nhóm</a>
+                <a href="#suc-khoe">Tính BMI</a>
+                <a href="#huan-luyen-vien">Huấn luyện viên</a>
+                <a href="#bang-gia">Bảng giá</a>
+            </div>
+            <div>
+                <h4>Hỗ trợ</h4>
+                <a href="#">Về chúng tôi</a>
+                <a href="#">Câu hỏi thường gặp</a>
+                <a href="#">Liên hệ</a>
+                <a href="#">Tuyển dụng</a>
+            </div>
             <div>
                 <h4 class="news-title">Năng lượng mới<br />trong hộp thư.</h4>
                 <p class="foot-note">Nhận bí quyết tập luyện, dinh dưỡng và ưu đãi mới nhất.</p>

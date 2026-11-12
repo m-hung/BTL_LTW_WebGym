@@ -1,22 +1,39 @@
 @model WebGym.Models.DTOs.Member.MemberPersonalInfoDto
 @{
-    ViewData["Title"] = "Thông Tin Cá Nhân";
+    ViewData["Title"] = "Thông Tin Cá Nhân & Thẻ Hội Viên";
     var defaultAvatar = Url.Content("~/images/default-avatar.svg");
     var currentAvatar = !string.IsNullOrEmpty(Model.AvatarUrl) ? Model.AvatarUrl : defaultAvatar;
 }
 
 <div class="row g-4 justify-content-center">
     <div class="col-lg-10 col-xl-9">
+
+        <!-- PHẦN 1: THẺ HỘI VIÊN ĐIỆN TỬ CHUẨN THẺ ATM SANG TRỌNG (YÊU CẦU CHÍNH) -->
+        <div class="portal-card p-3 p-md-4 mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-secondary border-opacity-25">
+                <div class="d-flex align-items-center gap-2">
+                    <span style="width: 10px; height: 10px; border-radius: 50%; background-color: var(--portal-lime); display: inline-block;"></span>
+                    <h3 class="portal-title-accent mb-0 fs-4">THẺ HỘI VIÊN <span>ĐIỆN TỬ SMARTPASS</span></h3>
+                </div>
+                <span class="small" style="color: #a4ad9f;">Dùng để quét check-in tại quầy</span>
+            </div>
+
+            <!-- RENDER THẺ ATM SANG TRỌNG -->
+            <div class="py-2">
+                <partial name="_DigitalMemberCard" model="Model.ToCardModel()" />
+            </div>
+        </div>
+
         <form asp-action="UpdatePersonalInfo" method="post" enctype="multipart/form-data">
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="MemberId" />
 
-            <!-- Card 1: Avatar & Quick Info (Yêu cầu ảnh 1: Icon chỉnh sửa góc dưới phải avatar, xóa các chú thích) -->
+            <!-- PHẦN 2: THAY ĐỔI ẢNH ĐẠI DIỆN VÀ TÙY CHỌN -->
             <div class="portal-card p-4 mb-4">
                 <div class="d-flex flex-column flex-sm-row align-items-center gap-4 py-2">
                     <!-- Avatar Preview Box with Edit Badge -->
                     <div class="position-relative d-inline-block">
-                        <div style="width: 120px; height: 120px; border-radius: 50%; overflow: hidden; border: 2.5px solid var(--portal-lime); background-color: var(--portal-bg2); box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);">
+                        <div style="width: 110px; height: 110px; border-radius: 50%; overflow: hidden; border: 2.5px solid var(--portal-lime); background-color: var(--portal-bg2); box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);">
                             <img id="avatarPreview" src="@currentAvatar" alt="@Model.FullName" 
                                  style="width: 100%; height: 100%; object-fit: cover;" />
                         </div>
@@ -30,30 +47,28 @@
                         </button>
                     </div>
 
-                    <!-- User Quick Identity (Không còn dòng chú thích dài dòng) -->
+                    <!-- User Quick Identity -->
                     <div class="text-center text-sm-start flex-grow-1">
-                        <h4 class="mb-1 fw-bold" style="color: #f4f6f2; font-size: 21px;">@Model.FullName</h4>
-                        <div class="d-flex flex-wrap gap-2 justify-content-center justify-content-sm-start align-items-center mt-2">
-                            <span class="portal-badge" style="background: rgba(200, 255, 46, 0.12); color: var(--portal-lime); border: 1px solid rgba(200, 255, 46, 0.3);">
-                                GÓI: @(Model.CurrentPackageName ?? "Chưa có gói tập")
-                            </span>
+                        <h4 class="mb-1 fw-bold" style="color: #f4f6f2; font-size: 20px;">@Model.FullName</h4>
+                        <div class="text-muted small mb-2">Mã hội viên: <strong style="color: var(--portal-lime); font-family: monospace;">@(Model.CardCode ?? $"GYM-MB-{Model.MemberId:D4}")</strong></div>
+                        <div class="d-flex flex-wrap gap-2 justify-content-center justify-content-sm-start align-items-center">
+                            <button type="button" class="btn-pulse-primary btn-sm py-1 px-3" onclick="document.getElementById('avatarFileInput').click();">
+                                Tải ảnh mới lên
+                            </button>
                             @if (!string.IsNullOrEmpty(Model.AvatarUrl))
                             {
                                 <button type="submit" form="deleteAvatarForm" class="btn-pulse-outline btn-sm py-1 px-2" 
                                         style="color: #ff7675; border-color: rgba(255, 118, 117, 0.35); font-size: 12px;"
                                         onclick="return confirm('Bạn có chắc muốn xóa ảnh đại diện và thiết lập lại ảnh mặc định?');">
-                                    Xóa ảnh đại diện
+                                    Xóa ảnh
                                 </button>
                             }
-                            <button type="button" class="btn-pulse-outline btn-sm py-1 px-2" id="btnResetAvatar" style="display: none; font-size: 12px;">
-                                Hủy ảnh vừa chọn
-                            </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Card 2: Personal Contact Information (Ảnh 2: Xóa hoàn toàn khung lưu ý chỉ số cơ thể) -->
+            <!-- PHẦN 3: CHI TIẾT HỒ SƠ CÁ NHÂN -->
             <div class="portal-card p-4 mb-4">
                 <div class="mb-4 pb-3 border-bottom border-secondary border-opacity-25">
                     <h3 class="portal-title-accent mb-1 fs-3">CHI TIẾT <span>HỒ SƠ CÁ NHÂN</span></h3>
@@ -73,7 +88,7 @@
                             Email đăng nhập <span class="badge ms-1" style="background: rgba(255,255,255,0.08); color: #a0a79c; font-weight: normal;">Cố định</span>
                         </label>
                         <input asp-for="Email" class="form-control" readonly 
-                               style="background-color: #121614 !important; opacity: 0.85; cursor: not-allowed; color: #b8bcb4 !important;" />
+                                style="background-color: #121614 !important; opacity: 0.85; cursor: not-allowed; color: #b8bcb4 !important;" />
                     </div>
 
                     <div class="col-md-4">
@@ -122,41 +137,72 @@
             const fileInput = document.getElementById('avatarFileInput');
             const previewImg = document.getElementById('avatarPreview');
             const btnReset = document.getElementById('btnResetAvatar');
-            const originalSrc = previewImg.src;
+            const originalSrc = previewImg ? previewImg.src : '';
 
             if (fileInput && previewImg) {
-                fileInput.addEventListener('change', function () {
+                fileInput.addEventListener('change', async function () {
                     const file = this.files[0];
-                    if (file) {
-                        const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
-                        if (!validTypes.includes(file.type)) {
-                            alert('Vui lòng chọn file ảnh định dạng JPG, PNG hoặc WEBP.');
-                            this.value = '';
-                            return;
-                        }
+                    if (!file) return;
 
-                        if (file.size > 5 * 1024 * 1024) {
-                            alert('Dung lượng file ảnh không được vượt quá 5MB.');
-                            this.value = '';
-                            return;
-                        }
+                    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+                    if (!validTypes.includes(file.type)) {
+                        alert('Vui lòng chọn file ảnh định dạng JPG, PNG hoặc WEBP.');
+                        this.value = '';
+                        return;
+                    }
 
-                        const reader = new FileReader();
-                        reader.onload = function (e) {
-                            previewImg.src = e.target.result;
-                            if (btnReset) btnReset.style.display = 'inline-block';
-                        };
-                        reader.readAsDataURL(file);
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('Dung lượng file ảnh không được vượt quá 5MB.');
+                        this.value = '';
+                        return;
+                    }
+
+                    // Xem trước ảnh ngay lập tức
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        previewImg.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+
+                    if (editBadge) {
+                        editBadge.style.opacity = '0.6';
+                        editBadge.style.pointerEvents = 'none';
+                    }
+
+                    const formData = new FormData();
+                    formData.append('avatarFile', file);
+
+                    const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+                    if (tokenInput) {
+                        formData.append('__RequestVerificationToken', tokenInput.value);
+                    }
+
+                    try {
+                        const res = await fetch('@Url.Action("UploadAvatarAjax", "Profile", new { area = "Member" })', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                            previewImg.src = data.avatarUrl;
+                            const sidebarImg = document.getElementById('sidebarAvatarImg');
+                            if (sidebarImg) sidebarImg.src = data.avatarUrl;
+                            setTimeout(() => { window.location.reload(); }, 600);
+                        } else {
+                            alert(data.message || 'Lỗi lưu ảnh.');
+                            previewImg.src = originalSrc;
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        alert('Đã xảy ra lỗi khi lưu ảnh.');
+                        previewImg.src = originalSrc;
+                    } finally {
+                        if (editBadge) {
+                            editBadge.style.opacity = '1';
+                            editBadge.style.pointerEvents = 'auto';
+                        }
                     }
                 });
-
-                if (btnReset) {
-                    btnReset.addEventListener('click', function () {
-                        fileInput.value = '';
-                        previewImg.src = originalSrc;
-                        btnReset.style.display = 'none';
-                    });
-                }
             }
         });
     </script>

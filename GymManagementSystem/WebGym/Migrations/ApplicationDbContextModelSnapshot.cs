@@ -762,6 +762,596 @@ namespace WebGym.Migrations
                         });
                 });
 
+            modelBuilder.Entity("WebGym.Models.Entities.Exercise", b =>
+                {
+                    b.Property<int>("ExerciseId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExerciseId"));
+
+                    b.Property<string>("AvoidIfInjury")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int>("DefaultRestSec")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("EquipmentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("HowTo")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Level")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("MuscleGroup")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.HasKey("ExerciseId");
+
+                    b.HasIndex("EquipmentId");
+
+                    b.ToTable("Exercises");
+
+                    b.HasData(
+                        new
+                        {
+                            ExerciseId = 1,
+                            AvoidIfInjury = "shoulder",
+                            Category = "Push",
+                            DefaultRestSec = 120,
+                            EquipmentId = 6,
+                            HowTo = "Nằm ghế phẳng, hạ tạ chạm giữa ngực, khuỷu tay mở khoảng 45 độ, đẩy thẳng lên. Luôn tập có người hỗ trợ hoặc chốt an toàn của Power Rack.",
+                            IsActive = true,
+                            Level = "Advanced",
+                            MuscleGroup = "Ngực",
+                            Name = "Đẩy ngực tạ đòn (Barbell Bench Press)"
+                        },
+                        new
+                        {
+                            ExerciseId = 2,
+                            AvoidIfInjury = "shoulder",
+                            Category = "Push",
+                            DefaultRestSec = 90,
+                            EquipmentId = 5,
+                            HowTo = "Đặt ghế dưới thanh Smith, hạ thanh chậm tới ngang ngực rồi đẩy lên. Thanh chạy theo ray nên an toàn cho người mới.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Ngực",
+                            Name = "Đẩy ngực trên Smith Machine"
+                        },
+                        new
+                        {
+                            ExerciseId = 3,
+                            AvoidIfInjury = "shoulder",
+                            Category = "Push",
+                            DefaultRestSec = 90,
+                            EquipmentId = 7,
+                            HowTo = "Nằm ghế phẳng, hai tạ ngang ngực, đẩy lên và khép nhẹ ở đỉnh. Hạ chậm 2-3 giây, không thả rơi tạ.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Ngực",
+                            Name = "Đẩy ngực tạ đơn (Dumbbell Bench Press)"
+                        },
+                        new
+                        {
+                            ExerciseId = 4,
+                            AvoidIfInjury = "shoulder",
+                            Category = "Push",
+                            DefaultRestSec = 90,
+                            EquipmentId = 7,
+                            HowTo = "Ghế dốc 30-45 độ, đẩy tạ từ ngực trên lên cao. Giữ lưng áp sát ghế, không ưỡn quá mức.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Ngực",
+                            Name = "Đẩy ngực dốc tạ đơn (Incline Dumbbell Press)"
+                        },
+                        new
+                        {
+                            ExerciseId = 5,
+                            Category = "Push",
+                            DefaultRestSec = 60,
+                            EquipmentId = 8,
+                            HowTo = "Ngồi thẳng lưng, tay hơi cong, ép hai tay vào trước ngực và giữ 1 giây rồi mở ra chậm.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Ngực",
+                            Name = "Ép ngực trên máy (Pec Fly)"
+                        },
+                        new
+                        {
+                            ExerciseId = 6,
+                            Category = "Push",
+                            DefaultRestSec = 60,
+                            EquipmentId = 10,
+                            HowTo = "Đứng giữa giàn cáp, bước một chân lên trước, kéo hai tay chéo xuống trước bụng, cảm nhận ngực siết lại.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Ngực",
+                            Name = "Ép ngực cáp chéo (Cable Crossover)"
+                        },
+                        new
+                        {
+                            ExerciseId = 7,
+                            Category = "Push",
+                            DefaultRestSec = 60,
+                            HowTo = "Hai tay rộng hơn vai, thân thẳng từ đầu tới gót. Người mới có thể chống gối. Hạ ngực gần sàn rồi đẩy lên.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Ngực",
+                            Name = "Hít đất (Push-up)"
+                        },
+                        new
+                        {
+                            ExerciseId = 8,
+                            AvoidIfInjury = "shoulder",
+                            Category = "Push",
+                            DefaultRestSec = 90,
+                            EquipmentId = 7,
+                            HowTo = "Ngồi ghế dựng thẳng, đẩy hai tạ từ ngang tai lên đỉnh đầu, không khoá cứng khuỷu tay.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Vai",
+                            Name = "Đẩy vai tạ đơn ngồi (Seated Dumbbell Press)"
+                        },
+                        new
+                        {
+                            ExerciseId = 9,
+                            AvoidIfInjury = "shoulder,back",
+                            Category = "Push",
+                            DefaultRestSec = 120,
+                            EquipmentId = 6,
+                            HowTo = "Đứng thẳng, siết bụng và mông, đẩy thanh đòn từ ngực trên lên quá đầu. Không ngả lưng ra sau.",
+                            IsActive = true,
+                            Level = "Advanced",
+                            MuscleGroup = "Vai",
+                            Name = "Đẩy vai tạ đòn đứng (Overhead Press)"
+                        },
+                        new
+                        {
+                            ExerciseId = 10,
+                            Category = "Push",
+                            DefaultRestSec = 60,
+                            EquipmentId = 7,
+                            HowTo = "Đứng thẳng, nâng hai tạ nhẹ sang ngang tới ngang vai, khuỷu hơi cong, hạ chậm.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Vai",
+                            Name = "Nâng tạ đơn sang ngang (Lateral Raise)"
+                        },
+                        new
+                        {
+                            ExerciseId = 11,
+                            Category = "Push",
+                            DefaultRestSec = 60,
+                            EquipmentId = 10,
+                            HowTo = "Đứng trước giàn cáp, khuỷu tay ép sát người, đẩy tay cầm xuống tới khi duỗi thẳng tay rồi nâng lên chậm.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Tay sau",
+                            Name = "Kéo cáp tay sau (Tricep Pushdown)"
+                        },
+                        new
+                        {
+                            ExerciseId = 12,
+                            AvoidIfInjury = "shoulder",
+                            Category = "Push",
+                            DefaultRestSec = 60,
+                            EquipmentId = 7,
+                            HowTo = "Ngồi thẳng, hai tay giữ một tạ sau đầu, duỗi thẳng tay lên trên. Giữ khuỷu tay hướng về phía trước.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Tay sau",
+                            Name = "Duỗi tay sau qua đầu tạ đơn (Overhead Extension)"
+                        },
+                        new
+                        {
+                            ExerciseId = 13,
+                            AvoidIfInjury = "shoulder",
+                            Category = "Push",
+                            DefaultRestSec = 60,
+                            HowTo = "Chống tay lên mép ghế sau lưng, hạ người xuống tới khi khuỷu tay vuông góc rồi đẩy lên.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Tay sau",
+                            Name = "Chống đẩy ghế tay sau (Bench Dip)"
+                        },
+                        new
+                        {
+                            ExerciseId = 14,
+                            Category = "Pull",
+                            DefaultRestSec = 90,
+                            EquipmentId = 10,
+                            HowTo = "Ngồi thẳng, kéo thanh cáp xuống ngực trên, ép hai bả vai về sau. Không giật người ra sau.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Lưng",
+                            Name = "Kéo cáp xuống trước ngực (Lat Pulldown)"
+                        },
+                        new
+                        {
+                            ExerciseId = 15,
+                            Category = "Pull",
+                            DefaultRestSec = 90,
+                            EquipmentId = 10,
+                            HowTo = "Ngồi lưng thẳng, kéo tay cầm về bụng, ép bả vai rồi duỗi tay ra chậm. Không cong lưng.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Lưng",
+                            Name = "Kéo cáp ngồi (Seated Cable Row)"
+                        },
+                        new
+                        {
+                            ExerciseId = 16,
+                            Category = "Pull",
+                            DefaultRestSec = 75,
+                            EquipmentId = 7,
+                            HowTo = "Một tay và một gối chống ghế, lưng song song sàn, kéo tạ về hông, giữ 1 giây rồi hạ.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Lưng",
+                            Name = "Chèo tạ đơn một tay (One-arm Dumbbell Row)"
+                        },
+                        new
+                        {
+                            ExerciseId = 17,
+                            AvoidIfInjury = "back",
+                            Category = "Pull",
+                            DefaultRestSec = 120,
+                            EquipmentId = 6,
+                            HowTo = "Gập người khoảng 45 độ, lưng thẳng, kéo thanh đòn về bụng dưới. Cần giữ lưng trung tính suốt hiệp.",
+                            IsActive = true,
+                            Level = "Advanced",
+                            MuscleGroup = "Lưng",
+                            Name = "Chèo tạ đòn (Barbell Row)"
+                        },
+                        new
+                        {
+                            ExerciseId = 18,
+                            AvoidIfInjury = "back",
+                            Category = "Pull",
+                            DefaultRestSec = 150,
+                            EquipmentId = 6,
+                            HowTo = "Thanh đòn sát ống chân, lưng thẳng, đẩy hông về trước để đứng dậy. Bắt đầu với mức tạ nhẹ để học kỹ thuật.",
+                            IsActive = true,
+                            Level = "Advanced",
+                            MuscleGroup = "Lưng dưới",
+                            Name = "Deadlift tạ đòn"
+                        },
+                        new
+                        {
+                            ExerciseId = 19,
+                            AvoidIfInjury = "shoulder",
+                            Category = "Pull",
+                            DefaultRestSec = 120,
+                            EquipmentId = 6,
+                            HowTo = "Nắm xà rộng hơn vai, kéo người lên tới khi cằm qua xà, hạ chậm tới khi duỗi tay.",
+                            IsActive = true,
+                            Level = "Advanced",
+                            MuscleGroup = "Lưng",
+                            Name = "Hít xà đơn (Pull-up) trên Power Rack"
+                        },
+                        new
+                        {
+                            ExerciseId = 20,
+                            Category = "Pull",
+                            DefaultRestSec = 60,
+                            EquipmentId = 10,
+                            HowTo = "Đặt cáp ngang mặt, kéo dây thừng về phía trán, mở hai khuỷu tay sang hai bên.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Vai sau",
+                            Name = "Kéo cáp về mặt (Face Pull)"
+                        },
+                        new
+                        {
+                            ExerciseId = 21,
+                            Category = "Pull",
+                            DefaultRestSec = 60,
+                            EquipmentId = 8,
+                            HowTo = "Ngồi quay mặt vào máy, mở hai tay về sau ngang vai, giữ 1 giây rồi trở về chậm.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Vai sau",
+                            Name = "Bay vai sau trên máy (Rear Delt Fly)"
+                        },
+                        new
+                        {
+                            ExerciseId = 22,
+                            Category = "Pull",
+                            DefaultRestSec = 60,
+                            EquipmentId = 7,
+                            HowTo = "Đứng thẳng, khuỷu tay sát người, cuốn tạ lên tới vai rồi hạ chậm. Không đung đưa người.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Tay trước",
+                            Name = "Cuốn tạ đơn tay trước (Dumbbell Curl)"
+                        },
+                        new
+                        {
+                            ExerciseId = 23,
+                            Category = "Pull",
+                            DefaultRestSec = 60,
+                            EquipmentId = 7,
+                            HowTo = "Cầm tạ lòng bàn tay hướng vào nhau, cuốn lên tới vai, hạ chậm.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Tay trước",
+                            Name = "Cuốn tạ búa (Hammer Curl)"
+                        },
+                        new
+                        {
+                            ExerciseId = 24,
+                            Category = "Pull",
+                            DefaultRestSec = 60,
+                            EquipmentId = 10,
+                            HowTo = "Đứng trước giàn cáp, cuốn thanh từ dưới lên ngực, khuỷu tay cố định.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Tay trước",
+                            Name = "Cuốn cáp tay trước (Cable Curl)"
+                        },
+                        new
+                        {
+                            ExerciseId = 25,
+                            AvoidIfInjury = "knee,back",
+                            Category = "Legs",
+                            DefaultRestSec = 150,
+                            EquipmentId = 6,
+                            HowTo = "Đặt thanh trên vai sau trong Power Rack, ngồi xuống tới khi đùi song song sàn, gối cùng hướng mũi chân.",
+                            IsActive = true,
+                            Level = "Advanced",
+                            MuscleGroup = "Chân",
+                            Name = "Squat tạ đòn (Barbell Back Squat)"
+                        },
+                        new
+                        {
+                            ExerciseId = 26,
+                            AvoidIfInjury = "knee",
+                            Category = "Legs",
+                            DefaultRestSec = 120,
+                            EquipmentId = 5,
+                            HowTo = "Đứng dưới thanh Smith, chân hơi bước lên trước, ngồi xuống tới đùi song song sàn rồi đứng dậy.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Chân",
+                            Name = "Squat trên Smith Machine"
+                        },
+                        new
+                        {
+                            ExerciseId = 27,
+                            AvoidIfInjury = "knee",
+                            Category = "Legs",
+                            DefaultRestSec = 90,
+                            EquipmentId = 7,
+                            HowTo = "Ôm một tạ đơn trước ngực, ngồi xuống sâu, lưng thẳng, gót chân không nhấc khỏi sàn.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Chân",
+                            Name = "Goblet Squat tạ đơn"
+                        },
+                        new
+                        {
+                            ExerciseId = 28,
+                            AvoidIfInjury = "knee",
+                            Category = "Legs",
+                            DefaultRestSec = 90,
+                            EquipmentId = 9,
+                            HowTo = "Ngồi tựa lưng, đặt chân rộng bằng vai, hạ bàn đạp tới khi gối vuông góc rồi đẩy lên, không khoá gối.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Chân",
+                            Name = "Đạp đùi 45 độ (Leg Press)"
+                        },
+                        new
+                        {
+                            ExerciseId = 29,
+                            AvoidIfInjury = "back",
+                            Category = "Legs",
+                            DefaultRestSec = 90,
+                            EquipmentId = 7,
+                            HowTo = "Cầm hai tạ trước đùi, gối hơi chùng, đẩy hông ra sau cho tới khi căng đùi sau rồi đứng dậy.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Đùi sau",
+                            Name = "Romanian Deadlift tạ đơn"
+                        },
+                        new
+                        {
+                            ExerciseId = 30,
+                            AvoidIfInjury = "knee",
+                            Category = "Legs",
+                            DefaultRestSec = 75,
+                            EquipmentId = 7,
+                            HowTo = "Cầm hai tạ, bước dài lên trước, hạ gối sau gần sàn rồi bước tiếp chân kia.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Chân",
+                            Name = "Chùng chân bước tới (Walking Lunge)"
+                        },
+                        new
+                        {
+                            ExerciseId = 31,
+                            AvoidIfInjury = "knee",
+                            Category = "Legs",
+                            DefaultRestSec = 90,
+                            EquipmentId = 7,
+                            HowTo = "Gác mu bàn chân sau lên ghế, hạ người bằng chân trước tới khi đùi song song sàn. Làm đủ số lần mỗi bên.",
+                            IsActive = true,
+                            Level = "Advanced",
+                            MuscleGroup = "Chân",
+                            Name = "Bulgarian Split Squat"
+                        },
+                        new
+                        {
+                            ExerciseId = 32,
+                            Category = "Legs",
+                            DefaultRestSec = 90,
+                            EquipmentId = 6,
+                            HowTo = "Tựa lưng trên vào ghế, thanh đòn trên hông, đẩy hông lên tới khi thân thẳng, siết mông 1 giây.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Mông",
+                            Name = "Đẩy hông với tạ đòn (Hip Thrust)"
+                        },
+                        new
+                        {
+                            ExerciseId = 33,
+                            Category = "Legs",
+                            DefaultRestSec = 60,
+                            EquipmentId = 10,
+                            HowTo = "Đeo dây cáp vào cổ chân, đá chân thẳng ra sau, siết mông rồi đưa về chậm.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Mông",
+                            Name = "Đá chân sau với cáp (Cable Kickback)"
+                        },
+                        new
+                        {
+                            ExerciseId = 34,
+                            Category = "Legs",
+                            DefaultRestSec = 60,
+                            EquipmentId = 5,
+                            HowTo = "Đứng dưới thanh Smith, nhón gót lên cao nhất, giữ 1 giây rồi hạ xuống chậm.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Bắp chân",
+                            Name = "Nhón bắp chân trên Smith (Calf Raise)"
+                        },
+                        new
+                        {
+                            ExerciseId = 35,
+                            Category = "Core",
+                            DefaultRestSec = 45,
+                            HowTo = "Chống khuỷu tay và mũi chân, thân thẳng từ đầu tới gót, siết bụng. Số lần ghi theo giây.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Bụng",
+                            Name = "Plank"
+                        },
+                        new
+                        {
+                            ExerciseId = 36,
+                            AvoidIfInjury = "back",
+                            Category = "Core",
+                            DefaultRestSec = 60,
+                            EquipmentId = 10,
+                            HowTo = "Quỳ trước giàn cáp, giữ dây thừng cạnh đầu, gập bụng kéo khuỷu tay về phía gối.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Bụng",
+                            Name = "Gập bụng với cáp (Cable Crunch)"
+                        },
+                        new
+                        {
+                            ExerciseId = 37,
+                            AvoidIfInjury = "shoulder",
+                            Category = "Core",
+                            DefaultRestSec = 60,
+                            EquipmentId = 6,
+                            HowTo = "Treo người trên xà, nâng hai chân lên ngang hông, hạ chậm và không đung đưa.",
+                            IsActive = true,
+                            Level = "Advanced",
+                            MuscleGroup = "Bụng",
+                            Name = "Nâng chân treo xà (Hanging Leg Raise)"
+                        },
+                        new
+                        {
+                            ExerciseId = 38,
+                            Category = "Core",
+                            DefaultRestSec = 45,
+                            EquipmentId = 10,
+                            HowTo = "Đứng nghiêng với giàn cáp, đẩy tay cầm thẳng ra trước ngực và giữ người không bị xoay.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Bụng",
+                            Name = "Chống xoay với cáp (Pallof Press)"
+                        },
+                        new
+                        {
+                            ExerciseId = 39,
+                            Category = "Core",
+                            DefaultRestSec = 45,
+                            HowTo = "Nằm ngửa, tay chân giơ lên, duỗi tay và chân đối diện ra xa, lưng dưới luôn áp sàn.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Bụng",
+                            Name = "Dead Bug"
+                        },
+                        new
+                        {
+                            ExerciseId = 40,
+                            AvoidIfInjury = "knee",
+                            Category = "Cardio",
+                            DefaultRestSec = 0,
+                            EquipmentId = 1,
+                            HowTo = "Khởi động 3 phút đi bộ, sau đó đi dốc 8-12% hoặc chạy nhẹ ở mức vẫn nói chuyện được.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Cardio",
+                            Name = "Đi bộ dốc / chạy bộ trên máy Technogym"
+                        },
+                        new
+                        {
+                            ExerciseId = 41,
+                            AvoidIfInjury = "knee",
+                            Category = "Cardio",
+                            DefaultRestSec = 0,
+                            EquipmentId = 2,
+                            HowTo = "Khởi động 3 phút đi bộ, sau đó chạy nhẹ hoặc xen kẽ 1 phút nhanh, 2 phút chậm.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Cardio",
+                            Name = "Chạy bộ trên máy Life Fitness"
+                        },
+                        new
+                        {
+                            ExerciseId = 42,
+                            Category = "Cardio",
+                            DefaultRestSec = 0,
+                            EquipmentId = 3,
+                            HowTo = "Chỉnh yên ngang hông, đạp đều ở mức vừa, có thể xen kẽ 30 giây đạp nhanh.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Cardio",
+                            Name = "Đạp xe Matrix CXP"
+                        },
+                        new
+                        {
+                            ExerciseId = 43,
+                            AvoidIfInjury = "back",
+                            Category = "Cardio",
+                            DefaultRestSec = 0,
+                            EquipmentId = 4,
+                            HowTo = "Đẩy chân trước, ngả người nhẹ rồi mới kéo tay. Giữ lưng thẳng suốt động tác.",
+                            IsActive = true,
+                            Level = "Basic",
+                            MuscleGroup = "Cardio",
+                            Name = "Chèo thuyền Concept2"
+                        });
+                });
+
             modelBuilder.Entity("WebGym.Models.Entities.GymClass", b =>
                 {
                     b.Property<int>("ClassId")
@@ -1185,11 +1775,19 @@ namespace WebGym.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MemberId"));
 
+                    b.Property<string>("AvatarUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<double?>("BMR")
                         .HasColumnType("float");
 
                     b.Property<double?>("BodyFatPercentage")
                         .HasColumnType("float");
+
+                    b.Property<string>("CardCode")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<double?>("Chest")
                         .HasColumnType("float");
@@ -1209,6 +1807,10 @@ namespace WebGym.Migrations
 
                     b.Property<double?>("MuscleMass")
                         .HasColumnType("float");
+
+                    b.Property<string>("QrCode")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -1230,14 +1832,17 @@ namespace WebGym.Migrations
                         new
                         {
                             MemberId = 1,
+                            AvatarUrl = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400",
                             BMR = 1720.0,
                             BodyFatPercentage = 25.5,
+                            CardCode = "GYM-MB-0001",
                             Chest = 98.0,
                             DateOfBirth = new DateTime(1997, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Gender = "Nam",
                             Height = 170.0,
                             Hips = 96.0,
                             MuscleMass = 32.0,
+                            QrCode = "GYM-MB-0001",
                             UserId = 5,
                             Waist = 88.0,
                             Weight = 78.5
@@ -1245,14 +1850,17 @@ namespace WebGym.Migrations
                         new
                         {
                             MemberId = 2,
+                            AvatarUrl = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
                             BMR = 1350.0,
                             BodyFatPercentage = 24.0,
+                            CardCode = "GYM-MB-0002",
                             Chest = 84.0,
                             DateOfBirth = new DateTime(2001, 8, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Gender = "Nữ",
                             Height = 162.0,
                             Hips = 91.0,
                             MuscleMass = 22.5,
+                            QrCode = "GYM-MB-0002",
                             UserId = 6,
                             Waist = 68.0,
                             Weight = 56.0
@@ -1260,14 +1868,17 @@ namespace WebGym.Migrations
                         new
                         {
                             MemberId = 3,
+                            AvatarUrl = "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=400",
                             BMR = 1850.0,
                             BodyFatPercentage = 26.0,
+                            CardCode = "GYM-MB-0003",
                             Chest = 102.0,
                             DateOfBirth = new DateTime(1995, 11, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Gender = "Nam",
                             Height = 176.0,
                             Hips = 100.0,
                             MuscleMass = 34.5,
+                            QrCode = "GYM-MB-0003",
                             UserId = 7,
                             Waist = 92.0,
                             Weight = 84.0
@@ -1275,14 +1886,17 @@ namespace WebGym.Migrations
                         new
                         {
                             MemberId = 4,
+                            AvatarUrl = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400",
                             BMR = 1280.0,
                             BodyFatPercentage = 21.5,
+                            CardCode = "GYM-MB-0004",
                             Chest = 82.0,
                             DateOfBirth = new DateTime(1999, 2, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Gender = "Nữ",
                             Height = 158.0,
                             Hips = 88.0,
                             MuscleMass = 20.0,
+                            QrCode = "GYM-MB-0004",
                             UserId = 8,
                             Waist = 64.0,
                             Weight = 49.0
@@ -1290,14 +1904,17 @@ namespace WebGym.Migrations
                         new
                         {
                             MemberId = 5,
+                            AvatarUrl = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400",
                             BMR = 1690.0,
                             BodyFatPercentage = 19.0,
+                            CardCode = "GYM-MB-0005",
                             Chest = 96.0,
                             DateOfBirth = new DateTime(1992, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Gender = "Nam",
                             Height = 174.0,
                             Hips = 94.0,
                             MuscleMass = 33.0,
+                            QrCode = "GYM-MB-0005",
                             UserId = 9,
                             Waist = 80.0,
                             Weight = 73.0
@@ -1305,14 +1922,17 @@ namespace WebGym.Migrations
                         new
                         {
                             MemberId = 21,
+                            AvatarUrl = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400",
                             BMR = 1320.0,
                             BodyFatPercentage = 23.5,
+                            CardCode = "GYM-MB-0021",
                             Chest = 85.0,
                             DateOfBirth = new DateTime(2000, 3, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Gender = "Nữ",
                             Height = 165.0,
                             Hips = 90.0,
                             MuscleMass = 21.800000000000001,
+                            QrCode = "GYM-MB-0021",
                             UserId = 21,
                             Waist = 65.0,
                             Weight = 54.0
@@ -1320,14 +1940,17 @@ namespace WebGym.Migrations
                         new
                         {
                             MemberId = 22,
+                            AvatarUrl = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
                             BMR = 1810.0,
                             BodyFatPercentage = 24.0,
+                            CardCode = "GYM-MB-0022",
                             Chest = 101.0,
                             DateOfBirth = new DateTime(1996, 7, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Gender = "Nam",
                             Height = 178.0,
                             Hips = 98.0,
                             MuscleMass = 35.0,
+                            QrCode = "GYM-MB-0022",
                             UserId = 22,
                             Waist = 86.0,
                             Weight = 82.0
@@ -1335,14 +1958,17 @@ namespace WebGym.Migrations
                         new
                         {
                             MemberId = 23,
+                            AvatarUrl = "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400",
                             BMR = 1290.0,
                             BodyFatPercentage = 22.0,
+                            CardCode = "GYM-MB-0023",
                             Chest = 83.0,
                             DateOfBirth = new DateTime(2002, 11, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Gender = "Nữ",
                             Height = 160.0,
                             Hips = 89.0,
                             MuscleMass = 20.5,
+                            QrCode = "GYM-MB-0023",
                             UserId = 23,
                             Waist = 63.0,
                             Weight = 52.5
@@ -1350,14 +1976,17 @@ namespace WebGym.Migrations
                         new
                         {
                             MemberId = 24,
+                            AvatarUrl = "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400",
                             BMR = 1700.0,
                             BodyFatPercentage = 21.0,
+                            CardCode = "GYM-MB-0024",
                             Chest = 97.0,
                             DateOfBirth = new DateTime(1994, 9, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Gender = "Nam",
                             Height = 172.0,
                             Hips = 95.0,
                             MuscleMass = 33.0,
+                            QrCode = "GYM-MB-0024",
                             UserId = 24,
                             Waist = 82.0,
                             Weight = 75.0
@@ -3430,6 +4059,44 @@ namespace WebGym.Migrations
                         });
                 });
 
+            modelBuilder.Entity("WebGym.Models.Entities.WorkoutLog", b =>
+                {
+                    b.Property<int>("LogId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LogId"));
+
+                    b.Property<DateTime>("CompletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<int>("ExerciseId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MemberId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PlanId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Weekday")
+                        .HasColumnType("int");
+
+                    b.HasKey("LogId");
+
+                    b.HasIndex("ExerciseId");
+
+                    b.HasIndex("MemberId");
+
+                    b.HasIndex("PlanId", "Date", "ExerciseId")
+                        .IsUnique();
+
+                    b.ToTable("WorkoutLogs");
+                });
+
             modelBuilder.Entity("WebGym.Models.Entities.WorkoutPlan", b =>
                 {
                     b.Property<int>("Id")
@@ -3438,16 +4105,25 @@ namespace WebGym.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CarbG")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("FatG")
+                        .HasColumnType("int");
+
                     b.Property<string>("Goal")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("InputJson")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -3462,23 +4138,45 @@ namespace WebGym.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PlanJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ProteinG")
+                        .HasColumnType("int");
+
                     b.Property<string>("RoutineDetails")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<int?>("TargetKcal")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
-                    b.Property<int>("TrainerId")
+                    b.Property<int?>("TrainerId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("WaterMl")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -3498,9 +4196,11 @@ namespace WebGym.Migrations
                             IsActive = true,
                             IsDeleted = false,
                             MemberId = 1,
-                            NutritionAdvice = "- Calo mục tiêu: 2.100 kcal/ngày (Deficit 300 kcal).\r\n- Đạm (Protein): 160g - 170g/ngày (~2.2g/kg thể trọng), ưu tiên ức gà, cá ngừ, trứng, Whey Isolate.\r\n- Tinh bột (Carb): 200g/ngày (khoai lang, yến mạch, cơm gạo lứt).\r\n- Chất béo tốt: 50g/ngày (dầu ô liu, quả bơ, hạt hạnh nhân).\r\n- Uống đủ 3 - 3.5 lít nước mỗi ngày, hạn chế tối đa bia rượu và đồ ngọt đóng chai.",
-                            RoutineDetails = "- Thứ 2 (Ngực & Tay sau): Bench Press 4x8, Incline Dumbbell Press 4x10, Cable Fly 3x12, Tricep Pushdown 4x12.\r\n- Thứ 3 (Lưng xô & Tay trước): Deadlift 4x6, Lat Pulldown 4x10, Barbell Row 4x8, Bicep Curls 3x12.\r\n- Thứ 4: Nghỉ ngơi tích cực hoặc Cardio nhẹ 30 phút đi bộ dốc.\r\n- Thứ 5 (Chân & Bắp chân): Barbell Squat 4x8, Leg Press 4x12, Leg Curl 3x15, Calf Raise 4x20.\r\n- Thứ 6 (Vai & Bụng): Overhead Press 4x8, Lateral Raise 4x15, Face Pull 3x15, Hanging Leg Raise 4x15.\r\n- Thứ 7: HIIT Cardio chạy bộ máy Technogym 25 phút.\r\n- Chủ nhật: Nghỉ phục hồi toàn diện.",
+                            NutritionAdvice = "- Calo mục tiêu: 2.100 kcal/ngày (Deficit 300 kcal).\n- Đạm (Protein): 160g - 170g/ngày (~2.2g/kg thể trọng), ưu tiên ức gà, cá ngừ, trứng, Whey Isolate.\n- Tinh bột (Carb): 200g/ngày (khoai lang, yến mạch, cơm gạo lứt).\n- Chất béo tốt: 50g/ngày (dầu ô liu, quả bơ, hạt hạnh nhân).\n- Uống đủ 3 - 3.5 lít nước mỗi ngày, hạn chế tối đa bia rượu và đồ ngọt đóng chai.",
+                            RoutineDetails = "- Thứ 2 (Ngực & Tay sau): Bench Press 4x8, Incline Dumbbell Press 4x10, Cable Fly 3x12, Tricep Pushdown 4x12.\n- Thứ 3 (Lưng xô & Tay trước): Deadlift 4x6, Lat Pulldown 4x10, Barbell Row 4x8, Bicep Curls 3x12.\n- Thứ 4: Nghỉ ngơi tích cực hoặc Cardio nhẹ 30 phút đi bộ dốc.\n- Thứ 5 (Chân & Bắp chân): Barbell Squat 4x8, Leg Press 4x12, Leg Curl 3x15, Calf Raise 4x20.\n- Thứ 6 (Vai & Bụng): Overhead Press 4x8, Lateral Raise 4x15, Face Pull 3x15, Hanging Leg Raise 4x15.\n- Thứ 7: HIIT Cardio chạy bộ máy Technogym 25 phút.\n- Chủ nhật: Nghỉ phục hồi toàn diện.",
+                            Source = "PT",
                             StartDate = new DateTime(2026, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Status = "Active",
                             Title = "Kế Hoạch Tăng Cơ Giảm Mỡ Cấp Tốc 12 Tuần (Hypertrophy & Shredding)",
                             TrainerId = 1
                         },
@@ -3513,9 +4213,11 @@ namespace WebGym.Migrations
                             IsActive = true,
                             IsDeleted = false,
                             MemberId = 2,
-                            NutritionAdvice = "- Calo mục tiêu: 1.450 kcal/ngày.\r\n- Ưu tiên rau xanh nhiều chất xơ, cá hồi, tôm, sữa chua Hy Lạp và sinh tố hoa quả mọng (berries).\r\n- Hạn chế gia vị nêm mặn nhằm tránh tích nước dưới da vùng bụng.\r\n- Uống trà hoa cúc hoặc trà xanh ấm buổi tối.",
-                            RoutineDetails = "- Thứ 2: Tập mông đùi Glute Focus: Hip Thrust 4x12, Romanian Deadlift 4x10, Bulgarian Split Squat 3x12 mỗi bên.\r\n- Thứ 3: Lớp Hatha Yoga phục hồi & giãn cơ chuyên sâu 75 phút.\r\n- Thứ 4: Thân trên nữ & Lưng xô: Lat Pulldown 3x12, Dumbbell Shoulder Press 3x12, Plank 4x45s.\r\n- Thứ 5: Nghỉ ngơi hoặc đạp xe Spinning kháng lực vừa phải 40 phút.\r\n- Thứ 6: Pilates thảm Matwork & Core Cốt Lõi: Động tác The Hundred, Criss Cross, Teaser.\r\n- Thứ 7 & CN: Đi dạo ngoài trời, thiền định.",
+                            NutritionAdvice = "- Calo mục tiêu: 1.450 kcal/ngày.\n- Ưu tiên rau xanh nhiều chất xơ, cá hồi, tôm, sữa chua Hy Lạp và sinh tố hoa quả mọng (berries).\n- Hạn chế gia vị nêm mặn nhằm tránh tích nước dưới da vùng bụng.\n- Uống trà hoa cúc hoặc trà xanh ấm buổi tối.",
+                            RoutineDetails = "- Thứ 2: Tập mông đùi Glute Focus: Hip Thrust 4x12, Romanian Deadlift 4x10, Bulgarian Split Squat 3x12 mỗi bên.\n- Thứ 3: Lớp Hatha Yoga phục hồi & giãn cơ chuyên sâu 75 phút.\n- Thứ 4: Thân trên nữ & Lưng xô: Lat Pulldown 3x12, Dumbbell Shoulder Press 3x12, Plank 4x45s.\n- Thứ 5: Nghỉ ngơi hoặc đạp xe Spinning kháng lực vừa phải 40 phút.\n- Thứ 6: Pilates thảm Matwork & Core Cốt Lõi: Động tác The Hundred, Criss Cross, Teaser.\n- Thứ 7 & CN: Đi dạo ngoài trời, thiền định.",
+                            Source = "PT",
                             StartDate = new DateTime(2026, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Status = "Active",
                             Title = "Giáo Án Siết Eo Săn Chắc Vóc Dáng & Yoga Nữ (Tone & Flexibility)",
                             TrainerId = 3
                         },
@@ -3528,9 +4230,11 @@ namespace WebGym.Migrations
                             IsActive = true,
                             IsDeleted = false,
                             MemberId = 3,
-                            NutritionAdvice = "- Calo mục tiêu: 2.800 - 3.000 kcal/ngày (Surplus calo tăng cơ).\r\n- Bổ sung 5g Creatine Monohydrate mỗi ngày vào buổi sáng hoặc ngay sau tập.\r\n- Chia nhỏ 5 bữa ăn/ngày, giàu đạm thịt bò, ức gà, cơm trắng và sữa tươi thanh trùng.",
-                            RoutineDetails = "- Thứ 2: Heavy Squat 5x5 (80% 1RM), Pause Squat 3x5, Bulgarian Split Squat 3x8.\r\n- Thứ 4: Heavy Bench Press 5x5, Close-Grip Bench 3x8, Incline Dumbbell Bench 3x10.\r\n- Thứ 6: Conventional Deadlift 5x3, Barbell Row 4x6, Farmer Walk 3 hiệp nặng.\r\n- Thứ 7: Phụ trợ vai tay, bài tập bụng chống xoay vòng Paloff Press.",
+                            NutritionAdvice = "- Calo mục tiêu: 2.800 - 3.000 kcal/ngày (Surplus calo tăng cơ).\n- Bổ sung 5g Creatine Monohydrate mỗi ngày vào buổi sáng hoặc ngay sau tập.\n- Chia nhỏ 5 bữa ăn/ngày, giàu đạm thịt bò, ức gà, cơm trắng và sữa tươi thanh trùng.",
+                            RoutineDetails = "- Thứ 2: Heavy Squat 5x5 (80% 1RM), Pause Squat 3x5, Bulgarian Split Squat 3x8.\n- Thứ 4: Heavy Bench Press 5x5, Close-Grip Bench 3x8, Incline Dumbbell Bench 3x10.\n- Thứ 6: Conventional Deadlift 5x3, Barbell Row 4x6, Farmer Walk 3 hiệp nặng.\n- Thứ 7: Phụ trợ vai tay, bài tập bụng chống xoay vòng Paloff Press.",
+                            Source = "PT",
                             StartDate = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Status = "Active",
                             Title = "Chương Trình Sức Mạnh Nền Tảng Powerlifting & Khối Lượng Cơ Lớn",
                             TrainerId = 1
                         });
@@ -3593,6 +4297,16 @@ namespace WebGym.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("GymRoom");
+                });
+
+            modelBuilder.Entity("WebGym.Models.Entities.Exercise", b =>
+                {
+                    b.HasOne("WebGym.Models.Entities.Equipment", "Equipment")
+                        .WithMany()
+                        .HasForeignKey("EquipmentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Equipment");
                 });
 
             modelBuilder.Entity("WebGym.Models.Entities.GymClass", b =>
@@ -3753,6 +4467,33 @@ namespace WebGym.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("WebGym.Models.Entities.WorkoutLog", b =>
+                {
+                    b.HasOne("WebGym.Models.Entities.Exercise", "Exercise")
+                        .WithMany()
+                        .HasForeignKey("ExerciseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("WebGym.Models.Entities.Member", "Member")
+                        .WithMany()
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("WebGym.Models.Entities.WorkoutPlan", "Plan")
+                        .WithMany("Logs")
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Exercise");
+
+                    b.Navigation("Member");
+
+                    b.Navigation("Plan");
+                });
+
             modelBuilder.Entity("WebGym.Models.Entities.WorkoutPlan", b =>
                 {
                     b.HasOne("WebGym.Models.Entities.Member", "Member")
@@ -3764,8 +4505,7 @@ namespace WebGym.Migrations
                     b.HasOne("WebGym.Models.Entities.Trainer", "Trainer")
                         .WithMany("WorkoutPlans")
                         .HasForeignKey("TrainerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Member");
 
@@ -3848,6 +4588,11 @@ namespace WebGym.Migrations
                     b.Navigation("Orders");
 
                     b.Navigation("Trainer");
+                });
+
+            modelBuilder.Entity("WebGym.Models.Entities.WorkoutPlan", b =>
+                {
+                    b.Navigation("Logs");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,0 +1,206 @@
+@using WebGym.Models.DTOs.AiPlan
+@using WebGym.Services.Fitness
+@model PlanViewModel
+@{
+    var doc = Model.Doc;
+    var t = doc.Targets;
+    var todayWd = FitnessCalculator.ToWeekday(FitnessCalculator.TodayVn());
+    var mealTotal = doc.Meals.Sum(m => m.Kcal);
+    var mealPct = t.TargetKcal > 0 ? Math.Min(100, (int)Math.Round(mealTotal * 100.0 / t.TargetKcal)) : 0;
+    string N(double v, int d = 0) => FitnessCalculator.N(v, d);
+}
+
+<div class="ap-result" id="apResultInner" data-draft-id="@Model.DraftId" data-remaining="@Model.RemainingToday">
+
+    @foreach (var notice in doc.Notices)
+    {
+        <div class="ap-notice ap-notice--warn" role="status">@notice</div>
+    }
+
+    <!-- 1. Chỉ số mục tiêu -->
+    <section class="ap-card" aria-labelledby="apTargetsTitle">
+        <div class="ap-card-head">
+            <div>
+                <p class="ap-eyebrow">Phần 1</p>
+                <h3 id="apTargetsTitle">Chỉ số <span>mục tiêu</span></h3>
+                <p class="ap-sub">@PlanOptions.Label(PlanOptions.Goals, t.Goal) · BMI @N(t.Bmi, 1) · BMR @N(t.Bmr) kcal (@t.BmrSource)</p>
+            </div>
+        </div>
+
+        <div class="ap-targets">
+            <div class="ap-tile">
+                <span class="ap-tile-label">Calo mỗi ngày</span>
+                <span class="ap-tile-val ap-tile-val--lime">@N(t.TargetKcal)<small>kcal</small></span>
+                <span class="ap-tile-meta">Tiêu hao ước tính @N(t.Tdee) kcal · @(t.KcalDelta < 0 ? "thâm hụt " + N(-t.KcalDelta) : t.KcalDelta > 0 ? "dư " + N(t.KcalDelta) : "cân bằng") kcal</span>
+                <details class="ap-why"><summary>Vì sao?</summary><p>@t.ExplainKcal</p></details>
+            </div>
+
+            <div class="ap-tile">
+                <span class="ap-tile-label">Đạm · Tinh bột · Chất béo</span>
+                <div class="ap-macro-bar" role="img" aria-label="Đạm @t.ProteinPct%, tinh bột @t.CarbPct%, chất béo @t.FatPct%">
+                    <i class="ap-m-p" style="width:@(t.ProteinPct)%"></i><i class="ap-m-c" style="width:@(t.CarbPct)%"></i><i class="ap-m-f" style="width:@(t.FatPct)%"></i>
+                </div>
+                <div class="ap-macro-legend">
+                    <div><b>@(t.ProteinG)g</b><span style="--dot: var(--portal-lime)">Đạm @t.ProteinPct%</span></div>
+                    <div><b>@(t.CarbG)g</b><span style="--dot: var(--portal-info)">Tinh bột @t.CarbPct%</span></div>
+                    <div><b>@(t.FatG)g</b><span style="--dot: var(--portal-warning)">Béo @t.FatPct%</span></div>
+                </div>
+                <details class="ap-why"><summary>Vì sao?</summary><p>@t.ExplainMacro</p></details>
+            </div>
+
+            <div class="ap-tile">
+                <span class="ap-tile-label">Nước</span>
+                <span class="ap-tile-val">@N(t.WaterMl / 1000.0, 1)<small>lít/ngày</small></span>
+                <span class="ap-tile-meta">Ngày tập: @N(t.WaterMlTrainingDay / 1000.0, 1) lít</span>
+                <details class="ap-why"><summary>Vì sao?</summary><p>@t.ExplainWater</p></details>
+            </div>
+
+            <div class="ap-tile">
+                <span class="ap-tile-label">Dự kiến</span>
+                <span class="ap-tile-val ap-tile-val--md">@t.EstimateText</span>
+                <span class="ap-tile-meta">Chỉ là ước tính, không phải cam kết</span>
+                <details class="ap-why"><summary>Vì sao?</summary><p>@t.ExplainEstimate</p></details>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. Lịch tập tuần -->
+    <section class="ap-card" aria-labelledby="apWeekTitle">
+        <div class="ap-card-head">
+            <div>
+                <p class="ap-eyebrow">Phần 2</p>
+                <h3 id="apWeekTitle">Lịch tập <span>trong tuần</span></h3>
+                <p class="ap-sub">@doc.SplitName · @doc.Days.Count buổi/tuần, các ngày còn lại để cơ phục hồi</p>
+            </div>
+        </div>
+
+        <div class="ap-week">
+            @for (var wd = 1; wd <= 7; wd++)
+            {
+                var day = doc.Days.FirstOrDefault(d => d.Weekday == wd);
+                var isToday = wd == todayWd && !Model.IsDraft;
+                if (day == null)
+                {
+                    <article class="ap-day ap-day--rest @(isToday ? "is-today" : "")">
+                        <header class="ap-day-head">
+                            <span class="ap-day-name">@PlanOptions.WeekdayLabel(wd)</span>
+                            <span class="ap-day-focus" style="color: var(--portal-text-subtle)">Phục hồi</span>
+                        </header>
+                        <div class="ap-day-body">Nghỉ ngơi, đi bộ nhẹ hoặc giãn cơ 10–15 phút.</div>
+                    </article>
+                    continue;
+                }
+                <article class="ap-day @(isToday ? "is-today" : "")">
+                    <header class="ap-day-head">
+                        <span class="ap-day-name">@PlanOptions.WeekdayLabel(wd)</span>
+                        <span class="ap-day-focus">@day.Focus</span>
+                    </header>
+                    <ol class="ap-ex-list">
+                        @foreach (var x in day.Exercises)
+                        {
+                            Model.Exercises.TryGetValue(x.ExerciseId, out var ex);
+                            <li class="ap-ex">
+                                <div class="ap-ex-top">
+                                    <span class="ap-ex-name">@(ex?.Name ?? "Bài #" + x.ExerciseId)</span>
+                                    <span class="ap-ex-dose">@x.Sets × @x.Reps</span>
+                                </div>
+                                <div class="ap-ex-meta">
+                                    <span>Nghỉ @x.RestSec giây</span>
+                                    <span>@(ex?.Equipment?.EquipmentName ?? "Không cần máy")</span>
+                                </div>
+                                @if (!string.IsNullOrWhiteSpace(x.Note))
+                                {
+                                    <div class="ap-ex-note">@x.Note</div>
+                                }
+                                @if (ex != null)
+                                {
+                                    <details><summary>Cách tập</summary><p>@ex.HowTo</p></details>
+                                }
+                            </li>
+                        }
+                    </ol>
+                    @if (!string.IsNullOrWhiteSpace(day.Cardio))
+                    {
+                        <div class="ap-cardio">Cardio: @day.Cardio</div>
+                    }
+                    @if (Model.IsDraft)
+                    {
+                        <div class="ap-day-foot">
+                            <button type="button" class="ap-btn ap-btn--ghost ap-btn--sm" data-regen="day" data-weekday="@wd">Đổi buổi này</button>
+                        </div>
+                    }
+                </article>
+            }
+        </div>
+    </section>
+
+    <!-- 3. Thực đơn -->
+    <section class="ap-card" aria-labelledby="apMealTitle">
+        <div class="ap-card-head">
+            <div>
+                <p class="ap-eyebrow">Phần 3</p>
+                <h3 id="apMealTitle">Thực đơn <span>một ngày</span></h3>
+                <p class="ap-sub">Món Việt dễ mua, khẩu phần ước lượng. Có thể đổi món tương đương.</p>
+            </div>
+            @if (Model.IsDraft)
+            {
+                <button type="button" class="ap-btn ap-btn--ghost ap-btn--sm" data-regen="meals">Đổi thực đơn</button>
+            }
+        </div>
+
+        <div class="ap-meals">
+            @foreach (var m in doc.Meals)
+            {
+                <div class="ap-meal">
+                    <span class="ap-meal-slot">@m.Slot</span>
+                    <span class="ap-meal-dish">@m.Dish</span>
+                    <span class="ap-meal-kcal"><b>@m.Kcal</b> kcal · @(m.ProteinG)g đạm</span>
+                </div>
+            }
+        </div>
+        <div class="ap-meal-total">
+            <span>Tổng @N(mealTotal) / @N(t.TargetKcal) kcal</span>
+            <span class="ap-track" aria-hidden="true"><i style="width:@(mealPct)%"></i></span>
+            <span>@doc.Meals.Sum(m => m.ProteinG) / @t.ProteinG g đạm</span>
+        </div>
+
+        @if (doc.Tips.Count > 0)
+        {
+            <p class="ap-eyebrow" style="margin-top: 20px">Lời khuyên</p>
+            <ul class="ap-tips">
+                @foreach (var tip in doc.Tips)
+                {
+                    <li>@tip</li>
+                }
+            </ul>
+        }
+    </section>
+
+    <p class="ap-disclaimer">
+        Gợi ý mang tính tham khảo, không thay thế tư vấn của bác sĩ. Hãy dừng tập và hỏi HLV nếu thấy đau hoặc chóng mặt.
+        @(doc.Origin == "ai" ? "Lịch tập và thực đơn do AI soạn dựa trên các chỉ số hệ thống tính." : doc.Origin == "mixed" ? "Một phần do AI soạn, một phần theo giáo án mẫu." : "Theo giáo án mẫu của phòng tập.")
+    </p>
+
+    @if (Model.IsDraft)
+    {
+        <div class="ap-savebar">
+            <button type="button" class="ap-btn" id="apSave">Lưu vào Giáo án của tôi</button>
+            <div class="ap-regen">
+                <button type="button" class="ap-btn ap-btn--ghost" id="apRegenToggle" aria-expanded="false" aria-controls="apRegenMenu">Tạo lại / Đổi phương án</button>
+                <div class="ap-regen-menu" id="apRegenMenu" hidden>
+                    <p>Lý do (không bắt buộc):</p>
+                    <div class="ap-chips">
+                        <label class="ap-chip"><input type="radio" name="apReason" value="Bài tập quá nặng, hãy nhẹ hơn" /><span>Quá nặng</span></label>
+                        <label class="ap-chip"><input type="radio" name="apReason" value="Bài tập quá nhẹ, hãy thử thách hơn" /><span>Quá nhẹ</span></label>
+                        <label class="ap-chip"><input type="radio" name="apReason" value="Không thích các món ăn này, đổi món khác" /><span>Không thích món</span></label>
+                        <label class="ap-chip"><input type="radio" name="apReason" value="Ít thời gian, ưu tiên bài nhanh gọn" /><span>Ít thời gian</span></label>
+                    </div>
+                    <button type="button" class="ap-btn" data-regen="all">Tạo lại toàn bộ</button>
+                    <button type="button" class="ap-btn ap-btn--ghost" data-regen="meals">Chỉ đổi thực đơn</button>
+                </div>
+            </div>
+            <span class="ap-spacer"></span>
+            <span class="ap-quota">Còn <b>@Model.RemainingToday</b> lượt tạo bằng AI hôm nay</span>
+        </div>
+    }
+</div>

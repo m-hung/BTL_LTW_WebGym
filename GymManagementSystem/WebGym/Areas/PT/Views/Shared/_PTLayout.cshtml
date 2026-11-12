@@ -12,6 +12,10 @@
         .Select(t => new { t.TrainerId, t.Specialization, t.AvatarUrl })
         .FirstOrDefaultAsync();
     var pendingCount = me == null ? 0 : await Db.Bookings.CountAsync(b => b.TrainerId == me.TrainerId && b.Status == "Pending");
+    // Giáo án AI của học viên (gói kèm PT) đang chờ HLV này xem
+    var planReviewCount = me == null ? 0 : await Db.WorkoutPlans.CountAsync(p =>
+        p.Status == WorkoutPlanStatuses.PendingReview && p.IsActive && !p.IsDeleted &&
+        Db.Bookings.Any(b => b.MemberId == p.MemberId && b.TrainerId == me.TrainerId && (b.Status == "Approved" || b.Status == "Completed")));
     var today = DateTime.Today;
     var avatarPath = WebGym.Helpers.CoachUi.AvatarPath(me?.AvatarUrl);
     var avatarSrc = avatarPath == null ? null : Url.Content(avatarPath);
@@ -28,6 +32,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/pt-portal.css" asp-append-version="true" />
 </head>
 <body class="cx">
@@ -58,6 +63,14 @@
                 <a class="@NavClass("AssignedMembers")" aria-current="@Current("AssignedMembers")" asp-area="PT" asp-controller="AssignedMembers" asp-action="Index">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3.5" /><path d="M2.5 20c.6-3.4 3.2-5.5 6.5-5.5s5.9 2.1 6.5 5.5M16 5.2a3.4 3.4 0 010 6.6M18.5 14.8c1.7.8 2.8 2.6 3 5.2" /></svg>
                     <span>Học viên</span>
+                </a>
+                <a class="@NavClass("PlanReview")" aria-current="@Current("PlanReview")" asp-area="PT" asp-controller="PlanReview" asp-action="Index">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5h9l3.5 3.5v13.5H6z" /><path d="M14.5 3.5V7.5H18.5M9 12.5l2 2 4-4.5" /></svg>
+                    <span>Giáo án chờ duyệt</span>
+                    @if (planReviewCount > 0)
+                    {
+                        <span class="cx-count" aria-label="@planReviewCount giáo án đang chờ">@planReviewCount</span>
+                    }
                 </a>
                 <a class="@NavClass("Profile")" aria-current="@Current("Profile")" asp-area="PT" asp-controller="Profile" asp-action="Index">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 20.5c.8-4 4-6.5 8-6.5s7.2 2.5 8 6.5" /></svg>

@@ -201,7 +201,7 @@ body.cx{margin:0;background:var(--cx-ink);color:var(--cx-text);font:15px/1.55 va
 .cx-chip.is-on b{color:var(--cx-ink)}
 
 /* ---------- Danh sách ca ---------- */
-.cx-row{display:grid;grid-template-columns:64px 112px minmax(200px,1fr) minmax(0,1.5fr) 130px;align-items:center;gap:20px;padding:14px 24px;border-top:1px solid var(--cx-line)}
+.cx-row{display:grid;grid-template-columns:64px 112px minmax(180px,1fr) minmax(0,1.2fr) minmax(130px,auto);align-items:center;gap:20px;padding:14px 24px;border-top:1px solid var(--cx-line)}
 .cx-row:first-child{border-top:0}
 .cx-row:hover{background:var(--cx-panel2)}
 .cx-date{display:flex;flex-direction:column;line-height:1.15}
@@ -216,6 +216,26 @@ body.cx{margin:0;background:var(--cx-ink);color:var(--cx-text);font:15px/1.55 va
 .cx-row-note{color:var(--cx-muted);font-size:14px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .cx-row--past .cx-date b,.cx-row--done .cx-date b,.cx-row--off .cx-date b{color:#6c736a}
 .cx-row--off .cx-row-who strong,.cx-row--off .cx-row-time{color:var(--cx-muted);text-decoration:line-through;text-decoration-color:rgba(255,107,107,.5)}
+
+.cx-row-status-col{justify-self:end;display:flex;align-items:center;justify-content:flex-end}
+.cx-act-cell{display:flex;flex-direction:column;align-items:flex-end;gap:6px;position:relative}
+.cx-window-pill{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:#fbbf24;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.35);padding:2px 8px;border-radius:4px;letter-spacing:.02em}
+.cx-act-buttons{display:inline-flex;align-items:center;gap:8px}
+.cx-btn-action{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:6px 12px;font:700 12.5px/1 var(--cx-label);letter-spacing:.04em;text-transform:uppercase;border-radius:4px;cursor:pointer;transition:all .15s ease;white-space:nowrap;border:1px solid transparent}
+.cx-btn-action--ok{background:var(--cx-lime);color:var(--cx-ink)!important;border-color:var(--cx-lime)}
+.cx-btn-action--ok:hover{background:#d9ff6a;transform:translateY(-1px);box-shadow:0 4px 12px rgba(200,255,46,.25)}
+.cx-btn-action--cancel{background:transparent;color:var(--cx-red)!important;border-color:rgba(255,107,107,.4)}
+.cx-btn-action--cancel:hover{background:rgba(255,107,107,.1);border-color:var(--cx-red)}
+.cx-btn-action--danger-solid{background:var(--cx-red);color:#fff!important;border-color:var(--cx-red);padding:7px 12px;width:100%}
+.cx-btn-action--danger-solid:hover{background:#ff5252}
+.cx-inline-details{position:relative}
+.cx-inline-details summary{list-style:none}
+.cx-inline-details summary::-webkit-details-marker{display:none}
+.cx-popover-form{position:absolute;right:0;top:calc(100% + 6px);z-index:50;width:250px;padding:12px;background:#181c18;border:1px solid var(--cx-line2);border-radius:6px;box-shadow:0 10px 30px rgba(0,0,0,.7);display:flex;flex-direction:column;gap:8px}
+.cx-popover-form label{font-size:11.5px;color:var(--cx-muted);font-weight:500}
+.cx-popover-form input{width:100%;padding:7px 10px;background:var(--cx-ink);border:1px solid var(--cx-line2);color:var(--cx-text);font-size:13px;border-radius:4px;outline:0}
+.cx-popover-form input:focus{border-color:var(--cx-lime)}
+.cx-countdown-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#fbbf24;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.35);padding:4px 10px;border-radius:4px}
 
 .cx-st{justify-self:end;display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;white-space:nowrap}
 .cx-st::before{content:"";width:6px;height:13px;transform:skewX(-12deg);background:currentColor}
@@ -410,3 +430,30 @@ body.cx{margin:0;background:var(--cx-ink);color:var(--cx-text);font:15px/1.55 va
 @media (prefers-reduced-motion:reduce){
   .cx *{animation:none!important;transition:none!important}
 }
+
+/* ---------- Duyệt giáo án AI (PT/PlanReview) ---------- */
+.cx-plans{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.cx-plan{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:16px;align-items:center;padding:16px;background:var(--cx-panel2);border:1px solid var(--cx-line)}
+.cx-plan-main strong{display:block;font-size:16px}
+.cx-plan-main small{color:var(--cx-muted)}
+.cx-plan-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.cx-rv-meta{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}
+.cx-rv-targets{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:14px}
+.cx-rv-targets div{padding:12px;background:var(--cx-panel2);border:1px solid var(--cx-line)}
+.cx-rv-targets b{display:block;font:400 24px/1.1 var(--cx-display);color:var(--cx-lime)}
+.cx-rv-targets small{color:var(--cx-muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.cx-rv-day{margin-top:18px}
+.cx-rv-day h3{font:700 18px/1.2 var(--cx-label);text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px}
+.cx-rv-day h3 span{color:var(--cx-lime);font-weight:600;margin-left:8px;text-transform:none;letter-spacing:0;font-family:var(--cx-body);font-size:14px}
+.cx-rv-table{width:100%;border-collapse:collapse}
+.cx-rv-table th{text-align:left;font:700 12px/1 var(--cx-label);letter-spacing:.08em;text-transform:uppercase;color:var(--cx-muted);padding:8px 6px;border-bottom:1px solid var(--cx-line)}
+.cx-rv-table td{padding:8px 6px;border-bottom:1px solid var(--cx-line);vertical-align:middle}
+.cx-rv-table td small{display:block;color:var(--cx-muted);font-size:12px}
+.cx-rv-table input{width:100%;height:38px;padding:0 10px;background:var(--cx-ink);border:1px solid var(--cx-line2);color:var(--cx-text);font-size:14px}
+.cx-rv-table input:focus{outline:0;border-color:var(--cx-lime)}
+.cx-rv-table .cx-rv-num{width:76px}
+.cx-rv-cardio{margin-top:8px;color:var(--cx-soft);font-size:13px}
+.cx-rv-meals{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:6px}
+.cx-rv-meals li{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;background:var(--cx-panel2);border:1px solid var(--cx-line);font-size:14px}
+.cx-rv-meals li span:first-child{color:var(--cx-muted);min-width:150px}
+@media (max-width:760px){.cx-plan{grid-template-columns:1fr}.cx-rv-table thead{display:none}.cx-rv-table tr{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px 0;border-bottom:1px solid var(--cx-line)}.cx-rv-table td{border:0;padding:2px 0}.cx-rv-table td:first-child,.cx-rv-table td:last-child{grid-column:1/-1}.cx-rv-table .cx-rv-num{width:100%}}

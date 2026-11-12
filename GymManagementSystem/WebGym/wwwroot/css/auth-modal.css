@@ -32,12 +32,12 @@
 .auth-btn--solid:hover svg{transform:translateX(4px)}
 
 /* trạng thái đã đăng nhập */
-.auth-user{display:inline-flex;align-items:center;gap:10px;height:44px;padding:0 16px;border:1px solid var(--am-line2);color:var(--am-text);font-size:14px;font-weight:600;transition:border-color .25s,color .25s}
-.auth-user.has-avatar{padding:0 16px 0 6px}
-.auth-user:hover{border-color:var(--am-lime);color:var(--am-lime)}
-.auth-user i{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--am-lime);color:#0a0a0a;font-style:normal;font-family:var(--am-display);font-size:15px}
+.auth-user{display:inline-flex;align-items:center;gap:10px;height:44px;padding:0 16px;border:1px solid var(--am-line2);color:var(--am-text);font-size:14px;font-weight:600;transition:border-color .25s,color .25s,background .25s;text-decoration:none}
+.auth-user.has-avatar{padding:0 16px 0 8px}
+.auth-user:hover{border-color:var(--am-lime);color:var(--am-lime);background:rgba(200,255,46,.06)}
+.auth-user i,.auth-user-placeholder{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:rgba(200,255,46,.18);color:var(--am-lime);border:1.5px solid var(--am-lime);font-style:normal;font-family:var(--am-display);font-size:15px;flex-shrink:0}
 .auth-user-avatar{width:30px;height:30px;border-radius:50%;object-fit:cover;border:1.5px solid var(--am-lime);display:block;flex-shrink:0}
-.auth-user span{max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.auth-user .auth-user-name{max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .auth-logout{margin:0}
 .auth-logout button{height:44px;padding:0 14px;background:none;border:1px solid transparent;color:var(--am-muted);font:600 13px var(--am-body);cursor:pointer;transition:color .2s}
 .auth-logout button:hover{color:var(--am-red)}
@@ -159,15 +159,6 @@
 
 .am-foot{text-align:center;color:var(--am-muted);font-size:14px;margin:18px 0 0}
 
-/* quên mật khẩu / đặt mật khẩu mới: màn hình phụ, ẩn thanh tab */
-.am[data-tab="forgot"] .am-tabs,.am[data-tab="reset"] .am-tabs{display:none}
-.am-devlink{margin-top:16px;padding:12px 14px;border:1px dashed var(--am-line2);background:var(--am-bg2);font-size:13px;color:var(--am-muted);animation:amIn .3s ease}
-.am-devlink[hidden]{display:none}
-.am-devlink p{margin:0 0 8px}
-.am-devlink b{color:var(--am-text);font-weight:600}
-.am-devlink a{color:var(--am-lime);font-weight:600;text-decoration:none;border-bottom:1px solid rgba(200,255,46,.4)}
-.am-devlink a:hover{border-bottom-color:var(--am-lime)}
-
 /* tài khoản mẫu */
 .am-demo{margin-top:18px;border:1px dashed var(--am-line2);padding:0}
 .am-demo summary{cursor:pointer;list-style:none;padding:11px 14px;font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--am-muted);display:flex;justify-content:space-between;align-items:center;transition:color .2s}
@@ -187,18 +178,21 @@
   .am-side{display:none}
   .am-main{padding:34px 28px 28px}
 }
-@media (max-width:560px){
+@media (max-width:650px){
   .am{padding:0;align-items:end}
   .am-box{width:100%;max-height:94dvh;border-left:0;border-right:0;border-bottom:0;transform:translateY(40px)}
   .am-main{padding:30px 20px 24px}
   .am-title{font-size:28px}
   .am-grid2{grid-template-columns:1fr}
   .am-demo-list{grid-template-columns:1fr}
-  .auth-actions{gap:6px}
+  .auth-actions{gap:8px}
   .auth-btn{height:38px;padding:0 11px;font-size:12px;letter-spacing:.05em}
   .auth-btn--solid svg{display:none}
   .auth-btn--ghost svg{display:none}
-  .auth-user span,.auth-logout{display:none}
+  .auth-user{width:42px;height:42px;padding:0!important;justify-content:center;border-radius:8px;border-color:rgba(200,255,46,.45);background:#141916}
+  .auth-user:hover{border-color:var(--am-lime);background:#19221c}
+  .auth-user .auth-user-name,.auth-user>span:not(.auth-user-placeholder),.auth-logout{display:none!important}
+  .auth-user-placeholder,.auth-user-avatar{width:32px;height:32px}
 }
 @media (prefers-reduced-motion:reduce){
   .am,.am-box,.am-ind,.am-form,.am-notice,.auth-btn,.am-submit{transition:none;animation:none}

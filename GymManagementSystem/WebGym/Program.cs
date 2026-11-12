@@ -23,7 +23,8 @@ namespace WebGym
                 ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
+                options.UseSqlServer(connectionString)
+                       .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
 
             // 2. Cookie Authentication & Authorization
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -45,6 +46,10 @@ namespace WebGym
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<IGymKnowledgeService, GymKnowledgeService>();
             builder.Services.AddScoped<IAIService, GeminiAIService>();
+
+            // Giáo án AI: bản nháp và giới hạn lượt gọi AI lưu trong bộ nhớ
+            builder.Services.AddMemoryCache();
+            builder.Services.AddScoped<IAiPlanService, AiPlanService>();
 
             // 4. Add MVC Controllers and Views
             builder.Services.AddControllersWithViews();

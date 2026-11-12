@@ -311,6 +311,18 @@
                            class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Report" ? "active" : "")">
                             <i class="bi bi-pie-chart-fill"></i>
                             <span>Báo Cáo Doanh Thu</span>
+                         </a>
+                        <a asp-area="Admin" asp-controller="CheckIn" asp-action="Index" 
+                           class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "CheckIn" ? "active" : "")">
+                            <i class="bi bi-qr-code-scan"></i>
+                            <span>Điểm Danh / Check-in</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-area="Admin" asp-controller="PackageManagement" asp-action="Index" 
+                           class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "PackageManagement" ? "active" : "")">
+                            <i class="bi bi-box-seam-fill"></i>
+                            <span>Gói Tập (Packages)</span>
                         </a>
                     </li>
                 </ul>

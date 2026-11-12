@@ -6,6 +6,7 @@
     ViewData["Title"] = "Thanh toán gói " + plan.Name + " - Pulse Gym";
     var today = DateTime.Today.ToString("yyyy-MM-dd");
     var allPackages = ViewBag.AllPackages as List<WebGym.Models.Entities.GymPackage> ?? new List<WebGym.Models.Entities.GymPackage>();
+    var activeSub = ViewBag.ActiveSub as WebGym.Models.Entities.Subscription;
 }
 <!DOCTYPE html>
 <html lang="vi">
@@ -18,6 +19,168 @@
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/pulse.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/auth-modal.css" asp-append-version="true" />
+    <style>
+        /* Custom Modern Form Inputs & Selects */
+        .co input[type=text],
+        .co input:not([type]),
+        .co input[type=email],
+        .co input[type=tel],
+        .co input[type=date],
+        .co select {
+            width: 100%;
+            background: #111512 !important;
+            border: 1px solid rgba(255, 255, 255, 0.16) !important;
+            border-radius: 6px !important;
+            color: #ffffff !important;
+            font-size: 14.5px !important;
+            padding: 13px 16px !important;
+            transition: all 0.2s ease !important;
+            color-scheme: dark !important;
+            box-sizing: border-box;
+        }
+
+        .co select {
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23c8ff2e' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+            background-repeat: no-repeat !important;
+            background-position: right 14px center !important;
+            padding-right: 38px !important;
+            cursor: pointer;
+        }
+
+        .co select option {
+            background: #151a17 !important;
+            color: #f2f5ef !important;
+            padding: 12px 14px !important;
+            font-size: 14px !important;
+        }
+
+        .co input:hover,
+        .co select:hover {
+            border-color: rgba(200, 255, 46, 0.45) !important;
+            background: #141916 !important;
+        }
+
+        .co input:focus,
+        .co select:focus {
+            outline: none !important;
+            border-color: var(--lime) !important;
+            box-shadow: 0 0 0 3px rgba(200, 255, 46, 0.16) !important;
+            background: #151a17 !important;
+        }
+
+        .co-f {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            font-size: 11.5px;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: #a4aca0;
+        }
+
+        .co-card {
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            background: #121613;
+            padding: 30px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        /* Package Switcher Dropdown */
+        .custom-pkg-trigger {
+            width: 100%;
+            background: #141916;
+            border: 1.5px solid var(--lime);
+            border-radius: 8px;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .custom-pkg-trigger:hover {
+            border-color: #e2ff6b;
+            background: #171f1a;
+        }
+        .custom-pkg-menu {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            z-index: 999;
+            background: #131815;
+            border: 1px solid rgba(200, 255, 46, 0.4);
+            border-radius: 8px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.85);
+            overflow: hidden;
+            padding: 4px 0;
+        }
+        .pkg-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 11px 14px;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.15s ease;
+        }
+        .pkg-item:last-child {
+            border-bottom: none;
+        }
+        .pkg-item.available:hover {
+            background: rgba(200, 255, 46, 0.15);
+        }
+        .pkg-item.active-choice {
+            background: rgba(200, 255, 46, 0.12);
+        }
+        .pkg-item.locked {
+            opacity: 0.42;
+            cursor: not-allowed;
+            background: rgba(0,0,0,0.2);
+        }
+
+        /* Responsive Breakpoints */
+        @@media (max-width: 900px) {
+            .co-grid {
+                grid-template-columns: 1fr !important;
+                gap: 28px !important;
+            }
+            .co-card {
+                padding: 24px 20px !important;
+            }
+        }
+
+        @@media (max-width: 650px) {
+            .co {
+                padding: 16px 14px 60px !important;
+            }
+            .co-head {
+                margin-bottom: 28px !important;
+            }
+            .co-fields {
+                grid-template-columns: 1fr !important;
+                gap: 16px !important;
+            }
+            .co-card {
+                padding: 20px 16px !important;
+            }
+            .co-card h2 {
+                font-size: 22px !important;
+                margin-bottom: 18px !important;
+            }
+            .co-methods {
+                grid-template-columns: 1fr !important;
+                gap: 10px !important;
+            }
+        }
+    </style>
 </head>
 <body>
     <partial name="_PulseHeader" />
@@ -28,6 +191,17 @@
             <p class="eyebrow">Bước cuối cùng</p>
             <h1 class="display">Hoàn tất<em class="outline">đăng ký</em></h1>
         </div>
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div style="background: rgba(255, 92, 92, 0.14); border: 1.5px solid rgba(255, 92, 92, 0.5); border-radius: 8px; padding: 14px 18px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; color: #ffcece; font-size: 14px; line-height: 1.5;">
+                <span style="font-size: 22px; color: #ff5c5c; line-height: 1;">⚠️</span>
+                <div>
+                    <strong style="color: #ffffff; display: block; margin-bottom: 2px;">Thông báo giao dịch:</strong>
+                    @TempData["ErrorMessage"]
+                </div>
+            </div>
+        }
 
         <form asp-controller="Checkout" asp-action="Submit" asp-route-slug="@plan.PackageId" method="post" class="co-grid" novalidate>
             <input type="hidden" asp-for="PackageId" value="@plan.PackageId" />
@@ -51,26 +225,29 @@
                     </div>
                 </section>
 
-                <!-- 2. Tập luyện -->
+                <!-- 2. Kế hoạch tập luyện (Yêu cầu ảnh 1) -->
                 <section class="co-card">
                     <h2><span>02</span>Kế hoạch tập luyện</h2>
                     <div class="co-fields">
-                        <label class="co-f">Ngày bắt đầu
+                        <label class="co-f">
+                            <span>Ngày bắt đầu <span style="color:var(--lime)">*</span></span>
                             <input asp-for="StartDate" type="date" min="@today" required />
                             <span asp-validation-for="StartDate" class="err"></span>
                         </label>
-                        <label class="co-f">Khu vực quan tâm (không bắt buộc)
+                        <label class="co-f">
+                            <span>Khu vực quan tâm (không bắt buộc)</span>
                             <select asp-for="AreaSlug">
-                                <option value="">Chưa chọn</option>
+                                <option value="">Chưa chọn khu vực</option>
                                 @foreach (var f in FacilityData.All)
                                 {
                                     <option value="@f.Slug" selected="@(Model.AreaSlug == f.Slug)">@f.FullName</option>
                                 }
                             </select>
                         </label>
-                        <label class="co-f wide">Huấn luyện viên mong muốn (không bắt buộc)
+                        <label class="co-f wide">
+                            <span>Huấn luyện viên mong muốn (không bắt buộc)</span>
                             <select asp-for="TrainerSlug">
-                                <option value="">Để Pulse sắp xếp giúp tôi</option>
+                                <option value="">Để Pulse sắp xếp giúp tôi (Khuyên dùng)</option>
                                 @if (ViewBag.AllTrainers != null)
                                 {
                                     foreach (var t in (List<WebGym.Models.TrainerInfo>)ViewBag.AllTrainers)
@@ -104,25 +281,85 @@
 
             <!-- Tóm tắt đơn -->
             <aside class="co-sum" id="coSum" data-monthly="@((long)plan.MonthlyPrice)">
-                <div style="margin-bottom: 16px;">
-                    <p class="co-label" style="margin-bottom: 8px;">Gói tập đã chọn @(plan.Popular ? "• Phổ biến nhất" : "")</p>
+                <div style="margin-bottom: 20px;">
+                    <div style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 8px;">
+                        Gói tập đã chọn @(plan.Popular ? "• Phổ biến" : "")
+                    </div>
+
                     @if (allPackages.Count > 1)
                     {
-                        <div style="margin-bottom: 10px;">
-                            <label for="packageSwitch" style="font-size:12px; color:var(--muted); display:block; margin-bottom:4px;">Chuyển nhanh sang gói khác:</label>
-                            <select id="packageSwitch" 
-                                    style="background:#141712; color:#fff; border:1px solid var(--lime); padding:10px 12px; width:100%; border-radius:4px; font-weight:600; font-size:13px; cursor:pointer;"
-                                    onchange="window.location.href='/thanh-toan/' + this.value;">
+                        <!-- Tối ưu lại Box chọn / chuyển đổi gói tập -->
+                        <div style="position: relative; margin-bottom: 12px;">
+                            <button type="button" class="custom-pkg-trigger" id="customPkgTrigger">
+                                <div style="overflow: hidden; padding-right: 8px;">
+                                    <div style="font-size: 14px; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        @plan.Name
+                                    </div>
+                                    <div style="font-size: 12.5px; color: var(--lime); font-weight: 600; margin-top: 2px;">
+                                        @plan.Price.ToString("N0")đ <span style="color: var(--muted); font-size: 11.5px; font-weight: normal;">• @plan.DurationDays ngày</span>
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+                                    <span style="font-size: 10.5px; background: rgba(200, 255, 46, 0.15); color: var(--lime); padding: 3px 7px; border-radius: 4px; font-weight: 700; text-transform: uppercase;">
+                                        Đang chọn
+                                    </span>
+                                    <span id="customPkgArrow" style="color: var(--lime); font-size: 11px; transition: transform 0.2s ease;">▼</span>
+                                </div>
+                            </button>
+
+                            <!-- Dropdown Menu -->
+                            <div class="custom-pkg-menu" id="customPkgMenu" style="display: none;">
                                 @foreach (var p in allPackages)
                                 {
-                                    <option value="@p.PackageId" selected="@(p.PackageId == plan.PackageId)">
-                                        @p.PackageName — @p.Price.ToString("N0")đ (@p.DurationDays ngày)
-                                    </option>
+                                    bool isSelected = p.PackageId == plan.PackageId;
+                                    bool isCurrentActive = activeSub != null && activeSub.PackageId == p.PackageId;
+                                    bool isLowerTier = activeSub != null && activeSub.Package != null && p.Price < activeSub.Package.Price;
+
+                                    if (isLowerTier)
+                                    {
+                                        <div class="pkg-item locked" title="Không thể hạ gói xuống gói thấp hơn gói đang sử dụng">
+                                            <div>
+                                                <div style="font-size: 13.5px; font-weight: 600; color: #889084;">@p.PackageName</div>
+                                                <div style="font-size: 11.5px; color: #666e63;">@p.Price.ToString("N0")đ • @p.DurationDays ngày</div>
+                                            </div>
+                                            <span style="font-size: 10.5px; color: #ff7878; background: rgba(255,92,92,0.12); border: 1px solid rgba(255,92,92,0.25); padding: 2px 6px; border-radius: 4px; font-weight: 600;">
+                                                🔒 Khóa hạ gói
+                                            </span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <a href="/thanh-toan/@p.PackageId" class="pkg-item available @(isSelected ? "active-choice" : "")">
+                                            <div>
+                                                <div style="font-size: 13.5px; font-weight: 700; color: @(isSelected ? "var(--lime)" : "#ffffff");">
+                                                    @p.PackageName
+                                                </div>
+                                                <div style="font-size: 11.5px; color: #a2aba0;">
+                                                    @p.Price.ToString("N0")đ • @p.DurationDays ngày
+                                                </div>
+                                            </div>
+                                            <div>
+                                                @if (isSelected)
+                                                {
+                                                    <span style="font-size: 11px; color: var(--lime); font-weight: 700;">✓ Đang chọn</span>
+                                                }
+                                                else if (isCurrentActive)
+                                                {
+                                                    <span style="font-size: 10.5px; color: #dce1d8; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">Gói hiện tại</span>
+                                                }
+                                                else
+                                                {
+                                                    <span style="font-size: 11px; color: var(--lime); font-weight: 600;">Chọn gói →</span>
+                                                }
+                                            </div>
+                                        </a>
+                                    }
                                 }
-                            </select>
+                            </div>
                         </div>
                     }
                 </div>
+
                 <h2 class="co-plan">@plan.Name</h2>
                 <p class="co-desc">@plan.Description</p>
                 <div style="font-size:13px; color:var(--lime); margin-bottom:12px; font-weight:600;">
@@ -160,5 +397,32 @@
     <partial name="_AuthModal" />
     <script src="~/js/auth-modal.js" asp-append-version="true"></script>
     <script src="~/js/pulse.js" asp-append-version="true"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const trigger = document.getElementById('customPkgTrigger');
+            const menu = document.getElementById('customPkgMenu');
+            const arrow = document.getElementById('customPkgArrow');
+
+            if (trigger && menu) {
+                trigger.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const isOpen = menu.style.display === 'block';
+                    menu.style.display = isOpen ? 'none' : 'block';
+                    if (arrow) {
+                        arrow.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+                    }
+                });
+
+                document.addEventListener('click', function (e) {
+                    if (!trigger.contains(e.target) && !menu.contains(e.target)) {
+                        menu.style.display = 'none';
+                        if (arrow) {
+                            arrow.style.transform = 'rotate(0deg)';
+                        }
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

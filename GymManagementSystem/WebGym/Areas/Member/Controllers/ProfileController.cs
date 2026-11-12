@@ -35,6 +35,19 @@ namespace WebGym.Areas.Member.Controllers
                 .OrderByDescending(s => s.StartDate)
                 .FirstOrDefault(s => s.Status == "Active");
 
+            string? avatarUrl = member.AvatarUrl;
+            if (string.IsNullOrEmpty(avatarUrl) && userId.HasValue)
+            {
+                var diskPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatars", $"user_{userId.Value}.jpg");
+                if (System.IO.File.Exists(diskPath))
+                {
+                    avatarUrl = $"/uploads/avatars/user_{userId.Value}.jpg?v={DateTime.UtcNow.Ticks}";
+                }
+            }
+
+            var cardCode = member.MemberCardCode;
+            var qrCode = member.MemberQrData;
+
             var dto = new MemberProfileDto
             {
                 Id = member.MemberId,
@@ -43,6 +56,9 @@ namespace WebGym.Areas.Member.Controllers
                 PhoneNumber = member.User.PhoneNumber,
                 Gender = member.Gender,
                 DateOfBirth = member.DateOfBirth,
+                AvatarUrl = avatarUrl,
+                CardCode = cardCode,
+                QrCode = qrCode,
                 Height = member.Height,
                 Weight = member.Weight,
                 BMR = member.BMR,
@@ -52,15 +68,22 @@ namespace WebGym.Areas.Member.Controllers
                 Waist = member.Waist,
                 Hips = member.Hips,
                 CurrentPackageName = activeSub?.Package.PackageName,
+                PackageTier = activeSub?.Package.PackageName?.Contains("Kim Cương", StringComparison.OrdinalIgnoreCase) == true ? "VVIP" : "VIP",
+                MembershipStartDate = activeSub?.StartDate,
                 MembershipEndDate = activeSub?.EndDate
             };
 
-            ViewBag.ProgressList = member.ProgressRecords.OrderBy(p => p.RecordedDate).ToList();
+            // Nếu chưa có cân nặng hoặc chiều cao (tài khoản mới/chưa đo InBody thực tế) thì không gửi bản ghi biểu đồ
+            var validProgress = (member.Weight > 0)
+                ? member.ProgressRecords.OrderBy(p => p.RecordedDate).ToList()
+                : new List<WebGym.Models.Entities.Progress>();
+
+            ViewBag.ProgressList = validProgress;
 
             return View(dto);
         }
 
-        // GET: /Member/Profile/PersonalInfo (Yêu cầu 3)
+        // GET: /Member/Profile/PersonalInfo
         [HttpGet]
         public async Task<IActionResult> PersonalInfo()
         {
@@ -81,15 +104,20 @@ namespace WebGym.Areas.Member.Controllers
                 .OrderByDescending(s => s.StartDate)
                 .FirstOrDefault(s => s.Status == "Active");
 
-            string? avatarUrl = null;
-            if (userId.HasValue)
+            string? avatarUrl = member.AvatarUrl;
+            if (string.IsNullOrEmpty(avatarUrl) && userId.HasValue)
             {
                 var diskPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatars", $"user_{userId.Value}.jpg");
                 if (System.IO.File.Exists(diskPath))
                 {
                     avatarUrl = $"/uploads/avatars/user_{userId.Value}.jpg?v={DateTime.UtcNow.Ticks}";
+                    member.AvatarUrl = $"/uploads/avatars/user_{userId.Value}.jpg";
+                    await _context.SaveChangesAsync();
                 }
             }
+
+            var cardCode = member.MemberCardCode;
+            var qrCode = member.MemberQrData;
 
             var dto = new MemberPersonalInfoDto
             {
@@ -100,13 +128,18 @@ namespace WebGym.Areas.Member.Controllers
                 Gender = member.Gender,
                 DateOfBirth = member.DateOfBirth,
                 AvatarUrl = avatarUrl,
-                CurrentPackageName = activeSub?.Package.PackageName ?? "Chưa đăng ký gói"
+                CardCode = cardCode,
+                QrCode = qrCode,
+                CurrentPackageName = activeSub?.Package.PackageName ?? "Chưa đăng ký gói",
+                PackageTier = activeSub?.Package.PackageName?.Contains("Kim Cương", StringComparison.OrdinalIgnoreCase) == true ? "VVIP" : "VIP",
+                MembershipStartDate = activeSub?.StartDate,
+                MembershipEndDate = activeSub?.EndDate
             };
 
             return View(dto);
         }
 
-        // POST: /Member/Profile/UpdatePersonalInfo (Yêu cầu 3)
+        // POST: /Member/Profile/UpdatePersonalInfo
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdatePersonalInfo(MemberPersonalInfoDto model, IFormFile? avatarFile)
@@ -122,7 +155,7 @@ namespace WebGym.Areas.Member.Controllers
                 return RedirectToAction(nameof(PersonalInfo));
             }
 
-            // Xử lý upload avatar nếu có
+            // Xử lý upload avatar nếu có và lưu trực tiếp đường dẫn vào Database (Bảng Members)
             if (avatarFile != null && avatarFile.Length > 0)
             {
                 var allowedExts = new[] { ".jpg", ".jpeg", ".png", ".webp" };
@@ -131,11 +164,13 @@ namespace WebGym.Areas.Member.Controllers
                 {
                     var uploadsDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatars");
                     Directory.CreateDirectory(uploadsDir);
-                    var filePath = Path.Combine(uploadsDir, $"user_{userId!.Value}.jpg");
+                    var fileName = $"user_{userId!.Value}_{DateTime.UtcNow.Ticks}{ext}";
+                    var filePath = Path.Combine(uploadsDir, fileName);
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         await avatarFile.CopyToAsync(stream);
                     }
+                    member.AvatarUrl = $"/uploads/avatars/user_{userId!.Value}.jpg";
                 }
                 else
                 {
@@ -144,7 +179,7 @@ namespace WebGym.Areas.Member.Controllers
                 }
             }
 
-            // Cập nhật thông tin cá nhân (KHÔNG CHỈNH SỬA CHỈ SỐ CƠ THỂ theo yêu cầu của Leader)
+            // Cập nhật thông tin cá nhân
             member.User.FullName = model.FullName;
             member.User.PhoneNumber = model.PhoneNumber;
             member.Gender = model.Gender;
@@ -156,25 +191,95 @@ namespace WebGym.Areas.Member.Controllers
             return RedirectToAction(nameof(PersonalInfo));
         }
 
-        // POST: /Member/Profile/DeleteAvatar (Xóa ảnh đại diện, trở về mặc định)
+        // POST: /Member/Profile/UploadAvatarAjax (Hỗ trợ học viên tải ảnh trực tiếp không cần reload)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteAvatar()
+        public async Task<IActionResult> UploadAvatarAjax(IFormFile? avatarFile)
+        {
+            var userId = CurrentUserId;
+            if (!userId.HasValue || avatarFile == null || avatarFile.Length == 0)
+            {
+                return Json(new { success = false, message = "Vui lòng chọn file ảnh hợp lệ." });
+            }
+
+            var member = await _context.Members.FirstOrDefaultAsync(m => m.UserId == userId);
+            if (member == null)
+            {
+                return Json(new { success = false, message = "Không tìm thấy thông tin hội viên." });
+            }
+
+            var allowedExts = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+            var ext = Path.GetExtension(avatarFile.FileName).ToLowerInvariant();
+            if (!allowedExts.Contains(ext))
+            {
+                return Json(new { success = false, message = "Định dạng ảnh không hợp lệ (chỉ hỗ trợ JPG, PNG, WEBP)." });
+            }
+
+            if (avatarFile.Length > 5 * 1024 * 1024)
+            {
+                return Json(new { success = false, message = "Dung lượng file ảnh không được vượt quá 5MB." });
+            }
+
+            var uploadsDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatars");
+            Directory.CreateDirectory(uploadsDir);
+            var fileName = $"user_{userId.Value}_{DateTime.UtcNow.Ticks}{ext}";
+            var filePath = Path.Combine(uploadsDir, fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await avatarFile.CopyToAsync(stream);
+            }
+
+            // Xóa file avatar cũ nếu có
+            if (!string.IsNullOrEmpty(member.AvatarUrl))
+            {
+                var oldDisk = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", member.AvatarUrl.TrimStart('/'));
+                if (System.IO.File.Exists(oldDisk))
+                {
+                    try { System.IO.File.Delete(oldDisk); } catch { }
+                }
+            }
+
+            var newUrl = $"/uploads/avatars/{fileName}";
+            member.AvatarUrl = newUrl;
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true, avatarUrl = newUrl, message = "Tải ảnh đại diện lên thành công!" });
+        }
+
+        // POST: /Member/Profile/DeleteAvatar (Xóa ảnh đại diện, trở về mặc định và cập nhật Database)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteAvatar()
         {
             var userId = CurrentUserId;
             if (userId.HasValue)
             {
-                var diskPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatars", $"user_{userId.Value}.jpg");
-                if (System.IO.File.Exists(diskPath))
+                var member = await _context.Members.FirstOrDefaultAsync(m => m.UserId == userId);
+                if (member != null)
                 {
-                    try
+                    if (!string.IsNullOrEmpty(member.AvatarUrl))
                     {
-                        System.IO.File.Delete(diskPath);
+                        var oldDisk = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", member.AvatarUrl.TrimStart('/'));
+                        if (System.IO.File.Exists(oldDisk))
+                        {
+                            try { System.IO.File.Delete(oldDisk); } catch { }
+                        }
                     }
-                    catch
-                    {
-                        // File delete retry or skip
-                    }
+                    member.AvatarUrl = null;
+                    await _context.SaveChangesAsync();
+                }
+
+                var legacyPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatars", $"user_{userId.Value}.jpg");
+                if (System.IO.File.Exists(legacyPath))
+                {
+                    try { System.IO.File.Delete(legacyPath); } catch { }
+                }
+
+                var member = await _context.Members.FirstOrDefaultAsync(m => m.UserId == userId.Value);
+                if (member != null)
+                {
+                    member.AvatarUrl = null;
+                    await _context.SaveChangesAsync();
                 }
             }
 

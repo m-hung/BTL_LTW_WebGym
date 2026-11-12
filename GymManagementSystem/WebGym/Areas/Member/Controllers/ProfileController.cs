@@ -35,6 +35,19 @@ namespace WebGym.Areas.Member.Controllers
                 .OrderByDescending(s => s.StartDate)
                 .FirstOrDefault(s => s.Status == "Active");
 
+            string? avatarUrl = member.AvatarUrl;
+            if (string.IsNullOrEmpty(avatarUrl) && userId.HasValue)
+            {
+                var diskPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatars", $"user_{userId.Value}.jpg");
+                if (System.IO.File.Exists(diskPath))
+                {
+                    avatarUrl = $"/uploads/avatars/user_{userId.Value}.jpg?v={DateTime.UtcNow.Ticks}";
+                }
+            }
+
+            var cardCode = member.MemberCardCode;
+            var qrCode = member.MemberQrData;
+
             var dto = new MemberProfileDto
             {
                 Id = member.MemberId,
@@ -43,6 +56,9 @@ namespace WebGym.Areas.Member.Controllers
                 PhoneNumber = member.User.PhoneNumber,
                 Gender = member.Gender,
                 DateOfBirth = member.DateOfBirth,
+                AvatarUrl = avatarUrl,
+                CardCode = cardCode,
+                QrCode = qrCode,
                 Height = member.Height,
                 Weight = member.Weight,
                 BMR = member.BMR,
@@ -52,6 +68,8 @@ namespace WebGym.Areas.Member.Controllers
                 Waist = member.Waist,
                 Hips = member.Hips,
                 CurrentPackageName = activeSub?.Package.PackageName,
+                PackageTier = activeSub?.Package.PackageName?.Contains("Kim Cương", StringComparison.OrdinalIgnoreCase) == true ? "VVIP" : "VIP",
+                MembershipStartDate = activeSub?.StartDate,
                 MembershipEndDate = activeSub?.EndDate
             };
 
@@ -60,7 +78,7 @@ namespace WebGym.Areas.Member.Controllers
             return View(dto);
         }
 
-        // GET: /Member/Profile/PersonalInfo (Yêu cầu 3)
+        // GET: /Member/Profile/PersonalInfo
         [HttpGet]
         public async Task<IActionResult> PersonalInfo()
         {
@@ -81,8 +99,8 @@ namespace WebGym.Areas.Member.Controllers
                 .OrderByDescending(s => s.StartDate)
                 .FirstOrDefault(s => s.Status == "Active");
 
-            string? avatarUrl = null;
-            if (userId.HasValue)
+            string? avatarUrl = member.AvatarUrl;
+            if (string.IsNullOrEmpty(avatarUrl) && userId.HasValue)
             {
                 var diskPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatars", $"user_{userId.Value}.jpg");
                 if (System.IO.File.Exists(diskPath))
@@ -90,6 +108,9 @@ namespace WebGym.Areas.Member.Controllers
                     avatarUrl = $"/uploads/avatars/user_{userId.Value}.jpg?v={DateTime.UtcNow.Ticks}";
                 }
             }
+
+            var cardCode = member.MemberCardCode;
+            var qrCode = member.MemberQrData;
 
             var dto = new MemberPersonalInfoDto
             {
@@ -100,13 +121,18 @@ namespace WebGym.Areas.Member.Controllers
                 Gender = member.Gender,
                 DateOfBirth = member.DateOfBirth,
                 AvatarUrl = avatarUrl,
-                CurrentPackageName = activeSub?.Package.PackageName ?? "Chưa đăng ký gói"
+                CardCode = cardCode,
+                QrCode = qrCode,
+                CurrentPackageName = activeSub?.Package.PackageName ?? "Chưa đăng ký gói",
+                PackageTier = activeSub?.Package.PackageName?.Contains("Kim Cương", StringComparison.OrdinalIgnoreCase) == true ? "VVIP" : "VIP",
+                MembershipStartDate = activeSub?.StartDate,
+                MembershipEndDate = activeSub?.EndDate
             };
 
             return View(dto);
         }
 
-        // POST: /Member/Profile/UpdatePersonalInfo (Yêu cầu 3)
+        // POST: /Member/Profile/UpdatePersonalInfo
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdatePersonalInfo(MemberPersonalInfoDto model, IFormFile? avatarFile)
@@ -136,6 +162,7 @@ namespace WebGym.Areas.Member.Controllers
                     {
                         await avatarFile.CopyToAsync(stream);
                     }
+                    member.AvatarUrl = $"/uploads/avatars/user_{userId!.Value}.jpg";
                 }
                 else
                 {
@@ -144,7 +171,7 @@ namespace WebGym.Areas.Member.Controllers
                 }
             }
 
-            // Cập nhật thông tin cá nhân (KHÔNG CHỈNH SỬA CHỈ SỐ CƠ THỂ theo yêu cầu của Leader)
+            // Cập nhật thông tin cá nhân
             member.User.FullName = model.FullName;
             member.User.PhoneNumber = model.PhoneNumber;
             member.Gender = model.Gender;
@@ -159,7 +186,7 @@ namespace WebGym.Areas.Member.Controllers
         // POST: /Member/Profile/DeleteAvatar (Xóa ảnh đại diện, trở về mặc định)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteAvatar()
+        public async Task<IActionResult> DeleteAvatar()
         {
             var userId = CurrentUserId;
             if (userId.HasValue)
@@ -175,6 +202,13 @@ namespace WebGym.Areas.Member.Controllers
                     {
                         // File delete retry or skip
                     }
+                }
+
+                var member = await _context.Members.FirstOrDefaultAsync(m => m.UserId == userId.Value);
+                if (member != null)
+                {
+                    member.AvatarUrl = null;
+                    await _context.SaveChangesAsync();
                 }
             }
 

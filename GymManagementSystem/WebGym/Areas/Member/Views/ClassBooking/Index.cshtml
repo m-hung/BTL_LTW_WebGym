@@ -1,0 +1,556 @@
+@model WebGym.Models.DTOs.Member.ClassBookingPageViewModel
+@{
+    ViewData["Title"] = "Đăng Ký Lớp Tập Nhóm";
+    var openCount = Model.AvailableClasses.Count(c => c.IsOpen);
+    var fullCount = Model.AvailableClasses.Count(c => !c.IsOpen);
+    var myBookedCount = Model.MyBookedClasses.Count(b => b.Status == "Confirmed");
+}
+
+<div class="portal-content-container">
+    <!-- 1. HEADER & THỐNG KÊ NHANH -->
+    <div class="portal-page-header d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="portal-badge-category">PULSE GROUP CLASSES</span>
+                <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50 px-2 py-1" style="font-size: 11px;">
+                    <i class="bi bi-check-circle-fill me-1"></i>HỆ THỐNG ĐẶT CHỖ TỰ ĐỘNG
+                </span>
+            </div>
+            <h1 class="portal-page-title mb-1">ĐĂNG KÝ LỚP HỌC NHÓM</h1>
+            <p class="portal-page-desc mb-0">
+                Thời khóa biểu các lớp nhóm cố định trong tuần (Yoga, Zumba, Boxing, Spinning RPM, BodyPump, Pilates).
+            </p>
+        </div>
+
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <div class="stat-pill-box">
+                <small>LỚP ĐANG MỞ</small>
+                <strong class="text-lime" id="statOpenCount">@openCount</strong>
+            </div>
+            <div class="stat-pill-box">
+                <small>LỚP ĐÃ ĐẦY</small>
+                <strong class="text-danger" id="statFullCount">@fullCount</strong>
+            </div>
+            <div class="stat-pill-box">
+                <small>LỊCH CỦA BẠN</small>
+                <strong class="text-info" id="statMyBookedCount">@myBookedCount</strong>
+            </div>
+        </div>
+    </div>
+
+    @if (myBookedCount > 0)
+    {
+        <div class="pulse-notice-banner mb-4">
+            <div>
+                <div class="notice-title">
+                    Bạn đang có <span class="notice-count-highlight">@myBookedCount</span> lớp học nhóm đã xác nhận giữ chỗ
+                </div>
+                <div class="notice-subtitle">
+                    Kiểm tra danh sách lớp, phòng học và thời gian biểu trong lịch cá nhân.
+                </div>
+            </div>
+            <button type="button" class="notice-action-btn" onclick="switchTab('my-classes')">
+                <span>Xem Lịch Tập Của Tôi</span>
+                <i class="bi bi-arrow-right"></i>
+            </button>
+        </div>
+    }
+
+    <!-- 2. TABS ĐIỀU HƯỚNG: THỜI KHÓA BIỂU vs LỊCH TẬP CỦA TÔI -->
+    <div class="class-tabs-bar mb-4">
+        <button type="button" class="class-tab-btn @(Model.ActiveTab == "schedule" ? "active" : "")" id="tabBtnSchedule" onclick="switchTab('schedule')">
+            <i class="bi bi-calendar3 me-2"></i>
+            <span>Thời Khóa Biểu Lớp Nhóm</span>
+            <span class="class-tab-badge">@Model.AvailableClasses.Count</span>
+        </button>
+        <button type="button" class="class-tab-btn @(Model.ActiveTab == "my-classes" ? "active" : "")" id="tabBtnMyClasses" onclick="switchTab('my-classes')">
+            <i class="bi bi-person-check-fill me-2"></i>
+            <span>Lịch Tập Của Tôi</span>
+            <span class="class-tab-badge bg-info text-dark" id="myClassesCountBadge">@myBookedCount</span>
+        </button>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 1: THỜI KHÓA BIỂU CÁC LỚP TẬP NHÓM (MỞ ĐĂNG KÝ & ĐÃ ĐẦY) -->
+    <!-- ========================================================================= -->
+    <div id="tabContentSchedule" class="tab-pane-content @(Model.ActiveTab == "schedule" ? "" : "d-none")">
+        <!-- Bộ lọc nhanh & Tìm kiếm -->
+        <div class="filter-controls-card mb-4">
+            <div class="filter-chips-group">
+                <button type="button" class="filter-chip active" data-filter="all" onclick="filterClasses('all', this)">
+                    <span>Tất cả lớp</span>
+                    <span class="chip-count">@Model.AvailableClasses.Count</span>
+                </button>
+                <button type="button" class="filter-chip" data-filter="open" onclick="filterClasses('open', this)">
+                    <i class="bi bi-unlock-fill chip-icon-open"></i>
+                    <span>Mở đăng ký</span>
+                    <span class="chip-count">@openCount</span>
+                </button>
+                <button type="button" class="filter-chip" data-filter="full" onclick="filterClasses('full', this)">
+                    <i class="bi bi-lock-fill chip-icon-full"></i>
+                    <span>Đã đầy sĩ số</span>
+                    <span class="chip-count">@fullCount</span>
+                </button>
+                <button type="button" class="filter-chip" data-filter="my" onclick="filterClasses('my', this)">
+                    <i class="bi bi-check2-circle chip-icon-my"></i>
+                    <span>Lớp tôi đã đăng ký</span>
+                    <span class="chip-count">@myBookedCount</span>
+                </button>
+            </div>
+
+            <div class="filter-search-box">
+                <i class="bi bi-search filter-search-icon"></i>
+                <input type="text" id="classSearchInput" class="filter-search-input" 
+                       placeholder="Tìm tên lớp, HLV, phòng..." oninput="searchClasses()" />
+                <button type="button" class="filter-search-clear d-none" id="clearSearchBtn" onclick="clearSearchInput()" title="Xóa tìm kiếm">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Lưới danh sách lớp học nhóm -->
+        <div class="row g-4" id="classGridContainer">
+            @if (Model.AvailableClasses.Any())
+            {
+                foreach (var item in Model.AvailableClasses)
+                {
+                    var percent = item.MaxCapacity > 0 ? (int)Math.Min(100, Math.Round((double)item.CurrentCapacity / item.MaxCapacity * 100)) : 0;
+                    var cardFilterTags = "all " + (item.IsOpen ? "open " : "full ") + (item.IsBookedByCurrentUser ? "my " : "");
+
+                    <div class="col-xl-4 col-md-6 class-card-col" data-filter-tags="@cardFilterTags" id="class-col-@item.ClassId">
+                        <div class="group-class-card @(item.IsBookedByCurrentUser ? "card-is-booked" : (item.IsOpen ? "card-is-open" : "card-is-full"))">
+                            <!-- Ảnh bìa lớp + Badges -->
+                            <div class="class-card-media">
+                                <img src="@item.ImageUrl" alt="@item.ClassName" loading="lazy" />
+                                
+                                <div class="bento-badges-row">
+                                    <span class="bento-room-badge">
+                                        <i class="bi bi-geo-alt-fill text-lime"></i>@item.RoomName
+                                    </span>
+
+                                    <!-- BADGE TRẠNG THÁI: MỞ ĐĂNG KÝ (OPEN) vs ĐÃ ĐẦY (FULL) -->
+                                    @if (item.IsBookedByCurrentUser)
+                                    {
+                                        <span class="class-status-badge badge-registered">
+                                            <i class="bi bi-check-circle-fill me-1"></i>ĐÃ GIỮ CHỖ
+                                        </span>
+                                    }
+                                    else if (item.IsOpen)
+                                    {
+                                        <span class="bento-slot-badge slot-open" id="badge-status-@item.ClassId">
+                                            <span class="slot-dot"></span>
+                                            <span>Còn @item.AvailableSlots slot</span>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="bento-slot-badge slot-full" id="badge-status-@item.ClassId">
+                                            <i class="bi bi-lock-fill"></i>
+                                            <span>Đã đầy (Full)</span>
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- Thân thẻ thông tin lớp -->
+                            <div class="class-card-body">
+                                <span class="bento-category-tag">PULSE GROUP CLASS</span>
+                                <h3 class="class-card-title text-truncate-2" title="@item.ClassName">
+                                    @item.ClassName
+                                </h3>
+                                <p class="class-card-desc text-truncate-2" title="@item.Description">
+                                    @(item.Description ?? "Lớp tập nhóm chuyên sâu cùng cộng đồng Pulse Gym.")
+                                </p>
+
+                                <div class="bento-widgets-group">
+                                    <!-- Lịch học cố định trong tuần -->
+                                    <div class="bento-info-box">
+                                        <div class="bento-info-icon">
+                                            <i class="bi bi-clock-history"></i>
+                                        </div>
+                                        <div class="bento-info-text">
+                                            <span class="info-label">LỊCH HỌC CỐ ĐỊNH</span>
+                                            <span class="info-value">@item.Schedule</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- HLV phụ trách -->
+                                    <div class="bento-coach-box">
+                                        <img src="@item.TrainerAvatar" alt="@item.TrainerName" class="bento-coach-avatar" onerror="this.onerror=null; this.src='/images/coach1.jpg';" />
+                                        <div class="bento-coach-info">
+                                            <span class="info-label">HLV PHỤ TRÁCH</span>
+                                            <span class="coach-name">@item.TrainerName</span>
+                                        </div>
+                                        <span class="coach-role-pill">PRO COACH</span>
+                                    </div>
+                                </div>
+
+                                <!-- Thanh tiến độ sĩ số & Số chỗ trống còn lại -->
+                                <div class="bento-capacity-wrap">
+                                    <div class="bento-capacity-meta">
+                                        <span>Sĩ số: <strong id="cap-text-@item.ClassId">@item.CurrentCapacity</strong>/@item.MaxCapacity học viên</span>
+                                        <span class="@(item.IsOpen ? "text-lime" : "text-danger") fw-semibold" id="slot-hint-@item.ClassId">
+                                            @(item.IsOpen ? $"Còn {item.AvailableSlots} chỗ" : "Đã kín chỗ")
+                                        </span>
+                                    </div>
+                                    <div class="bento-progress-track">
+                                        <div class="bento-progress-bar @(item.IsOpen ? "bar-open" : "bar-full")" 
+                                             id="prog-bar-@item.ClassId"
+                                             style="width: @percent%;">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Nút Đăng ký / Trạng thái -->
+                                <div class="class-action-wrapper mt-3 pt-3 border-top border-dark border-opacity-50" id="action-wrapper-@item.ClassId">
+                                    @if (item.IsBookedByCurrentUser)
+                                    {
+                                        <div class="d-flex gap-2">
+                                            <button type="button" class="btn-class-booked flex-grow-1" disabled>
+                                                <i class="bi bi-check-circle-fill me-1 text-success"></i>Đã Đăng Ký
+                                            </button>
+                                            <button type="button" class="btn-class-cancel-sm" 
+                                                    onclick="cancelClassBooking(@item.CurrentUserBookingId, '@item.ClassName', @item.ClassId)"
+                                                    title="Hủy đăng ký lớp này">
+                                                <i class="bi bi-trash3-fill"></i> Hủy
+                                            </button>
+                                        </div>
+                                    }
+                                    else if (item.IsOpen)
+                                    {
+                                        <button type="button" class="btn-class-register" 
+                                                id="btn-reg-@item.ClassId"
+                                                onclick="registerClass(@item.ClassId, '@item.ClassName')">
+                                            <i class="bi bi-plus-circle-fill me-1"></i>Đăng Ký Tham Gia
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn-class-full" disabled title="Lớp đã kín chỗ">
+                                            <i class="bi bi-lock-fill me-1"></i>Lớp Đã Đầy Sĩ Số
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center py-5">
+                    <i class="bi bi-calendar-x text-white-50 display-3 mb-3 d-block"></i>
+                    <h4 class="text-white">Hiện chưa có lớp học nhóm nào được mở</h4>
+                    <p class="text-white-50">Vui lòng quay lại sau khi ban quản lý công bố thời khóa biểu mới.</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 2: LỊCH TẬP RIÊNG CỦA HỘI VIÊN (MY CLASSES & HỦY LỊCH) -->
+    <!-- ========================================================================= -->
+    <div id="tabContentMyClasses" class="tab-pane-content @(Model.ActiveTab == "my-classes" ? "" : "d-none")">
+        <div class="card portal-card border-0 mb-4">
+            <div class="card-header bg-transparent border-bottom border-dark border-opacity-50 py-3 d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-card-checklist text-lime fs-5"></i>
+                    <span class="fw-bold text-white">DANH SÁCH LỚP TẬP NHÓM ĐÃ ĐĂNG KÝ CỦA BẠN</span>
+                </div>
+                <span class="badge bg-dark text-lime border border-lime border-opacity-50 px-2 py-1">
+                    <span id="myListTotalCount">@myBookedCount</span> Lớp đã xác nhận
+                </span>
+            </div>
+
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table portal-table align-middle mb-0" id="myClassesTable">
+                        <thead>
+                            <tr>
+                                <th class="ps-3" style="width: 50px;">#</th>
+                                <th>LỚP HỌC NHÓM</th>
+                                <th>HLV PHỤ TRÁCH</th>
+                                <th>PHÒNG STUDIO</th>
+                                <th>LỊCH HỌC TRONG TUẦN</th>
+                                <th>NGÀY ĐĂNG KÝ</th>
+                                <th class="text-center">TRẠNG THÁI</th>
+                                <th class="text-end pe-3">THAO TÁC</th>
+                            </tr>
+                        </thead>
+                        <tbody id="myClassesTableBody">
+                            @if (Model.MyBookedClasses.Any(b => b.Status == "Confirmed"))
+                            {
+                                var idx = 1;
+                                foreach (var b in Model.MyBookedClasses.Where(b => b.Status == "Confirmed"))
+                                {
+                                    <tr id="my-booking-row-@b.ClassBookingId">
+                                        <td class="ps-3 text-white-50 font-monospace">@(idx++)</td>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-3">
+                                                <img src="@b.ImageUrl" alt="@b.ClassName" class="rounded-2 object-fit-cover border border-secondary" style="width: 48px; height: 48px;" />
+                                                <div>
+                                                    <div class="fw-bold text-white">@b.ClassName</div>
+                                                    <small class="text-white-50">Mã lịch: #CB-@b.ClassBookingId</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <img src="@b.TrainerAvatar" alt="@b.TrainerName" class="rounded-circle object-fit-cover border border-secondary" style="width: 30px; height: 30px;" onerror="this.onerror=null; this.src='/images/coach1.jpg';" />
+                                                <span class="text-white fw-semibold">@b.TrainerName</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="text-white-50">@b.RoomName</span>
+                                            <small class="d-block text-white-50" style="font-size: 11px;">@b.RoomLocation</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-dark text-lime border border-lime border-opacity-25 font-monospace">
+                                                @b.Schedule
+                                            </span>
+                                        </td>
+                                        <td class="text-white-50 font-monospace small">
+                                            @b.BookingDate.ToString("dd/MM/yyyy HH:mm")
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50 px-2 py-1">
+                                                <i class="bi bi-patch-check-fill me-1"></i>Đã Giữ Chỗ
+                                            </span>
+                                        </td>
+                                        <td class="text-end pe-3">
+                                            <button type="button" class="btn btn-outline-danger btn-sm px-3" 
+                                                    onclick="cancelClassBooking(@b.ClassBookingId, '@b.ClassName', @b.ClassId)"
+                                                    title="Hủy đăng ký và nhả chỗ">
+                                                <i class="bi bi-x-circle me-1"></i>Hủy Lịch Tập
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr id="emptyMyClassesRow">
+                                    <td colspan="8" class="text-center py-5 text-white-50">
+                                        <i class="bi bi-calendar2-plus display-4 d-block mb-2 text-white-50 opacity-50"></i>
+                                        <h5 class="text-white mb-1">Bạn chưa đăng ký lớp học nhóm nào</h5>
+                                        <p class="small text-white-50 mb-3">Xem thời khóa biểu và đăng ký các lớp Yoga, Zumba, Boxing, Spinning để bùng nổ năng lượng!</p>
+                                        <button type="button" class="btn-pulse-solid btn-sm" onclick="switchTab('schedule')">
+                                            <i class="bi bi-calendar3 me-1"></i>Xem Thời Khóa Biểu Ngay
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function switchTab(tabName) {
+            document.getElementById('tabBtnSchedule')?.classList.toggle('active', tabName === 'schedule');
+            document.getElementById('tabBtnMyClasses')?.classList.toggle('active', tabName === 'my-classes');
+
+            document.getElementById('tabContentSchedule')?.classList.toggle('d-none', tabName !== 'schedule');
+            document.getElementById('tabContentMyClasses')?.classList.toggle('d-none', tabName !== 'my-classes');
+
+            // Cập nhật URL parameter mà không load lại trang
+            const url = new URL(window.location);
+            url.searchParams.set('tab', tabName);
+            window.history.replaceState({}, '', url);
+        }
+
+        function filterClasses(filterType, element) {
+            document.querySelectorAll('.filter-chip').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+
+            const cols = document.querySelectorAll('.class-card-col');
+            cols.forEach(col => {
+                const tags = col.getAttribute('data-filter-tags') || '';
+                if (filterType === 'all') {
+                    col.style.display = '';
+                } else if (tags.includes(filterType)) {
+                    col.style.display = '';
+                } else {
+                    col.style.display = 'none';
+                }
+            });
+        }
+
+        function searchClasses() {
+            const input = document.getElementById('classSearchInput');
+            const clearBtn = document.getElementById('clearSearchBtn');
+            const query = input?.value?.toLowerCase().trim() || '';
+
+            if (clearBtn) {
+                clearBtn.classList.toggle('d-none', query.length === 0);
+            }
+
+            const cols = document.querySelectorAll('.class-card-col');
+            cols.forEach(col => {
+                const text = col.textContent.toLowerCase();
+                col.style.display = text.includes(query) ? '' : 'none';
+            });
+        }
+
+        function clearSearchInput() {
+            const input = document.getElementById('classSearchInput');
+            if (input) {
+                input.value = '';
+                searchClasses();
+                input.focus();
+            }
+        }
+
+        // ==========================================
+        // ĐĂNG KÝ THAM GIA LỚP HỌC NHÓM
+        // ==========================================
+        async function registerClass(classId, className) {
+            const confirmResult = await Swal.fire({
+                title: 'Xác Nhận Đăng Ký',
+                html: `
+                    <p class="mb-2 text-white-50">Bạn muốn đăng ký giữ chỗ tham gia lớp học nhóm:</p>
+                    <div class="p-3 my-3 rounded-3" style="background: rgba(200, 255, 46, 0.08); border: 1px dashed rgba(200, 255, 46, 0.4);">
+                        <div class="fw-bold fs-5 text-lime">${className}</div>
+                    </div>
+                    <div class="small text-white-50">
+                        <i class="bi bi-check2-circle text-lime me-1"></i>Hệ thống sẽ giữ chỗ ngay cho bạn trong danh sách lớp.
+                    </div>
+                `,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: '<i class="bi bi-check-lg me-1"></i> Đăng Ký Ngay',
+                cancelButtonText: '<i class="bi bi-x-lg me-1"></i> Để Sau',
+                buttonsStyling: true
+            });
+
+            if (!confirmResult.isConfirmed) return;
+
+            try {
+                Swal.showLoading();
+                const formData = new FormData();
+                formData.append('classId', classId);
+
+                const response = await fetch('/Member/ClassBooking/Register', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const res = await response.json();
+
+                if (res.success) {
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Đăng Ký Thành Công!',
+                        html: `
+                            <div class="p-3 my-3 rounded-3" style="background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3);">
+                                <div class="fw-bold text-success">${res.message}</div>
+                            </div>
+                            <div class="small text-white-50">Chỗ của bạn đã được đảm bảo trong danh sách học viên.</div>
+                        `,
+                        confirmButtonText: 'Tuyệt Vời'
+                    });
+
+                    // Cập nhật UI ngay lập tức
+                    location.reload();
+                } else {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Không Thể Đăng Ký',
+                        html: `
+                            <div class="p-3 my-3 rounded-3 text-start" style="background: rgba(239, 68, 68, 0.1); border: 1px dashed rgba(239, 68, 68, 0.35);">
+                                <div class="text-warning fw-bold mb-1"><i class="bi bi-exclamation-triangle-fill me-1"></i>Cảnh Báo Lịch Tập:</div>
+                                <div class="text-white-50 small" style="line-height: 1.6;">${res.message || 'Lớp học có thể đã đầy hoặc bạn đã có lịch trùng.'}</div>
+                            </div>
+                        `,
+                        confirmButtonText: 'Đã Hiểu'
+                    });
+                }
+            } catch (err) {
+                console.error(err);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi Kết Nối',
+                    html: '<div class="text-white-50">Không thể kết nối đến máy chủ. Vui lòng thử lại!</div>',
+                    confirmButtonText: 'Đóng'
+                });
+            }
+        }
+
+        // ==========================================
+        // HỦY ĐĂNG KÝ VÀ NHẢ SLOT TRỐNG
+        // ==========================================
+        async function cancelClassBooking(bookingId, className, classId) {
+            const confirmResult = await Swal.fire({
+                title: 'Hủy Đăng Ký Lớp Tập?',
+                html: `
+                    <p class="mb-2 text-white-50">Bạn có chắc chắn muốn hủy đăng ký lớp:</p>
+                    <div class="p-3 my-3 rounded-3" style="background: rgba(239, 68, 68, 0.1); border: 1px dashed rgba(239, 68, 68, 0.35);">
+                        <div class="fw-bold fs-5 text-danger">${className}</div>
+                    </div>
+                    <div class="small text-white-50">
+                        <i class="bi bi-info-circle text-warning me-1"></i>Slot trống sẽ được nhả ngay lập tức cho các hội viên khác đăng ký.
+                    </div>
+                `,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: '<i class="bi bi-trash3-fill me-1"></i> Đồng Ý Hủy',
+                cancelButtonText: '<i class="bi bi-arrow-left me-1"></i> Giữ Lại Chỗ',
+                customClass: {
+                    confirmButton: 'btn-swal-danger'
+                },
+                buttonsStyling: true
+            });
+
+            if (!confirmResult.isConfirmed) return;
+
+            try {
+                Swal.showLoading();
+                const formData = new FormData();
+                formData.append('bookingId', bookingId);
+
+                const response = await fetch('/Member/ClassBooking/Cancel', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const res = await response.json();
+
+                if (res.success) {
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Đã Hủy Lịch Tập',
+                        html: `
+                            <div class="p-3 my-3 rounded-3" style="background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3);">
+                                <div class="fw-bold text-success">${res.message}</div>
+                            </div>
+                            <div class="small text-white-50">Slot trống đã được nhả cho hội viên khác thành công.</div>
+                        `,
+                        confirmButtonText: 'Đã Hiểu'
+                    });
+
+                    location.reload();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Không Thể Hủy',
+                        html: `<div class="text-white-50">${res.message || 'Có lỗi xảy ra khi hủy lịch tập.'}</div>`,
+                        confirmButtonText: 'Đóng'
+                    });
+                }
+            } catch (err) {
+                console.error(err);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi Kết Nối',
+                    html: '<div class="text-white-50">Không thể kết nối tới máy chủ.</div>',
+                    confirmButtonText: 'Đóng'
+                });
+            }
+        }
+    </script>
+}

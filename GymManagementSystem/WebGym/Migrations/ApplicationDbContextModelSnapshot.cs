@@ -1185,11 +1185,19 @@ namespace WebGym.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MemberId"));
 
+                    b.Property<string>("AvatarUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<double?>("BMR")
                         .HasColumnType("float");
 
                     b.Property<double?>("BodyFatPercentage")
                         .HasColumnType("float");
+
+                    b.Property<string>("CardCode")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<double?>("Chest")
                         .HasColumnType("float");
@@ -1209,6 +1217,10 @@ namespace WebGym.Migrations
 
                     b.Property<double?>("MuscleMass")
                         .HasColumnType("float");
+
+                    b.Property<string>("QrCode")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -1230,14 +1242,17 @@ namespace WebGym.Migrations
                         new
                         {
                             MemberId = 1,
+                            AvatarUrl = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400",
                             BMR = 1720.0,
                             BodyFatPercentage = 25.5,
+                            CardCode = "GYM-MB-0001",
                             Chest = 98.0,
                             DateOfBirth = new DateTime(1997, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Gender = "Nam",
                             Height = 170.0,
                             Hips = 96.0,
                             MuscleMass = 32.0,
+                            QrCode = "GYM-MB-0001",
                             UserId = 5,
                             Waist = 88.0,
                             Weight = 78.5
@@ -1245,14 +1260,17 @@ namespace WebGym.Migrations
                         new
                         {
                             MemberId = 2,
+                            AvatarUrl = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
                             BMR = 1350.0,
                             BodyFatPercentage = 24.0,
+                            CardCode = "GYM-MB-0002",
                             Chest = 84.0,
                             DateOfBirth = new DateTime(2001, 8, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Gender = "Nữ",
                             Height = 162.0,
                             Hips = 91.0,
                             MuscleMass = 22.5,
+                            QrCode = "GYM-MB-0002",
                             UserId = 6,
                             Waist = 68.0,
                             Weight = 56.0
@@ -1260,14 +1278,17 @@ namespace WebGym.Migrations
                         new
                         {
                             MemberId = 3,
+                            AvatarUrl = "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=400",
                             BMR = 1850.0,
                             BodyFatPercentage = 26.0,
+                            CardCode = "GYM-MB-0003",
                             Chest = 102.0,
                             DateOfBirth = new DateTime(1995, 11, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Gender = "Nam",
                             Height = 176.0,
                             Hips = 100.0,
                             MuscleMass = 34.5,
+                            QrCode = "GYM-MB-0003",
                             UserId = 7,
                             Waist = 92.0,
                             Weight = 84.0
@@ -1275,14 +1296,17 @@ namespace WebGym.Migrations
                         new
                         {
                             MemberId = 4,
+                            AvatarUrl = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400",
                             BMR = 1280.0,
                             BodyFatPercentage = 21.5,
+                            CardCode = "GYM-MB-0004",
                             Chest = 82.0,
                             DateOfBirth = new DateTime(1999, 2, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Gender = "Nữ",
                             Height = 158.0,
                             Hips = 88.0,
                             MuscleMass = 20.0,
+                            QrCode = "GYM-MB-0004",
                             UserId = 8,
                             Waist = 64.0,
                             Weight = 49.0
@@ -1290,14 +1314,17 @@ namespace WebGym.Migrations
                         new
                         {
                             MemberId = 5,
+                            AvatarUrl = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400",
                             BMR = 1690.0,
                             BodyFatPercentage = 19.0,
+                            CardCode = "GYM-MB-0005",
                             Chest = 96.0,
                             DateOfBirth = new DateTime(1992, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Gender = "Nam",
                             Height = 174.0,
                             Hips = 94.0,
                             MuscleMass = 33.0,
+                            QrCode = "GYM-MB-0005",
                             UserId = 9,
                             Waist = 80.0,
                             Weight = 73.0
@@ -1305,14 +1332,17 @@ namespace WebGym.Migrations
                         new
                         {
                             MemberId = 21,
+                            AvatarUrl = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400",
                             BMR = 1320.0,
                             BodyFatPercentage = 23.5,
+                            CardCode = "GYM-MB-0021",
                             Chest = 85.0,
                             DateOfBirth = new DateTime(2000, 3, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Gender = "Nữ",
                             Height = 165.0,
                             Hips = 90.0,
                             MuscleMass = 21.800000000000001,
+                            QrCode = "GYM-MB-0021",
                             UserId = 21,
                             Waist = 65.0,
                             Weight = 54.0
@@ -1320,14 +1350,17 @@ namespace WebGym.Migrations
                         new
                         {
                             MemberId = 22,
+                            AvatarUrl = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
                             BMR = 1810.0,
                             BodyFatPercentage = 24.0,
+                            CardCode = "GYM-MB-0022",
                             Chest = 101.0,
                             DateOfBirth = new DateTime(1996, 7, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Gender = "Nam",
                             Height = 178.0,
                             Hips = 98.0,
                             MuscleMass = 35.0,
+                            QrCode = "GYM-MB-0022",
                             UserId = 22,
                             Waist = 86.0,
                             Weight = 82.0
@@ -1335,14 +1368,17 @@ namespace WebGym.Migrations
                         new
                         {
                             MemberId = 23,
+                            AvatarUrl = "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400",
                             BMR = 1290.0,
                             BodyFatPercentage = 22.0,
+                            CardCode = "GYM-MB-0023",
                             Chest = 83.0,
                             DateOfBirth = new DateTime(2002, 11, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Gender = "Nữ",
                             Height = 160.0,
                             Hips = 89.0,
                             MuscleMass = 20.5,
+                            QrCode = "GYM-MB-0023",
                             UserId = 23,
                             Waist = 63.0,
                             Weight = 52.5
@@ -1350,14 +1386,17 @@ namespace WebGym.Migrations
                         new
                         {
                             MemberId = 24,
+                            AvatarUrl = "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400",
                             BMR = 1700.0,
                             BodyFatPercentage = 21.0,
+                            CardCode = "GYM-MB-0024",
                             Chest = 97.0,
                             DateOfBirth = new DateTime(1994, 9, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Gender = "Nam",
                             Height = 172.0,
                             Hips = 95.0,
                             MuscleMass = 33.0,
+                            QrCode = "GYM-MB-0024",
                             UserId = 24,
                             Waist = 82.0,
                             Weight = 75.0
@@ -3498,8 +3537,8 @@ namespace WebGym.Migrations
                             IsActive = true,
                             IsDeleted = false,
                             MemberId = 1,
-                            NutritionAdvice = "- Calo mục tiêu: 2.100 kcal/ngày (Deficit 300 kcal).\n- Đạm (Protein): 160g - 170g/ngày (~2.2g/kg thể trọng), ưu tiên ức gà, cá ngừ, trứng, Whey Isolate.\n- Tinh bột (Carb): 200g/ngày (khoai lang, yến mạch, cơm gạo lứt).\n- Chất béo tốt: 50g/ngày (dầu ô liu, quả bơ, hạt hạnh nhân).\n- Uống đủ 3 - 3.5 lít nước mỗi ngày, hạn chế tối đa bia rượu và đồ ngọt đóng chai.",
-                            RoutineDetails = "- Thứ 2 (Ngực & Tay sau): Bench Press 4x8, Incline Dumbbell Press 4x10, Cable Fly 3x12, Tricep Pushdown 4x12.\n- Thứ 3 (Lưng xô & Tay trước): Deadlift 4x6, Lat Pulldown 4x10, Barbell Row 4x8, Bicep Curls 3x12.\n- Thứ 4: Nghỉ ngơi tích cực hoặc Cardio nhẹ 30 phút đi bộ dốc.\n- Thứ 5 (Chân & Bắp chân): Barbell Squat 4x8, Leg Press 4x12, Leg Curl 3x15, Calf Raise 4x20.\n- Thứ 6 (Vai & Bụng): Overhead Press 4x8, Lateral Raise 4x15, Face Pull 3x15, Hanging Leg Raise 4x15.\n- Thứ 7: HIIT Cardio chạy bộ máy Technogym 25 phút.\n- Chủ nhật: Nghỉ phục hồi toàn diện.",
+                            NutritionAdvice = "- Calo mục tiêu: 2.100 kcal/ngày (Deficit 300 kcal).\r\n- Đạm (Protein): 160g - 170g/ngày (~2.2g/kg thể trọng), ưu tiên ức gà, cá ngừ, trứng, Whey Isolate.\r\n- Tinh bột (Carb): 200g/ngày (khoai lang, yến mạch, cơm gạo lứt).\r\n- Chất béo tốt: 50g/ngày (dầu ô liu, quả bơ, hạt hạnh nhân).\r\n- Uống đủ 3 - 3.5 lít nước mỗi ngày, hạn chế tối đa bia rượu và đồ ngọt đóng chai.",
+                            RoutineDetails = "- Thứ 2 (Ngực & Tay sau): Bench Press 4x8, Incline Dumbbell Press 4x10, Cable Fly 3x12, Tricep Pushdown 4x12.\r\n- Thứ 3 (Lưng xô & Tay trước): Deadlift 4x6, Lat Pulldown 4x10, Barbell Row 4x8, Bicep Curls 3x12.\r\n- Thứ 4: Nghỉ ngơi tích cực hoặc Cardio nhẹ 30 phút đi bộ dốc.\r\n- Thứ 5 (Chân & Bắp chân): Barbell Squat 4x8, Leg Press 4x12, Leg Curl 3x15, Calf Raise 4x20.\r\n- Thứ 6 (Vai & Bụng): Overhead Press 4x8, Lateral Raise 4x15, Face Pull 3x15, Hanging Leg Raise 4x15.\r\n- Thứ 7: HIIT Cardio chạy bộ máy Technogym 25 phút.\r\n- Chủ nhật: Nghỉ phục hồi toàn diện.",
                             StartDate = new DateTime(2026, 8, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Title = "Kế Hoạch Tăng Cơ Giảm Mỡ Cấp Tốc 12 Tuần (Hypertrophy & Shredding)",
                             TrainerId = 1
@@ -3513,8 +3552,8 @@ namespace WebGym.Migrations
                             IsActive = true,
                             IsDeleted = false,
                             MemberId = 2,
-                            NutritionAdvice = "- Calo mục tiêu: 1.450 kcal/ngày.\n- Ưu tiên rau xanh nhiều chất xơ, cá hồi, tôm, sữa chua Hy Lạp và sinh tố hoa quả mọng (berries).\n- Hạn chế gia vị nêm mặn nhằm tránh tích nước dưới da vùng bụng.\n- Uống trà hoa cúc hoặc trà xanh ấm buổi tối.",
-                            RoutineDetails = "- Thứ 2: Tập mông đùi Glute Focus: Hip Thrust 4x12, Romanian Deadlift 4x10, Bulgarian Split Squat 3x12 mỗi bên.\n- Thứ 3: Lớp Hatha Yoga phục hồi & giãn cơ chuyên sâu 75 phút.\n- Thứ 4: Thân trên nữ & Lưng xô: Lat Pulldown 3x12, Dumbbell Shoulder Press 3x12, Plank 4x45s.\n- Thứ 5: Nghỉ ngơi hoặc đạp xe Spinning kháng lực vừa phải 40 phút.\n- Thứ 6: Pilates thảm Matwork & Core Cốt Lõi: Động tác The Hundred, Criss Cross, Teaser.\n- Thứ 7 & CN: Đi dạo ngoài trời, thiền định.",
+                            NutritionAdvice = "- Calo mục tiêu: 1.450 kcal/ngày.\r\n- Ưu tiên rau xanh nhiều chất xơ, cá hồi, tôm, sữa chua Hy Lạp và sinh tố hoa quả mọng (berries).\r\n- Hạn chế gia vị nêm mặn nhằm tránh tích nước dưới da vùng bụng.\r\n- Uống trà hoa cúc hoặc trà xanh ấm buổi tối.",
+                            RoutineDetails = "- Thứ 2: Tập mông đùi Glute Focus: Hip Thrust 4x12, Romanian Deadlift 4x10, Bulgarian Split Squat 3x12 mỗi bên.\r\n- Thứ 3: Lớp Hatha Yoga phục hồi & giãn cơ chuyên sâu 75 phút.\r\n- Thứ 4: Thân trên nữ & Lưng xô: Lat Pulldown 3x12, Dumbbell Shoulder Press 3x12, Plank 4x45s.\r\n- Thứ 5: Nghỉ ngơi hoặc đạp xe Spinning kháng lực vừa phải 40 phút.\r\n- Thứ 6: Pilates thảm Matwork & Core Cốt Lõi: Động tác The Hundred, Criss Cross, Teaser.\r\n- Thứ 7 & CN: Đi dạo ngoài trời, thiền định.",
                             StartDate = new DateTime(2026, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Title = "Giáo Án Siết Eo Săn Chắc Vóc Dáng & Yoga Nữ (Tone & Flexibility)",
                             TrainerId = 3
@@ -3528,8 +3567,8 @@ namespace WebGym.Migrations
                             IsActive = true,
                             IsDeleted = false,
                             MemberId = 3,
-                            NutritionAdvice = "- Calo mục tiêu: 2.800 - 3.000 kcal/ngày (Surplus calo tăng cơ).\n- Bổ sung 5g Creatine Monohydrate mỗi ngày vào buổi sáng hoặc ngay sau tập.\n- Chia nhỏ 5 bữa ăn/ngày, giàu đạm thịt bò, ức gà, cơm trắng và sữa tươi thanh trùng.",
-                            RoutineDetails = "- Thứ 2: Heavy Squat 5x5 (80% 1RM), Pause Squat 3x5, Bulgarian Split Squat 3x8.\n- Thứ 4: Heavy Bench Press 5x5, Close-Grip Bench 3x8, Incline Dumbbell Bench 3x10.\n- Thứ 6: Conventional Deadlift 5x3, Barbell Row 4x6, Farmer Walk 3 hiệp nặng.\n- Thứ 7: Phụ trợ vai tay, bài tập bụng chống xoay vòng Paloff Press.",
+                            NutritionAdvice = "- Calo mục tiêu: 2.800 - 3.000 kcal/ngày (Surplus calo tăng cơ).\r\n- Bổ sung 5g Creatine Monohydrate mỗi ngày vào buổi sáng hoặc ngay sau tập.\r\n- Chia nhỏ 5 bữa ăn/ngày, giàu đạm thịt bò, ức gà, cơm trắng và sữa tươi thanh trùng.",
+                            RoutineDetails = "- Thứ 2: Heavy Squat 5x5 (80% 1RM), Pause Squat 3x5, Bulgarian Split Squat 3x8.\r\n- Thứ 4: Heavy Bench Press 5x5, Close-Grip Bench 3x8, Incline Dumbbell Bench 3x10.\r\n- Thứ 6: Conventional Deadlift 5x3, Barbell Row 4x6, Farmer Walk 3 hiệp nặng.\r\n- Thứ 7: Phụ trợ vai tay, bài tập bụng chống xoay vòng Paloff Press.",
                             StartDate = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Title = "Chương Trình Sức Mạnh Nền Tảng Powerlifting & Khối Lượng Cơ Lớn",
                             TrainerId = 1

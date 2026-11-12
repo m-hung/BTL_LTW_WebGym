@@ -106,15 +106,56 @@ namespace WebGym.Helpers
         }
 
         /// <summary>
-        /// Trạng thái hiển thị của một ca, có xét thời gian thực:
-        /// ca "Approved" đã qua giờ kết thúc hiển thị là "Đã diễn ra".
+        /// Kiểm tra ca tập có đang trong cửa sổ 24h để PT cập nhật trạng thái hay không.
+        /// Ca tập đã tới giờ bắt đầu và chưa quá 24h kể từ thời gian bắt đầu.
+        /// </summary>
+        public static bool IsIn24HourWindow(DateTime day, string? slot)
+        {
+            var start = StartAt(day, slot);
+            var now = DateTime.Now;
+            return now >= start && now <= start.AddHours(24);
+        }
+
+        /// <summary>
+        /// Kiểm tra ca tập đã quá 24h kể từ thời gian bắt đầu hay chưa (để tự động hoàn thành).
+        /// </summary>
+        public static bool IsOver24Hours(DateTime day, string? slot)
+        {
+            var start = StartAt(day, slot);
+            return DateTime.Now > start.AddHours(24);
+        }
+
+        /// <summary>
+        /// Thời gian còn lại của cửa sổ 24h cập nhật (ví dụ: "Còn 18h 30p" hoặc "Còn 45 phút").
+        /// </summary>
+        public static string WindowCountdown(DateTime day, string? slot)
+        {
+            var deadline = StartAt(day, slot).AddHours(24);
+            var span = deadline - DateTime.Now;
+            if (span.TotalMinutes <= 0) return "Hết hạn 24h";
+            if (span.TotalHours >= 1)
+            {
+                return $"Còn {(int)span.TotalHours}h {span.Minutes}p";
+            }
+            return $"Còn {Math.Max(1, (int)span.TotalMinutes)} phút";
+        }
+
+        /// <summary>
+        /// Trạng thái hiển thị của một ca, có xét thời gian thực và cửa sổ 24h:
+        /// ca "Approved" trong 24h kể từ giờ bắt đầu sẽ hiển thị "Cần chốt (24h)".
         /// Trả về (nhãn, hậu tố CSS, nhóm lọc).
         /// </summary>
         public static (string Label, string Css, string Groups) SessionState(string status, DateTime day, string? slot)
         {
+            var start = StartAt(day, slot);
             var ended = EndAt(day, slot) < DateTime.Now;
+            var inWindow = status == "Approved" && IsIn24HourWindow(day, slot);
+            var overdue = status == "Approved" && IsOver24Hours(day, slot);
+
             return status switch
             {
+                "Approved" when inWindow => ("Cần chốt (24h)", "wait", "actionable upcoming"),
+                "Approved" when overdue => ("Tự động hoàn thành", "done", "done"),
                 "Approved" when !ended => ("Đã xác nhận", "ok", "upcoming"),
                 "Approved" => ("Đã diễn ra", "past", "done"),
                 "Pending" when !ended => ("Chờ duyệt", "wait", "upcoming pending"),

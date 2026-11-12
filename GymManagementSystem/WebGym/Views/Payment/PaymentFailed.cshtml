@@ -1,35 +1,28 @@
 @{
-    Layout = null;
-    ViewData["Title"] = "Thanh toán thất bại - Pulse Gym";
-    var errorMsg = ViewBag.Message as string ?? TempData["ErrorMsg"] as string ?? "Giao dịch bị hủy hoặc không thành công trên cổng VNPay. Tài khoản của bạn chưa bị trừ tiền.";
+    ViewData["Title"] = "Thanh Toán Không Thành Công";
 }
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>@ViewData["Title"]</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="~/css/pulse.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/auth-modal.css" asp-append-version="true" />
-</head>
-<body>
-    <partial name="_PulseHeader" />
-    <main class="co co-done">
-        <span class="arrow-box co-ok" style="background:#ff5252;color:#fff">✕</span>
-        <p class="eyebrow center" style="color:#ff5252">Giao dịch không thành công</p>
-        <h1 class="display center">Thanh toán<em class="outline" style="-webkit-text-stroke-color:#ff5252">chưa hoàn tất</em></h1>
-        <p class="lead center">@errorMsg</p>
 
-        <div class="hero-cta" style="justify-content:center;gap:20px;flex-wrap:wrap;margin-top:36px">
-            <a href="~/#bang-gia" class="btn">Thử lại gói tập <b>→</b></a>
-            <a href="~/" class="btn btn-ghost">Về trang chủ <b>→</b></a>
+<div class="row justify-content-center my-5">
+    <div class="col-md-6 text-center">
+        <div class="card border-0 shadow rounded-4 p-5" style="background: #141916; border: 1px solid rgba(255, 92, 92, 0.35)!important; color: #f2f5ef;">
+            <div class="text-danger mb-3">
+                <i class="bi bi-x-circle-fill" style="font-size: 4.5rem; color: #ff5c5c;"></i>
+            </div>
+            <h2 class="fw-bold mb-3" style="color: #ff5c5c; font-family: var(--portal-display, sans-serif); letter-spacing: 0.03em;">
+                GIAO DỊCH BỊ HỦY HOẶC THẤT BẠI
+            </h2>
+            <p style="color: #a2aba0; line-height: 1.6;">
+                @(ViewBag.Message ?? "Đã có lỗi xảy ra hoặc bạn đã hủy giao dịch trên cổng thanh toán. Tài khoản của bạn chưa bị trừ tiền.")
+            </p>
+
+            <div class="mt-4 d-flex justify-content-center gap-3">
+                <a href="/thanh-toan" class="btn px-4 py-2 fw-bold" style="background: var(--portal-lime, #c8ff2e); color: #000; text-decoration: none; border-radius: 6px;">
+                    <i class="bi bi-arrow-repeat me-1"></i> Quay Lại Thanh Toán
+                </a>
+                <a href="~/" class="btn btn-outline-secondary px-4 py-2" style="color: #dce1d8; border-color: rgba(255,255,255,0.2); text-decoration: none; border-radius: 6px;">
+                    Về Trang Chủ
+                </a>
+            </div>
         </div>
-    </main>
-    <partial name="_PulseFooter" />
-    <partial name="_AuthModal" />
-    <script src="~/js/auth-modal.js" asp-append-version="true"></script>
-</body>
-</html>
+    </div>
+</div>

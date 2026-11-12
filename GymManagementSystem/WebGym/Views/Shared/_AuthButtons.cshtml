@@ -47,7 +47,7 @@
             <span>@name</span>
         </a>
         <form class="auth-logout" asp-area="" asp-controller="Auth" asp-action="Logout" method="post">
-            <button type="submit">Đăng xuất</button>
+            <button type="submit" title="Đăng xuất khỏi hệ thống">Đăng xuất</button>
         </form>
     </div>
 }
@@ -61,10 +61,8 @@ else
             </span>
         </a>
         <a class="auth-btn auth-btn--solid" href="@Url.Action("Register", "Auth", new { area = "" })" data-auth-open="register">
-            <span>
-                Đăng ký
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
-            </span>
+            <span>Đăng ký ngay</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
         </a>
     </div>
 }

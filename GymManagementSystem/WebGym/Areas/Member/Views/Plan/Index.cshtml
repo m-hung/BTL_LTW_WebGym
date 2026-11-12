@@ -1,0 +1,115 @@
+@using WebGym.Models.DTOs.AiPlan
+@model WorkoutPlan?
+@{
+    ViewData["Title"] = "Giáo án của tôi";
+    var history = ViewBag.History as List<WorkoutPlan> ?? new List<WorkoutPlan>();
+    var activeView = ViewBag.ActiveView as PlanViewModel;
+    var remaining = ViewBag.Remaining is int r ? r : 0;
+    string StatusBadge(WorkoutPlan p) => p.Status switch
+    {
+        WorkoutPlanStatuses.PendingReview => "<span class=\"ap-badge ap-badge--wait\">Chờ HLV xem</span>",
+        WorkoutPlanStatuses.Archived => "<span class=\"ap-badge ap-badge--muted\">Lưu trữ</span>",
+        _ => p.IsActive ? "<span class=\"ap-badge ap-badge--ok\">Đang dùng</span>" : "<span class=\"ap-badge ap-badge--muted\">Lưu trữ</span>"
+    };
+}
+
+<link rel="stylesheet" href="~/css/ai-plan.css" asp-append-version="true" />
+
+<div class="ap">
+    @if (Model == null)
+    {
+        <section class="ap-card ap-hero">
+            <div>
+                <p class="ap-eyebrow">Giáo án cá nhân</p>
+                <h2>Tạo lộ trình <span>cùng AI</span></h2>
+                <ul>
+                    <li>Calo, đạm, tinh bột, chất béo và lượng nước tính theo số đo của bạn.</li>
+                    <li>Lịch tập theo số buổi bạn chọn, chỉ dùng máy đang hoạt động tốt ở Pulse Gym.</li>
+                    <li>Thực đơn món Việt, theo chế độ ăn và dị ứng của bạn.</li>
+                    <li>Mỗi ngày mở mục "Hôm nay" để xem bài và tích khi tập xong.</li>
+                </ul>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:12px; align-items:flex-start">
+                <a class="ap-btn" asp-action="Create">Tạo lộ trình cùng AI</a>
+                <span class="ap-sub">Khoảng 1 phút: xác nhận số đo, trả lời 9 câu trắc nghiệm, chờ AI phân tích.</span>
+            </div>
+        </section>
+    }
+    else
+    {
+        <section class="ap-card">
+            <div class="ap-card-head" style="margin-bottom: 8px">
+                <div>
+                    <p class="ap-eyebrow">Giáo án đang dùng</p>
+                    <h3>@Model.Title</h3>
+                    <div class="ap-plan-meta" style="margin-top: 8px">
+                        @Html.Raw(StatusBadge(Model))
+                        <span>@(Model.Source == WorkoutPlanSources.Ai ? "Tạo bằng AI" : "Do HLV soạn")@(activeView?.TrainerName != null || Model.Trainer != null ? " · HLV " + (activeView?.TrainerName ?? Model.Trainer?.User?.FullName) : "")</span>
+                        <span>Từ @Model.StartDate.ToString("dd/MM/yyyy") đến @Model.EndDate.ToString("dd/MM/yyyy")</span>
+                    </div>
+                </div>
+                <div style="display:flex; gap:10px; flex-wrap:wrap">
+                    <a class="ap-btn" asp-action="Today">Bài tập hôm nay</a>
+                    <a class="ap-btn ap-btn--ghost" asp-action="Create" asp-route-from="@Model.Id">Tạo lại giáo án</a>
+                </div>
+            </div>
+            @if (Model.Status == WorkoutPlanStatuses.PendingReview)
+            {
+                <div class="ap-notice ap-notice--info" style="margin: 12px 0 0">Bạn vẫn dùng giáo án này bình thường. HLV sẽ xem lại và có thể điều chỉnh bài tập, số hiệp cho phù hợp hơn.</div>
+            }
+        </section>
+
+        @if (activeView != null)
+        {
+            <partial name="_PlanView" model="activeView" />
+        }
+        else
+        {
+            <!-- Giáo án do HLV soạn dạng văn bản -->
+            <section class="ap-card">
+                <p class="ap-eyebrow">Mục tiêu</p>
+                <p class="ap-text-block" style="margin-bottom: 18px">@Model.Goal</p>
+                <p class="ap-eyebrow">Lịch tập trong tuần</p>
+                <div class="ap-text-block" style="margin-bottom: 18px">@Model.RoutineDetails</div>
+                <p class="ap-eyebrow">Dinh dưỡng</p>
+                <div class="ap-text-block">@Model.NutritionAdvice</div>
+            </section>
+        }
+    }
+
+    @if (history.Count > 0)
+    {
+        <section class="ap-card">
+            <div class="ap-card-head">
+                <div>
+                    <p class="ap-eyebrow">Lịch sử</p>
+                    <h3>Giáo án <span>trước đây</span></h3>
+                </div>
+            </div>
+            <div style="overflow-x:auto">
+                <table class="ap-history">
+                    <thead><tr><th>Tên</th><th>Nguồn</th><th>Ngày tạo</th><th>Trạng thái</th><th></th></tr></thead>
+                    <tbody>
+                        @foreach (var p in history)
+                        {
+                            <tr>
+                                <td>@p.Title</td>
+                                <td>@(p.Source == WorkoutPlanSources.Ai ? "AI" : "HLV")</td>
+                                <td>@p.CreatedAt.AddHours(7).ToString("dd/MM/yyyy")</td>
+                                <td>@Html.Raw(StatusBadge(p))</td>
+                                <td>
+                                    @if (p.Source == WorkoutPlanSources.Ai && p.InputJson != null)
+                                    {
+                                        <a asp-action="Create" asp-route-from="@p.Id">Dùng lại khảo sát</a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    }
+
+    <p class="ap-sub">Còn @remaining lượt tạo giáo án bằng AI hôm nay.</p>
+</div>

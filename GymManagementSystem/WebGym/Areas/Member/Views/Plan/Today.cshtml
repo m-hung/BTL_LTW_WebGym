@@ -1,0 +1,132 @@
+@using WebGym.Models.DTOs.AiPlan
+@model TodayViewModel
+@{
+    ViewData["Title"] = "Bài tập hôm nay";
+    var day = Model.TodayDay;
+    var total = day?.Exercises.Count ?? 0;
+    var done = day == null ? 0 : day.Exercises.Count(x => Model.DoneExerciseIds.Contains(x.ExerciseId));
+    var pct = total > 0 ? done * 100 / total : 0;
+}
+
+<link rel="stylesheet" href="~/css/ai-plan.css" asp-append-version="true" />
+
+<div class="ap" id="apToday">
+    @Html.AntiForgeryToken()
+
+    <div class="ap-today-head">
+        <div>
+            <p class="ap-eyebrow">Hôm nay</p>
+            <div class="ap-today-date">@PlanOptions.WeekdayLabel(Model.Weekday) <span>@Model.Date.ToString("dd/MM")</span></div>
+        </div>
+        <div class="ap-today-stats">
+            @if (Model.CheckInTime.HasValue)
+            {
+                <span class="ap-stat-pill"><b>✓</b>Đã check-in lúc @Model.CheckInTime.Value.ToString("HH:mm")</span>
+            }
+            @if (Model.Doc != null)
+            {
+                <span class="ap-stat-pill"><b>@Model.SessionsDoneThisWeek/@Model.SessionsPlannedThisWeek</b>buổi hoàn thành tuần này</span>
+            }
+        </div>
+    </div>
+
+    @if (Model.Plan == null)
+    {
+        <section class="ap-card ap-hero">
+            <div>
+                <h2>Chưa có <span>giáo án</span></h2>
+                <p class="ap-sub" style="margin-top: 10px">Tạo giáo án cá nhân để mỗi ngày biết cần tập bài gì, bao nhiêu hiệp.</p>
+            </div>
+            <div><a class="ap-btn" asp-action="Create">Tạo lộ trình cùng AI</a></div>
+        </section>
+    }
+    else if (Model.Doc == null)
+    {
+        <section class="ap-card">
+            <p class="ap-eyebrow">Giáo án do HLV soạn</p>
+            <div class="ap-text-block">@Model.Plan.RoutineDetails</div>
+            <p class="ap-sub" style="margin-top: 14px">Giáo án này ở dạng văn bản nên chưa tích hoàn thành từng bài được. <a asp-action="Index" style="color: var(--portal-lime)">Xem giáo án</a></p>
+        </section>
+    }
+    else if (day == null)
+    {
+        <section class="ap-card">
+            <h3 style="font-size: 26px; text-transform: uppercase">Ngày <span style="color: var(--portal-lime)">phục hồi</span></h3>
+            <p class="ap-sub" style="margin-top: 8px">Hôm nay không có buổi tập. Nghỉ ngơi, đi bộ nhẹ hoặc giãn cơ 10–15 phút để cơ phục hồi.</p>
+            @if (Model.NextDay != null)
+            {
+                <div class="ap-notice ap-notice--info" style="margin-top: 16px">
+                    <div>Buổi tiếp theo: <strong>@PlanOptions.WeekdayLabel(Model.NextDay.Weekday)</strong> · @Model.NextDay.Focus · @Model.NextDay.Exercises.Count bài</div>
+                </div>
+            }
+            <a class="ap-btn ap-btn--ghost" asp-action="Index">Xem cả tuần</a>
+        </section>
+    }
+    else
+    {
+        <section class="ap-card">
+            <div class="ap-card-head" style="margin-bottom: 4px">
+                <div>
+                    <h3>@day.Focus</h3>
+                    <p class="ap-sub"><span id="apDoneCount">@done</span>/@total bài đã xong</p>
+                </div>
+                <a class="ap-btn ap-btn--ghost ap-btn--sm" asp-action="Index">Xem cả tuần</a>
+            </div>
+            <div class="ap-progress" aria-hidden="true"><i id="apProgress" style="width:@(pct)%"></i></div>
+
+            <ul class="ap-check-list" data-total="@total">
+                @foreach (var x in day.Exercises)
+                {
+                    Model.Exercises.TryGetValue(x.ExerciseId, out var ex);
+                    var isDone = Model.DoneExerciseIds.Contains(x.ExerciseId);
+                    <li class="ap-check @(isDone ? "is-done" : "")">
+                        <label class="ap-check-box">
+                            <input type="checkbox" data-exercise="@x.ExerciseId" @(isDone ? "checked" : "") aria-label="Đã hoàn thành @(ex?.Name)" />
+                            <span></span>
+                        </label>
+                        <div>
+                            <div class="ap-ex-name">@(ex?.Name ?? "Bài #" + x.ExerciseId)</div>
+                            <div class="ap-ex-meta">
+                                <span>Nghỉ @x.RestSec giây</span>
+                                <span>@(ex?.Equipment?.EquipmentName ?? "Không cần máy")</span>
+                            </div>
+                            @if (!string.IsNullOrWhiteSpace(x.Note))
+                            {
+                                <div class="ap-ex-note">@x.Note</div>
+                            }
+                            @if (ex != null)
+                            {
+                                <details><summary style="cursor:pointer; font-size:12.5px; color: var(--portal-info)">Cách tập</summary><p style="font-size:13px; color: var(--portal-text-muted); margin: 6px 0 0">@ex.HowTo</p></details>
+                            }
+                        </div>
+                        <span class="ap-ex-dose">@x.Sets × @x.Reps</span>
+                    </li>
+                }
+            </ul>
+
+            @if (!string.IsNullOrWhiteSpace(day.Cardio))
+            {
+                <div class="ap-cardio" style="margin: 14px 0 0">Cardio cuối buổi: @day.Cardio</div>
+            }
+
+            <div class="ap-done-banner" id="apDoneBanner" @(done == total && total > 0 ? "" : "hidden")>Tuyệt vời! Bạn đã hoàn thành buổi tập hôm nay. Nhớ uống đủ nước và ngủ sớm.</div>
+            <div class="ap-notice ap-notice--error" id="apTodayError" role="alert" hidden style="margin-top: 14px"></div>
+        </section>
+
+        @if (Model.Doc.Targets.TargetKcal > 0)
+        {
+            <section class="ap-card">
+                <p class="ap-eyebrow">Dinh dưỡng hôm nay</p>
+                <div class="ap-plan-meta">
+                    <span><b style="color: var(--portal-lime)">@WebGym.Services.Fitness.FitnessCalculator.N(Model.Doc.Targets.TargetKcal)</b> kcal</span>
+                    <span>Đạm @(Model.Doc.Targets.ProteinG)g · Tinh bột @(Model.Doc.Targets.CarbG)g · Béo @(Model.Doc.Targets.FatG)g</span>
+                    <span>Nước khoảng @WebGym.Services.Fitness.FitnessCalculator.N(Model.Doc.Targets.WaterMlTrainingDay / 1000.0, 1) lít</span>
+                </div>
+            </section>
+        }
+    }
+</div>
+
+@section Scripts {
+    <script src="~/js/ai-plan.js" asp-append-version="true"></script>
+}

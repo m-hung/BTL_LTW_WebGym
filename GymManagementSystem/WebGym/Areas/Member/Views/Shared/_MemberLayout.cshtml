@@ -121,6 +121,9 @@
                     </a>
                 </li>
                 <li>
+                    <a asp-area="Member" asp-controller="Plan" asp-action="Index" 
+                       class="portal-nav-link @(currentController == "Plan" ? "active" : "")">
+                        <span>Giáo Án Của Tôi</span>
                     <a asp-area="Member" asp-controller="ClassBooking" asp-action="Index" 
                        class="portal-nav-link @(currentController == "ClassBooking" && currentAction == "Index" && Context.Request.Query["tab"] != "my-classes" ? "active" : "")">
                         <span>Đăng Ký Lớp Tập</span>

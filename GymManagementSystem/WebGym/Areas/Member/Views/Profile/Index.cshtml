@@ -25,6 +25,17 @@
     }
 }
 
+<!-- Lối vào giáo án AI (Member/Plan) -->
+<div class="portal-card p-3 p-md-4 mb-4 d-flex flex-wrap align-items-center justify-content-between gap-3" style="border-color: rgba(200, 255, 46, 0.35);">
+    <div>
+        <div class="portal-section-eyebrow mb-1">Giáo án cá nhân</div>
+        <div style="color: #f2f5ef; font-size: 15px;">Dùng số đo trên để AI gợi ý lịch tập, calo và thực đơn món Việt dành riêng cho bạn.</div>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <a asp-area="Member" asp-controller="Plan" asp-action="Create" class="btn-pulse-primary">Tạo lộ trình cùng AI</a>
+        <a asp-area="Member" asp-controller="Plan" asp-action="Index" class="btn-pulse-outline">Giáo án của tôi</a>
+    </div>
+</div>
 <!-- SECTION: THẺ HỘI VIÊN ĐIỆN TỬ DẠNG ATM SANG TRỌNG TRÊN TRANG CÁ NHÂN -->
 <div class="portal-card p-3 p-md-4 mb-4">
     <div class="row g-4 align-items-center">

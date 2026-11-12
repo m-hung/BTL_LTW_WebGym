@@ -31,12 +31,12 @@ namespace WebGym.Data
 - Thứ 5 (Chân & Bắp chân): Barbell Squat 4x8, Leg Press 4x12, Leg Curl 3x15, Calf Raise 4x20.
 - Thứ 6 (Vai & Bụng): Overhead Press 4x8, Lateral Raise 4x15, Face Pull 3x15, Hanging Leg Raise 4x15.
 - Thứ 7: HIIT Cardio chạy bộ máy Technogym 25 phút.
-- Chủ nhật: Nghỉ phục hồi toàn diện.",
+- Chủ nhật: Nghỉ phục hồi toàn diện.".Replace("\r\n", "\n"),
                     NutritionAdvice = @"- Calo mục tiêu: 2.100 kcal/ngày (Deficit 300 kcal).
 - Đạm (Protein): 160g - 170g/ngày (~2.2g/kg thể trọng), ưu tiên ức gà, cá ngừ, trứng, Whey Isolate.
 - Tinh bột (Carb): 200g/ngày (khoai lang, yến mạch, cơm gạo lứt).
 - Chất béo tốt: 50g/ngày (dầu ô liu, quả bơ, hạt hạnh nhân).
-- Uống đủ 3 - 3.5 lít nước mỗi ngày, hạn chế tối đa bia rượu và đồ ngọt đóng chai.",
+- Uống đủ 3 - 3.5 lít nước mỗi ngày, hạn chế tối đa bia rượu và đồ ngọt đóng chai.".Replace("\r\n", "\n"),
                     IsActive = true,
                     CreatedAt = new DateTime(2026, 8, 1, 0, 0, 0, DateTimeKind.Utc),
                     IsDeleted = false
@@ -55,11 +55,11 @@ namespace WebGym.Data
 - Thứ 4: Thân trên nữ & Lưng xô: Lat Pulldown 3x12, Dumbbell Shoulder Press 3x12, Plank 4x45s.
 - Thứ 5: Nghỉ ngơi hoặc đạp xe Spinning kháng lực vừa phải 40 phút.
 - Thứ 6: Pilates thảm Matwork & Core Cốt Lõi: Động tác The Hundred, Criss Cross, Teaser.
-- Thứ 7 & CN: Đi dạo ngoài trời, thiền định.",
+- Thứ 7 & CN: Đi dạo ngoài trời, thiền định.".Replace("\r\n", "\n"),
                     NutritionAdvice = @"- Calo mục tiêu: 1.450 kcal/ngày.
 - Ưu tiên rau xanh nhiều chất xơ, cá hồi, tôm, sữa chua Hy Lạp và sinh tố hoa quả mọng (berries).
 - Hạn chế gia vị nêm mặn nhằm tránh tích nước dưới da vùng bụng.
-- Uống trà hoa cúc hoặc trà xanh ấm buổi tối.",
+- Uống trà hoa cúc hoặc trà xanh ấm buổi tối.".Replace("\r\n", "\n"),
                     IsActive = true,
                     CreatedAt = new DateTime(2026, 9, 1, 0, 0, 0, DateTimeKind.Utc),
                     IsDeleted = false
@@ -76,10 +76,10 @@ namespace WebGym.Data
                     RoutineDetails = @"- Thứ 2: Heavy Squat 5x5 (80% 1RM), Pause Squat 3x5, Bulgarian Split Squat 3x8.
 - Thứ 4: Heavy Bench Press 5x5, Close-Grip Bench 3x8, Incline Dumbbell Bench 3x10.
 - Thứ 6: Conventional Deadlift 5x3, Barbell Row 4x6, Farmer Walk 3 hiệp nặng.
-- Thứ 7: Phụ trợ vai tay, bài tập bụng chống xoay vòng Paloff Press.",
+- Thứ 7: Phụ trợ vai tay, bài tập bụng chống xoay vòng Paloff Press.".Replace("\r\n", "\n"),
                     NutritionAdvice = @"- Calo mục tiêu: 2.800 - 3.000 kcal/ngày (Surplus calo tăng cơ).
 - Bổ sung 5g Creatine Monohydrate mỗi ngày vào buổi sáng hoặc ngay sau tập.
-- Chia nhỏ 5 bữa ăn/ngày, giàu đạm thịt bò, ức gà, cơm trắng và sữa tươi thanh trùng.",
+- Chia nhỏ 5 bữa ăn/ngày, giàu đạm thịt bò, ức gà, cơm trắng và sữa tươi thanh trùng.".Replace("\r\n", "\n"),
                     IsActive = true,
                     CreatedAt = new DateTime(2026, 10, 1, 0, 0, 0, DateTimeKind.Utc),
                     IsDeleted = false

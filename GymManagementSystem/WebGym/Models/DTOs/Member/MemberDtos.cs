@@ -12,7 +12,6 @@ namespace WebGym.Models.DTOs.Member
         public DateTime? DateOfBirth { get; set; }
         public string? AvatarUrl { get; set; }
 
-        public string? AvatarUrl { get; set; }
         public string CardCode { get; set; } = string.Empty;
         public string QrCode { get; set; } = string.Empty;
 

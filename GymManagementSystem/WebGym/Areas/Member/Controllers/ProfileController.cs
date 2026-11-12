@@ -274,13 +274,6 @@ namespace WebGym.Areas.Member.Controllers
                 {
                     try { System.IO.File.Delete(legacyPath); } catch { }
                 }
-
-                var member = await _context.Members.FirstOrDefaultAsync(m => m.UserId == userId.Value);
-                if (member != null)
-                {
-                    member.AvatarUrl = null;
-                    await _context.SaveChangesAsync();
-                }
             }
 
             SetSuccessMessage("Đã xóa ảnh đại diện và thiết lập lại ảnh mặc định!");

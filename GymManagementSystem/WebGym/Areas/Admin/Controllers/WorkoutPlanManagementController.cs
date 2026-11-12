@@ -47,7 +47,7 @@ namespace WebGym.Areas.Admin.Controllers
                 query = query.Where(p => p.Title.ToLower().Contains(kw) ||
                                          p.Goal.ToLower().Contains(kw) ||
                                          p.Member.User.FullName.ToLower().Contains(kw) ||
-                                         p.Trainer.User.FullName.ToLower().Contains(kw));
+                                         (p.Trainer != null && p.Trainer.User.FullName.ToLower().Contains(kw)));
             }
 
             var plansList = await query.OrderByDescending(p => p.CreatedAt).ToListAsync();
@@ -68,9 +68,9 @@ namespace WebGym.Areas.Admin.Controllers
                     MemberPhone = p.Member.User.PhoneNumber,
                     MemberWeight = p.Member.Weight,
                     MemberHeight = p.Member.Height,
-                    TrainerId = p.TrainerId,
-                    TrainerName = p.Trainer.User.FullName,
-                    TrainerSpecialization = p.Trainer.Specialization,
+                    TrainerId = p.TrainerId ?? 0,
+                    TrainerName = p.Trainer?.User?.FullName ?? "AI (Chưa gán HLV)",
+                    TrainerSpecialization = p.Trainer?.Specialization,
                     Goal = p.Goal,
                     StartDate = p.StartDate,
                     EndDate = p.EndDate,
@@ -140,9 +140,9 @@ namespace WebGym.Areas.Admin.Controllers
                 MemberPhone = p.Member.User.PhoneNumber,
                 MemberWeight = p.Member.Weight,
                 MemberHeight = p.Member.Height,
-                TrainerId = p.TrainerId,
-                TrainerName = p.Trainer.User.FullName,
-                TrainerSpecialization = p.Trainer.Specialization,
+                TrainerId = p.TrainerId ?? 0,
+                TrainerName = p.Trainer?.User?.FullName ?? "AI (Chưa gán HLV)",
+                TrainerSpecialization = p.Trainer?.Specialization,
                 Goal = p.Goal,
                 StartDate = p.StartDate,
                 EndDate = p.EndDate,
@@ -227,7 +227,7 @@ namespace WebGym.Areas.Admin.Controllers
                 Id = plan.Id,
                 Title = plan.Title,
                 MemberId = plan.MemberId,
-                TrainerId = plan.TrainerId,
+                TrainerId = plan.TrainerId ?? 0,
                 Goal = plan.Goal,
                 StartDate = plan.StartDate,
                 EndDate = plan.EndDate,

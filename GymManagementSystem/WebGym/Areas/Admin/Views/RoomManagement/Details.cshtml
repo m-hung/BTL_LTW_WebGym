@@ -1,0 +1,221 @@
+@using Equipment = WebGym.Models.Entities.Equipment
+@model WebGym.Models.DTOs.Admin.RoomDetailsViewModel
+@{
+    ViewData["Title"] = $"Chi Tiết Phòng - {Model.Room.RoomName}";
+}
+
+<!-- Breadcrumb -->
+<div class="mb-3">
+    <a asp-action="Index" class="text-decoration-none text-muted small">
+        <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách phòng tập
+    </a>
+</div>
+
+<!-- Header Card -->
+<div class="card border-0 rounded-4 shadow-sm bg-white p-4 mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+        <div class="d-flex align-items-center gap-3">
+            <div class="p-3 bg-primary bg-opacity-10 rounded-3 text-primary">
+                <i class="bi bi-door-open-fill fs-2"></i>
+            </div>
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <h3 class="fw-bold text-dark mb-0">@Model.Room.RoomName</h3>
+                    @if (Model.Room.Status == "Hoạt động")
+                    {
+                        <span class="badge badge-soft-success rounded-pill px-3 py-2 small">Hoạt động</span>
+                    }
+                    else if (Model.Room.Status == "Bảo trì")
+                    {
+                        <span class="badge badge-soft-warning rounded-pill px-3 py-2 small">Bảo trì</span>
+                    }
+                    else
+                    {
+                        <span class="badge badge-soft-danger rounded-pill px-3 py-2 small">Tạm đóng</span>
+                    }
+                </div>
+                <p class="text-muted small mb-0">
+                    <i class="bi bi-geo-alt-fill text-danger me-1"></i>Vị trí: <strong>@Model.Room.Location</strong> | 
+                    Sức chứa: <strong>@Model.Room.Capacity người</strong>
+                </p>
+            </div>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.Room.RoomId" class="btn btn-outline-warning rounded-3 px-3">
+                <i class="bi bi-pencil-square me-1"></i> Chỉnh sửa
+            </a>
+            <a asp-controller="EquipmentManagement" asp-action="Create" class="btn btn-primary rounded-3 px-3">
+                <i class="bi bi-plus-circle me-1"></i> Gán thiết bị mới
+            </a>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.Room.Description))
+    {
+        <div class="alert alert-light border mt-3 mb-0 small text-secondary rounded-3">
+            <i class="bi bi-info-circle me-1 text-primary"></i> @Model.Room.Description
+        </div>
+    }
+</div>
+
+<!-- Quick Stats Row -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card border-0 rounded-4 shadow-sm p-3 bg-white">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted small">Tổng thiết bị trong phòng</span>
+                    <h4 class="fw-bold text-primary mb-0 mt-1">@Model.TotalEquipments <small class="text-muted fs-6">máy</small></h4>
+                </div>
+                <i class="bi bi-gear-fill fs-3 text-primary"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 rounded-4 shadow-sm p-3 bg-white">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted small">Thiết bị hỏng / cần bảo dưỡng</span>
+                    <h4 class="fw-bold text-danger mb-0 mt-1">@Model.BrokenEquipments <small class="text-muted fs-6">máy</small></h4>
+                </div>
+                <i class="bi bi-exclamation-triangle-fill fs-3 text-danger"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 rounded-4 shadow-sm p-3 bg-white">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted small">Lớp học nhóm tại phòng</span>
+                    <h4 class="fw-bold text-warning mb-0 mt-1">@Model.TotalClasses <small class="text-muted fs-6">lớp</small></h4>
+                </div>
+                <i class="bi bi-people-fill fs-3 text-warning"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Two Columns: Equipments & Classes -->
+<div class="row g-4">
+    <!-- Left Column: Equipments in Room -->
+    <div class="col-12 col-lg-7">
+        <div class="card border-0 rounded-4 shadow-sm bg-white p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold text-dark mb-0">
+                    <i class="bi bi-cpu-fill text-primary me-2"></i>Thiết Bị Đang Đặt Tại Phòng (@Model.Equipments.Count)
+                </h5>
+            </div>
+
+            @if (!Model.Equipments.Any())
+            {
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-inbox fs-1 d-block mb-2 text-muted"></i>
+                    <p class="small mb-0">Phòng này hiện chưa có thiết bị máy móc nào.</p>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Tên Thiết Bị</th>
+                                <th>Hãng / Khu Vực</th>
+                                <th>Tình Trạng</th>
+                                <th class="text-end">Hành Động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var eq in Model.Equipments)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="fw-bold text-dark">@eq.EquipmentName</div>
+                                        <small class="text-muted">Serial: @(eq.SerialNumber ?? "Chưa có")</small>
+                                    </td>
+                                    <td>
+                                        <div class="small fw-semibold text-secondary">@eq.Brand</div>
+                                        <small class="text-muted">@eq.Area</small>
+                                    </td>
+                                    <td>
+                                        @if (eq.Status == "Hoạt động tốt")
+                                        {
+                                            <span class="badge badge-soft-success rounded-pill px-2 py-1 small">Tốt</span>
+                                        }
+                                        else if (eq.Status == "Cần bảo trì")
+                                        {
+                                            <span class="badge badge-soft-warning rounded-pill px-2 py-1 small">Cần bảo trì</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-soft-danger rounded-pill px-2 py-1 small">Đang hỏng</span>
+                                        }
+                                    </td>
+                                    <td class="text-end">
+                                        <a asp-controller="EquipmentManagement" asp-action="Details" asp-route-id="@eq.EquipmentId" 
+                                           class="btn btn-sm btn-light border rounded-2" title="Xem chi tiết & lịch sử bảo trì">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Right Column: Classes in Room -->
+    <div class="col-12 col-lg-5">
+        <div class="card border-0 rounded-4 shadow-sm bg-white p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold text-dark mb-0">
+                    <i class="bi bi-calendar2-range-fill text-warning me-2"></i>Lớp Học Nhóm (@Model.Classes.Count)
+                </h5>
+            </div>
+
+            @if (!Model.Classes.Any())
+            {
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-calendar-x fs-1 d-block mb-2 text-muted"></i>
+                    <p class="small mb-0">Chưa có lớp học nhóm nào được xếp vào phòng này.</p>
+                </div>
+            }
+            else
+            {
+                <div class="d-flex flex-column gap-3">
+                    @foreach (var c in Model.Classes)
+                    {
+                        <div class="p-3 bg-light rounded-3 border">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h6 class="fw-bold text-dark mb-0">@c.ClassName</h6>
+                                @if (c.Status == "Open")
+                                {
+                                    <span class="badge badge-soft-success rounded-pill small">Mở đăng ký</span>
+                                }
+                                else if (c.Status == "Full")
+                                {
+                                    <span class="badge badge-soft-danger rounded-pill small">Đã đầy</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-soft-secondary rounded-pill small">@c.Status</span>
+                                }
+                            </div>
+                            <div class="text-muted small mb-2">
+                                <i class="bi bi-clock me-1 text-primary"></i>@c.Schedule
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center small">
+                                <span>HLV: <strong>@c.Trainer.User.FullName</strong></span>
+                                <span class="badge bg-white text-dark border">
+                                    Sĩ số: @c.CurrentCapacity/@c.MaxCapacity
+                                </span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>

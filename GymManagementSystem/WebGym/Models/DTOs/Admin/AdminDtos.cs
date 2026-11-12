@@ -12,16 +12,44 @@ namespace WebGym.Models.DTOs.Admin
         public decimal TotalRevenueThisMonth { get; set; }
         public decimal TotalRevenueOverall { get; set; }
 
+        // 4 Widget mới (Phân hệ 6)
+        // 1. Doanh thu bán hàng Shop & POS
+        public decimal ShopRevenueThisMonth { get; set; }
+        public decimal ShopRevenueOverall { get; set; }
+        public int ShopOrdersThisMonth { get; set; }
+        public int ShopOrdersOverall { get; set; }
+
+        // 2. Tỷ lệ lấp đầy Lớp học nhóm
+        public double ClassFillRatePercent { get; set; }
+        public int TotalClassSlots { get; set; }
+        public int BookedClassSlots { get; set; }
+        public int ActiveClassesCount { get; set; }
+
+        // 3. Cảnh báo thiết bị hỏng / cần bảo trì
+        public int BrokenEquipmentCount { get; set; }
+        public int NeedsMaintenanceEquipmentCount { get; set; }
+        public int AlertEquipmentTotal => BrokenEquipmentCount + NeedsMaintenanceEquipmentCount;
+
+        // 4. Cảnh báo hàng tồn kho (< 5 cái)
+        public int LowStockProductsCount { get; set; }
+        public int OutOfStockProductsCount { get; set; }
+        public int AlertProductsTotal => LowStockProductsCount + OutOfStockProductsCount;
+
         public List<MonthlyRevenueItem> MonthlyRevenueChart { get; set; } = new();
         public List<PackageDistributionItem> PackageDistributionChart { get; set; } = new();
         public List<RecentBookingItem> RecentBookings { get; set; } = new();
         public List<RecentPaymentItem> RecentPayments { get; set; } = new();
+        public List<RecentShopOrderItem> RecentShopOrders { get; set; } = new();
     }
 
     public class MonthlyRevenueItem
     {
         public string MonthLabel { get; set; } = string.Empty; // Ví dụ: "Tháng 10"
-        public decimal Revenue { get; set; }
+        public decimal Revenue { get; set; } // Thu Gói tập (giữ tương thích)
+        public decimal PackageRevenue { get; set; }
+        public decimal ShopRevenue { get; set; }
+        public decimal MaintenanceCost { get; set; }
+        public decimal NetRevenue => PackageRevenue + ShopRevenue - MaintenanceCost;
     }
 
     public class PackageDistributionItem
@@ -51,19 +79,55 @@ namespace WebGym.Models.DTOs.Admin
         public string Status { get; set; } = string.Empty;
     }
 
+    public class RecentShopOrderItem
+    {
+        public int OrderId { get; set; }
+        public string CustomerName { get; set; } = string.Empty;
+        public int ItemCount { get; set; }
+        public decimal TotalAmount { get; set; }
+        public string PaymentMethod { get; set; } = string.Empty;
+        public DateTime OrderDate { get; set; }
+        public string Status { get; set; } = string.Empty;
+    }
+
     // ================= DTOs CHO BÁO CÁO DOANH THU =================
     public class RevenueReportDto
     {
         public int Year { get; set; } = DateTime.UtcNow.Year;
         public int? Month { get; set; }
         public string? PaymentMethod { get; set; }
-        public decimal TotalRevenue { get; set; }
+        public string? SourceFilter { get; set; } = "All"; // "All", "Package", "Shop", "Maintenance"
+
+        public decimal TotalRevenue { get; set; } // Tổng thu (Gói + Shop)
+        public decimal PackageRevenue { get; set; } // Tiền bán Gói tập
+        public decimal ShopRevenue { get; set; } // Tiền bán Hàng Shop / POS
+        public decimal MaintenanceCost { get; set; } // Chi phí sửa chữa bảo trì máy
+        public decimal NetRevenue => PackageRevenue + ShopRevenue - MaintenanceCost;
+
         public int TotalTransactions { get; set; }
+        public int PackageTransactionsCount { get; set; }
+        public int ShopOrdersCount { get; set; }
+        public int MaintenanceLogsCount { get; set; }
+
         public decimal AverageOrderValue => TotalTransactions > 0 ? TotalRevenue / TotalTransactions : 0;
         public string BestSellingPackage { get; set; } = "Chưa có";
-        
+
         public List<MonthlyRevenueItem> MonthlyBreakdown { get; set; } = new();
         public Dictionary<string, decimal> MethodBreakdown { get; set; } = new();
+        public List<ConsolidatedTransactionItem> ConsolidatedItems { get; set; } = new();
+    }
+
+    public class ConsolidatedTransactionItem
+    {
+        public DateTime Date { get; set; }
+        public string SourceType { get; set; } = string.Empty; // "Gói tập", "Shop POS", "Bảo trì"
+        public string ReferenceCode { get; set; } = string.Empty;
+        public string CustomerOrTarget { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string PaymentMethod { get; set; } = string.Empty;
+        public decimal Amount { get; set; }
+        public bool IsExpense { get; set; }
+        public string Status { get; set; } = string.Empty;
     }
 
     // ================= DTOs CHO QUẢN LÝ GÓI TẬP =================

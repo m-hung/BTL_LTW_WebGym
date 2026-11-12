@@ -1,0 +1,225 @@
+@model WebGym.Models.Entities.GymClass
+@{
+    ViewData["Title"] = $"Chi Tiết Lớp - {Model.ClassName}";
+    var activeBookings = Model.ClassBookings.Where(b => b.Status != "Cancelled").ToList();
+    var percent = Model.MaxCapacity > 0 ? (activeBookings.Count * 100 / Model.MaxCapacity) : 0;
+}
+
+<!-- Breadcrumb -->
+<div class="mb-3">
+    <a asp-action="Index" class="text-decoration-none text-muted small">
+        <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách lớp học
+    </a>
+</div>
+
+<!-- Header Card -->
+<div class="card border-0 rounded-4 shadow-sm bg-white p-4 mb-4">
+    <div class="row align-items-center g-4">
+        <div class="col-12 col-md-auto text-center">
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <img src="@Model.ImageUrl" alt="@Model.ClassName" class="rounded-4 border object-fit-cover shadow-sm" style="width: 140px; height: 140px;" 
+                     onerror="this.onerror=null; this.src='/images/default-class.png';" />
+            }
+            else
+            {
+                <div class="bg-light rounded-4 d-flex align-items-center justify-content-center text-muted border shadow-sm mx-auto" style="width: 140px; height: 140px;">
+                    <i class="bi bi-person-video3 fs-1"></i>
+                </div>
+            }
+        </div>
+        <div class="col-12 col-md">
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                <h3 class="fw-bold text-dark mb-0">@Model.ClassName</h3>
+                @if (Model.Status == "Open")
+                {
+                    <span class="badge badge-soft-success rounded-pill px-3 py-2 small">Mở đăng ký</span>
+                }
+                else if (Model.Status == "Full")
+                {
+                    <span class="badge badge-soft-danger rounded-pill px-3 py-2 small">Đã đầy</span>
+                }
+                else
+                {
+                    <span class="badge badge-soft-secondary rounded-pill px-3 py-2 small">@Model.Status</span>
+                }
+            </div>
+
+            <div class="row g-2 text-muted small mb-3">
+                <div class="col-sm-6 col-lg-3">
+                    <i class="bi bi-person-badge-fill text-primary me-1"></i> HLV: <strong>@Model.Trainer.User.FullName</strong>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <i class="bi bi-door-open-fill text-info me-1"></i> Phòng: <strong>@(Model.Room != null ? Model.Room.RoomName : "Chưa có")</strong>
+                </div>
+                <div class="col-sm-6 col-lg-4">
+                    <i class="bi bi-clock-fill text-warning me-1"></i> Lịch: <strong>@Model.Schedule</strong>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-3">
+                <div class="flex-grow-1" style="max-width: 300px;">
+                    <div class="d-flex justify-content-between small fw-bold mb-1">
+                        <span>Sĩ số: @activeBookings.Count / @Model.MaxCapacity học viên</span>
+                        <span class="text-muted">@percent%</span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar @(percent >= 100 ? "bg-danger" : "bg-success")" role="progressbar" style="width: @percent%"></div>
+                    </div>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(Model.Description))
+            {
+                <div class="alert alert-light border small text-secondary py-2 px-3 rounded-3 mt-3 mb-0">
+                    <i class="bi bi-info-circle me-1 text-primary"></i> @Model.Description
+                </div>
+            }
+        </div>
+        <div class="col-12 col-md-auto d-flex flex-md-column gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.ClassId" class="btn btn-outline-warning rounded-3 btn-sm">
+                <i class="bi bi-pencil-square me-1"></i> Chỉnh sửa lớp
+            </a>
+            <a asp-controller="ClassBookingManagement" asp-action="Create" asp-route-classId="@Model.ClassId" 
+               class="btn btn-primary rounded-3 btn-sm">
+                <i class="bi bi-person-plus-fill me-1"></i> Thêm học viên tại quầy
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Danh Sách Học Viên Đăng Ký Vào Lớp Này & Điểm Danh Trực Tiếp -->
+<div class="card border-0 rounded-4 shadow-sm bg-white p-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
+        <div>
+            <h5 class="fw-bold text-dark mb-1">
+                <i class="bi bi-people-fill text-primary me-2"></i>Danh Sách Học Viên Đăng Ký Lớp (@Model.ClassBookings.Count)
+            </h5>
+            <p class="text-muted small mb-0">Điểm danh có mặt, vắng mặt hoặc hủy đăng ký trực tiếp cho từng học viên.</p>
+        </div>
+        <a asp-controller="ClassBookingManagement" asp-action="Create" asp-route-classId="@Model.ClassId" 
+           class="btn btn-outline-primary btn-sm rounded-3">
+            <i class="bi bi-plus-lg me-1"></i> Đăng ký học viên mới
+        </a>
+    </div>
+
+    @if (!Model.ClassBookings.Any())
+    {
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-person-x fs-1 text-muted d-block mb-2"></i>
+            <h6 class="fw-bold text-dark">Chưa có học viên nào đăng ký lớp này</h6>
+            <p class="small text-muted mb-0">Bấm nút "Đăng ký học viên mới" để thêm học viên đăng ký tại quầy.</p>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Học Viên</th>
+                        <th>Số Điện Thoại & Email</th>
+                        <th>Ngày Đăng Ký</th>
+                        <th>Ghi Chú</th>
+                        <th>Trạng Thái</th>
+                        <th class="text-center" style="min-width: 200px;">Điểm Danh Buổi Học (1-Click)</th>
+                        <th class="text-end">Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var booking in Model.ClassBookings)
+                    {
+                        <tr>
+                            <td>
+                                <div class="fw-bold text-dark">@booking.Member.User.FullName</div>
+                                <small class="text-muted">Mã HV: #@booking.MemberId</small>
+                            </td>
+                            <td>
+                                <div><i class="bi bi-telephone text-muted me-1"></i>@(booking.Member.User.PhoneNumber ?? "Chưa có")</div>
+                                <small class="text-muted"><i class="bi bi-envelope text-muted me-1"></i>@booking.Member.User.Email</small>
+                            </td>
+                            <td>
+                                <div class="small fw-semibold text-secondary">@booking.BookingDate.ToString("dd/MM/yyyy")</div>
+                            </td>
+                            <td>
+                                <small class="text-muted">@(booking.Notes ?? "Không có")</small>
+                            </td>
+                            <td>
+                                @if (booking.Status == "Attended")
+                                {
+                                    <span class="badge badge-soft-success rounded-pill px-3 py-2 small">
+                                        <i class="bi bi-check-circle-fill me-1"></i> Có mặt
+                                    </span>
+                                }
+                                else if (booking.Status == "Confirmed")
+                                {
+                                    <span class="badge badge-soft-primary rounded-pill px-3 py-2 small">
+                                        <i class="bi bi-clock-history me-1"></i> Chờ tham gia
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-soft-danger rounded-pill px-3 py-2 small">
+                                        <i class="bi bi-x-circle me-1"></i> Đã hủy
+                                    </span>
+                                }
+                            </td>
+                            <!-- 1-Click Attendance Buttons -->
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <!-- Nút Có mặt -->
+                                    <form asp-controller="ClassBookingManagement" asp-action="QuickAttendance" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@booking.ClassBookingId" />
+                                        <input type="hidden" name="newStatus" value="Attended" />
+                                        <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                                        <button type="submit" class="btn btn-outline-success btn-sm @(booking.Status == "Attended" ? "active fw-bold" : "")" 
+                                                title="Điểm danh Có mặt">
+                                            <i class="bi bi-check2"></i> Có mặt
+                                        </button>
+                                    </form>
+
+                                    <!-- Nút Chờ tham gia / Đặt trước -->
+                                    <form asp-controller="ClassBookingManagement" asp-action="QuickAttendance" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@booking.ClassBookingId" />
+                                        <input type="hidden" name="newStatus" value="Confirmed" />
+                                        <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                                        <button type="submit" class="btn btn-outline-primary btn-sm @(booking.Status == "Confirmed" ? "active fw-bold" : "")"
+                                                title="Đặt lại trạng thái Chờ tham gia">
+                                            <i class="bi bi-clock"></i> Chờ
+                                        </button>
+                                    </form>
+
+                                    <!-- Nút Hủy đăng ký -->
+                                    <form asp-controller="ClassBookingManagement" asp-action="QuickAttendance" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@booking.ClassBookingId" />
+                                        <input type="hidden" name="newStatus" value="Cancelled" />
+                                        <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                                        <button type="submit" class="btn btn-outline-danger btn-sm @(booking.Status == "Cancelled" ? "active fw-bold" : "")"
+                                                title="Hủy lượt đăng ký này">
+                                            <i class="bi bi-x-lg"></i> Hủy
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                            <!-- Delete -->
+                            <td class="text-end">
+                                <form asp-controller="ClassBookingManagement" asp-action="Delete" asp-route-id="@booking.ClassBookingId" method="post" id="deleteBooking-@booking.ClassBookingId" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="button" class="btn btn-sm btn-light border rounded-2 text-danger" 
+                                            onclick="confirmAction('deleteBooking-@booking.ClassBookingId', 'Bạn có chắc muốn xóa học viên \'@booking.Member.User.FullName\' khỏi lớp?')"
+                                            title="Xóa khỏi danh sách">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+

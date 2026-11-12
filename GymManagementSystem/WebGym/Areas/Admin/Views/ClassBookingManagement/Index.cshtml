@@ -1,0 +1,255 @@
+@model IEnumerable<WebGym.Models.Entities.ClassBooking>
+@{
+    ViewData["Title"] = "Quản Lý Đăng Ký Lớp & Điểm Danh";
+}
+
+<!-- Page Header -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold text-dark mb-1">
+            <i class="bi bi-card-checklist text-primary me-2"></i>Quản Lý Đăng Ký Lớp & Điểm Danh Học Viên
+        </h3>
+        <p class="text-muted small mb-0">Hỗ trợ lễ tân tiếp nhận đăng ký lớp học tại quầy, quản lý danh sách học viên và điểm danh sĩ số từng buổi học.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="Create" class="btn btn-primary d-flex align-items-center gap-2 px-3 py-2 rounded-3 shadow-sm">
+            <i class="bi bi-person-plus-fill"></i>
+            <span class="fw-semibold">Đăng Ký Học Viên Tại Quầy</span>
+        </a>
+        <a asp-controller="ClassManagement" asp-action="Index" class="btn btn-outline-secondary d-flex align-items-center gap-2 px-3 py-2 rounded-3 shadow-sm">
+            <i class="bi bi-calendar2-week"></i>
+            <span class="fw-semibold">Xem Lịch Lớp Học</span>
+        </a>
+    </div>
+</div>
+
+<!-- Stats Row -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted small fw-semibold">Tổng lượt đăng ký</span>
+                    <h3 class="fw-bold text-dark mb-0 mt-1">@ViewBag.TotalBookings</h3>
+                </div>
+                <div class="p-3 bg-primary bg-opacity-10 rounded-3 text-primary">
+                    <i class="bi bi-people-fill fs-4"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted small fw-semibold">Đã có mặt (Attended)</span>
+                    <h3 class="fw-bold text-success mb-0 mt-1">@ViewBag.AttendedCount</h3>
+                </div>
+                <div class="p-3 bg-success bg-opacity-10 rounded-3 text-success">
+                    <i class="bi bi-check2-circle fs-4"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted small fw-semibold">Chờ tham gia (Confirmed)</span>
+                    <h3 class="fw-bold text-primary mb-0 mt-1">@ViewBag.ConfirmedCount</h3>
+                </div>
+                <div class="p-3 bg-primary bg-opacity-10 rounded-3 text-primary">
+                    <i class="bi bi-clock-history fs-4"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted small fw-semibold">Đã hủy / Vắng</span>
+                    <h3 class="fw-bold text-danger mb-0 mt-1">@ViewBag.CancelledCount</h3>
+                </div>
+                <div class="p-3 bg-danger bg-opacity-10 rounded-3 text-danger">
+                    <i class="bi bi-x-circle fs-4"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters Card -->
+<div class="card border-0 bg-white p-3 mb-4 rounded-4 shadow-sm">
+    <form method="get" class="row g-2 align-items-center">
+        <div class="col-md-3">
+            <div class="input-group">
+                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                <input type="text" name="searchKeyword" class="form-control bg-light border-start-0" 
+                       placeholder="Tìm học viên, SĐT hoặc lớp..." value="@ViewBag.SearchKeyword" />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <select name="classId" class="form-select bg-light" asp-items="ViewBag.ClassesList">
+                <option value="">-- Tất cả lớp học nhóm --</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="status" class="form-select bg-light">
+                <option value="">-- Trạng thái điểm danh --</option>
+                <option value="Confirmed" selected="@(ViewBag.SelectedStatus == "Confirmed")">Chờ tham gia (Confirmed)</option>
+                <option value="Attended" selected="@(ViewBag.SelectedStatus == "Attended")">Đã có mặt (Attended)</option>
+                <option value="Cancelled" selected="@(ViewBag.SelectedStatus == "Cancelled")">Đã hủy (Cancelled)</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <input type="date" name="bookingDate" class="form-control bg-light" 
+                   value="@(ViewBag.SelectedBookingDate != null ? ((DateTime)ViewBag.SelectedBookingDate).ToString("yyyy-MM-dd") : "")" />
+        </div>
+        <div class="col-md-2 d-flex gap-2">
+            <button type="submit" class="btn btn-dark w-100 rounded-3">
+                <i class="bi bi-funnel me-1"></i> Lọc
+            </button>
+            <a asp-action="Index" class="btn btn-outline-secondary rounded-3" title="Đặt lại bộ lọc">
+                <i class="bi bi-arrow-clockwise"></i>
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- Table Card -->
+<div class="card border-0 rounded-4 shadow-sm bg-white overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Mã ĐK</th>
+                    <th>Học Viên</th>
+                    <th>Lớp Học Nhóm</th>
+                    <th>HLV / Phòng Học</th>
+                    <th>Ngày Đăng Ký</th>
+                    <th>Trạng Thái</th>
+                    <th class="text-center" style="min-width: 220px;">Điểm Danh Buổi Học (1-Click)</th>
+                    <th class="text-end">Thao Tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="bi bi-search fs-2 d-block mb-2"></i>
+                            Không tìm thấy lượt đăng ký học viên nào.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var b in Model)
+                    {
+                        <tr>
+                            <td>
+                                <span class="badge bg-light text-dark border">#@b.ClassBookingId</span>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">@b.Member.User.FullName</div>
+                                <div class="small text-muted">
+                                    <i class="bi bi-telephone me-1"></i>@(b.Member.User.PhoneNumber ?? "Chưa có")
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-primary">@b.GymClass.ClassName</div>
+                                <small class="text-muted"><i class="bi bi-clock me-1"></i>@b.GymClass.Schedule</small>
+                            </td>
+                            <td>
+                                <div class="fw-semibold text-dark small">HLV: @b.GymClass.Trainer.User.FullName</div>
+                                <small class="text-muted">
+                                    <i class="bi bi-door-open me-1"></i>@(b.GymClass.Room != null ? b.GymClass.Room.RoomName : "Chưa có")
+                                </small>
+                            </td>
+                            <td>
+                                <div class="small fw-semibold text-secondary">@b.BookingDate.ToString("dd/MM/yyyy")</div>
+                                @if (!string.IsNullOrWhiteSpace(b.Notes))
+                                {
+                                    <small class="text-muted d-block text-truncate" style="max-width: 150px;">Ghi chú: @b.Notes</small>
+                                }
+                            </td>
+                            <td>
+                                @if (b.Status == "Attended")
+                                {
+                                    <span class="badge badge-soft-success rounded-pill px-3 py-2 small">
+                                        <i class="bi bi-check-circle-fill me-1"></i> Có mặt
+                                    </span>
+                                }
+                                else if (b.Status == "Confirmed")
+                                {
+                                    <span class="badge badge-soft-primary rounded-pill px-3 py-2 small">
+                                        <i class="bi bi-clock-history me-1"></i> Chờ tham gia
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-soft-danger rounded-pill px-3 py-2 small">
+                                        <i class="bi bi-x-circle me-1"></i> Đã hủy
+                                    </span>
+                                }
+                            </td>
+                            <!-- 1-Click Attendance Actions -->
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <!-- Nút Có mặt -->
+                                    <form asp-action="QuickAttendance" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@b.ClassBookingId" />
+                                        <input type="hidden" name="newStatus" value="Attended" />
+                                        <input type="hidden" name="returnUrl" value="@Context.Request.Path@Context.Request.QueryString" />
+                                        <button type="submit" class="btn btn-outline-success btn-sm @(b.Status == "Attended" ? "active fw-bold" : "")" 
+                                                title="Điểm danh Có mặt">
+                                            <i class="bi bi-check2"></i> Có mặt
+                                        </button>
+                                    </form>
+
+                                    <!-- Nút Chờ tham gia -->
+                                    <form asp-action="QuickAttendance" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@b.ClassBookingId" />
+                                        <input type="hidden" name="newStatus" value="Confirmed" />
+                                        <input type="hidden" name="returnUrl" value="@Context.Request.Path@Context.Request.QueryString" />
+                                        <button type="submit" class="btn btn-outline-primary btn-sm @(b.Status == "Confirmed" ? "active fw-bold" : "")"
+                                                title="Đặt lại trạng thái Chờ tham gia">
+                                            <i class="bi bi-clock"></i> Chờ
+                                        </button>
+                                    </form>
+
+                                    <!-- Nút Hủy đăng ký -->
+                                    <form asp-action="QuickAttendance" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@b.ClassBookingId" />
+                                        <input type="hidden" name="newStatus" value="Cancelled" />
+                                        <input type="hidden" name="returnUrl" value="@Context.Request.Path@Context.Request.QueryString" />
+                                        <button type="submit" class="btn btn-outline-danger btn-sm @(b.Status == "Cancelled" ? "active fw-bold" : "")"
+                                                title="Hủy đăng ký buổi này">
+                                            <i class="bi bi-x-lg"></i> Hủy
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                            <!-- Delete -->
+                            <td class="text-end">
+                                <form asp-action="Delete" asp-route-id="@b.ClassBookingId" method="post" id="deleteClassBooking-@b.ClassBookingId" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="button" class="btn btn-sm btn-light border rounded-2 text-danger" 
+                                            onclick="confirmAction('deleteClassBooking-@b.ClassBookingId', 'Bạn có chắc chắn muốn xóa lượt đăng ký này?')"
+                                            title="Xóa lượt đăng ký">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

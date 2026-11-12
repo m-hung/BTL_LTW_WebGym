@@ -74,73 +74,75 @@
         }
 
         .sidebar-brand {
-            padding: 1.5rem 1.25rem;
+            padding: 0.7rem 1rem;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.65rem;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             text-decoration: none;
         }
 
         .sidebar-brand-icon {
-            width: 42px;
-            height: 42px;
+            width: 34px;
+            height: 34px;
             background: linear-gradient(135deg, #f59e0b, #ef4444);
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1.3rem;
+            font-size: 1.05rem;
             box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
 
         .sidebar-brand-text {
-            font-size: 1.25rem;
+            font-size: 1.15rem;
             font-weight: 800;
             letter-spacing: -0.5px;
             color: #ffffff;
         }
 
         .sidebar-brand-badge {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             text-transform: uppercase;
-            padding: 2px 6px;
-            border-radius: 6px;
+            padding: 2px 5px;
+            border-radius: 5px;
             background: rgba(239, 68, 68, 0.2);
             color: #f87171;
             font-weight: 700;
-            margin-left: 6px;
+            margin-left: 5px;
         }
 
         .nav-category {
-            font-size: 0.75rem;
+            font-size: 0.68rem;
             font-weight: 700;
             text-transform: uppercase;
             color: #64748b;
-            padding: 1.25rem 1.25rem 0.5rem 1.25rem;
+            padding: 0.55rem 1rem 0.2rem 1rem;
             letter-spacing: 0.05em;
         }
 
         .admin-nav .nav-link {
             display: flex;
             align-items: center;
-            padding: 0.75rem 1.25rem;
+            padding: 0.36rem 0.8rem;
             color: #94a3b8;
             font-weight: 500;
-            font-size: 0.925rem;
-            border-radius: 10px;
-            margin: 0.15rem 0.75rem;
+            font-size: 0.84rem;
+            border-radius: 8px;
+            margin: 0.06rem 0.6rem;
             transition: all 0.2s ease;
             text-decoration: none;
+            white-space: nowrap;
         }
 
         .admin-nav .nav-link i {
-            font-size: 1.2rem;
-            margin-right: 0.85rem;
-            width: 24px;
+            font-size: 1rem;
+            margin-right: 0.65rem;
+            width: 20px;
             text-align: center;
             transition: transform 0.2s;
+            flex-shrink: 0;
         }
 
         .admin-nav .nav-link:hover {
@@ -149,14 +151,14 @@
         }
 
         .admin-nav .nav-link:hover i {
-            transform: scale(1.15);
+            transform: scale(1.12);
         }
 
         .admin-nav .nav-link.active {
             color: #ffffff;
             background: linear-gradient(90deg, #2563eb, #3b82f6);
             font-weight: 600;
-            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+            box-shadow: 0 3px 10px rgba(37, 99, 235, 0.35);
         }
 
         /* Top Navbar */
@@ -293,7 +295,8 @@
             </div>
 
             <!-- Navigation Menu -->
-            <div class="overflow-y-auto flex-grow-1 py-2">
+            <div class="overflow-y-auto flex-grow-1 py-1">
+                <!-- 1. TỔNG QUAN -->
                 <div class="nav-category">Tổng Quan</div>
                 <ul class="nav flex-column admin-nav">
                     <li class="nav-item">
@@ -303,11 +306,12 @@
                             <span>Dashboard Thống Kê</span>
                         </a>
                     </li>
-                </ul>
-
-                <div class="nav-category">Quản Lý Nghiệp Vụ</div>
-                <ul class="nav flex-column admin-nav">
                     <li class="nav-item">
+                        <a asp-area="Admin" asp-controller="Report" asp-action="Index" 
+                           class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Report" ? "active" : "")">
+                            <i class="bi bi-pie-chart-fill"></i>
+                            <span>Báo Cáo Doanh Thu</span>
+                         </a>
                         <a asp-area="Admin" asp-controller="CheckIn" asp-action="Index" 
                            class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "CheckIn" ? "active" : "")">
                             <i class="bi bi-qr-code-scan"></i>
@@ -321,11 +325,16 @@
                             <span>Gói Tập (Packages)</span>
                         </a>
                     </li>
+                </ul>
+
+                <!-- 2. THÀNH VIÊN & NHÂN SỰ -->
+                <div class="nav-category">Thành Viên & Nhân Sự</div>
+                <ul class="nav flex-column admin-nav">
                     <li class="nav-item">
                         <a asp-area="Admin" asp-controller="MemberManagement" asp-action="Index" 
                            class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MemberManagement" ? "active" : "")">
                             <i class="bi bi-people-fill"></i>
-                            <span>Hội Viên (Members)</span>
+                            <span>Quản Lý Hội Viên</span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -336,35 +345,109 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a asp-area="Admin" asp-controller="BookingManagement" asp-action="Index" 
-                           class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "BookingManagement" ? "active" : "")">
-                            <i class="bi bi-calendar2-week-fill"></i>
-                            <span>Lịch Đặt PT Hệ Thống</span>
+                        <a asp-area="Admin" asp-controller="PackageManagement" asp-action="Index" 
+                           class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "PackageManagement" ? "active" : "")">
+                            <i class="bi bi-box-seam-fill"></i>
+                            <span>Quản Lý Gói Tập</span>
                         </a>
                     </li>
                 </ul>
 
-                <div class="nav-category">Tài Chính & Báo Cáo</div>
+                <!-- 3. DỊCH VỤ TẬP LUYỆN -->
+                <div class="nav-category">Dịch Vụ Tập Luyện</div>
                 <ul class="nav flex-column admin-nav">
                     <li class="nav-item">
-                        <a asp-area="Admin" asp-controller="Report" asp-action="Index" 
-                           class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Report" ? "active" : "")">
-                            <i class="bi bi-pie-chart-fill"></i>
-                            <span>Báo Cáo Doanh Thu</span>
+                        <a asp-area="Admin" asp-controller="BookingManagement" asp-action="Index" 
+                           class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "BookingManagement" ? "active" : "")">
+                            <i class="bi bi-calendar2-week-fill"></i>
+                            <span>Lịch Hẹn PT 1-1</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-area="Admin" asp-controller="ClassManagement" asp-action="Index" 
+                           class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ClassManagement" ? "active" : "")">
+                            <i class="bi bi-person-video3"></i>
+                            <span>Lớp Học Nhóm (Classes)</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-area="Admin" asp-controller="ClassBookingManagement" asp-action="Index" 
+                           class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ClassBookingManagement" ? "active" : "")">
+                            <i class="bi bi-card-checklist"></i>
+                            <span>Đăng Ký & Điểm Danh</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-area="Admin" asp-controller="WorkoutPlanManagement" asp-action="Index" 
+                           class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "WorkoutPlanManagement" ? "active" : "")">
+                            <i class="bi bi-journal-bookmark-fill"></i>
+                            <span>Giáo Án Tập Luyện</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- 4. CƠ SỞ VẬT CHẤT -->
+                <div class="nav-category">Cơ Sở Vật Chất</div>
+                <ul class="nav flex-column admin-nav">
+                    <li class="nav-item">
+                        <a asp-area="Admin" asp-controller="RoomManagement" asp-action="Index" 
+                           class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "RoomManagement" ? "active" : "")">
+                            <i class="bi bi-door-open-fill"></i>
+                            <span>Phòng Tập / Studio</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-area="Admin" asp-controller="EquipmentManagement" asp-action="Index" 
+                           class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "EquipmentManagement" ? "active" : "")">
+                            <i class="bi bi-cpu-fill"></i>
+                            <span>Máy Móc & Thiết Bị</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-area="Admin" asp-controller="MaintenanceManagement" asp-action="Index" 
+                           class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MaintenanceManagement" ? "active" : "")">
+                            <i class="bi bi-tools"></i>
+                            <span>Nhật Ký Bảo Trì</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- 5. CỬA HÀNG & BÁN HÀNG -->
+                <div class="nav-category">Cửa Hàng & Bán Hàng</div>
+                <ul class="nav flex-column admin-nav">
+                    <li class="nav-item">
+                        <a asp-area="Admin" asp-controller="OrderManagement" asp-action="POS" 
+                           class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "OrderManagement" && ViewContext.RouteData.Values["action"]?.ToString() == "POS" ? "active" : "")">
+                            <i class="bi bi-calculator"></i>
+                            <span>Bán Hàng Tại Quầy (POS)</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-area="Admin" asp-controller="ProductManagement" asp-action="Index" 
+                           class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ProductManagement" ? "active" : "")">
+                            <i class="bi bi-box-seam-fill"></i>
+                            <span>Sản Phẩm & Kho Hàng</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-area="Admin" asp-controller="OrderManagement" asp-action="Index" 
+                           class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "OrderManagement" && ViewContext.RouteData.Values["action"]?.ToString() != "POS" ? "active" : "")">
+                            <i class="bi bi-receipt"></i>
+                            <span>Quản Lý Đơn Hàng</span>
                         </a>
                     </li>
                 </ul>
             </div>
 
             <!-- Bottom User & Exit -->
-            <div class="p-3 border-top border-secondary border-opacity-25">
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-outline-light btn-sm w-100 mb-2 rounded-3 text-start">
-                    <i class="bi bi-globe me-2"></i> Xem Website Khách
+            <div class="p-2 border-top border-secondary border-opacity-25 d-flex gap-2">
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-outline-light btn-sm w-50 rounded-3 text-truncate" title="Xem Website Khách">
+                    <i class="bi bi-globe me-1"></i> Website
                 </a>
-                <form asp-area="" asp-controller="Auth" asp-action="Logout" method="post" id="logoutForm">
+                <form asp-area="" asp-controller="Auth" asp-action="Logout" method="post" id="logoutForm" class="w-50">
                     @Html.AntiForgeryToken()
-                    <button type="submit" class="btn btn-danger btn-sm w-100 rounded-3 text-start">
-                        <i class="bi bi-box-arrow-right me-2"></i> Đăng Xuất
+                    <button type="submit" class="btn btn-danger btn-sm w-100 rounded-3 text-truncate" title="Đăng xuất">
+                        <i class="bi bi-box-arrow-right me-1"></i> Đăng Xuất
                     </button>
                 </form>
             </div>
@@ -452,8 +535,36 @@
             }
         });
 
-        // SweetAlert2 Toasts for TempData Messages
-        const Toast = Swal.mixin({
+        // Global helper for delete confirmations (đặt trước để luôn sẵn sàng)
+        function confirmAction(formId, message) {
+            const form = document.getElementById(formId);
+            if (!form) return;
+
+            const textMessage = message || 'Hành động này không thể hoàn tác!';
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Xác nhận?',
+                    text: textMessage,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#64748b',
+                    confirmButtonText: 'Đồng ý',
+                    cancelButtonText: 'Hủy bỏ'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            } else {
+                if (confirm(textMessage)) {
+                    form.submit();
+                }
+            }
+        }
+
+        // SweetAlert2 Toasts for TempData Messages (Dùng JSON serialization an toàn tuyệt đối với mọi ký tự đặc biệt / dấu nháy)
+        const Toast = typeof Swal !== 'undefined' ? Swal.mixin({
             toast: true,
             position: 'top-end',
             showConfirmButton: false,
@@ -463,54 +574,59 @@
                 toast.addEventListener('mouseenter', Swal.stopTimer);
                 toast.addEventListener('mouseleave', Swal.resumeTimer);
             }
-        });
+        }) : null;
+
+        @{
+            string CleanToastMessage(object? msg)
+            {
+                if (msg == null) return string.Empty;
+                var str = msg.ToString()?.Trim() ?? string.Empty;
+                if (str.StartsWith("\"") && str.EndsWith("\"") && str.Length >= 2)
+                {
+                    try { str = System.Text.Json.JsonSerializer.Deserialize<string>(str) ?? str; } catch { }
+                }
+                return str;
+            }
+            var toastJsonOpts = new System.Text.Json.JsonSerializerOptions
+            {
+                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
+        }
 
         @if (TempData["SuccessMessage"] != null)
         {
             <text>
-            Toast.fire({
-                icon: 'success',
-                title: '@Html.Raw(TempData["SuccessMessage"])'
-            });
+            if (Toast) {
+                Toast.fire({
+                    icon: 'success',
+                    title: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(CleanToastMessage(TempData["SuccessMessage"]), toastJsonOpts))
+                });
+            }
             </text>
         }
 
         @if (TempData["ErrorMessage"] != null)
         {
             <text>
-            Toast.fire({
-                icon: 'error',
-                title: '@Html.Raw(TempData["ErrorMessage"])'
-            });
+            if (Toast) {
+                Toast.fire({
+                    icon: 'error',
+                    title: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(CleanToastMessage(TempData["ErrorMessage"]), toastJsonOpts))
+                });
+            }
             </text>
         }
 
         @if (TempData["InfoMessage"] != null)
         {
             <text>
-            Toast.fire({
-                icon: 'info',
-                title: '@Html.Raw(TempData["InfoMessage"])'
-            });
+            if (Toast) {
+                Toast.fire({
+                    icon: 'info',
+                    title: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(CleanToastMessage(TempData["InfoMessage"]), toastJsonOpts))
+                });
+            }
             </text>
-        }
-
-        // Global helper for delete confirmations
-        function confirmAction(formId, message) {
-            Swal.fire({
-                title: 'Xác nhận?',
-                text: message || 'Hành động này không thể hoàn tác!',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#ef4444',
-                cancelButtonColor: '#64748b',
-                confirmButtonText: 'Đồng ý',
-                cancelButtonText: 'Hủy bỏ'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById(formId).submit();
-                }
-            });
         }
     </script>
 

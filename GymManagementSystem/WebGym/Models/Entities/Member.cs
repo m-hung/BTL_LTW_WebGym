@@ -24,6 +24,12 @@ namespace WebGym.Models.Entities
         [MaxLength(500)]
         public string? AvatarUrl { get; set; }
 
+        [MaxLength(50)]
+        public string? CardCode { get; set; } // Mã thẻ hội viên (vd: GYM-MB-0001)
+
+        [MaxLength(500)]
+        public string? QrCode { get; set; } // Mã QR hoặc chuỗi mã hóa thẻ hội viên
+
         public double? Height { get; set; } // Chiều cao (cm)
         public double? Weight { get; set; } // Cân nặng ban đầu (kg)
         public double? BMR { get; set; } // Basal Metabolic Rate (kcal)
@@ -52,5 +58,11 @@ namespace WebGym.Models.Entities
 
         [NotMapped]
         public double? WeightKg => Weight;
+
+        [NotMapped]
+        public string MemberCardCode => !string.IsNullOrWhiteSpace(CardCode) ? CardCode : $"GYM-MB-{MemberId:D4}";
+
+        [NotMapped]
+        public string MemberQrData => !string.IsNullOrWhiteSpace(QrCode) ? QrCode : MemberCardCode;
     }
 }

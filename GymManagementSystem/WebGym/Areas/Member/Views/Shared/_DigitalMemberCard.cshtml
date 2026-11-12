@@ -1,0 +1,180 @@
+@model WebGym.Models.DTOs.Member.DigitalMemberCardModel
+@{
+    var defaultAvatar = Url.Content("~/images/default-avatar.svg");
+    var avatarSrc = !string.IsNullOrWhiteSpace(Model.AvatarUrl) 
+        ? (Model.AvatarUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase) 
+            ? Model.AvatarUrl 
+            : Url.Content(Model.AvatarUrl.StartsWith("~") ? Model.AvatarUrl : (Model.AvatarUrl.StartsWith("/") ? Model.AvatarUrl : "~/images/" + Model.AvatarUrl)))
+        : defaultAvatar;
+
+    var qrData = Uri.EscapeDataString(Model.RawQrData);
+    var qrImageUrl = $"https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=4&data={qrData}";
+    var hasActivePackage = Model.IsActive && !string.IsNullOrWhiteSpace(Model.PackageName) && !Model.PackageName.Contains("Chưa đăng ký", StringComparison.OrdinalIgnoreCase);
+}
+
+<div class="luxury-atm-wrapper">
+    <!-- THẺ HỘI VIÊN ĐIỆN TỬ DẠNG ATM SANG TRỌNG -->
+    <div class="luxury-atm-card" id="digitalMemberCard">
+        <!-- 1. HÀNG ĐẦU: LOGO THƯƠNG HIỆU & HẠNG THẺ -->
+        <div class="atm-card-header">
+            <div class="atm-brand">
+                <div class="atm-brand-logo">
+                    <span></span><span></span><span></span>
+                </div>
+                <span class="atm-brand-name">PULSE GYM</span>
+            </div>
+            <div class="atm-tier-badge">
+                <i class="bi bi-patch-check-fill me-1"></i>@(Model.PackageTier) PASS
+            </div>
+        </div>
+
+        <!-- 2. KHU VỰC THÂN THẺ: CHIP EMV + MÃ QR ĐIỆN TỬ Ở CHÍNH GIỮA + AVATAR -->
+        <div class="atm-card-body">
+            <!-- Trái: Chip thẻ ATM vàng nổi + Sóng NFC -->
+            <div class="atm-left-elements">
+                <div class="atm-chip-gold" title="Thẻ thông minh Pulse SmartPass"></div>
+                <div class="atm-nfc-icon" title="Hỗ trợ check-in không chạm">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                        <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                        <line x1="12" y1="20" x2="12.01" y2="20"></line>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- CHÍNH GIỮA: MÃ QR ĐIỆN TỬ (Mã hóa mã thẻ GYM-MB-xxxx để Admin quét) -->
+            <div class="atm-center-qr-container">
+                <div class="atm-qr-box" onclick="openQrModal('@Model.RawCardCode', '@Model.FullName', '@(Model.PackageName ?? "Chưa đăng ký")', '@qrImageUrl')" title="Bấm để phóng to mã QR cho Admin quét">
+                    <img src="@qrImageUrl" alt="Mã QR @Model.RawCardCode" class="atm-qr-img" loading="lazy" />
+                </div>
+                <div class="atm-qr-hint">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1">
+                        <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"></path>
+                    </svg>
+                    Quét điểm danh
+                </div>
+            </div>
+
+            <!-- Phải: Ảnh đại diện hội viên + Trạng thái hoạt động -->
+            <div class="atm-right-avatar">
+                <div class="atm-avatar-frame">
+                    <img src="@avatarSrc" alt="@Model.FullName" />
+                </div>
+                <div class="atm-status-dot">
+                    @(hasActivePackage ? "ACTIVE" : "READY")
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. MÃ THẺ HỘI VIÊN DẬP NỔI CHUẨN THẺ ATM (GYM-MB-xxxx) -->
+        <div class="atm-card-number-row text-center">
+            <span class="atm-card-number-text" id="memberCardCodeText">@Model.FormattedCardCode</span>
+        </div>
+
+        <!-- 4. CHÂN THẺ: HỌ TÊN HỘI VIÊN - TÊN GÓI TẬP - HẠN DÙNG -->
+        <div class="atm-card-footer">
+            <div>
+                <span class="atm-holder-label">Chủ thẻ hội viên</span>
+                <div class="atm-holder-name">@Model.FullName</div>
+                <div class="atm-package-name">
+                    @(Model.PackageName ?? "Chưa đăng ký gói")
+                </div>
+            </div>
+            <div class="text-end">
+                <span class="atm-expiry-label">Ngày hết hạn</span>
+                <div class="atm-expiry-date">
+                    @(Model.EndDate?.ToString("dd/MM/yyyy") ?? "VÔ THỜI HẠN")
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CÁC NÚT ĐIỀU KHIỂN NHANH DƯỚI THẺ (TỐI ƯU CHO ĐIỆN THOẠI) -->
+    <div class="d-flex flex-wrap gap-2 justify-content-center align-items-center mt-3">
+        <button type="button" class="btn-pulse-outline btn-sm py-1 px-3 d-inline-flex align-items-center gap-1"
+                onclick="openQrModal('@Model.RawCardCode', '@Model.FullName', '@(Model.PackageName ?? "Chưa đăng ký")', '@qrImageUrl')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"></path>
+            </svg>
+            <span>Phóng to mã QR</span>
+        </button>
+
+        <button type="button" class="btn-pulse-outline btn-sm py-1 px-3 d-inline-flex align-items-center gap-1"
+                onclick="copyCardCode('@Model.RawCardCode')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span id="copyBtnText">Sao chép mã thẻ</span>
+        </button>
+    </div>
+</div>
+
+<!-- MODAL PHÓNG TO MÃ QR ĐIỆN TỬ CHO ADMIN QUÉT TRÊN ĐIỆN THOẠI -->
+<div class="qr-modal-backdrop" id="qrModalBackdrop" onclick="closeQrModal(event)">
+    <div class="qr-modal-card" onclick="event.stopPropagation()">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex align-items-center gap-2">
+                <span style="width: 8px; height: 8px; border-radius: 50%; background-color: var(--portal-lime); display: inline-block;"></span>
+                <span class="fw-bold" style="color: #ffffff; font-size: 14px; letter-spacing: 0.05em;">MÃ ĐIỂM DANH CHECK-IN</span>
+            </div>
+            <button type="button" class="btn-close btn-close-white" style="font-size: 12px;" onclick="closeQrModal()"></button>
+        </div>
+
+        <div style="background: #ffffff; border-radius: 14px; padding: 12px; display: inline-block; margin: 0 auto; box-shadow: 0 8px 24px rgba(0,0,0,0.6);">
+            <img id="modalQrImg" src="@qrImageUrl" alt="QR Full" style="width: 220px; height: 220px; display: block; object-fit: contain;" />
+        </div>
+
+        <div class="mt-3">
+            <div class="text-uppercase fw-bold fs-5" style="color: #ffffff;" id="modalMemberName">@Model.FullName</div>
+            <div class="badge px-3 py-1 my-1" style="background: rgba(200, 255, 46, 0.15); color: var(--portal-lime); font-family: monospace; font-size: 14px; letter-spacing: 0.12em;" id="modalCardCode">
+                @Model.RawCardCode
+            </div>
+            <div class="small mt-1" style="color: #a4ad9f;" id="modalPackageName">Gói: @(Model.PackageName ?? "Chưa đăng ký")</div>
+        </div>
+
+        <div class="mt-3 pt-3 border-top border-secondary border-opacity-25 small" style="color: #8fa091;">
+            Đưa mã này cho Lễ tân / Huấn luyện viên quét để điểm danh vào phòng tập
+        </div>
+
+        <button type="button" class="btn-pulse-primary btn-sm w-100 mt-3" onclick="closeQrModal()">
+            ĐÓNG
+        </button>
+    </div>
+</div>
+
+<script>
+    function openQrModal(cardCode, memberName, packageName, qrUrl) {
+        const modal = document.getElementById('qrModalBackdrop');
+        if (!modal) return;
+        document.getElementById('modalCardCode').textContent = cardCode;
+        document.getElementById('modalMemberName').textContent = memberName;
+        document.getElementById('modalPackageName').textContent = 'Gói: ' + packageName;
+        if (qrUrl) document.getElementById('modalQrImg').src = qrUrl;
+        modal.classList.add('show');
+    }
+
+    function closeQrModal(e) {
+        const modal = document.getElementById('qrModalBackdrop');
+        if (modal) modal.classList.remove('show');
+    }
+
+    function copyCardCode(code) {
+        if (!navigator.clipboard) {
+            const ta = document.createElement('textarea');
+            ta.value = code;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+        } else {
+            navigator.clipboard.writeText(code);
+        }
+        const btnText = document.getElementById('copyBtnText');
+        if (btnText) {
+            const old = btnText.textContent;
+            btnText.textContent = 'Đã sao chép: ' + code;
+            setTimeout(() => { btnText.textContent = old; }, 2000);
+        }
+    }
+</script>

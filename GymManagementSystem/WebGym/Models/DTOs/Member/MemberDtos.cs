@@ -12,6 +12,10 @@ namespace WebGym.Models.DTOs.Member
         public DateTime? DateOfBirth { get; set; }
         public string? AvatarUrl { get; set; }
 
+        public string? AvatarUrl { get; set; }
+        public string CardCode { get; set; } = string.Empty;
+        public string QrCode { get; set; } = string.Empty;
+
         // Các chỉ số thể hình
         public double? Height { get; set; }
         public double? Weight { get; set; }
@@ -23,8 +27,23 @@ namespace WebGym.Models.DTOs.Member
         public double? Hips { get; set; }
 
         public string? CurrentPackageName { get; set; }
+        public string PackageTier { get; set; } = "VIP";
+        public DateTime? MembershipStartDate { get; set; }
         public DateTime? MembershipEndDate { get; set; }
         public bool IsMembershipActive => MembershipEndDate.HasValue && MembershipEndDate.Value >= DateTime.UtcNow;
+
+        public DigitalMemberCardModel ToCardModel() => new()
+        {
+            MemberId = Id,
+            FullName = FullName,
+            AvatarUrl = AvatarUrl,
+            CardCode = CardCode,
+            QrCode = QrCode,
+            PackageName = CurrentPackageName,
+            PackageTier = PackageTier,
+            EndDate = MembershipEndDate,
+            IsActive = IsMembershipActive
+        };
     }
 
     public class CreateBookingDto
@@ -63,7 +82,27 @@ namespace WebGym.Models.DTOs.Member
 
         public string? AvatarUrl { get; set; }
 
+        public string CardCode { get; set; } = string.Empty;
+        public string QrCode { get; set; } = string.Empty;
+
         public string? CurrentPackageName { get; set; }
+        public string PackageTier { get; set; } = "VIP";
+        public DateTime? MembershipStartDate { get; set; }
+        public DateTime? MembershipEndDate { get; set; }
+        public bool IsMembershipActive => MembershipEndDate.HasValue && MembershipEndDate.Value >= DateTime.UtcNow;
+
+        public DigitalMemberCardModel ToCardModel() => new()
+        {
+            MemberId = MemberId,
+            FullName = FullName,
+            AvatarUrl = AvatarUrl,
+            CardCode = CardCode,
+            QrCode = QrCode,
+            PackageName = CurrentPackageName,
+            PackageTier = PackageTier,
+            EndDate = MembershipEndDate,
+            IsActive = IsMembershipActive
+        };
     }
 
     public class MemberPackageViewModel
@@ -93,5 +132,35 @@ namespace WebGym.Models.DTOs.Member
         public DateTime EndDate { get; set; }
         public decimal Amount { get; set; }
         public string Status { get; set; } = "Đã thanh toán";
+    }
+
+    public class DigitalMemberCardModel
+    {
+        public int MemberId { get; set; }
+        public string FullName { get; set; } = string.Empty;
+        public string? AvatarUrl { get; set; }
+        public string CardCode { get; set; } = string.Empty;
+        public string QrCode { get; set; } = string.Empty;
+        public string? PackageName { get; set; }
+        public string PackageTier { get; set; } = "VIP";
+        public DateTime? EndDate { get; set; }
+        public bool IsActive { get; set; } = true;
+
+        public string FormattedCardCode
+        {
+            get
+            {
+                var clean = string.IsNullOrWhiteSpace(CardCode) ? $"GYM-MB-{MemberId:D4}" : CardCode;
+                // Nếu dạng GYM-MB-0001 -> GYM - MB - 0001
+                if (clean.StartsWith("GYM-MB-", StringComparison.OrdinalIgnoreCase))
+                {
+                    return "GYM - MB - " + clean[7..];
+                }
+                return clean;
+            }
+        }
+
+        public string RawCardCode => string.IsNullOrWhiteSpace(CardCode) ? $"GYM-MB-{MemberId:D4}" : CardCode;
+        public string RawQrData => string.IsNullOrWhiteSpace(QrCode) ? RawCardCode : QrCode;
     }
 }

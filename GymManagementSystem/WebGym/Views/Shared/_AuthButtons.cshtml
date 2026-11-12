@@ -1,4 +1,5 @@
 @inject WebGym.Data.ApplicationDbContext _context
+@using Microsoft.EntityFrameworkCore
 @* Cụm nút Đăng nhập / Đăng ký trên thanh điều hướng kiểu Pulse.
    Chưa đăng nhập → mở modal (href giữ làm fallback khi tắt JS).
    Đã đăng nhập  → hiện tên + link vào khu vực của vai trò + nút đăng xuất. *@
@@ -14,12 +15,16 @@
     var userIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
     if (int.TryParse(userIdStr, out var uId))
     {
-        var member = _context.Members.FirstOrDefault(m => m.UserId == uId);
-        if (!string.IsNullOrEmpty(member?.AvatarUrl))
+        if (User.IsInRole("Member"))
         {
-            userAvatar = member.AvatarUrl;
+            userAvatar = _context.Members.AsNoTracking().FirstOrDefault(m => m.UserId == uId)?.AvatarUrl;
         }
-        else
+        else if (User.IsInRole("PT") || User.IsInRole("Trainer"))
+        {
+            userAvatar = _context.Trainers.AsNoTracking().FirstOrDefault(t => t.UserId == uId)?.AvatarUrl;
+        }
+
+        if (string.IsNullOrEmpty(userAvatar))
         {
             var avatarDiskPath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatars", $"user_{uId}.jpg");
             if (System.IO.File.Exists(avatarDiskPath))
@@ -29,22 +34,17 @@
         }
     }
 
+    var defaultAvatar = Url.Content("~/images/default-avatar.svg");
+    var resolvedAvatar = !string.IsNullOrWhiteSpace(userAvatar)
+        ? (userAvatar.StartsWith("http", StringComparison.OrdinalIgnoreCase) 
+            ? userAvatar 
+            : Url.Content(userAvatar.StartsWith("~") ? userAvatar : (userAvatar.StartsWith("/") ? userAvatar : "~/images/" + userAvatar)))
+        : defaultAvatar;
+
     <div class="auth-actions">
-        <a class="auth-user @(!string.IsNullOrEmpty(userAvatar) ? "has-avatar" : "")" href="@home" title="Trang cá nhân: @name" aria-label="Trang cá nhân của @name">
-            @if (!string.IsNullOrEmpty(userAvatar))
-            {
-                <img src="@userAvatar" alt="Avatar" class="auth-user-avatar" />
-            }
-            else
-            {
-                <span class="auth-user-placeholder">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="17" height="17" aria-hidden="true">
-                        <circle cx="12" cy="8" r="4"></circle>
-                        <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"></path>
-                    </svg>
-                </span>
-            }
-            <span class="auth-user-name">@name</span>
+        <a class="auth-user has-avatar" href="@home" title="Vào khu vực của bạn">
+            <img src="@resolvedAvatar" alt="Avatar" class="auth-user-avatar" />
+            <span>@name</span>
         </a>
         <form class="auth-logout" asp-area="" asp-controller="Auth" asp-action="Logout" method="post">
             <button type="submit" title="Đăng xuất khỏi hệ thống">Đăng xuất</button>

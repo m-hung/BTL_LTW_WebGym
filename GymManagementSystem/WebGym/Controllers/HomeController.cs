@@ -30,8 +30,19 @@ namespace WebGym.Controllers
                 .Include(t => t.User)
                 .ToListAsync();
 
+            // Lấy danh sách lớp học nhóm cho phần giới thiệu trang chủ
+            var groupClasses = await _context.GymClasses
+                .Include(c => c.Trainer)
+                    .ThenInclude(t => t.User)
+                .Include(c => c.Room)
+                .Include(c => c.ClassBookings)
+                .Where(c => c.Status != "Cancelled")
+                .OrderBy(c => c.ClassId)
+                .ToListAsync();
+
             ViewBag.FeaturedPackages = featuredPackages;
             ViewBag.Trainers = trainers;
+            ViewBag.GroupClasses = groupClasses;
             return View(featuredPackages);
         }
 

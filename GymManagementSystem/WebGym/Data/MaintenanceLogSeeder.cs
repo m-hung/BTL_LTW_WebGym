@@ -92,7 +92,19 @@ namespace WebGym.Data
                     PerformedBy = "Bảo trì nội bộ Gym",
                     Status = "Hoàn thành",
                     Notes = "Tất cả các nấc nạp cáp trượt trơn tru."
-                }
+                },
+
+                // === BỔ SUNG BẢO TRÌ THIẾT BỊ TRẢI RỘNG CÁC THÁNG NĂM 2026 ===
+                new MaintenanceLog { LogId = 9, EquipmentId = 1, MaintenanceDate = new DateTime(2026, 1, 20), Description = "Kiểm tra tổng quát máy chạy bộ Technogym đầu năm, hiệu chuẩn độ nghiêng 15% và vệ sinh quạt tản nhiệt.", Cost = 650000m, PerformedBy = "Technogym Vietnam Services", Status = "Hoàn thành", Notes = "Hoạt động ổn định." },
+                new MaintenanceLog { LogId = 10, EquipmentId = 3, MaintenanceDate = new DateTime(2026, 2, 18), Description = "Vệ sinh cụm cảm biến từ tính kháng lực xe đạp Matrix CXP và siết chặt bàn đạp.", Cost = 450000m, PerformedBy = "Bảo trì nội bộ Gym", Status = "Hoàn thành", Notes = "Đo công suất Watt chính xác." },
+                new MaintenanceLog { LogId = 11, EquipmentId = 6, MaintenanceDate = new DateTime(2026, 3, 14), Description = "Kiểm tra chốt an toàn J-hooks và thanh chắn trên khung Power Rack, sơn dặm chống gỉ phần đế.", Cost = 500000m, PerformedBy = "Xưởng cơ khí Thành Phát", Status = "Hoàn thành", Notes = "Đảm bảo tải trọng 400kg." },
+                new MaintenanceLog { LogId = 12, EquipmentId = 7, MaintenanceDate = new DateTime(2026, 4, 22), Description = "Siết bulong giá đỡ giàn tạ đơn, thay mới đệm cao su chống va đập trên 6 cặp tạ từ 20-35kg.", Cost = 900000m, PerformedBy = "Bảo trì nội bộ Gym", Status = "Hoàn thành", Notes = "Giảm tiếng ồn khi hạ tạ." },
+                new MaintenanceLog { LogId = 13, EquipmentId = 2, MaintenanceDate = new DateTime(2026, 5, 19), Description = "Thay thảm chạy và kiểm tra bo mạch công suất máy chạy bộ Life Fitness sau 6 tháng vận hành cao điểm.", Cost = 2200000m, PerformedBy = "Kỹ thuật viên phòng máy (Nguyễn Văn Bình)", Status = "Hoàn thành", Notes = "Thảm chạy mới êm ái, độ bám tốt." },
+                new MaintenanceLog { LogId = 14, EquipmentId = 8, MaintenanceDate = new DateTime(2026, 6, 16), Description = "Tra dầu puly ròng rọc máy ép ngực và vệ sinh thanh dẫn trượt chồng tạ 90kg.", Cost = 400000m, PerformedBy = "Bảo trì nội bộ Gym", Status = "Hoàn thành", Notes = "Chuyển động mượt." },
+                new MaintenanceLog { LogId = 15, EquipmentId = 9, MaintenanceDate = new DateTime(2026, 7, 25), Description = "Kiểm tra cơ cấu khóa an toàn 2 bên của máy đạp đùi Leg Press 45 độ và thay 2 chốt lò xo.", Cost = 800000m, PerformedBy = "Xưởng cơ khí & da thể thao Thành Phát", Status = "Hoàn thành", Notes = "Đạt chuẩn an toàn kỹ thuật." },
+                new MaintenanceLog { LogId = 16, EquipmentId = 3, MaintenanceDate = new DateTime(2026, 9, 10), Description = "Thay mới yên đệm gel thể thao và kiểm tra bộ truyền động dây curoa xe đạp Matrix CXP.", Cost = 700000m, PerformedBy = "Bảo trì nội bộ Gym", Status = "Hoàn thành", Notes = "Phục vụ lớp Spinning RPM." },
+                new MaintenanceLog { LogId = 17, EquipmentId = 4, MaintenanceDate = new DateTime(2026, 11, 4), Description = "Hoàn tất thay thế cụm xích mạ niken và hiệu chỉnh màn hình PM5 máy chèo thuyền Concept2.", Cost = 1100000m, PerformedBy = "Trung tâm sửa chữa thiết bị thể thao Việt Á", Status = "Hoàn thành", Notes = "Đã nghiệm thu bàn giao đưa vào sử dụng." },
+                new MaintenanceLog { LogId = 18, EquipmentId = 1, MaintenanceDate = new DateTime(2026, 11, 11), Description = "Bảo dưỡng định kỳ trước đợt cao điểm cuối năm: vệ sinh motor, bôi trơn băng tải máy chạy Technogym.", Cost = 550000m, PerformedBy = "Technogym Vietnam Services", Status = "Hoàn thành", Notes = "Máy vận hành ổn định 100%." }
             };
         }
     }

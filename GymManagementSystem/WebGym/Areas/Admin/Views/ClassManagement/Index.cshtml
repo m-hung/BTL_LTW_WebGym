@@ -18,7 +18,7 @@
         </a>
         <a asp-controller="ClassBookingManagement" asp-action="Index" class="btn btn-outline-dark d-flex align-items-center gap-2 px-3 py-2 rounded-3 shadow-sm">
             <i class="bi bi-card-checklist"></i>
-            <span class="fw-semibold">Danh Sách Đăng Ký & Điểm Danh</span>
+            <span class="fw-semibold">Điểm Danh Tham Gia Lớp</span>
         </a>
     </div>
 </div>
@@ -149,17 +149,11 @@
                         var percent = c.MaxCapacity > 0 ? (c.CurrentCapacity * 100 / c.MaxCapacity) : 0;
                         <tr>
                             <td>
-                                @if (!string.IsNullOrEmpty(c.ImageUrl))
-                                {
-                                    <img src="@c.ImageUrl" alt="@c.ClassName" class="rounded-3 border object-fit-cover" style="width: 50px; height: 50px;" 
-                                         onerror="this.onerror=null; this.src='/images/default-class.png';" />
+                                @{
+                                    var resolvedImg = WebGym.Areas.Member.Controllers.ClassBookingController.ResolveClassImage(c.ImageUrl, c.ClassName);
                                 }
-                                else
-                                {
-                                    <div class="bg-light rounded-3 d-flex align-items-center justify-content-center text-muted border" style="width: 50px; height: 50px;">
-                                        <i class="bi bi-person-video3 fs-4"></i>
-                                    </div>
-                                }
+                                <img src="@resolvedImg" alt="@c.ClassName" class="rounded-3 border object-fit-cover" style="width: 50px; height: 50px;"
+                                     onerror="this.onerror=null; this.src='/images/default-class.png';" />
                             </td>
                             <td>
                                 <div class="fw-bold text-dark fs-6">@c.ClassName</div>

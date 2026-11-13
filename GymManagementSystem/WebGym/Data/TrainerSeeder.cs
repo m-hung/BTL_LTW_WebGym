@@ -39,6 +39,47 @@ namespace WebGym.Data
                     Specialization = "Pilates, Yoga & Điều chỉnh tư thế cột sống (Rehabilitation)",
                     Bio = "Chuyên gia phục hồi tư thế, tăng độ dẻo dai và giảm đau mỏi lưng cổ vai gáy cho dân văn phòng.",
                     AvatarUrl = "~/images/coach3.jpg"
+                },
+                // 5 PT phương Tây chuyên phụ trách 5 lớp học nhóm
+                new Trainer
+                {
+                    TrainerId = 4,
+                    UserId = 10,
+                    Specialization = "Hatha Yoga & Thiền Định Phục Hồi (Yoga Alliance RYT-500)",
+                    Bio = "HLV 7 năm kinh nghiệm giảng dạy Hatha Yoga, thở chánh niệm và phục hồi cân bằng thân - tâm - trí.",
+                    AvatarUrl = "~/images/coach4.jpg"
+                },
+                new Trainer
+                {
+                    TrainerId = 5,
+                    UserId = 11,
+                    Specialization = "Spinning RPM & Sức Bền Tim Mạch (Indoor Cycling Coach)",
+                    Bio = "HLV 6 năm kinh nghiệm dẫn dắt các lớp đạp xe trong nhà cường độ cao và HIIT đốt mỡ.",
+                    AvatarUrl = "~/images/coach5.jpg"
+                },
+                new Trainer
+                {
+                    TrainerId = 6,
+                    UserId = 12,
+                    Specialization = "BodyPump & Sức Mạnh Kháng Lực (Les Mills Certified)",
+                    Bio = "HLV 8 năm kinh nghiệm huấn luyện BodyPump với thanh đòn tạ và tăng sức bền cơ bắp toàn thân.",
+                    AvatarUrl = "~/images/coach6.jpg"
+                },
+                new Trainer
+                {
+                    TrainerId = 7,
+                    UserId = 13,
+                    Specialization = "Kickfit, Muay Thai & Cardio Boxing (Combat Conditioning)",
+                    Bio = "HLV 5 năm kinh nghiệm thi đấu và giảng dạy Boxing, Kickfit tự vệ rèn phản xạ nhanh nhẹn.",
+                    AvatarUrl = "~/images/coach7.jpg"
+                },
+                new Trainer
+                {
+                    TrainerId = 8,
+                    UserId = 14,
+                    Specialization = "Pilates Reformer & Điều Chỉnh Tư Thế (Core & Mobility)",
+                    Bio = "HLV 6 năm kinh nghiệm trị liệu cột sống, cải thiện tư thế và làm săn chắc cơ lõi Core với Pilates.",
+                    AvatarUrl = "~/images/coach8.jpg"
                 }
             };
         }

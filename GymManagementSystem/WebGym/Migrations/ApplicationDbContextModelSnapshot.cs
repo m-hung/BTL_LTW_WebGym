@@ -135,7 +135,7 @@ namespace WebGym.Migrations
                         new
                         {
                             BookingId = 8,
-                            BookingDate = new DateTime(2026, 11, 4, 0, 0, 0, 0, DateTimeKind.Utc),
+                            BookingDate = new DateTime(2026, 11, 16, 0, 0, 0, 0, DateTimeKind.Utc),
                             MemberId = 4,
                             Notes = "Hội viên mới đăng ký buổi đầu thẩm định thể lực",
                             Status = "Pending",
@@ -145,7 +145,7 @@ namespace WebGym.Migrations
                         new
                         {
                             BookingId = 9,
-                            BookingDate = new DateTime(2026, 11, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            BookingDate = new DateTime(2026, 11, 17, 0, 0, 0, 0, DateTimeKind.Utc),
                             MemberId = 3,
                             Notes = "Tập vai & cơ bụng core strength",
                             Status = "Pending",
@@ -155,7 +155,7 @@ namespace WebGym.Migrations
                         new
                         {
                             BookingId = 10,
-                            BookingDate = new DateTime(2026, 11, 6, 0, 0, 0, 0, DateTimeKind.Utc),
+                            BookingDate = new DateTime(2026, 11, 18, 0, 0, 0, 0, DateTimeKind.Utc),
                             MemberId = 5,
                             Notes = "Đăng ký buổi tập bù ca tuần trước",
                             Status = "Pending",
@@ -245,7 +245,7 @@ namespace WebGym.Migrations
                         new
                         {
                             BookingId = 29,
-                            BookingDate = new DateTime(2026, 11, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            BookingDate = new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Utc),
                             MemberId = 23,
                             Notes = "Luyện tập thân dưới và thăng bằng cơ thể",
                             Status = "Pending",
@@ -285,7 +285,7 @@ namespace WebGym.Migrations
                         new
                         {
                             BookingId = 33,
-                            BookingDate = new DateTime(2026, 11, 7, 0, 0, 0, 0, DateTimeKind.Utc),
+                            BookingDate = new DateTime(2026, 11, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                             MemberId = 2,
                             Notes = "Tập eo thon và cơ lưng dưới",
                             Status = "Pending",
@@ -300,6 +300,686 @@ namespace WebGym.Migrations
                             Notes = "Tập tăng cơ đùi và điều chỉnh tư thế bước đi",
                             Status = "Approved",
                             TimeSlot = "14:00 - 15:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 35,
+                            BookingDate = new DateTime(2026, 11, 9, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 1,
+                            Notes = "Tập ngực trên & vai trước (Incline Press)",
+                            Status = "Completed",
+                            TimeSlot = "07:00 - 08:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 36,
+                            BookingDate = new DateTime(2026, 11, 9, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 21,
+                            Notes = "Mông đùi & ổn định khớp gối",
+                            Status = "Completed",
+                            TimeSlot = "09:30 - 11:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 37,
+                            BookingDate = new DateTime(2026, 11, 9, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 22,
+                            Notes = "Tập kéo lưng xô & tay trước (Pull Day)",
+                            Status = "Completed",
+                            TimeSlot = "17:00 - 18:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 38,
+                            BookingDate = new DateTime(2026, 11, 9, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 3,
+                            Notes = "Heavy Squat 5x5 tăng sức mạnh thân dưới",
+                            Status = "Completed",
+                            TimeSlot = "19:00 - 20:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 39,
+                            BookingDate = new DateTime(2026, 11, 10, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 24,
+                            Notes = "Deadlift kỹ thuật & sức mạnh cơ dựng lưng",
+                            Status = "Completed",
+                            TimeSlot = "07:00 - 08:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 40,
+                            BookingDate = new DateTime(2026, 11, 10, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 2,
+                            Notes = "Siết eo & Cardio HIIT cuối buổi",
+                            Status = "Completed",
+                            TimeSlot = "10:00 - 11:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 41,
+                            BookingDate = new DateTime(2026, 11, 10, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 23,
+                            Notes = "Giãn cơ cổ vai gáy & Core Balance",
+                            Status = "Completed",
+                            TimeSlot = "15:30 - 17:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 42,
+                            BookingDate = new DateTime(2026, 11, 10, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 5,
+                            Notes = "Tập thân trên toàn diện & đốt mỡ",
+                            Status = "Completed",
+                            TimeSlot = "18:00 - 19:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 43,
+                            BookingDate = new DateTime(2026, 11, 11, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 1,
+                            Notes = "Chân & Bắp chân (Squat + Leg Press)",
+                            Status = "Completed",
+                            TimeSlot = "08:00 - 09:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 44,
+                            BookingDate = new DateTime(2026, 11, 11, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 4,
+                            Notes = "Cải thiện sức bền thân dưới",
+                            Status = "Completed",
+                            TimeSlot = "14:00 - 15:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 45,
+                            BookingDate = new DateTime(2026, 11, 11, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 21,
+                            Notes = "Tập lưng trên & tay sau săn chắc",
+                            Status = "Approved",
+                            TimeSlot = "17:30 - 19:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 46,
+                            BookingDate = new DateTime(2026, 11, 11, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 22,
+                            Notes = "Vai rộng & cơ cầu vai (Overhead Press)",
+                            Status = "Approved",
+                            TimeSlot = "19:30 - 21:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 47,
+                            BookingDate = new DateTime(2026, 11, 12, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 24,
+                            Notes = "Bench Press nặng & phụ trợ tay sau",
+                            Status = "Approved",
+                            TimeSlot = "07:00 - 08:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 48,
+                            BookingDate = new DateTime(2026, 11, 12, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 3,
+                            Notes = "Lưng xô & Kéo xà có tải trọng",
+                            Status = "Approved",
+                            TimeSlot = "09:30 - 11:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 49,
+                            BookingDate = new DateTime(2026, 11, 12, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 23,
+                            Notes = "Glute Bridge & Romanian Deadlift nhẹ",
+                            Status = "Approved",
+                            TimeSlot = "15:30 - 17:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 50,
+                            BookingDate = new DateTime(2026, 11, 12, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 1,
+                            Notes = "Vai, bụng & 20 phút chạy dốc đốt mỡ",
+                            Status = "Approved",
+                            TimeSlot = "18:00 - 19:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 51,
+                            BookingDate = new DateTime(2026, 11, 13, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 2,
+                            Notes = "Hip Thrust & Lunges đốt mỡ đùi",
+                            Status = "Approved",
+                            TimeSlot = "07:00 - 08:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 52,
+                            BookingDate = new DateTime(2026, 11, 13, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 21,
+                            Notes = "Full Body Conditioning & Core",
+                            Status = "Approved",
+                            TimeSlot = "09:00 - 10:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 53,
+                            BookingDate = new DateTime(2026, 11, 13, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 5,
+                            Notes = "Ngực, vai & Cardio đốt năng lượng",
+                            Status = "Approved",
+                            TimeSlot = "16:00 - 17:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 54,
+                            BookingDate = new DateTime(2026, 11, 13, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 22,
+                            Notes = "Xin tập bổ sung kỹ thuật Squat sâu",
+                            Status = "Pending",
+                            TimeSlot = "18:30 - 20:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 55,
+                            BookingDate = new DateTime(2026, 11, 14, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 1,
+                            Notes = "Tổng kết InBody giữa chu kỳ 12 tuần",
+                            Status = "Approved",
+                            TimeSlot = "08:00 - 09:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 56,
+                            BookingDate = new DateTime(2026, 11, 14, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 24,
+                            Notes = "Functional Circuit cuối tuần",
+                            Status = "Approved",
+                            TimeSlot = "10:00 - 11:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 57,
+                            BookingDate = new DateTime(2026, 11, 14, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 4,
+                            Notes = "Đặt lịch tập thân trên & tư thế vai",
+                            Status = "Pending",
+                            TimeSlot = "14:30 - 16:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 58,
+                            BookingDate = new DateTime(2026, 11, 14, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 3,
+                            Notes = "Phụ trợ tay trước sau & Core",
+                            Status = "Approved",
+                            TimeSlot = "17:00 - 18:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 59,
+                            BookingDate = new DateTime(2026, 11, 15, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 23,
+                            Notes = "Phục hồi cột sống & giãn cơ sâu",
+                            Status = "Approved",
+                            TimeSlot = "08:30 - 10:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 60,
+                            BookingDate = new DateTime(2026, 11, 15, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 2,
+                            Notes = "Cardio Zone 2 & siết cơ bụng",
+                            Status = "Approved",
+                            TimeSlot = "10:30 - 12:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 61,
+                            BookingDate = new DateTime(2026, 11, 15, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 25,
+                            Notes = "Hội viên mới đặt buổi đánh giá thể lực",
+                            Status = "Pending",
+                            TimeSlot = "16:30 - 18:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 62,
+                            BookingDate = new DateTime(2026, 11, 16, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 1,
+                            Notes = "Ngực & Tay sau tuần mới (Progressive Overload)",
+                            Status = "Approved",
+                            TimeSlot = "07:00 - 08:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 63,
+                            BookingDate = new DateTime(2026, 11, 16, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 21,
+                            Notes = "Chân mông tăng mức tạ Hip Thrust",
+                            Status = "Approved",
+                            TimeSlot = "09:30 - 11:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 64,
+                            BookingDate = new DateTime(2026, 11, 16, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 22,
+                            Notes = "Push Day tăng khối lượng tạ",
+                            Status = "Approved",
+                            TimeSlot = "18:00 - 19:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 65,
+                            BookingDate = new DateTime(2026, 11, 17, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 24,
+                            Notes = "Deadlift & Lưng giữa",
+                            Status = "Approved",
+                            TimeSlot = "07:00 - 08:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 66,
+                            BookingDate = new DateTime(2026, 11, 17, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 23,
+                            Notes = "Cải thiện độ linh hoạt khớp hông",
+                            Status = "Approved",
+                            TimeSlot = "15:30 - 17:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 67,
+                            BookingDate = new DateTime(2026, 11, 17, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 2,
+                            Notes = "Thân trên & HIIT đốt mỡ",
+                            Status = "Approved",
+                            TimeSlot = "18:30 - 20:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 68,
+                            BookingDate = new DateTime(2026, 11, 18, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 1,
+                            Notes = "Chân & Mông cường độ vừa",
+                            Status = "Approved",
+                            TimeSlot = "08:00 - 09:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 69,
+                            BookingDate = new DateTime(2026, 11, 18, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 4,
+                            Notes = "Chỉnh form Lunge & Squat",
+                            Status = "Approved",
+                            TimeSlot = "10:30 - 12:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 70,
+                            BookingDate = new DateTime(2026, 11, 18, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 21,
+                            Notes = "Lưng xô & tư thế vai",
+                            Status = "Approved",
+                            TimeSlot = "15:00 - 16:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 71,
+                            BookingDate = new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 24,
+                            Notes = "Squat & Leg Press",
+                            Status = "Approved",
+                            TimeSlot = "07:00 - 08:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 72,
+                            BookingDate = new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 3,
+                            Notes = "Bench Press nặng 5x5",
+                            Status = "Approved",
+                            TimeSlot = "09:30 - 11:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 73,
+                            BookingDate = new DateTime(2026, 11, 19, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 22,
+                            Notes = "Pull Day & Tay trước",
+                            Status = "Approved",
+                            TimeSlot = "18:00 - 19:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 74,
+                            BookingDate = new DateTime(2026, 11, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 1,
+                            Notes = "Vai & Core chống xoay",
+                            Status = "Approved",
+                            TimeSlot = "07:00 - 08:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 75,
+                            BookingDate = new DateTime(2026, 11, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 21,
+                            Notes = "Giảm mỡ toàn thân & Cardio",
+                            Status = "Approved",
+                            TimeSlot = "10:00 - 11:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 76,
+                            BookingDate = new DateTime(2026, 11, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 26,
+                            Notes = "Yêu cầu tư vấn lộ trình giảm mỡ sau sinh",
+                            Status = "Pending",
+                            TimeSlot = "14:30 - 16:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 77,
+                            BookingDate = new DateTime(2026, 11, 21, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 24,
+                            Notes = "Upper Power & Core",
+                            Status = "Approved",
+                            TimeSlot = "08:00 - 09:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 78,
+                            BookingDate = new DateTime(2026, 11, 21, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 3,
+                            Notes = "Deadlift 5x3 mục tiêu PR mới",
+                            Status = "Approved",
+                            TimeSlot = "10:30 - 12:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 79,
+                            BookingDate = new DateTime(2026, 11, 21, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 5,
+                            Notes = "HIIT Sprint & Core",
+                            Status = "Approved",
+                            TimeSlot = "16:00 - 17:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 80,
+                            BookingDate = new DateTime(2026, 11, 22, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 23,
+                            Notes = "Core Balance & Mobility",
+                            Status = "Approved",
+                            TimeSlot = "08:30 - 10:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 81,
+                            BookingDate = new DateTime(2026, 11, 22, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 4,
+                            Notes = "Mông đùi săn chắc",
+                            Status = "Approved",
+                            TimeSlot = "15:00 - 16:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 82,
+                            BookingDate = new DateTime(2026, 11, 22, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 25,
+                            Notes = "Đặt lịch tập thân trên buổi 2",
+                            Status = "Pending",
+                            TimeSlot = "17:30 - 19:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 83,
+                            BookingDate = new DateTime(2026, 11, 23, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 1,
+                            Notes = "Ngực & Tay sau cường độ cao",
+                            Status = "Approved",
+                            TimeSlot = "07:00 - 08:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 84,
+                            BookingDate = new DateTime(2026, 11, 23, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 21,
+                            Notes = "Glutes Hypertrophy",
+                            Status = "Approved",
+                            TimeSlot = "17:00 - 18:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 85,
+                            BookingDate = new DateTime(2026, 11, 23, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 22,
+                            Notes = "Squat & Calf Raise",
+                            Status = "Approved",
+                            TimeSlot = "19:00 - 20:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 86,
+                            BookingDate = new DateTime(2026, 11, 24, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 24,
+                            Notes = "Full Body Functional",
+                            Status = "Approved",
+                            TimeSlot = "07:00 - 08:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 87,
+                            BookingDate = new DateTime(2026, 11, 24, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 2,
+                            Notes = "Đo InBody & chỉnh bài tập eo",
+                            Status = "Approved",
+                            TimeSlot = "10:00 - 11:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 88,
+                            BookingDate = new DateTime(2026, 11, 24, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 5,
+                            Notes = "Lưng xô & Cardio",
+                            Status = "Approved",
+                            TimeSlot = "18:00 - 19:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 89,
+                            BookingDate = new DateTime(2026, 11, 25, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 1,
+                            Notes = "Deadlift & Lưng dày",
+                            Status = "Approved",
+                            TimeSlot = "08:00 - 09:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 90,
+                            BookingDate = new DateTime(2026, 11, 25, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 23,
+                            Notes = "Tập Core & phục hồi vai",
+                            Status = "Approved",
+                            TimeSlot = "15:30 - 17:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 91,
+                            BookingDate = new DateTime(2026, 11, 25, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 3,
+                            Notes = "Squat kỹ thuật & bắp chân",
+                            Status = "Approved",
+                            TimeSlot = "18:30 - 20:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 92,
+                            BookingDate = new DateTime(2026, 11, 26, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 24,
+                            Notes = "Overhead Press & Pull-up",
+                            Status = "Approved",
+                            TimeSlot = "07:00 - 08:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 93,
+                            BookingDate = new DateTime(2026, 11, 26, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 4,
+                            Notes = "Đốt mỡ thân dưới",
+                            Status = "Approved",
+                            TimeSlot = "14:00 - 15:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 94,
+                            BookingDate = new DateTime(2026, 11, 26, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 21,
+                            Notes = "Thân trên & siết bụng",
+                            Status = "Approved",
+                            TimeSlot = "17:30 - 19:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 95,
+                            BookingDate = new DateTime(2026, 11, 27, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 1,
+                            Notes = "Đo lại InBody cuối tháng 11",
+                            Status = "Approved",
+                            TimeSlot = "08:00 - 09:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 96,
+                            BookingDate = new DateTime(2026, 11, 27, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 2,
+                            Notes = "Tổng kết 12 tuần & giãn cơ",
+                            Status = "Approved",
+                            TimeSlot = "10:30 - 12:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 97,
+                            BookingDate = new DateTime(2026, 11, 27, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 22,
+                            Notes = "Ngực vai tay toàn diện",
+                            Status = "Approved",
+                            TimeSlot = "18:00 - 19:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 98,
+                            BookingDate = new DateTime(2026, 11, 28, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 3,
+                            Notes = "Kiểm tra sức mạnh Big 3 cuối tháng",
+                            Status = "Approved",
+                            TimeSlot = "08:30 - 10:00",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 99,
+                            BookingDate = new DateTime(2026, 11, 28, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 23,
+                            Notes = "Pilates kết hợp tạ nhẹ",
+                            Status = "Approved",
+                            TimeSlot = "15:00 - 16:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 100,
+                            BookingDate = new DateTime(2026, 11, 28, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 27,
+                            Notes = "Đặt lịch PT 1-1 mục tiêu tăng 4kg cơ",
+                            Status = "Pending",
+                            TimeSlot = "17:00 - 18:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 101,
+                            BookingDate = new DateTime(2026, 11, 29, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 24,
+                            Notes = "Điều hòa tim mạch & giãn cơ",
+                            Status = "Approved",
+                            TimeSlot = "09:00 - 10:30",
+                            TrainerId = 1
+                        },
+                        new
+                        {
+                            BookingId = 102,
+                            BookingDate = new DateTime(2026, 11, 29, 0, 0, 0, 0, DateTimeKind.Utc),
+                            MemberId = 5,
+                            Notes = "Cardio kết hợp Core cuối tuần",
+                            Status = "Approved",
+                            TimeSlot = "16:00 - 17:30",
                             TrainerId = 1
                         });
                 });
@@ -520,25 +1200,25 @@ namespace WebGym.Migrations
                         new
                         {
                             ClassBookingId = 5,
-                            BookingDate = new DateTime(2026, 11, 4, 18, 0, 0, 0, DateTimeKind.Unspecified),
+                            BookingDate = new DateTime(2026, 11, 13, 18, 30, 0, 0, DateTimeKind.Unspecified),
                             ClassId = 3,
                             MemberId = 1,
-                            Notes = "Mức tạ gánh 25kg mỗi bên.",
-                            Status = "Attended"
+                            Notes = "Xác nhận tham gia lớp BodyPump tối thứ 6.",
+                            Status = "Confirmed"
                         },
                         new
                         {
                             ClassBookingId = 6,
-                            BookingDate = new DateTime(2026, 11, 4, 18, 0, 0, 0, DateTimeKind.Unspecified),
+                            BookingDate = new DateTime(2026, 11, 13, 18, 30, 0, 0, DateTimeKind.Unspecified),
                             ClassId = 3,
                             MemberId = 5,
-                            Notes = "Tập rất sung sức.",
-                            Status = "Attended"
+                            Notes = "Đã đặt chỗ thành công.",
+                            Status = "Confirmed"
                         },
                         new
                         {
                             ClassBookingId = 7,
-                            BookingDate = new DateTime(2026, 11, 5, 19, 0, 0, 0, DateTimeKind.Unspecified),
+                            BookingDate = new DateTime(2026, 11, 14, 19, 30, 0, 0, DateTimeKind.Unspecified),
                             ClassId = 4,
                             MemberId = 3,
                             Notes = "Đã xác nhận giữ chỗ lớp đấm bốc.",
@@ -547,7 +1227,7 @@ namespace WebGym.Migrations
                         new
                         {
                             ClassBookingId = 8,
-                            BookingDate = new DateTime(2026, 11, 7, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            BookingDate = new DateTime(2026, 11, 14, 8, 30, 0, 0, DateTimeKind.Unspecified),
                             ClassId = 5,
                             MemberId = 2,
                             Notes = "Học viên yêu cầu điều chỉnh tư thế thắt lưng.",
@@ -556,10 +1236,613 @@ namespace WebGym.Migrations
                         new
                         {
                             ClassBookingId = 9,
-                            BookingDate = new DateTime(2026, 11, 7, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            BookingDate = new DateTime(2026, 11, 14, 8, 30, 0, 0, DateTimeKind.Unspecified),
                             ClassId = 5,
                             MemberId = 4,
                             Notes = "Đã xếp máy Reformer số 3.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 11,
+                            BookingDate = new DateTime(2026, 11, 13, 6, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 1,
+                            MemberId = 25,
+                            Notes = "Đăng ký học Yoga buổi sáng.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 12,
+                            BookingDate = new DateTime(2026, 11, 13, 6, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 1,
+                            MemberId = 26,
+                            Notes = "Hội viên mang thảm cá nhân.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 13,
+                            BookingDate = new DateTime(2026, 11, 13, 6, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 1,
+                            MemberId = 27,
+                            Notes = "Giãn cơ phục hồi sau chạy bộ.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 14,
+                            BookingDate = new DateTime(2026, 11, 13, 6, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 1,
+                            MemberId = 28,
+                            Notes = "Đăng ký qua cổng hội viên.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 15,
+                            BookingDate = new DateTime(2026, 11, 13, 6, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 1,
+                            MemberId = 29,
+                            Notes = "Tập trung cải thiện nhịp thở.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 16,
+                            BookingDate = new DateTime(2026, 11, 13, 6, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 1,
+                            MemberId = 30,
+                            Notes = "Đăng ký lớp HLV Elena.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 17,
+                            BookingDate = new DateTime(2026, 11, 13, 6, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 1,
+                            MemberId = 31,
+                            Notes = "Đăng ký giữ chỗ trước.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 18,
+                            BookingDate = new DateTime(2026, 11, 13, 6, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 1,
+                            MemberId = 32,
+                            Notes = "Giữ chỗ lớp sáng.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 19,
+                            BookingDate = new DateTime(2026, 11, 13, 6, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 1,
+                            MemberId = 33,
+                            Notes = "Giảm căng cứng vai gáy.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 20,
+                            BookingDate = new DateTime(2026, 11, 13, 6, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 1,
+                            MemberId = 34,
+                            Notes = "Tham gia cùng nhóm bạn.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 21,
+                            BookingDate = new DateTime(2026, 11, 13, 6, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 1,
+                            MemberId = 35,
+                            Notes = "Đăng ký tại quầy lễ tân.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 22,
+                            BookingDate = new DateTime(2026, 11, 13, 6, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 1,
+                            MemberId = 36,
+                            Notes = "Đăng ký qua website.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 23,
+                            BookingDate = new DateTime(2026, 11, 12, 18, 0, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 2,
+                            MemberId = 25,
+                            Notes = "Đạp xe đốt mỡ tối thứ 5.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 24,
+                            BookingDate = new DateTime(2026, 11, 12, 18, 0, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 2,
+                            MemberId = 26,
+                            Notes = "Đăng ký giữ xe hàng đầu.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 25,
+                            BookingDate = new DateTime(2026, 11, 12, 18, 0, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 2,
+                            MemberId = 27,
+                            Notes = "Lớp Cardio cùng HLV Marcus.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 26,
+                            BookingDate = new DateTime(2026, 11, 12, 18, 0, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 2,
+                            MemberId = 28,
+                            Notes = "Chuẩn bị sẵn bình nước điện giải.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 27,
+                            BookingDate = new DateTime(2026, 11, 12, 18, 0, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 2,
+                            MemberId = 29,
+                            Notes = "Mục tiêu đốt 700 kcal.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 28,
+                            BookingDate = new DateTime(2026, 11, 12, 18, 0, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 2,
+                            MemberId = 30,
+                            Notes = "Đăng ký online.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 29,
+                            BookingDate = new DateTime(2026, 11, 12, 18, 0, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 2,
+                            MemberId = 31,
+                            Notes = "Đăng ký qua cổng hội viên.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 30,
+                            BookingDate = new DateTime(2026, 11, 12, 18, 0, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 2,
+                            MemberId = 32,
+                            Notes = "Tăng sức bền tim mạch.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 31,
+                            BookingDate = new DateTime(2026, 11, 12, 18, 0, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 2,
+                            MemberId = 33,
+                            Notes = "Giữ chỗ lớp tối.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 32,
+                            BookingDate = new DateTime(2026, 11, 12, 18, 0, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 2,
+                            MemberId = 34,
+                            Notes = "Tập luyện theo nhịp nhạc RPM.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 33,
+                            BookingDate = new DateTime(2026, 11, 12, 18, 0, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 2,
+                            MemberId = 35,
+                            Notes = "Đặt chỗ tại quầy.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 34,
+                            BookingDate = new DateTime(2026, 11, 12, 18, 0, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 2,
+                            MemberId = 36,
+                            Notes = "Đăng ký trực tuyến.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 35,
+                            BookingDate = new DateTime(2026, 11, 12, 18, 0, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 2,
+                            MemberId = 37,
+                            Notes = "Tham gia đều 3 buổi/tuần.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 36,
+                            BookingDate = new DateTime(2026, 11, 12, 18, 0, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 2,
+                            MemberId = 38,
+                            Notes = "Giữ chỗ thành công.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 37,
+                            BookingDate = new DateTime(2026, 11, 12, 18, 0, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 2,
+                            MemberId = 39,
+                            Notes = "Tập cardio giảm mỡ.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 38,
+                            BookingDate = new DateTime(2026, 11, 13, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 3,
+                            MemberId = 2,
+                            Notes = "Đăng ký lớp BodyPump HLV Liam.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 39,
+                            BookingDate = new DateTime(2026, 11, 13, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 3,
+                            MemberId = 3,
+                            Notes = "Giữ vị trí khu vực trung tâm.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 40,
+                            BookingDate = new DateTime(2026, 11, 13, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 3,
+                            MemberId = 4,
+                            Notes = "Sẵn sàng bộ tạ 15kg.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 41,
+                            BookingDate = new DateTime(2026, 11, 13, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 3,
+                            MemberId = 21,
+                            Notes = "Đăng ký qua cổng hội viên.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 42,
+                            BookingDate = new DateTime(2026, 11, 13, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 3,
+                            MemberId = 22,
+                            Notes = "Tập sức bền thân trên & đùi.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 43,
+                            BookingDate = new DateTime(2026, 11, 13, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 3,
+                            MemberId = 23,
+                            Notes = "Đã xác nhận tham gia.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 44,
+                            BookingDate = new DateTime(2026, 11, 13, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 3,
+                            MemberId = 24,
+                            Notes = "Tăng sức bền toàn thân.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 45,
+                            BookingDate = new DateTime(2026, 11, 13, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 3,
+                            MemberId = 25,
+                            Notes = "Giữ chỗ lớp BodyPump tối.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 46,
+                            BookingDate = new DateTime(2026, 11, 13, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 3,
+                            MemberId = 26,
+                            Notes = "Đặt chỗ thành công.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 47,
+                            BookingDate = new DateTime(2026, 11, 13, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 3,
+                            MemberId = 27,
+                            Notes = "Đăng ký tại quầy lễ tân.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 48,
+                            BookingDate = new DateTime(2026, 11, 13, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 3,
+                            MemberId = 28,
+                            Notes = "Đăng ký online.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 49,
+                            BookingDate = new DateTime(2026, 11, 13, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 3,
+                            MemberId = 29,
+                            Notes = "Tập theo giáo án sức bền.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 50,
+                            BookingDate = new DateTime(2026, 11, 13, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 3,
+                            MemberId = 30,
+                            Notes = "Xác nhận tham gia.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 51,
+                            BookingDate = new DateTime(2026, 11, 13, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 3,
+                            MemberId = 31,
+                            Notes = "Đã đăng ký trước 3 ngày.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 52,
+                            BookingDate = new DateTime(2026, 11, 13, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 3,
+                            MemberId = 32,
+                            Notes = "Tập tạ nhóm buổi tối.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 53,
+                            BookingDate = new DateTime(2026, 11, 13, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 3,
+                            MemberId = 33,
+                            Notes = "Giữ chỗ lớp tối.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 54,
+                            BookingDate = new DateTime(2026, 11, 13, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 3,
+                            MemberId = 34,
+                            Notes = "Đăng ký cùng bạn tập.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 55,
+                            BookingDate = new DateTime(2026, 11, 13, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 3,
+                            MemberId = 35,
+                            Notes = "Đặt chỗ trực tuyến.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 56,
+                            BookingDate = new DateTime(2026, 11, 13, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 3,
+                            MemberId = 36,
+                            Notes = "Xác nhận giữ chỗ.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 57,
+                            BookingDate = new DateTime(2026, 11, 13, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 3,
+                            MemberId = 37,
+                            Notes = "Đặt trước qua App/Web.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 58,
+                            BookingDate = new DateTime(2026, 11, 13, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 3,
+                            MemberId = 38,
+                            Notes = "Đã xác nhận slot.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 59,
+                            BookingDate = new DateTime(2026, 11, 13, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 3,
+                            MemberId = 39,
+                            Notes = "Sẵn sàng buổi BodyPump.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 60,
+                            BookingDate = new DateTime(2026, 11, 13, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 3,
+                            MemberId = 40,
+                            Notes = "Slot cuối cùng của lớp BodyPump.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 61,
+                            BookingDate = new DateTime(2026, 11, 14, 19, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 4,
+                            MemberId = 1,
+                            Notes = "Tập phản xạ Boxing cùng HLV Devon.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 62,
+                            BookingDate = new DateTime(2026, 11, 14, 19, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 4,
+                            MemberId = 5,
+                            Notes = "Mượn găng Boxing 12oz của phòng.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 63,
+                            BookingDate = new DateTime(2026, 11, 14, 19, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 4,
+                            MemberId = 22,
+                            Notes = "Đăng ký buổi tối thứ 5/CN.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 64,
+                            BookingDate = new DateTime(2026, 11, 14, 19, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 4,
+                            MemberId = 24,
+                            Notes = "Tăng thể lực tim mạch & đấm bao cát.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 65,
+                            BookingDate = new DateTime(2026, 11, 14, 19, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 4,
+                            MemberId = 41,
+                            Notes = "Đăng ký qua lễ tân.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 66,
+                            BookingDate = new DateTime(2026, 11, 14, 19, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 4,
+                            MemberId = 42,
+                            Notes = "Học kỹ thuật tự vệ cơ bản.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 67,
+                            BookingDate = new DateTime(2026, 11, 14, 19, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 4,
+                            MemberId = 43,
+                            Notes = "Đặt chỗ thành công.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 68,
+                            BookingDate = new DateTime(2026, 11, 14, 8, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 5,
+                            MemberId = 21,
+                            Notes = "Xếp máy Reformer số 1.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 69,
+                            BookingDate = new DateTime(2026, 11, 14, 8, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 5,
+                            MemberId = 23,
+                            Notes = "Tập cùng HLV Chloe Bennett.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 70,
+                            BookingDate = new DateTime(2026, 11, 14, 8, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 5,
+                            MemberId = 26,
+                            Notes = "Cải thiện độ linh hoạt lưng dưới.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 71,
+                            BookingDate = new DateTime(2026, 11, 14, 8, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 5,
+                            MemberId = 28,
+                            Notes = "Đăng ký lớp cuối tuần.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 72,
+                            BookingDate = new DateTime(2026, 11, 14, 8, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 5,
+                            MemberId = 30,
+                            Notes = "Giữ chỗ máy Reformer số 5.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 73,
+                            BookingDate = new DateTime(2026, 11, 14, 8, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 5,
+                            MemberId = 32,
+                            Notes = "Tập săn chắc cơ bụng Core.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 74,
+                            BookingDate = new DateTime(2026, 11, 14, 8, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 5,
+                            MemberId = 34,
+                            Notes = "Đăng ký online thành công.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 75,
+                            BookingDate = new DateTime(2026, 11, 14, 8, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 5,
+                            MemberId = 36,
+                            Notes = "Lớp trị liệu tư thế sáng cuối tuần.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 76,
+                            BookingDate = new DateTime(2026, 11, 14, 8, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 5,
+                            MemberId = 38,
+                            Notes = "Đã xác nhận slot.",
+                            Status = "Confirmed"
+                        },
+                        new
+                        {
+                            ClassBookingId = 77,
+                            BookingDate = new DateTime(2026, 11, 14, 8, 30, 0, 0, DateTimeKind.Unspecified),
+                            ClassId = 5,
+                            MemberId = 40,
+                            Notes = "Slot cuối cùng của lớp Pilates.",
                             Status = "Confirmed"
                         });
                 });
@@ -1414,31 +2697,31 @@ namespace WebGym.Migrations
                         {
                             ClassId = 1,
                             ClassName = "Hatha Yoga & Thiền Định Phục Hồi Năng Lượng",
-                            CurrentCapacity = 15,
+                            CurrentCapacity = 14,
                             Description = "Lớp học giúp cân bằng thân - tâm - trí, kéo giãn cơ bắp, giải tỏa căng thẳng và cải thiện hệ hô hấp cho người bận rộn.",
                             EndDate = new DateTime(2026, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ImageUrl = "~/images/classes/class-yoga.jpg",
+                            ImageUrl = "https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=800&auto=format&fit=crop",
                             MaxCapacity = 20,
                             RoomId = 3,
                             Schedule = "Thứ 2 - 4 - 6 (06:30 - 07:45)",
                             StartDate = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = "Open",
-                            TrainerId = 3
+                            TrainerId = 4
                         },
                         new
                         {
                             ClassId = 2,
                             ClassName = "Spinning RPM - Đua Xe Đạp Trong Nhà Đốt Mỡ Cấp Tốc",
-                            CurrentCapacity = 20,
+                            CurrentCapacity = 16,
                             Description = "Âm nhạc bùng nổ kết hợp các bài leo dốc, chạy nước rút cường độ cao giúp tiêu hao 600 - 800 kcal mỗi buổi tập.",
                             EndDate = new DateTime(2026, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ImageUrl = "~/images/classes/class-spinning.jpg",
+                            ImageUrl = "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&auto=format&fit=crop",
                             MaxCapacity = 25,
                             RoomId = 2,
                             Schedule = "Thứ 3 - 5 - 7 (18:00 - 19:15)",
                             StartDate = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = "Open",
-                            TrainerId = 2
+                            TrainerId = 5
                         },
                         new
                         {
@@ -1447,28 +2730,28 @@ namespace WebGym.Migrations
                             CurrentCapacity = 25,
                             Description = "Tập luyện với thanh đòn tạ theo giai điệu bài hát sôi động, tăng mật độ xương và săn chắc toàn bộ nhóm cơ.",
                             EndDate = new DateTime(2026, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ImageUrl = "~/images/classes/class-bodypump.jpg",
+                            ImageUrl = "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&auto=format&fit=crop",
                             MaxCapacity = 25,
                             RoomId = 1,
                             Schedule = "Thứ 2 - 4 - 6 (18:30 - 19:45)",
                             StartDate = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = "Full",
-                            TrainerId = 1
+                            TrainerId = 6
                         },
                         new
                         {
                             ClassId = 4,
                             ClassName = "Kickfit Tự Vệ & Cardio Boxing (Combat Zone)",
-                            CurrentCapacity = 10,
+                            CurrentCapacity = 8,
                             Description = "Sự kết hợp hoàn hảo giữa đấm bốc boxing, cùi chỏ muay thai và bài tập thể lực rèn luyện phản xạ nhanh nhẹn.",
                             EndDate = new DateTime(2026, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ImageUrl = "~/images/classes/class-kickfit.jpg",
+                            ImageUrl = "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&auto=format&fit=crop",
                             MaxCapacity = 15,
                             RoomId = 4,
                             Schedule = "Thứ 3 - 5 - CN (19:30 - 20:45)",
                             StartDate = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = "Open",
-                            TrainerId = 2
+                            TrainerId = 7
                         },
                         new
                         {
@@ -1477,13 +2760,13 @@ namespace WebGym.Migrations
                             CurrentCapacity = 12,
                             Description = "Phương pháp căn chỉnh khung xương chậu, cải thiện gù lưng cổ rùa và làm săn chắc cơ bụng cốt lõi Core.",
                             EndDate = new DateTime(2026, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ImageUrl = "~/images/classes/class-pilates.jpg",
+                            ImageUrl = "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=800&auto=format&fit=crop",
                             MaxCapacity = 12,
                             RoomId = 3,
                             Schedule = "Thứ 7 - Chủ Nhật (08:30 - 10:00)",
                             StartDate = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = "Full",
-                            TrainerId = 3
+                            TrainerId = 8
                         });
                 });
 
@@ -1764,6 +3047,116 @@ namespace WebGym.Migrations
                             Notes = "Tất cả các nấc nạp cáp trượt trơn tru.",
                             PerformedBy = "Bảo trì nội bộ Gym",
                             Status = "Hoàn thành"
+                        },
+                        new
+                        {
+                            LogId = 9,
+                            Cost = 650000m,
+                            Description = "Kiểm tra tổng quát máy chạy bộ Technogym đầu năm, hiệu chuẩn độ nghiêng 15% và vệ sinh quạt tản nhiệt.",
+                            EquipmentId = 1,
+                            MaintenanceDate = new DateTime(2026, 1, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Hoạt động ổn định.",
+                            PerformedBy = "Technogym Vietnam Services",
+                            Status = "Hoàn thành"
+                        },
+                        new
+                        {
+                            LogId = 10,
+                            Cost = 450000m,
+                            Description = "Vệ sinh cụm cảm biến từ tính kháng lực xe đạp Matrix CXP và siết chặt bàn đạp.",
+                            EquipmentId = 3,
+                            MaintenanceDate = new DateTime(2026, 2, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Đo công suất Watt chính xác.",
+                            PerformedBy = "Bảo trì nội bộ Gym",
+                            Status = "Hoàn thành"
+                        },
+                        new
+                        {
+                            LogId = 11,
+                            Cost = 500000m,
+                            Description = "Kiểm tra chốt an toàn J-hooks và thanh chắn trên khung Power Rack, sơn dặm chống gỉ phần đế.",
+                            EquipmentId = 6,
+                            MaintenanceDate = new DateTime(2026, 3, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Đảm bảo tải trọng 400kg.",
+                            PerformedBy = "Xưởng cơ khí Thành Phát",
+                            Status = "Hoàn thành"
+                        },
+                        new
+                        {
+                            LogId = 12,
+                            Cost = 900000m,
+                            Description = "Siết bulong giá đỡ giàn tạ đơn, thay mới đệm cao su chống va đập trên 6 cặp tạ từ 20-35kg.",
+                            EquipmentId = 7,
+                            MaintenanceDate = new DateTime(2026, 4, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Giảm tiếng ồn khi hạ tạ.",
+                            PerformedBy = "Bảo trì nội bộ Gym",
+                            Status = "Hoàn thành"
+                        },
+                        new
+                        {
+                            LogId = 13,
+                            Cost = 2200000m,
+                            Description = "Thay thảm chạy và kiểm tra bo mạch công suất máy chạy bộ Life Fitness sau 6 tháng vận hành cao điểm.",
+                            EquipmentId = 2,
+                            MaintenanceDate = new DateTime(2026, 5, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Thảm chạy mới êm ái, độ bám tốt.",
+                            PerformedBy = "Kỹ thuật viên phòng máy (Nguyễn Văn Bình)",
+                            Status = "Hoàn thành"
+                        },
+                        new
+                        {
+                            LogId = 14,
+                            Cost = 400000m,
+                            Description = "Tra dầu puly ròng rọc máy ép ngực và vệ sinh thanh dẫn trượt chồng tạ 90kg.",
+                            EquipmentId = 8,
+                            MaintenanceDate = new DateTime(2026, 6, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Chuyển động mượt.",
+                            PerformedBy = "Bảo trì nội bộ Gym",
+                            Status = "Hoàn thành"
+                        },
+                        new
+                        {
+                            LogId = 15,
+                            Cost = 800000m,
+                            Description = "Kiểm tra cơ cấu khóa an toàn 2 bên của máy đạp đùi Leg Press 45 độ và thay 2 chốt lò xo.",
+                            EquipmentId = 9,
+                            MaintenanceDate = new DateTime(2026, 7, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Đạt chuẩn an toàn kỹ thuật.",
+                            PerformedBy = "Xưởng cơ khí & da thể thao Thành Phát",
+                            Status = "Hoàn thành"
+                        },
+                        new
+                        {
+                            LogId = 16,
+                            Cost = 700000m,
+                            Description = "Thay mới yên đệm gel thể thao và kiểm tra bộ truyền động dây curoa xe đạp Matrix CXP.",
+                            EquipmentId = 3,
+                            MaintenanceDate = new DateTime(2026, 9, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Phục vụ lớp Spinning RPM.",
+                            PerformedBy = "Bảo trì nội bộ Gym",
+                            Status = "Hoàn thành"
+                        },
+                        new
+                        {
+                            LogId = 17,
+                            Cost = 1100000m,
+                            Description = "Hoàn tất thay thế cụm xích mạ niken và hiệu chỉnh màn hình PM5 máy chèo thuyền Concept2.",
+                            EquipmentId = 4,
+                            MaintenanceDate = new DateTime(2026, 11, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Đã nghiệm thu bàn giao đưa vào sử dụng.",
+                            PerformedBy = "Trung tâm sửa chữa thiết bị thể thao Việt Á",
+                            Status = "Hoàn thành"
+                        },
+                        new
+                        {
+                            LogId = 18,
+                            Cost = 550000m,
+                            Description = "Bảo dưỡng định kỳ trước đợt cao điểm cuối năm: vệ sinh motor, bôi trơn băng tải máy chạy Technogym.",
+                            EquipmentId = 1,
+                            MaintenanceDate = new DateTime(2026, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Notes = "Máy vận hành ổn định 100%.",
+                            PerformedBy = "Technogym Vietnam Services",
+                            Status = "Hoàn thành"
                         });
                 });
 
@@ -1990,6 +3383,402 @@ namespace WebGym.Migrations
                             UserId = 24,
                             Waist = 82.0,
                             Weight = 75.0
+                        },
+                        new
+                        {
+                            MemberId = 25,
+                            AvatarUrl = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400",
+                            BMR = 1690.0,
+                            BodyFatPercentage = 18.5,
+                            CardCode = "GYM-MB-0025",
+                            Chest = 96.0,
+                            DateOfBirth = new DateTime(1997, 3, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Gender = "Nam",
+                            Height = 175.0,
+                            Hips = 94.0,
+                            MuscleMass = 33.200000000000003,
+                            QrCode = "GYM-MB-0025",
+                            UserId = 25,
+                            Waist = 79.0,
+                            Weight = 72.0
+                        },
+                        new
+                        {
+                            MemberId = 26,
+                            AvatarUrl = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
+                            BMR = 1310.0,
+                            BodyFatPercentage = 22.0,
+                            CardCode = "GYM-MB-0026",
+                            Chest = 84.0,
+                            DateOfBirth = new DateTime(1999, 6, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Gender = "Nữ",
+                            Height = 163.0,
+                            Hips = 91.0,
+                            MuscleMass = 21.5,
+                            QrCode = "GYM-MB-0026",
+                            UserId = 26,
+                            Waist = 64.0,
+                            Weight = 53.0
+                        },
+                        new
+                        {
+                            MemberId = 27,
+                            AvatarUrl = "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=400",
+                            BMR = 1800.0,
+                            BodyFatPercentage = 20.0,
+                            CardCode = "GYM-MB-0027",
+                            Chest = 102.0,
+                            DateOfBirth = new DateTime(1995, 11, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Gender = "Nam",
+                            Height = 179.0,
+                            Hips = 98.0,
+                            MuscleMass = 36.0,
+                            QrCode = "GYM-MB-0027",
+                            UserId = 27,
+                            Waist = 84.0,
+                            Weight = 80.5
+                        },
+                        new
+                        {
+                            MemberId = 28,
+                            AvatarUrl = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400",
+                            BMR = 1280.0,
+                            BodyFatPercentage = 21.5,
+                            CardCode = "GYM-MB-0028",
+                            Chest = 82.0,
+                            DateOfBirth = new DateTime(2000, 1, 17, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Gender = "Nữ",
+                            Height = 161.0,
+                            Hips = 89.0,
+                            MuscleMass = 20.199999999999999,
+                            QrCode = "GYM-MB-0028",
+                            UserId = 28,
+                            Waist = 62.0,
+                            Weight = 51.0
+                        },
+                        new
+                        {
+                            MemberId = 29,
+                            AvatarUrl = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400",
+                            BMR = 1720.0,
+                            BodyFatPercentage = 21.0,
+                            CardCode = "GYM-MB-0029",
+                            Chest = 98.0,
+                            DateOfBirth = new DateTime(1993, 8, 29, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Gender = "Nam",
+                            Height = 174.0,
+                            Hips = 96.0,
+                            MuscleMass = 33.799999999999997,
+                            QrCode = "GYM-MB-0029",
+                            UserId = 29,
+                            Waist = 83.0,
+                            Weight = 76.0
+                        },
+                        new
+                        {
+                            MemberId = 30,
+                            AvatarUrl = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400",
+                            BMR = 1350.0,
+                            BodyFatPercentage = 23.0,
+                            CardCode = "GYM-MB-0030",
+                            Chest = 86.0,
+                            DateOfBirth = new DateTime(1998, 4, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Gender = "Nữ",
+                            Height = 165.0,
+                            Hips = 92.0,
+                            MuscleMass = 22.100000000000001,
+                            QrCode = "GYM-MB-0030",
+                            UserId = 30,
+                            Waist = 65.0,
+                            Weight = 55.0
+                        },
+                        new
+                        {
+                            MemberId = 31,
+                            AvatarUrl = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
+                            BMR = 1740.0,
+                            BodyFatPercentage = 17.5,
+                            CardCode = "GYM-MB-0031",
+                            Chest = 97.0,
+                            DateOfBirth = new DateTime(2001, 2, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Gender = "Nam",
+                            Height = 177.0,
+                            Hips = 95.0,
+                            MuscleMass = 34.5,
+                            QrCode = "GYM-MB-0031",
+                            UserId = 31,
+                            Waist = 78.0,
+                            Weight = 73.5
+                        },
+                        new
+                        {
+                            MemberId = 32,
+                            AvatarUrl = "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400",
+                            BMR = 1270.0,
+                            BodyFatPercentage = 21.0,
+                            CardCode = "GYM-MB-0032",
+                            Chest = 83.0,
+                            DateOfBirth = new DateTime(1996, 9, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Gender = "Nữ",
+                            Height = 160.0,
+                            Hips = 88.5,
+                            MuscleMass = 20.399999999999999,
+                            QrCode = "GYM-MB-0032",
+                            UserId = 32,
+                            Waist = 61.5,
+                            Weight = 50.5
+                        },
+                        new
+                        {
+                            MemberId = 33,
+                            AvatarUrl = "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400",
+                            BMR = 1840.0,
+                            BodyFatPercentage = 22.5,
+                            CardCode = "GYM-MB-0033",
+                            Chest = 104.0,
+                            DateOfBirth = new DateTime(1992, 12, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Gender = "Nam",
+                            Height = 180.0,
+                            Hips = 99.0,
+                            MuscleMass = 36.799999999999997,
+                            QrCode = "GYM-MB-0033",
+                            UserId = 33,
+                            Waist = 87.0,
+                            Weight = 84.0
+                        },
+                        new
+                        {
+                            MemberId = 34,
+                            AvatarUrl = "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400",
+                            BMR = 1330.0,
+                            BodyFatPercentage = 22.5,
+                            CardCode = "GYM-MB-0034",
+                            Chest = 85.0,
+                            DateOfBirth = new DateTime(2001, 5, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Gender = "Nữ",
+                            Height = 164.0,
+                            Hips = 91.0,
+                            MuscleMass = 21.800000000000001,
+                            QrCode = "GYM-MB-0034",
+                            UserId = 34,
+                            Waist = 64.0,
+                            Weight = 54.0
+                        },
+                        new
+                        {
+                            MemberId = 35,
+                            AvatarUrl = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400",
+                            BMR = 1680.0,
+                            BodyFatPercentage = 18.0,
+                            CardCode = "GYM-MB-0035",
+                            Chest = 95.0,
+                            DateOfBirth = new DateTime(1998, 7, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Gender = "Nam",
+                            Height = 173.0,
+                            Hips = 94.0,
+                            MuscleMass = 32.899999999999999,
+                            QrCode = "GYM-MB-0035",
+                            UserId = 35,
+                            Waist = 79.0,
+                            Weight = 71.0
+                        },
+                        new
+                        {
+                            MemberId = 36,
+                            AvatarUrl = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
+                            BMR = 1250.0,
+                            BodyFatPercentage = 20.5,
+                            CardCode = "GYM-MB-0036",
+                            Chest = 81.0,
+                            DateOfBirth = new DateTime(2002, 8, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Gender = "Nữ",
+                            Height = 159.0,
+                            Hips = 87.0,
+                            MuscleMass = 19.800000000000001,
+                            QrCode = "GYM-MB-0036",
+                            UserId = 36,
+                            Waist = 60.0,
+                            Weight = 49.0
+                        },
+                        new
+                        {
+                            MemberId = 37,
+                            AvatarUrl = "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=400",
+                            BMR = 1760.0,
+                            BodyFatPercentage = 19.5,
+                            CardCode = "GYM-MB-0037",
+                            Chest = 100.0,
+                            DateOfBirth = new DateTime(1994, 4, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Gender = "Nam",
+                            Height = 176.0,
+                            Hips = 96.0,
+                            MuscleMass = 35.100000000000001,
+                            QrCode = "GYM-MB-0037",
+                            UserId = 37,
+                            Waist = 82.0,
+                            Weight = 77.5
+                        },
+                        new
+                        {
+                            MemberId = 38,
+                            AvatarUrl = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400",
+                            BMR = 1300.0,
+                            BodyFatPercentage = 21.800000000000001,
+                            CardCode = "GYM-MB-0038",
+                            Chest = 84.0,
+                            DateOfBirth = new DateTime(1997, 10, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Gender = "Nữ",
+                            Height = 162.0,
+                            Hips = 90.0,
+                            MuscleMass = 21.0,
+                            QrCode = "GYM-MB-0038",
+                            UserId = 38,
+                            Waist = 63.0,
+                            Weight = 52.0
+                        },
+                        new
+                        {
+                            MemberId = 39,
+                            AvatarUrl = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400",
+                            BMR = 1785.0,
+                            BodyFatPercentage = 19.0,
+                            CardCode = "GYM-MB-0039",
+                            Chest = 101.0,
+                            DateOfBirth = new DateTime(1996, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Gender = "Nam",
+                            Height = 178.0,
+                            Hips = 97.0,
+                            MuscleMass = 35.899999999999999,
+                            QrCode = "GYM-MB-0039",
+                            UserId = 39,
+                            Waist = 83.0,
+                            Weight = 79.0
+                        },
+                        new
+                        {
+                            MemberId = 40,
+                            AvatarUrl = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400",
+                            BMR = 1370.0,
+                            BodyFatPercentage = 23.199999999999999,
+                            CardCode = "GYM-MB-0040",
+                            Chest = 87.0,
+                            DateOfBirth = new DateTime(1999, 12, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Gender = "Nữ",
+                            Height = 166.0,
+                            Hips = 93.0,
+                            MuscleMass = 22.600000000000001,
+                            QrCode = "GYM-MB-0040",
+                            UserId = 40,
+                            Waist = 66.0,
+                            Weight = 56.5
+                        },
+                        new
+                        {
+                            MemberId = 41,
+                            AvatarUrl = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
+                            BMR = 1715.0,
+                            BodyFatPercentage = 18.800000000000001,
+                            CardCode = "GYM-MB-0041",
+                            Chest = 98.0,
+                            DateOfBirth = new DateTime(1995, 5, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Gender = "Nam",
+                            Height = 175.0,
+                            Hips = 95.0,
+                            MuscleMass = 34.0,
+                            QrCode = "GYM-MB-0041",
+                            UserId = 41,
+                            Waist = 80.0,
+                            Weight = 74.5
+                        },
+                        new
+                        {
+                            MemberId = 42,
+                            AvatarUrl = "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400",
+                            BMR = 1275.0,
+                            BodyFatPercentage = 20.800000000000001,
+                            CardCode = "GYM-MB-0042",
+                            Chest = 82.0,
+                            DateOfBirth = new DateTime(2000, 7, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Gender = "Nữ",
+                            Height = 161.0,
+                            Hips = 89.0,
+                            MuscleMass = 20.300000000000001,
+                            QrCode = "GYM-MB-0042",
+                            UserId = 42,
+                            Waist = 61.0,
+                            Weight = 50.0
+                        },
+                        new
+                        {
+                            MemberId = 43,
+                            AvatarUrl = "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400",
+                            BMR = 1320.0,
+                            BodyFatPercentage = 22.399999999999999,
+                            CardCode = "GYM-MB-0043",
+                            Chest = 85.0,
+                            DateOfBirth = new DateTime(1998, 11, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Gender = "Nữ",
+                            Height = 163.0,
+                            Hips = 91.0,
+                            MuscleMass = 21.600000000000001,
+                            QrCode = "GYM-MB-0043",
+                            UserId = 43,
+                            Waist = 64.0,
+                            Weight = 54.0
+                        },
+                        new
+                        {
+                            MemberId = 44,
+                            AvatarUrl = "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400",
+                            BMR = 1790.0,
+                            BodyFatPercentage = 22.0,
+                            CardCode = "GYM-MB-0044",
+                            Chest = 102.0,
+                            DateOfBirth = new DateTime(1991, 9, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Gender = "Nam",
+                            Height = 177.0,
+                            Hips = 98.0,
+                            MuscleMass = 35.600000000000001,
+                            QrCode = "GYM-MB-0044",
+                            UserId = 44,
+                            Waist = 85.0,
+                            Weight = 81.0
+                        },
+                        new
+                        {
+                            MemberId = 45,
+                            AvatarUrl = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
+                            BMR = 1305.0,
+                            BodyFatPercentage = 21.899999999999999,
+                            CardCode = "GYM-MB-0045",
+                            Chest = 84.0,
+                            DateOfBirth = new DateTime(1997, 3, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Gender = "Nữ",
+                            Height = 162.0,
+                            Hips = 90.0,
+                            MuscleMass = 21.199999999999999,
+                            QrCode = "GYM-MB-0045",
+                            UserId = 45,
+                            Waist = 63.0,
+                            Weight = 52.5
+                        },
+                        new
+                        {
+                            MemberId = 46,
+                            AvatarUrl = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400",
+                            BMR = 1675.0,
+                            BodyFatPercentage = 16.5,
+                            CardCode = "GYM-MB-0046",
+                            Chest = 95.0,
+                            DateOfBirth = new DateTime(1999, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Gender = "Nam",
+                            Height = 174.0,
+                            Hips = 93.0,
+                            MuscleMass = 33.399999999999999,
+                            QrCode = "GYM-MB-0046",
+                            UserId = 46,
+                            Waist = 77.0,
+                            Weight = 70.0
                         });
                 });
 
@@ -2252,6 +4041,266 @@ namespace WebGym.Migrations
                             Status = "Chờ xác nhận",
                             TotalAmount = 2470000m,
                             UserId = 9
+                        },
+                        new
+                        {
+                            OrderId = 6,
+                            MemberId = 1,
+                            Notes = "Đơn POS đầu năm: Whey Gold + Bình lắc.",
+                            OrderDate = new DateTime(2026, 1, 18, 17, 15, 0, 0, DateTimeKind.Unspecified),
+                            PaymentMethod = "Tiền mặt",
+                            PhoneNumber = "0987654321",
+                            ShippingAddress = "Mua trực tiếp tại quầy POS",
+                            Status = "Hoàn thành",
+                            TotalAmount = 2030000m,
+                            UserId = 5
+                        },
+                        new
+                        {
+                            OrderId = 7,
+                            MemberId = 24,
+                            Notes = "Mua phụ kiện đai lưng + găng tay tại quầy.",
+                            OrderDate = new DateTime(2026, 1, 27, 19, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentMethod = "VNPay",
+                            PhoneNumber = "0987654329",
+                            ShippingAddress = "Mua trực tiếp tại quầy POS",
+                            Status = "Đã thanh toán",
+                            TotalAmount = 1240000m,
+                            UserId = 24
+                        },
+                        new
+                        {
+                            OrderId = 8,
+                            MemberId = 21,
+                            Notes = "Rule 1 Protein Isolate tại quầy lễ tân.",
+                            OrderDate = new DateTime(2026, 2, 14, 10, 30, 0, 0, DateTimeKind.Unspecified),
+                            PaymentMethod = "VNPay",
+                            PhoneNumber = "0987654326",
+                            ShippingAddress = "Mua trực tiếp tại quầy POS",
+                            Status = "Hoàn thành",
+                            TotalAmount = 1890000m,
+                            UserId = 21
+                        },
+                        new
+                        {
+                            OrderId = 9,
+                            MemberId = 22,
+                            Notes = "Creatine + Pre-Workout C4.",
+                            OrderDate = new DateTime(2026, 2, 23, 18, 45, 0, 0, DateTimeKind.Unspecified),
+                            PaymentMethod = "Tiền mặt",
+                            PhoneNumber = "0987654327",
+                            ShippingAddress = "Mua trực tiếp tại quầy POS",
+                            Status = "Hoàn thành",
+                            TotalAmount = 1370000m,
+                            UserId = 22
+                        },
+                        new
+                        {
+                            OrderId = 10,
+                            MemberId = 3,
+                            Notes = "Whey Gold + Creatine.",
+                            OrderDate = new DateTime(2026, 3, 9, 16, 20, 0, 0, DateTimeKind.Unspecified),
+                            PaymentMethod = "Chuyển khoản",
+                            PhoneNumber = "0987654323",
+                            ShippingAddress = "Mua trực tiếp tại quầy POS",
+                            Status = "Hoàn thành",
+                            TotalAmount = 2330000m,
+                            UserId = 7
+                        },
+                        new
+                        {
+                            OrderId = 11,
+                            MemberId = 25,
+                            Notes = "Áo thun GymTech + Hộp bánh Quest Bar.",
+                            OrderDate = new DateTime(2026, 3, 24, 19, 10, 0, 0, DateTimeKind.Unspecified),
+                            PaymentMethod = "Tiền mặt",
+                            PhoneNumber = "0987654330",
+                            ShippingAddress = "Mua trực tiếp tại quầy POS",
+                            Status = "Hoàn thành",
+                            TotalAmount = 950000m,
+                            UserId = 25
+                        },
+                        new
+                        {
+                            OrderId = 12,
+                            MemberId = 23,
+                            Notes = "BCAA Xtend + Bình lắc BlenderBottle.",
+                            OrderDate = new DateTime(2026, 4, 11, 11, 15, 0, 0, DateTimeKind.Unspecified),
+                            PaymentMethod = "VNPay",
+                            PhoneNumber = "0987654328",
+                            ShippingAddress = "Mua trực tiếp tại quầy POS",
+                            Status = "Hoàn thành",
+                            TotalAmount = 1430000m,
+                            UserId = 23
+                        },
+                        new
+                        {
+                            OrderId = 13,
+                            MemberId = 27,
+                            Notes = "Rule 1 Isolate + Creatine Platinum.",
+                            OrderDate = new DateTime(2026, 4, 25, 17, 40, 0, 0, DateTimeKind.Unspecified),
+                            PaymentMethod = "Tiền mặt",
+                            PhoneNumber = "0987654332",
+                            ShippingAddress = "Mua trực tiếp tại quầy POS",
+                            Status = "Đã thanh toán",
+                            TotalAmount = 2470000m,
+                            UserId = 27
+                        },
+                        new
+                        {
+                            OrderId = 14,
+                            MemberId = 1,
+                            Notes = "Whey Gold + Pre-Workout C4.",
+                            OrderDate = new DateTime(2026, 5, 12, 18, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentMethod = "VNPay",
+                            PhoneNumber = "0987654321",
+                            ShippingAddress = "Mua trực tiếp tại quầy POS",
+                            Status = "Hoàn thành",
+                            TotalAmount = 2540000m,
+                            UserId = 5
+                        },
+                        new
+                        {
+                            OrderId = 15,
+                            MemberId = 31,
+                            Notes = "Đai lưng Lever Belt + Găng tay Harbinger.",
+                            OrderDate = new DateTime(2026, 5, 28, 15, 50, 0, 0, DateTimeKind.Unspecified),
+                            PaymentMethod = "Tiền mặt",
+                            PhoneNumber = "0987654336",
+                            ShippingAddress = "Mua trực tiếp tại quầy POS",
+                            Status = "Hoàn thành",
+                            TotalAmount = 1240000m,
+                            UserId = 31
+                        },
+                        new
+                        {
+                            OrderId = 16,
+                            MemberId = 2,
+                            Notes = "BCAA Xtend + Hộp Quest Bar.",
+                            OrderDate = new DateTime(2026, 6, 8, 9, 45, 0, 0, DateTimeKind.Unspecified),
+                            PaymentMethod = "Chuyển khoản",
+                            PhoneNumber = "0987654322",
+                            ShippingAddress = "Mua trực tiếp tại quầy POS",
+                            Status = "Hoàn thành",
+                            TotalAmount = 1840000m,
+                            UserId = 6
+                        },
+                        new
+                        {
+                            OrderId = 17,
+                            MemberId = 29,
+                            Notes = "Rule 1 Isolate + Áo thun GymTech.",
+                            OrderDate = new DateTime(2026, 6, 21, 18, 30, 0, 0, DateTimeKind.Unspecified),
+                            PaymentMethod = "Tiền mặt",
+                            PhoneNumber = "0987654334",
+                            ShippingAddress = "Mua trực tiếp tại quầy POS",
+                            Status = "Hoàn thành",
+                            TotalAmount = 2150000m,
+                            UserId = 29
+                        },
+                        new
+                        {
+                            OrderId = 18,
+                            MemberId = 22,
+                            Notes = "Whey Gold + Creatine Monohydrate.",
+                            OrderDate = new DateTime(2026, 7, 14, 17, 20, 0, 0, DateTimeKind.Unspecified),
+                            PaymentMethod = "VNPay",
+                            PhoneNumber = "0987654327",
+                            ShippingAddress = "Mua trực tiếp tại quầy POS",
+                            Status = "Hoàn thành",
+                            TotalAmount = 2330000m,
+                            UserId = 22
+                        },
+                        new
+                        {
+                            OrderId = 19,
+                            MemberId = 33,
+                            Notes = "Pre-Workout C4 + Bình lắc BlenderBottle.",
+                            OrderDate = new DateTime(2026, 7, 29, 19, 15, 0, 0, DateTimeKind.Unspecified),
+                            PaymentMethod = "Tiền mặt",
+                            PhoneNumber = "0987654338",
+                            ShippingAddress = "Mua trực tiếp tại quầy POS",
+                            Status = "Đã thanh toán",
+                            TotalAmount = 1070000m,
+                            UserId = 33
+                        },
+                        new
+                        {
+                            OrderId = 20,
+                            MemberId = 24,
+                            Notes = "Rule 1 Isolate + Đai lưng Lever Belt.",
+                            OrderDate = new DateTime(2026, 8, 10, 16, 10, 0, 0, DateTimeKind.Unspecified),
+                            PaymentMethod = "VNPay",
+                            PhoneNumber = "0987654329",
+                            ShippingAddress = "Mua trực tiếp tại quầy POS",
+                            Status = "Hoàn thành",
+                            TotalAmount = 2740000m,
+                            UserId = 24
+                        },
+                        new
+                        {
+                            OrderId = 21,
+                            MemberId = 30,
+                            Notes = "2 hộp bánh Protein Quest Bar tại quầy.",
+                            OrderDate = new DateTime(2026, 8, 22, 10, 25, 0, 0, DateTimeKind.Unspecified),
+                            PaymentMethod = "Tiền mặt",
+                            PhoneNumber = "0987654335",
+                            ShippingAddress = "Mua trực tiếp tại quầy POS",
+                            Status = "Hoàn thành",
+                            TotalAmount = 1380000m,
+                            UserId = 30
+                        },
+                        new
+                        {
+                            OrderId = 22,
+                            MemberId = 21,
+                            Notes = "BCAA Xtend + Pre-Workout C4.",
+                            OrderDate = new DateTime(2026, 9, 12, 17, 0, 0, 0, DateTimeKind.Unspecified),
+                            PaymentMethod = "Chuyển khoản",
+                            PhoneNumber = "0987654326",
+                            ShippingAddress = "Mua trực tiếp tại quầy POS",
+                            Status = "Hoàn thành",
+                            TotalAmount = 1940000m,
+                            UserId = 21
+                        },
+                        new
+                        {
+                            OrderId = 23,
+                            MemberId = 37,
+                            Notes = "Whey Gold + Găng tay Harbinger.",
+                            OrderDate = new DateTime(2026, 9, 26, 18, 40, 0, 0, DateTimeKind.Unspecified),
+                            PaymentMethod = "Tiền mặt",
+                            PhoneNumber = "0987654342",
+                            ShippingAddress = "Mua trực tiếp tại quầy POS",
+                            Status = "Hoàn thành",
+                            TotalAmount = 2140000m,
+                            UserId = 37
+                        },
+                        new
+                        {
+                            OrderId = 24,
+                            MemberId = 1,
+                            Notes = "Rule 1 Isolate + Creatine Platinum mua tại quầy.",
+                            OrderDate = new DateTime(2026, 11, 5, 17, 30, 0, 0, DateTimeKind.Unspecified),
+                            PaymentMethod = "VNPay",
+                            PhoneNumber = "0987654321",
+                            ShippingAddress = "Mua trực tiếp tại quầy POS",
+                            Status = "Hoàn thành",
+                            TotalAmount = 2470000m,
+                            UserId = 5
+                        },
+                        new
+                        {
+                            OrderId = 25,
+                            MemberId = 3,
+                            Notes = "Đai lưng Lever Belt + Găng tay + Áo GymTech + Bình lắc.",
+                            OrderDate = new DateTime(2026, 11, 10, 18, 50, 0, 0, DateTimeKind.Unspecified),
+                            PaymentMethod = "Tiền mặt",
+                            PhoneNumber = "0987654323",
+                            ShippingAddress = "Mua trực tiếp tại quầy POS",
+                            Status = "Hoàn thành",
+                            TotalAmount = 1780000m,
+                            UserId = 7
                         });
                 });
 
@@ -2367,6 +4416,366 @@ namespace WebGym.Migrations
                             Quantity = 1,
                             TotalPrice = 580000m,
                             UnitPrice = 580000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 10,
+                            OrderId = 6,
+                            ProductId = 1,
+                            Quantity = 1,
+                            TotalPrice = 1750000m,
+                            UnitPrice = 1750000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 11,
+                            OrderId = 6,
+                            ProductId = 8,
+                            Quantity = 1,
+                            TotalPrice = 280000m,
+                            UnitPrice = 280000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 12,
+                            OrderId = 7,
+                            ProductId = 6,
+                            Quantity = 1,
+                            TotalPrice = 850000m,
+                            UnitPrice = 850000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 13,
+                            OrderId = 7,
+                            ProductId = 7,
+                            Quantity = 1,
+                            TotalPrice = 390000m,
+                            UnitPrice = 390000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 14,
+                            OrderId = 8,
+                            ProductId = 2,
+                            Quantity = 1,
+                            TotalPrice = 1890000m,
+                            UnitPrice = 1890000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 15,
+                            OrderId = 9,
+                            ProductId = 3,
+                            Quantity = 1,
+                            TotalPrice = 580000m,
+                            UnitPrice = 580000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 16,
+                            OrderId = 9,
+                            ProductId = 4,
+                            Quantity = 1,
+                            TotalPrice = 790000m,
+                            UnitPrice = 790000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 17,
+                            OrderId = 10,
+                            ProductId = 1,
+                            Quantity = 1,
+                            TotalPrice = 1750000m,
+                            UnitPrice = 1750000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 18,
+                            OrderId = 10,
+                            ProductId = 3,
+                            Quantity = 1,
+                            TotalPrice = 580000m,
+                            UnitPrice = 580000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 19,
+                            OrderId = 11,
+                            ProductId = 9,
+                            Quantity = 1,
+                            TotalPrice = 260000m,
+                            UnitPrice = 260000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 20,
+                            OrderId = 11,
+                            ProductId = 10,
+                            Quantity = 1,
+                            TotalPrice = 690000m,
+                            UnitPrice = 690000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 21,
+                            OrderId = 12,
+                            ProductId = 5,
+                            Quantity = 1,
+                            TotalPrice = 1150000m,
+                            UnitPrice = 1150000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 22,
+                            OrderId = 12,
+                            ProductId = 8,
+                            Quantity = 1,
+                            TotalPrice = 280000m,
+                            UnitPrice = 280000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 23,
+                            OrderId = 13,
+                            ProductId = 2,
+                            Quantity = 1,
+                            TotalPrice = 1890000m,
+                            UnitPrice = 1890000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 24,
+                            OrderId = 13,
+                            ProductId = 3,
+                            Quantity = 1,
+                            TotalPrice = 580000m,
+                            UnitPrice = 580000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 25,
+                            OrderId = 14,
+                            ProductId = 1,
+                            Quantity = 1,
+                            TotalPrice = 1750000m,
+                            UnitPrice = 1750000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 26,
+                            OrderId = 14,
+                            ProductId = 4,
+                            Quantity = 1,
+                            TotalPrice = 790000m,
+                            UnitPrice = 790000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 27,
+                            OrderId = 15,
+                            ProductId = 6,
+                            Quantity = 1,
+                            TotalPrice = 850000m,
+                            UnitPrice = 850000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 28,
+                            OrderId = 15,
+                            ProductId = 7,
+                            Quantity = 1,
+                            TotalPrice = 390000m,
+                            UnitPrice = 390000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 29,
+                            OrderId = 16,
+                            ProductId = 5,
+                            Quantity = 1,
+                            TotalPrice = 1150000m,
+                            UnitPrice = 1150000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 30,
+                            OrderId = 16,
+                            ProductId = 10,
+                            Quantity = 1,
+                            TotalPrice = 690000m,
+                            UnitPrice = 690000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 31,
+                            OrderId = 17,
+                            ProductId = 2,
+                            Quantity = 1,
+                            TotalPrice = 1890000m,
+                            UnitPrice = 1890000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 32,
+                            OrderId = 17,
+                            ProductId = 9,
+                            Quantity = 1,
+                            TotalPrice = 260000m,
+                            UnitPrice = 260000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 33,
+                            OrderId = 18,
+                            ProductId = 1,
+                            Quantity = 1,
+                            TotalPrice = 1750000m,
+                            UnitPrice = 1750000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 34,
+                            OrderId = 18,
+                            ProductId = 3,
+                            Quantity = 1,
+                            TotalPrice = 580000m,
+                            UnitPrice = 580000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 35,
+                            OrderId = 19,
+                            ProductId = 4,
+                            Quantity = 1,
+                            TotalPrice = 790000m,
+                            UnitPrice = 790000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 36,
+                            OrderId = 19,
+                            ProductId = 8,
+                            Quantity = 1,
+                            TotalPrice = 280000m,
+                            UnitPrice = 280000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 37,
+                            OrderId = 20,
+                            ProductId = 2,
+                            Quantity = 1,
+                            TotalPrice = 1890000m,
+                            UnitPrice = 1890000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 38,
+                            OrderId = 20,
+                            ProductId = 6,
+                            Quantity = 1,
+                            TotalPrice = 850000m,
+                            UnitPrice = 850000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 39,
+                            OrderId = 21,
+                            ProductId = 10,
+                            Quantity = 2,
+                            TotalPrice = 1380000m,
+                            UnitPrice = 690000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 40,
+                            OrderId = 22,
+                            ProductId = 5,
+                            Quantity = 1,
+                            TotalPrice = 1150000m,
+                            UnitPrice = 1150000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 41,
+                            OrderId = 22,
+                            ProductId = 4,
+                            Quantity = 1,
+                            TotalPrice = 790000m,
+                            UnitPrice = 790000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 42,
+                            OrderId = 23,
+                            ProductId = 1,
+                            Quantity = 1,
+                            TotalPrice = 1750000m,
+                            UnitPrice = 1750000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 43,
+                            OrderId = 23,
+                            ProductId = 7,
+                            Quantity = 1,
+                            TotalPrice = 390000m,
+                            UnitPrice = 390000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 44,
+                            OrderId = 24,
+                            ProductId = 2,
+                            Quantity = 1,
+                            TotalPrice = 1890000m,
+                            UnitPrice = 1890000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 45,
+                            OrderId = 24,
+                            ProductId = 3,
+                            Quantity = 1,
+                            TotalPrice = 580000m,
+                            UnitPrice = 580000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 46,
+                            OrderId = 25,
+                            ProductId = 6,
+                            Quantity = 1,
+                            TotalPrice = 850000m,
+                            UnitPrice = 850000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 47,
+                            OrderId = 25,
+                            ProductId = 7,
+                            Quantity = 1,
+                            TotalPrice = 390000m,
+                            UnitPrice = 390000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 48,
+                            OrderId = 25,
+                            ProductId = 9,
+                            Quantity = 1,
+                            TotalPrice = 260000m,
+                            UnitPrice = 260000m
+                        },
+                        new
+                        {
+                            OrderDetailId = 49,
+                            OrderId = 25,
+                            ProductId = 8,
+                            Quantity = 1,
+                            TotalPrice = 280000m,
+                            UnitPrice = 280000m
                         });
                 });
 
@@ -3001,7 +5410,7 @@ namespace WebGym.Migrations
                             CategoryId = 4,
                             CreatedAt = new DateTime(2026, 3, 15, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Vải Spandex pha Polyester thể thao thấm hút mồ hôi nhanh, tôn dáng cơ bắp và chống nhăn co rút.",
-                            ImageUrl = "~/images/products/gymtech-shirt.jpg",
+                            ImageUrl = "~/images/products/gymtech-shirt.svg",
                             IsActive = true,
                             Price = 260000m,
                             ProductName = "Áo Thun Tập Gym Nam Co Giãn 4 Chiều GymTech Pro",
@@ -3013,7 +5422,7 @@ namespace WebGym.Migrations
                             CategoryId = 5,
                             CreatedAt = new DateTime(2026, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "21g Protein chất lượng cao mỗi thanh, chỉ 1g đường và dồi dào chất xơ prebiotic, bữa phụ hoàn hảo lành mạnh.",
-                            ImageUrl = "~/images/products/quest-bar.jpg",
+                            ImageUrl = "~/images/products/quest-bar.svg",
                             IsActive = true,
                             Price = 690000m,
                             ProductName = "Hộp Bánh Protein Bar Quest Nutrition (Hộp 12 Thanh x 60g)",
@@ -3861,6 +6270,46 @@ namespace WebGym.Migrations
                             Bio = "Chuyên gia phục hồi tư thế, tăng độ dẻo dai và giảm đau mỏi lưng cổ vai gáy cho dân văn phòng.",
                             Specialization = "Pilates, Yoga & Điều chỉnh tư thế cột sống (Rehabilitation)",
                             UserId = 4
+                        },
+                        new
+                        {
+                            TrainerId = 4,
+                            AvatarUrl = "~/images/coach4.jpg",
+                            Bio = "HLV 7 năm kinh nghiệm giảng dạy Hatha Yoga, thở chánh niệm và phục hồi cân bằng thân - tâm - trí.",
+                            Specialization = "Hatha Yoga & Thiền Định Phục Hồi (Yoga Alliance RYT-500)",
+                            UserId = 10
+                        },
+                        new
+                        {
+                            TrainerId = 5,
+                            AvatarUrl = "~/images/coach5.jpg",
+                            Bio = "HLV 6 năm kinh nghiệm dẫn dắt các lớp đạp xe trong nhà cường độ cao và HIIT đốt mỡ.",
+                            Specialization = "Spinning RPM & Sức Bền Tim Mạch (Indoor Cycling Coach)",
+                            UserId = 11
+                        },
+                        new
+                        {
+                            TrainerId = 6,
+                            AvatarUrl = "~/images/coach6.jpg",
+                            Bio = "HLV 8 năm kinh nghiệm huấn luyện BodyPump với thanh đòn tạ và tăng sức bền cơ bắp toàn thân.",
+                            Specialization = "BodyPump & Sức Mạnh Kháng Lực (Les Mills Certified)",
+                            UserId = 12
+                        },
+                        new
+                        {
+                            TrainerId = 7,
+                            AvatarUrl = "~/images/coach7.jpg",
+                            Bio = "HLV 5 năm kinh nghiệm thi đấu và giảng dạy Boxing, Kickfit tự vệ rèn phản xạ nhanh nhẹn.",
+                            Specialization = "Kickfit, Muay Thai & Cardio Boxing (Combat Conditioning)",
+                            UserId = 13
+                        },
+                        new
+                        {
+                            TrainerId = 8,
+                            AvatarUrl = "~/images/coach8.jpg",
+                            Bio = "HLV 6 năm kinh nghiệm trị liệu cột sống, cải thiện tư thế và làm săn chắc cơ lõi Core với Pilates.",
+                            Specialization = "Pilates Reformer & Điều Chỉnh Tư Thế (Core & Mobility)",
+                            UserId = 14
                         });
                 });
 
@@ -3960,6 +6409,61 @@ namespace WebGym.Migrations
                         },
                         new
                         {
+                            UserId = 10,
+                            CreatedAt = new DateTime(2026, 5, 4, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "elena.pt@gym.com",
+                            FullName = "Elena Rostova",
+                            PasswordHash = "T6jis6FX1pX02Z7bA4WYKdv2Yv//nDSnSZ6x4/S/Z44=",
+                            PhoneNumber = "0912345681",
+                            Role = "PT",
+                            Username = "pt_elena"
+                        },
+                        new
+                        {
+                            UserId = 11,
+                            CreatedAt = new DateTime(2026, 5, 4, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "marcus.pt@gym.com",
+                            FullName = "Marcus Vance",
+                            PasswordHash = "T6jis6FX1pX02Z7bA4WYKdv2Yv//nDSnSZ6x4/S/Z44=",
+                            PhoneNumber = "0912345682",
+                            Role = "PT",
+                            Username = "pt_marcus"
+                        },
+                        new
+                        {
+                            UserId = 12,
+                            CreatedAt = new DateTime(2026, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "liam.pt@gym.com",
+                            FullName = "Liam O'Connor",
+                            PasswordHash = "T6jis6FX1pX02Z7bA4WYKdv2Yv//nDSnSZ6x4/S/Z44=",
+                            PhoneNumber = "0912345683",
+                            Role = "PT",
+                            Username = "pt_liam"
+                        },
+                        new
+                        {
+                            UserId = 13,
+                            CreatedAt = new DateTime(2026, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "devon.pt@gym.com",
+                            FullName = "Devon Brooks",
+                            PasswordHash = "T6jis6FX1pX02Z7bA4WYKdv2Yv//nDSnSZ6x4/S/Z44=",
+                            PhoneNumber = "0912345684",
+                            Role = "PT",
+                            Username = "pt_devon"
+                        },
+                        new
+                        {
+                            UserId = 14,
+                            CreatedAt = new DateTime(2026, 5, 6, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "chloe.pt@gym.com",
+                            FullName = "Chloe Bennett",
+                            PasswordHash = "T6jis6FX1pX02Z7bA4WYKdv2Yv//nDSnSZ6x4/S/Z44=",
+                            PhoneNumber = "0912345685",
+                            Role = "PT",
+                            Username = "pt_chloe"
+                        },
+                        new
+                        {
                             UserId = 5,
                             CreatedAt = new DateTime(2026, 1, 10, 8, 0, 0, 0, DateTimeKind.Utc),
                             Email = "quanghai@gmail.com",
@@ -4056,6 +6560,248 @@ namespace WebGym.Migrations
                             PhoneNumber = "0987654329",
                             Role = "Member",
                             Username = "member_huuduc"
+                        },
+                        new
+                        {
+                            UserId = 25,
+                            CreatedAt = new DateTime(2026, 2, 12, 8, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "minhan@gmail.com",
+                            FullName = "Trịnh Minh An",
+                            PasswordHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=",
+                            PhoneNumber = "0987654330",
+                            Role = "Member",
+                            Username = "member_minhan"
+                        },
+                        new
+                        {
+                            UserId = 26,
+                            CreatedAt = new DateTime(2026, 2, 18, 9, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "khanhlinh@gmail.com",
+                            FullName = "Hoàng Khánh Linh",
+                            PasswordHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=",
+                            PhoneNumber = "0987654331",
+                            Role = "Member",
+                            Username = "member_khanhlinh"
+                        },
+                        new
+                        {
+                            UserId = 27,
+                            CreatedAt = new DateTime(2026, 3, 1, 10, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "tuananh@gmail.com",
+                            FullName = "Đào Tuấn Anh",
+                            PasswordHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=",
+                            PhoneNumber = "0987654332",
+                            Role = "Member",
+                            Username = "member_tuananh"
+                        },
+                        new
+                        {
+                            UserId = 28,
+                            CreatedAt = new DateTime(2026, 3, 14, 11, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "ngocdiep@gmail.com",
+                            FullName = "Phan Ngọc Diệp",
+                            PasswordHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=",
+                            PhoneNumber = "0987654333",
+                            Role = "Member",
+                            Username = "member_ngocdiep"
+                        },
+                        new
+                        {
+                            UserId = 29,
+                            CreatedAt = new DateTime(2026, 4, 2, 14, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "quocbao@gmail.com",
+                            FullName = "Võ Quốc Bảo",
+                            PasswordHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=",
+                            PhoneNumber = "0987654334",
+                            Role = "Member",
+                            Username = "member_quocbao"
+                        },
+                        new
+                        {
+                            UserId = 30,
+                            CreatedAt = new DateTime(2026, 4, 9, 15, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "thuyduong@gmail.com",
+                            FullName = "Lý Thùy Dương",
+                            PasswordHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=",
+                            PhoneNumber = "0987654335",
+                            Role = "Member",
+                            Username = "member_thuyduong"
+                        },
+                        new
+                        {
+                            UserId = 31,
+                            CreatedAt = new DateTime(2026, 5, 11, 8, 30, 0, 0, DateTimeKind.Utc),
+                            Email = "giabao@gmail.com",
+                            FullName = "Bùi Gia Bảo",
+                            PasswordHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=",
+                            PhoneNumber = "0987654336",
+                            Role = "Member",
+                            Username = "member_giabao"
+                        },
+                        new
+                        {
+                            UserId = 32,
+                            CreatedAt = new DateTime(2026, 5, 19, 9, 30, 0, 0, DateTimeKind.Utc),
+                            Email = "hatrang@gmail.com",
+                            FullName = "Ngô Hà Trang",
+                            PasswordHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=",
+                            PhoneNumber = "0987654337",
+                            Role = "Member",
+                            Username = "member_hatrang"
+                        },
+                        new
+                        {
+                            UserId = 33,
+                            CreatedAt = new DateTime(2026, 6, 4, 10, 30, 0, 0, DateTimeKind.Utc),
+                            Email = "trongnghia@gmail.com",
+                            FullName = "Dương Trọng Nghĩa",
+                            PasswordHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=",
+                            PhoneNumber = "0987654338",
+                            Role = "Member",
+                            Username = "member_trongnghia"
+                        },
+                        new
+                        {
+                            UserId = 34,
+                            CreatedAt = new DateTime(2026, 6, 17, 13, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "myduyen@gmail.com",
+                            FullName = "Tạ Mỹ Duyên",
+                            PasswordHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=",
+                            PhoneNumber = "0987654339",
+                            Role = "Member",
+                            Username = "member_myduyen"
+                        },
+                        new
+                        {
+                            UserId = 35,
+                            CreatedAt = new DateTime(2026, 7, 3, 14, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "anhkhoa@gmail.com",
+                            FullName = "Hồ Anh Khoa",
+                            PasswordHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=",
+                            PhoneNumber = "0987654340",
+                            Role = "Member",
+                            Username = "member_anhkhoa"
+                        },
+                        new
+                        {
+                            UserId = 36,
+                            CreatedAt = new DateTime(2026, 7, 15, 16, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "thaovy@gmail.com",
+                            FullName = "Đinh Thảo Vy",
+                            PasswordHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=",
+                            PhoneNumber = "0987654341",
+                            Role = "Member",
+                            Username = "member_thaovy"
+                        },
+                        new
+                        {
+                            UserId = 37,
+                            CreatedAt = new DateTime(2026, 8, 1, 9, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "minhtuan@gmail.com",
+                            FullName = "Cao Minh Tuấn",
+                            PasswordHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=",
+                            PhoneNumber = "0987654342",
+                            Role = "Member",
+                            Username = "member_minhtuan"
+                        },
+                        new
+                        {
+                            UserId = 38,
+                            CreatedAt = new DateTime(2026, 8, 12, 10, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "kimngan@gmail.com",
+                            FullName = "Mai Kim Ngân",
+                            PasswordHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=",
+                            PhoneNumber = "0987654343",
+                            Role = "Member",
+                            Username = "member_kimngan"
+                        },
+                        new
+                        {
+                            UserId = 39,
+                            CreatedAt = new DateTime(2026, 9, 2, 11, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "ductai@gmail.com",
+                            FullName = "Lương Đức Tài",
+                            PasswordHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=",
+                            PhoneNumber = "0987654344",
+                            Role = "Member",
+                            Username = "member_ductai"
+                        },
+                        new
+                        {
+                            UserId = 40,
+                            CreatedAt = new DateTime(2026, 9, 10, 15, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "lanphuong@gmail.com",
+                            FullName = "Châu Lan Phương",
+                            PasswordHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=",
+                            PhoneNumber = "0987654345",
+                            Role = "Member",
+                            Username = "member_lanphuong"
+                        },
+                        new
+                        {
+                            UserId = 41,
+                            CreatedAt = new DateTime(2026, 9, 22, 16, 30, 0, 0, DateTimeKind.Utc),
+                            Email = "quangvinh@gmail.com",
+                            FullName = "Tô Quang Vinh",
+                            PasswordHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=",
+                            PhoneNumber = "0987654346",
+                            Role = "Member",
+                            Username = "member_quangvinh"
+                        },
+                        new
+                        {
+                            UserId = 42,
+                            CreatedAt = new DateTime(2026, 10, 3, 9, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "yennhi@gmail.com",
+                            FullName = "Vương Yến Nhi",
+                            PasswordHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=",
+                            PhoneNumber = "0987654347",
+                            Role = "Member",
+                            Username = "member_yennhi"
+                        },
+                        new
+                        {
+                            UserId = 43,
+                            CreatedAt = new DateTime(2026, 10, 11, 10, 30, 0, 0, DateTimeKind.Utc),
+                            Email = "haiha@gmail.com",
+                            FullName = "Kiều Hải Hà",
+                            PasswordHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=",
+                            PhoneNumber = "0987654348",
+                            Role = "Member",
+                            Username = "member_haiha"
+                        },
+                        new
+                        {
+                            UserId = 44,
+                            CreatedAt = new DateTime(2026, 10, 19, 14, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "tienhung@gmail.com",
+                            FullName = "Chu Tiến Hưng",
+                            PasswordHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=",
+                            PhoneNumber = "0987654349",
+                            Role = "Member",
+                            Username = "member_tienhung"
+                        },
+                        new
+                        {
+                            UserId = 45,
+                            CreatedAt = new DateTime(2026, 11, 1, 8, 45, 0, 0, DateTimeKind.Utc),
+                            Email = "bichthuy@gmail.com",
+                            FullName = "Nghiêm Bích Thủy",
+                            PasswordHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=",
+                            PhoneNumber = "0987654350",
+                            Role = "Member",
+                            Username = "member_bichthuy"
+                        },
+                        new
+                        {
+                            UserId = 46,
+                            CreatedAt = new DateTime(2026, 11, 4, 17, 15, 0, 0, DateTimeKind.Utc),
+                            Email = "hoangphuc@gmail.com",
+                            FullName = "Đoàn Hoàng Phúc",
+                            PasswordHash = "q+LT7VQZ4aIpPANKazdaYi/1pg5aww8pxGEiCJj/3Zc=",
+                            PhoneNumber = "0987654351",
+                            Role = "Member",
+                            Username = "member_hoangphuc"
                         });
                 });
 
@@ -4237,6 +6983,98 @@ namespace WebGym.Migrations
                             Status = "Active",
                             Title = "Chương Trình Sức Mạnh Nền Tảng Powerlifting & Khối Lượng Cơ Lớn",
                             TrainerId = 1
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CarbG = 176,
+                            CreatedAt = new DateTime(2026, 11, 10, 9, 15, 0, 0, DateTimeKind.Utc),
+                            EndDate = new DateTime(2027, 1, 7, 0, 0, 0, 0, DateTimeKind.Utc),
+                            FatG = 42,
+                            Goal = "AI khuyến nghị: Giảm mỡ vùng bụng đùi về 20% bodyfat, giữ khối lượng cơ nạc với lịch Push/Pull/Legs + Core.",
+                            InputJson = "{\"heightCm\":162,\"weightKg\":54.5,\"bodyFatPercent\":23.0,\"muscleMassKg\":22.5,\"dateOfBirth\":\"1998-05-12T00:00:00\",\"gender\":\"Nữ\",\"goal\":\"fat_loss\",\"sessionsPerWeek\":4,\"weekdays\":[1,2,4,6],\"sessionMinutes\":60,\"experience\":\"experienced\",\"activity\":\"sedentary\",\"diet\":\"clean\",\"allergies\":[],\"injuries\":[],\"condition\":\"none\",\"consent\":true}",
+                            IsActive = true,
+                            IsDeleted = false,
+                            MemberId = 2,
+                            NutritionAdvice = "- Calo mục tiêu: 1.498 kcal/ngày (Thâm hụt 300 kcal).\n- Đạm 104g, Tinh bột 176g, Chất béo 42g/ngày.\n- Uống 2.2L - 2.7L nước mỗi ngày.",
+                            PlanJson = "{\"version\":1,\"targets\":{\"goal\":\"fat_loss\",\"age\":28,\"bmi\":20.8,\"bmr\":1240,\"bmrSource\":\"Mifflin-St Jeor\",\"activityFactor\":1.45,\"tdee\":1798,\"targetKcal\":1498,\"kcalDelta\":-300,\"proteinPerKg\":1.9,\"proteinG\":104,\"fatG\":42,\"carbG\":176,\"proteinPct\":28,\"fatPct\":25,\"carbPct\":47,\"waterMl\":2200,\"waterMlTrainingDay\":2700,\"estimateText\":\"Khoảng 8-10 tuần giảm ~2.5-3 kg mỡ bền vững\",\"explainKcal\":\"Thâm hụt nhẹ 300 kcal/ngày giúp giảm mỡ mà không mất sức.\",\"explainMacro\":\"Đạm 1.9g/kg bảo vệ cơ nạc trong giai đoạn siết.\",\"explainWater\":\"Uống 2.2L ngày nghỉ và 2.7L ngày tập.\",\"explainEstimate\":\"Ước tính dựa trên 4 buổi/tuần kết hợp ăn sạch.\"},\"splitName\":\"Thân trên / Thân dưới 4 buổi\",\"days\":[{\"weekday\":1,\"focus\":\"Thân trên A\",\"exercises\":[{\"exerciseId\":4,\"sets\":3,\"reps\":\"10-12\",\"restSec\":75,\"note\":\"Kiểm soát hạ tạ 2 giây\"},{\"exerciseId\":14,\"sets\":3,\"reps\":\"10-12\",\"restSec\":75,\"note\":null},{\"exerciseId\":10,\"sets\":3,\"reps\":\"12-15\",\"restSec\":60,\"note\":null},{\"exerciseId\":35,\"sets\":3,\"reps\":\"45 giây\",\"restSec\":45,\"note\":\"Siết chặt core\"}],\"cardio\":\"20 phút đi bộ dốc trên máy Technogym\"},{\"weekday\":2,\"focus\":\"Thân dưới A\",\"exercises\":[{\"exerciseId\":32,\"sets\":4,\"reps\":\"10-12\",\"restSec\":90,\"note\":\"Giữ đỉnh 1 giây siết mông\"},{\"exerciseId\":29,\"sets\":3,\"reps\":\"10-12\",\"restSec\":90,\"note\":null},{\"exerciseId\":28,\"sets\":3,\"reps\":\"12\",\"restSec\":90,\"note\":null},{\"exerciseId\":39,\"sets\":3,\"reps\":\"12 mỗi bên\",\"restSec\":45,\"note\":null}],\"cardio\":null},{\"weekday\":4,\"focus\":\"Thân trên B\",\"exercises\":[{\"exerciseId\":5,\"sets\":3,\"reps\":\"12\",\"restSec\":60,\"note\":null},{\"exerciseId\":15,\"sets\":3,\"reps\":\"10-12\",\"restSec\":75,\"note\":null},{\"exerciseId\":20,\"sets\":3,\"reps\":\"15\",\"restSec\":60,\"note\":null},{\"exerciseId\":38,\"sets\":3,\"reps\":\"12 mỗi bên\",\"restSec\":45,\"note\":null}],\"cardio\":\"20 phút đạp xe Matrix CXP\"},{\"weekday\":6,\"focus\":\"Thân dưới B\",\"exercises\":[{\"exerciseId\":27,\"sets\":4,\"reps\":\"10-12\",\"restSec\":90,\"note\":null},{\"exerciseId\":31,\"sets\":3,\"reps\":\"10 mỗi bên\",\"restSec\":90,\"note\":null},{\"exerciseId\":33,\"sets\":3,\"reps\":\"12 mỗi bên\",\"restSec\":60,\"note\":null},{\"exerciseId\":36,\"sets\":3,\"reps\":\"15\",\"restSec\":60,\"note\":null}],\"cardio\":null}],\"meals\":[{\"slot\":\"Sáng\",\"dish\":\"Yến mạch sữa hạnh nhân + 2 trứng luộc\",\"kcal\":360,\"proteinG\":22},{\"slot\":\"Trưa\",\"dish\":\"150g ức gà áp chảo + 120g cơm gạo lứt + rau luộc\",\"kcal\":470,\"proteinG\":40},{\"slot\":\"Xế (trước tập)\",\"dish\":\"1 quả chuối + 1 hũ sữa chua Hy Lạp\",\"kcal\":220,\"proteinG\":14},{\"slot\":\"Tối\",\"dish\":\"150g cá hồi nướng + salad bơ rau xanh\",\"kcal\":448,\"proteinG\":32}],\"tips\":[\"Ngủ đủ 7-8 giờ mỗi đêm để phục hồi cơ và ổn định hormone.\",\"Tăng mức tạ 2.5kg khi vượt quá số rep mục tiêu ở cả 3 hiệp.\"],\"origin\":\"ai\",\"notices\":[\"Ưu tiên bài Hip Thrust & kéo lưng cải thiện vóc dáng và cột sống.\"],\"generatedAt\":\"2026-11-10T09:15:00Z\"}",
+                            ProteinG = 104,
+                            RoutineDetails = "- Thứ 2 (Thân trên A): Đẩy ngực dốc tạ đơn 3x10-12, Lat Pulldown 3x10-12, Lateral Raise 3x12-15, Plank 3x45s + Cardio 20p.\n- Thứ 3 (Thân dưới A): Hip Thrust 4x10-12, Romanian Deadlift 3x10-12, Leg Press 3x12, Dead Bug 3x12.\n- Thứ 5 (Thân trên B): Pec Fly 3x12, Seated Cable Row 3x10-12, Face Pull 3x15, Pallof Press 3x12 + Đạp xe 20p.\n- Thứ 7 (Thân dưới B): Goblet Squat 4x10-12, Bulgarian Split Squat 3x10, Cable Kickback 3x12, Cable Crunch 3x15.",
+                            Source = "AI",
+                            StartDate = new DateTime(2026, 11, 12, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Status = "PendingReview",
+                            TargetKcal = 1498,
+                            Title = "[AI Smart] Giảm mỡ & săn chắc toàn thân 4 buổi/tuần (AI)",
+                            WaterMl = 2700
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CarbG = 205,
+                            CreatedAt = new DateTime(2026, 11, 11, 8, 40, 0, 0, DateTimeKind.Utc),
+                            EndDate = new DateTime(2027, 1, 7, 0, 0, 0, 0, DateTimeKind.Utc),
+                            FatG = 45,
+                            Goal = "AI khuyến nghị: Giảm mỡ nhẹ từ 23.5% xuống 20%, tăng độ săn chắc vòng 3 và cơ bụng cốt lõi.",
+                            InputJson = "{\"heightCm\":164,\"weightKg\":56.0,\"bodyFatPercent\":23.5,\"muscleMassKg\":21.8,\"dateOfBirth\":\"2000-03-14T00:00:00\",\"gender\":\"Nữ\",\"goal\":\"fat_loss\",\"sessionsPerWeek\":3,\"weekdays\":[1,3,5],\"sessionMinutes\":60,\"experience\":\"beginner\",\"activity\":\"moderate\",\"diet\":\"clean\",\"allergies\":[\"seafood\"],\"injuries\":[],\"condition\":\"none\",\"consent\":true}",
+                            IsActive = true,
+                            IsDeleted = false,
+                            MemberId = 21,
+                            NutritionAdvice = "- Calo mục tiêu: 1.630 kcal/ngày (Loại bỏ hải sản).\n- Đạm 101g, Tinh bột 205g, Chất béo 45g/ngày.",
+                            PlanJson = "{\"version\":1,\"targets\":{\"goal\":\"fat_loss\",\"age\":26,\"bmi\":20.8,\"bmr\":1320,\"bmrSource\":\"Katch-McArdle\",\"activityFactor\":1.5,\"tdee\":1980,\"targetKcal\":1630,\"kcalDelta\":-350,\"proteinPerKg\":1.8,\"proteinG\":101,\"fatG\":45,\"carbG\":205,\"proteinPct\":25,\"fatPct\":25,\"carbPct\":50,\"waterMl\":2300,\"waterMlTrainingDay\":2800,\"estimateText\":\"Khoảng 8 tuần giảm ~3kg mỡ, vòng eo giảm 3-4 cm\",\"explainKcal\":\"Thâm hụt 350 kcal phù hợp lịch 3 buổi/tuần và vận động vừa.\",\"explainMacro\":\"Thực đơn không hải sản theo khai báo dị ứng.\",\"explainWater\":\"Bổ sung thêm 500ml nước trong các buổi tập chân mông.\",\"explainEstimate\":\"Duy trì đủ protein và giấc ngủ sẽ thấy rõ sau 4 tuần.\"},\"splitName\":\"Toàn thân 3 buổi (A - B - A)\",\"days\":[{\"weekday\":1,\"focus\":\"Toàn thân A\",\"exercises\":[{\"exerciseId\":26,\"sets\":3,\"reps\":\"10-12\",\"restSec\":90,\"note\":\"Xuống chậm kiểm soát gối\"},{\"exerciseId\":2,\"sets\":3,\"reps\":\"10-12\",\"restSec\":75,\"note\":null},{\"exerciseId\":14,\"sets\":3,\"reps\":\"12\",\"restSec\":75,\"note\":null},{\"exerciseId\":32,\"sets\":4,\"reps\":\"12\",\"restSec\":90,\"note\":\"Siết đỉnh 1 giây\"},{\"exerciseId\":35,\"sets\":3,\"reps\":\"45 giây\",\"restSec\":45,\"note\":null}],\"cardio\":\"15 phút đi bộ dốc 8%\"},{\"weekday\":3,\"focus\":\"Toàn thân B\",\"exercises\":[{\"exerciseId\":29,\"sets\":3,\"reps\":\"10-12\",\"restSec\":90,\"note\":null},{\"exerciseId\":8,\"sets\":3,\"reps\":\"12\",\"restSec\":75,\"note\":null},{\"exerciseId\":15,\"sets\":3,\"reps\":\"12\",\"restSec\":75,\"note\":null},{\"exerciseId\":33,\"sets\":3,\"reps\":\"12 mỗi bên\",\"restSec\":60,\"note\":null},{\"exerciseId\":39,\"sets\":3,\"reps\":\"12 mỗi bên\",\"restSec\":45,\"note\":null}],\"cardio\":\"20 phút đạp xe Matrix CXP\"},{\"weekday\":5,\"focus\":\"Chân & Mông + Core\",\"exercises\":[{\"exerciseId\":28,\"sets\":4,\"reps\":\"12\",\"restSec\":90,\"note\":null},{\"exerciseId\":30,\"sets\":3,\"reps\":\"10 mỗi bên\",\"restSec\":75,\"note\":null},{\"exerciseId\":16,\"sets\":3,\"reps\":\"12 mỗi bên\",\"restSec\":75,\"note\":null},{\"exerciseId\":38,\"sets\":3,\"reps\":\"12 mỗi bên\",\"restSec\":45,\"note\":null}],\"cardio\":\"15 phút đi bộ dốc trên máy Technogym\"}],\"meals\":[{\"slot\":\"Sáng\",\"dish\":\"Bánh mì nguyên cám + 2 trứng ốp la + 1/2 quả bơ\",\"kcal\":390,\"proteinG\":20},{\"slot\":\"Trưa\",\"dish\":\"150g ức gà nướng mật ong + 130g cơm + bông cải xanh\",\"kcal\":520,\"proteinG\":40},{\"slot\":\"Xế (trước tập)\",\"dish\":\"100g khoai lang hấp + 1 muỗng Whey Isolate\",\"kcal\":240,\"proteinG\":25},{\"slot\":\"Tối\",\"dish\":\"150g thịt thăn bò xào rau củ + súp lơ\",\"kcal\":480,\"proteinG\":36}],\"tips\":[\"Không ăn hải sản (tôm, cua, mực) theo hồ sơ dị ứng đã ghi nhận.\",\"Giữ lưng thẳng khi thực hiện Romanian Deadlift.\"],\"origin\":\"ai\",\"notices\":[\"Đã loại bỏ hải sản khỏi gợi ý thực đơn.\"],\"generatedAt\":\"2026-11-11T08:40:00Z\"}",
+                            ProteinG = 101,
+                            RoutineDetails = "- Thứ 2 (Toàn thân A): Squat Smith 3x10-12, Đẩy ngực Smith 3x10-12, Lat Pulldown 3x12, Hip Thrust 4x12, Plank 3x45s.\n- Thứ 4 (Toàn thân B): Romanian Deadlift 3x10-12, Đẩy vai tạ đơn 3x12, Seated Cable Row 3x12, Cable Kickback 3x12, Dead Bug 3x12.\n- Thứ 6 (Chân Mông & Core): Leg Press 4x12, Walking Lunge 3x10, Chèo tạ đơn 1 tay 3x12, Pallof Press 3x12.",
+                            Source = "AI",
+                            StartDate = new DateTime(2026, 11, 12, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Status = "PendingReview",
+                            TargetKcal = 1630,
+                            Title = "[AI Smart] Lộ trình thon gọn eo & tăng cơ mông đùi 3 buổi (AI)",
+                            WaterMl = 2800
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CarbG = 394,
+                            CreatedAt = new DateTime(2026, 11, 11, 14, 20, 0, 0, DateTimeKind.Utc),
+                            EndDate = new DateTime(2027, 1, 7, 0, 0, 0, 0, DateTimeKind.Utc),
+                            FatG = 78,
+                            Goal = "AI khuyến nghị: Dư nhẹ 250 kcal để tăng khối lượng cơ nạc toàn thân, nâng tạ đa khớp làm trọng tâm.",
+                            InputJson = "{\"heightCm\":178,\"weightKg\":82.0,\"bodyFatPercent\":24.0,\"muscleMassKg\":35.0,\"dateOfBirth\":\"1996-07-25T00:00:00\",\"gender\":\"Nam\",\"goal\":\"muscle_gain\",\"sessionsPerWeek\":4,\"weekdays\":[1,2,4,5],\"sessionMinutes\":90,\"experience\":\"experienced\",\"activity\":\"moderate\",\"diet\":\"normal\",\"allergies\":[],\"injuries\":[],\"condition\":\"none\",\"consent\":true}",
+                            IsActive = true,
+                            IsDeleted = false,
+                            MemberId = 22,
+                            NutritionAdvice = "- Calo mục tiêu: 2.965 kcal/ngày (Surplus +250 kcal).\n- Đạm 172g, Tinh bột 394g, Chất béo 78g/ngày.",
+                            PlanJson = "{\"version\":1,\"targets\":{\"goal\":\"muscle_gain\",\"age\":30,\"bmi\":25.9,\"bmr\":1810,\"bmrSource\":\"Katch-McArdle\",\"activityFactor\":1.5,\"tdee\":2715,\"targetKcal\":2965,\"kcalDelta\":250,\"proteinPerKg\":2.1,\"proteinG\":172,\"fatG\":78,\"carbG\":394,\"proteinPct\":23,\"fatPct\":24,\"carbPct\":53,\"waterMl\":2900,\"waterMlTrainingDay\":3500,\"estimateText\":\"Tăng 0.8-1.2 kg cơ nạc sau 8 tuần với áp lực tạ tăng tiến\",\"explainKcal\":\"Dư nhẹ 250 kcal giúp tăng cơ hạn chế tích mỡ bụng.\",\"explainMacro\":\"Đạm 2.1g/kg hỗ trợ tổng hợp protein cơ bắp tối ưu.\",\"explainWater\":\"Uống 3.5L vào ngày tập nặng 90 phút.\",\"explainEstimate\":\"Theo dõi tiến độ tăng tạ ở Bench Press, Squat và Barbell Row.\"},\"splitName\":\"Thân trên / Thân dưới 4 buổi\",\"days\":[{\"weekday\":1,\"focus\":\"Thân trên A\",\"exercises\":[{\"exerciseId\":1,\"sets\":4,\"reps\":\"6-8\",\"restSec\":120,\"note\":\"Chạm ngực kiểm soát\"},{\"exerciseId\":17,\"sets\":4,\"reps\":\"8\",\"restSec\":120,\"note\":null},{\"exerciseId\":9,\"sets\":3,\"reps\":\"8-10\",\"restSec\":120,\"note\":null},{\"exerciseId\":11,\"sets\":3,\"reps\":\"12\",\"restSec\":60,\"note\":null},{\"exerciseId\":22,\"sets\":3,\"reps\":\"12\",\"restSec\":60,\"note\":null}],\"cardio\":null},{\"weekday\":2,\"focus\":\"Thân dưới A\",\"exercises\":[{\"exerciseId\":25,\"sets\":4,\"reps\":\"6-8\",\"restSec\":150,\"note\":\"Phát lực mạnh từ giữa chân\"},{\"exerciseId\":28,\"sets\":3,\"reps\":\"10-12\",\"restSec\":90,\"note\":null},{\"exerciseId\":29,\"sets\":3,\"reps\":\"10\",\"restSec\":90,\"note\":null},{\"exerciseId\":34,\"sets\":4,\"reps\":\"15\",\"restSec\":60,\"note\":null},{\"exerciseId\":37,\"sets\":3,\"reps\":\"12\",\"restSec\":60,\"note\":null}],\"cardio\":null},{\"weekday\":4,\"focus\":\"Thân trên B\",\"exercises\":[{\"exerciseId\":4,\"sets\":4,\"reps\":\"8-10\",\"restSec\":90,\"note\":null},{\"exerciseId\":19,\"sets\":4,\"reps\":\"8-10\",\"restSec\":120,\"note\":null},{\"exerciseId\":10,\"sets\":4,\"reps\":\"12-15\",\"restSec\":60,\"note\":null},{\"exerciseId\":20,\"sets\":3,\"reps\":\"15\",\"restSec\":60,\"note\":null},{\"exerciseId\":23,\"sets\":3,\"reps\":\"12\",\"restSec\":60,\"note\":null}],\"cardio\":null},{\"weekday\":5,\"focus\":\"Thân dưới B\",\"exercises\":[{\"exerciseId\":18,\"sets\":4,\"reps\":\"5-6\",\"restSec\":150,\"note\":\"Khởi động kỹ lưng dưới\"},{\"exerciseId\":31,\"sets\":3,\"reps\":\"10 mỗi bên\",\"restSec\":90,\"note\":null},{\"exerciseId\":32,\"sets\":3,\"reps\":\"10\",\"restSec\":90,\"note\":null},{\"exerciseId\":36,\"sets\":4,\"reps\":\"15\",\"restSec\":60,\"note\":null}],\"cardio\":\"15 phút chèo thuyền Concept2\"}],\"meals\":[{\"slot\":\"Sáng\",\"dish\":\"Phở bò tái chín + 2 trứng chần + 1 ly sữa tươi\",\"kcal\":650,\"proteinG\":42},{\"slot\":\"Trưa\",\"dish\":\"200g ức gà / thăn bò + 2 chén cơm + rau xanh\",\"kcal\":820,\"proteinG\":55},{\"slot\":\"Xế (trước tập)\",\"dish\":\"2 lát bánh mì bơ đậu phộng + 1 muỗng Whey\",\"kcal\":440,\"proteinG\":32},{\"slot\":\"Tối\",\"dish\":\"200g cá hồi / thịt nạc + 1.5 chén cơm + canh rau\",\"kcal\":780,\"proteinG\":48}],\"tips\":[\"Ghi chép mức tạ sau mỗi buổi tập để tăng tiến đều đặn.\",\"Ngủ đủ 8 tiếng giúp tối đa hóa hormone tăng trưởng.\"],\"origin\":\"ai\",\"notices\":[\"Giáo án cường độ cao dành cho người đã có nền tảng tập trên 6 tháng.\"],\"generatedAt\":\"2026-11-11T14:20:00Z\"}",
+                            ProteinG = 172,
+                            RoutineDetails = "- Thứ 2 (Thân trên A): Bench Press 4x6-8, Barbell Row 4x8, Overhead Press 3x8-10, Tricep Pushdown 3x12, Dumbbell Curl 3x12.\n- Thứ 3 (Thân dưới A): Barbell Squat 4x6-8, Leg Press 3x10-12, Romanian Deadlift 3x10, Calf Raise 4x15, Hanging Leg Raise 3x12.\n- Thứ 5 (Thân trên B): Incline Dumbbell Press 4x8-10, Pull-up 4x8-10, Lateral Raise 4x12-15, Face Pull 3x15, Hammer Curl 3x12.\n- Thứ 6 (Thân dưới B): Deadlift 4x5-6, Bulgarian Split Squat 3x10, Hip Thrust 3x10, Cable Crunch 4x15.",
+                            Source = "AI",
+                            StartDate = new DateTime(2026, 11, 12, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Status = "PendingReview",
+                            TargetKcal = 2965,
+                            Title = "[AI Smart] Hypertrophy tăng cơ nạc 4 buổi/tuần (AI)",
+                            WaterMl = 3500
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CarbG = 354,
+                            CreatedAt = new DateTime(2026, 11, 12, 7, 30, 0, 0, DateTimeKind.Utc),
+                            EndDate = new DateTime(2027, 1, 7, 0, 0, 0, 0, DateTimeKind.Utc),
+                            FatG = 72,
+                            Goal = "AI khuyến nghị: Duy trì cân nặng hiện tại 75kg, giảm dần tỷ lệ mỡ về 17% và cải thiện VO2Max kết hợp sức mạnh.",
+                            InputJson = "{\"heightCm\":172,\"weightKg\":75.0,\"bodyFatPercent\":21.0,\"muscleMassKg\":33.0,\"dateOfBirth\":\"1994-09-08T00:00:00\",\"gender\":\"Nam\",\"goal\":\"endurance\",\"sessionsPerWeek\":4,\"weekdays\":[1,3,5,7],\"sessionMinutes\":60,\"experience\":\"experienced\",\"activity\":\"moderate\",\"diet\":\"clean\",\"allergies\":[\"dairy\"],\"injuries\":[],\"condition\":\"none\",\"consent\":true}",
+                            IsActive = true,
+                            IsDeleted = false,
+                            MemberId = 24,
+                            NutritionAdvice = "- Calo mục tiêu: 2.635 kcal/ngày (Loại bỏ sữa theo hồ sơ dị ứng).\n- Đạm 143g, Tinh bột 354g, Chất béo 72g/ngày.",
+                            PlanJson = "{\"version\":1,\"targets\":{\"goal\":\"endurance\",\"age\":32,\"bmi\":25.4,\"bmr\":1700,\"bmrSource\":\"Katch-McArdle\",\"activityFactor\":1.55,\"tdee\":2635,\"targetKcal\":2635,\"kcalDelta\":0,\"proteinPerKg\":1.9,\"proteinG\":143,\"fatG\":72,\"carbG\":354,\"proteinPct\":22,\"fatPct\":25,\"carbPct\":53,\"waterMl\":2700,\"waterMlTrainingDay\":3300,\"estimateText\":\"Thể lực và nhịp tim phục hồi cải thiện rõ rệt sau 4-6 tuần\",\"explainKcal\":\"Nạp đủ TDEE giúp phục hồi tốt giữa các buổi tạ và cardio.\",\"explainMacro\":\"Thực đơn không sữa bò theo khai báo dị ứng (dùng đạm thịt, cá, trứng, đậu).\",\"explainWater\":\"Bù điện giải sau mỗi buổi chèo thuyền hoặc chạy bộ.\",\"explainEstimate\":\"Kết hợp bài đa khớp với 20-25 phút cardio Zone 2/HIIT.\"},\"splitName\":\"Thân trên / Thân dưới + Cardio 4 buổi\",\"days\":[{\"weekday\":1,\"focus\":\"Thân trên A\",\"exercises\":[{\"exerciseId\":3,\"sets\":4,\"reps\":\"10\",\"restSec\":75,\"note\":null},{\"exerciseId\":14,\"sets\":4,\"reps\":\"10\",\"restSec\":75,\"note\":null},{\"exerciseId\":8,\"sets\":3,\"reps\":\"12\",\"restSec\":75,\"note\":null},{\"exerciseId\":35,\"sets\":3,\"reps\":\"60 giây\",\"restSec\":45,\"note\":null}],\"cardio\":\"20 phút chạy bộ trên máy Life Fitness\"},{\"weekday\":3,\"focus\":\"Thân dưới A\",\"exercises\":[{\"exerciseId\":26,\"sets\":4,\"reps\":\"10\",\"restSec\":90,\"note\":null},{\"exerciseId\":29,\"sets\":3,\"reps\":\"10\",\"restSec\":90,\"note\":null},{\"exerciseId\":30,\"sets\":3,\"reps\":\"12 mỗi bên\",\"restSec\":60,\"note\":null},{\"exerciseId\":39,\"sets\":3,\"reps\":\"12 mỗi bên\",\"restSec\":45,\"note\":null}],\"cardio\":\"15 phút chèo thuyền Concept2\"},{\"weekday\":5,\"focus\":\"Thân trên B\",\"exercises\":[{\"exerciseId\":7,\"sets\":3,\"reps\":\"15\",\"restSec\":60,\"note\":null},{\"exerciseId\":15,\"sets\":4,\"reps\":\"12\",\"restSec\":75,\"note\":null},{\"exerciseId\":20,\"sets\":3,\"reps\":\"15\",\"restSec\":60,\"note\":null},{\"exerciseId\":11,\"sets\":3,\"reps\":\"12\",\"restSec\":60,\"note\":null}],\"cardio\":\"20 phút đạp xe Matrix CXP\"},{\"weekday\":7,\"focus\":\"Thân dưới & Core\",\"exercises\":[{\"exerciseId\":28,\"sets\":4,\"reps\":\"12\",\"restSec\":90,\"note\":null},{\"exerciseId\":32,\"sets\":3,\"reps\":\"12\",\"restSec\":75,\"note\":null},{\"exerciseId\":38,\"sets\":3,\"reps\":\"12 mỗi bên\",\"restSec\":45,\"note\":null}],\"cardio\":\"25 phút đi bộ dốc / chạy bộ trên máy Technogym\"}],\"meals\":[{\"slot\":\"Sáng\",\"dish\":\"Cháo yến mạch nấu thịt bằm + 2 trứng ốp la\",\"kcal\":560,\"proteinG\":32},{\"slot\":\"Trưa\",\"dish\":\"200g ức gà nướng + 2 chén cơm gạo lứt + rau xanh\",\"kcal\":750,\"proteinG\":48},{\"slot\":\"Xế (trước tập)\",\"dish\":\"2 quả chuối + 30g hạt hạnh nhân\",\"kcal\":360,\"proteinG\":12},{\"slot\":\"Tối\",\"dish\":\"200g cá thu sốt cà + 1.5 chén cơm + canh rau cải\",\"kcal\":765,\"proteinG\":46}],\"tips\":[\"Không sử dụng chế phẩm từ sữa bò (whey cô đặc, phô mai, sữa tươi) theo hồ sơ dị ứng.\",\"Giữ nhịp thở đều trong lúc chèo thuyền Concept2.\"],\"origin\":\"ai\",\"notices\":[\"Đã loại trừ sữa và chế phẩm từ sữa trong thực đơn.\"],\"generatedAt\":\"2026-11-12T07:30:00Z\"}",
+                            ProteinG = 143,
+                            RoutineDetails = "- Thứ 2 (Thân trên A): Dumbbell Bench Press 4x10, Lat Pulldown 4x10, Seated Dumbbell Press 3x12, Plank 3x60s + Chạy bộ 20p.\n- Thứ 4 (Thân dưới A): Squat Smith 4x10, Romanian Deadlift 3x10, Walking Lunge 3x12, Dead Bug 3x12 + Chèo thuyền 15p.\n- Thứ 6 (Thân trên B): Push-up 3x15, Seated Cable Row 4x12, Face Pull 3x15, Tricep Pushdown 3x12 + Đạp xe 20p.\n- Chủ nhật (Thân dưới & Core): Leg Press 4x12, Hip Thrust 3x12, Pallof Press 3x12 + Cardio 25p.",
+                            Source = "AI",
+                            StartDate = new DateTime(2026, 11, 12, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Status = "PendingReview",
+                            TargetKcal = 2635,
+                            Title = "[AI Smart] Tăng thể lực & sức mạnh nền tảng 4 buổi (AI)",
+                            WaterMl = 3300
                         });
                 });
 

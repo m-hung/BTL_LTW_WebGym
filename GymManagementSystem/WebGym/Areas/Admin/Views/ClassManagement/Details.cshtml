@@ -16,17 +16,11 @@
 <div class="card border-0 rounded-4 shadow-sm bg-white p-4 mb-4">
     <div class="row align-items-center g-4">
         <div class="col-12 col-md-auto text-center">
-            @if (!string.IsNullOrEmpty(Model.ImageUrl))
-            {
-                <img src="@Model.ImageUrl" alt="@Model.ClassName" class="rounded-4 border object-fit-cover shadow-sm" style="width: 140px; height: 140px;" 
-                     onerror="this.onerror=null; this.src='/images/default-class.png';" />
+            @{
+                var resolvedDetailImg = WebGym.Areas.Member.Controllers.ClassBookingController.ResolveClassImage(Model.ImageUrl, Model.ClassName);
             }
-            else
-            {
-                <div class="bg-light rounded-4 d-flex align-items-center justify-content-center text-muted border shadow-sm mx-auto" style="width: 140px; height: 140px;">
-                    <i class="bi bi-person-video3 fs-1"></i>
-                </div>
-            }
+            <img src="@resolvedDetailImg" alt="@Model.ClassName" class="rounded-4 border object-fit-cover shadow-sm" style="width: 140px; height: 140px;"
+                 onerror="this.onerror=null; this.src='/images/default-class.png';" />
         </div>
         <div class="col-12 col-md">
             <div class="d-flex flex-wrap align-items-center gap-2 mb-2">

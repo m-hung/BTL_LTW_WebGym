@@ -21,37 +21,37 @@ namespace WebGym.Data
                     ClassId = 1,
                     ClassName = "Hatha Yoga & Thiền Định Phục Hồi Năng Lượng",
                     Description = "Lớp học giúp cân bằng thân - tâm - trí, kéo giãn cơ bắp, giải tỏa căng thẳng và cải thiện hệ hô hấp cho người bận rộn.",
-                    TrainerId = 3, // HLV Nguyễn Thụy Tiên
+                    TrainerId = 4, // HLV Elena Rostova
                     RoomId = 3, // Phòng Yoga & Pilates Studio
                     Schedule = "Thứ 2 - 4 - 6 (06:30 - 07:45)",
                     MaxCapacity = 20,
-                    CurrentCapacity = 15,
+                    CurrentCapacity = 14,
                     Status = "Open",
                     StartDate = new DateTime(2026, 10, 1),
                     EndDate = new DateTime(2026, 12, 31),
-                    ImageUrl = "~/images/classes/class-yoga.jpg"
+                    ImageUrl = "https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=800&auto=format&fit=crop"
                 },
                 new GymClass
                 {
                     ClassId = 2,
                     ClassName = "Spinning RPM - Đua Xe Đạp Trong Nhà Đốt Mỡ Cấp Tốc",
                     Description = "Âm nhạc bùng nổ kết hợp các bài leo dốc, chạy nước rút cường độ cao giúp tiêu hao 600 - 800 kcal mỗi buổi tập.",
-                    TrainerId = 2, // HLV Lê Hoàng Anh
+                    TrainerId = 5, // HLV Marcus Vance
                     RoomId = 2, // Phòng Cardio & Spinning
                     Schedule = "Thứ 3 - 5 - 7 (18:00 - 19:15)",
                     MaxCapacity = 25,
-                    CurrentCapacity = 20,
+                    CurrentCapacity = 16,
                     Status = "Open",
                     StartDate = new DateTime(2026, 10, 1),
                     EndDate = new DateTime(2026, 12, 31),
-                    ImageUrl = "~/images/classes/class-spinning.jpg"
+                    ImageUrl = "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&auto=format&fit=crop"
                 },
                 new GymClass
                 {
                     ClassId = 3,
                     ClassName = "BodyPump - Rèn Luyện Sức Bền Cơ Bắp Toàn Thân",
                     Description = "Tập luyện với thanh đòn tạ theo giai điệu bài hát sôi động, tăng mật độ xương và săn chắc toàn bộ nhóm cơ.",
-                    TrainerId = 1, // HLV Trần Minh Nhật
+                    TrainerId = 6, // HLV Liam O'Connor
                     RoomId = 1, // Phòng Gym Trung Tâm
                     Schedule = "Thứ 2 - 4 - 6 (18:30 - 19:45)",
                     MaxCapacity = 25,
@@ -59,29 +59,29 @@ namespace WebGym.Data
                     Status = "Full",
                     StartDate = new DateTime(2026, 10, 1),
                     EndDate = new DateTime(2026, 12, 31),
-                    ImageUrl = "~/images/classes/class-bodypump.jpg"
+                    ImageUrl = "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&auto=format&fit=crop"
                 },
                 new GymClass
                 {
                     ClassId = 4,
                     ClassName = "Kickfit Tự Vệ & Cardio Boxing (Combat Zone)",
                     Description = "Sự kết hợp hoàn hảo giữa đấm bốc boxing, cùi chỏ muay thai và bài tập thể lực rèn luyện phản xạ nhanh nhẹn.",
-                    TrainerId = 2, // HLV Lê Hoàng Anh
+                    TrainerId = 7, // HLV Devon Brooks
                     RoomId = 4, // Phòng Boxing & Kickfit
                     Schedule = "Thứ 3 - 5 - CN (19:30 - 20:45)",
                     MaxCapacity = 15,
-                    CurrentCapacity = 10,
+                    CurrentCapacity = 8,
                     Status = "Open",
                     StartDate = new DateTime(2026, 10, 1),
                     EndDate = new DateTime(2026, 12, 31),
-                    ImageUrl = "~/images/classes/class-kickfit.jpg"
+                    ImageUrl = "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&auto=format&fit=crop"
                 },
                 new GymClass
                 {
                     ClassId = 5,
                     ClassName = "Pilates Trị Liệu Tư Thế & Giảm Đau Cột Sống",
                     Description = "Phương pháp căn chỉnh khung xương chậu, cải thiện gù lưng cổ rùa và làm săn chắc cơ bụng cốt lõi Core.",
-                    TrainerId = 3, // HLV Nguyễn Thụy Tiên
+                    TrainerId = 8, // HLV Chloe Bennett
                     RoomId = 3, // Phòng Yoga & Pilates Studio
                     Schedule = "Thứ 7 - Chủ Nhật (08:30 - 10:00)",
                     MaxCapacity = 12,
@@ -89,7 +89,7 @@ namespace WebGym.Data
                     Status = "Full",
                     StartDate = new DateTime(2026, 10, 1),
                     EndDate = new DateTime(2026, 12, 31),
-                    ImageUrl = "~/images/classes/class-pilates.jpg"
+                    ImageUrl = "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=800&auto=format&fit=crop"
                 }
             };
         }

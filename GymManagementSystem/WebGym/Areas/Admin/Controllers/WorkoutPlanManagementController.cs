@@ -27,7 +27,7 @@ namespace WebGym.Areas.Admin.Controllers
         {
             var query = _context.WorkoutPlans
                 .Include(p => p.Member).ThenInclude(m => m.User)
-                .Include(p => p.Trainer).ThenInclude(t => t.User)
+                .Include(p => p.Trainer).ThenInclude(t => t!.User)
                 .Where(p => !p.IsDeleted)
                 .AsQueryable();
 
@@ -118,7 +118,7 @@ namespace WebGym.Areas.Admin.Controllers
         {
             var p = await _context.WorkoutPlans
                 .Include(w => w.Member).ThenInclude(m => m.User)
-                .Include(w => w.Trainer).ThenInclude(t => t.User)
+                .Include(w => w.Trainer).ThenInclude(t => t!.User)
                 .FirstOrDefaultAsync(w => w.Id == id && !w.IsDeleted);
 
             if (p == null)

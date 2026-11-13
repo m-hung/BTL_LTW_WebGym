@@ -27,7 +27,7 @@ namespace WebGym.Data
                     LastMaintenanceDate = new DateTime(2026, 10, 10),
                     Status = "Hoạt động tốt",
                     SerialNumber = "TG-SR7000-01",
-                    ImageUrl = "~/images/equipment/treadmill-technogym.jpg",
+                    ImageUrl = "https://images.unsplash.com/photo-1576678927484-cc907957088c?w=800&auto=format&fit=crop",
                     Notes = "Màn hình cảm ứng 19 inch, tích hợp bài tập leo dốc và chạy sức cản."
                 },
                 new Equipment
@@ -41,7 +41,7 @@ namespace WebGym.Data
                     LastMaintenanceDate = new DateTime(2026, 9, 25),
                     Status = "Cần bảo trì",
                     SerialNumber = "LF-SE3-02",
-                    ImageUrl = "~/images/equipment/treadmill-lifefitness.jpg",
+                    ImageUrl = "https://images.unsplash.com/photo-1576678927484-cc907957088c?w=800&auto=format&fit=crop",
                     Notes = "Băng chuyền phát tiếng kêu nhỏ khi nâng độ dốc trên 8%."
                 },
                 new Equipment
@@ -55,7 +55,7 @@ namespace WebGym.Data
                     LastMaintenanceDate = new DateTime(2026, 10, 05),
                     Status = "Hoạt động tốt",
                     SerialNumber = "MX-CXP-03",
-                    ImageUrl = "~/images/equipment/spinning-bike.jpg",
+                    ImageUrl = "https://images.unsplash.com/photo-1594737625785-a6cbdabd333c?w=800&auto=format&fit=crop",
                     Notes = "Xe đạp bánh đà kháng lực từ tính êm ái, đo công suất watt."
                 },
                 new Equipment
@@ -69,7 +69,7 @@ namespace WebGym.Data
                     LastMaintenanceDate = new DateTime(2026, 8, 15),
                     Status = "Đang hỏng",
                     SerialNumber = "C2-ROW-04",
-                    ImageUrl = "~/images/equipment/rower-concept2.jpg",
+                    ImageUrl = "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&auto=format&fit=crop",
                     Notes = "Dây kéo xích bị kẹt puly trục cuốn, đang chờ linh kiện thay thế."
                 },
                 new Equipment
@@ -83,7 +83,7 @@ namespace WebGym.Data
                     LastMaintenanceDate = new DateTime(2026, 10, 15),
                     Status = "Hoạt động tốt",
                     SerialNumber = "IMP-SM3D-05",
-                    ImageUrl = "~/images/equipment/smith-machine.jpg",
+                    ImageUrl = "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&auto=format&fit=crop",
                     Notes = "Trục dẫn hướng chuyển động mượt mà, chốt khóa an toàn đa điểm."
                 },
                 new Equipment
@@ -97,7 +97,7 @@ namespace WebGym.Data
                     LastMaintenanceDate = new DateTime(2026, 9, 30),
                     Status = "Hoạt động tốt",
                     SerialNumber = "ROG-PR-06",
-                    ImageUrl = "~/images/equipment/power-rack.jpg",
+                    ImageUrl = "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=800&auto=format&fit=crop",
                     Notes = "Thép chịu lực tải trọng 500kg, kèm thanh xà đơn và chốt an toàn J-Cups."
                 },
                 new Equipment
@@ -111,7 +111,7 @@ namespace WebGym.Data
                     LastMaintenanceDate = new DateTime(2026, 9, 20),
                     Status = "Hoạt động tốt",
                     SerialNumber = "ROG-DB-07",
-                    ImageUrl = "~/images/equipment/dumbbells-set.jpg",
+                    ImageUrl = "https://images.unsplash.com/photo-1638803040283-7a5ffd48dad5?w=800&auto=format&fit=crop",
                     Notes = "Bọc Urethane chống ồn, tay cầm mạ chrome vân kim cương chống trượt."
                 },
                 new Equipment
@@ -125,7 +125,7 @@ namespace WebGym.Data
                     LastMaintenanceDate = new DateTime(2026, 10, 20),
                     Status = "Hoạt động tốt",
                     SerialNumber = "TG-SEL-08",
-                    ImageUrl = "~/images/equipment/pec-fly.jpg",
+                    ImageUrl = "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&auto=format&fit=crop",
                     Notes = "Hệ thống tạ tháp Selection Pro, chuyển đổi linh hoạt giữa ép ngực và kéo vai."
                 },
                 new Equipment
@@ -139,7 +139,7 @@ namespace WebGym.Data
                     LastMaintenanceDate = new DateTime(2026, 8, 30),
                     Status = "Cần bảo trì",
                     SerialNumber = "LF-LP45-09",
-                    ImageUrl = "~/images/equipment/leg-press.jpg",
+                    ImageUrl = "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=800&auto=format&fit=crop",
                     Notes = "Đệm lưng bị trầy rách góc dưới, ray trượt cần tra thêm mỡ bôi trơn công nghiệp."
                 },
                 new Equipment
@@ -153,7 +153,7 @@ namespace WebGym.Data
                     LastMaintenanceDate = new DateTime(2026, 10, 28),
                     Status = "Hoạt động tốt",
                     SerialNumber = "MX-DAP-10",
-                    ImageUrl = "~/images/equipment/dual-pulley.jpg",
+                    ImageUrl = "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=800&auto=format&fit=crop",
                     Notes = "Hai cột tạ độc lập, ròng rọc xoay 360 độ điều chỉnh độ cao nhiều mức."
                 }
             };

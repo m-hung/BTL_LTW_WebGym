@@ -194,10 +194,17 @@
                                     </div>
                                 </div>
 
-                                @if (isMember)
+                                @if (isFull)
                                 {
-                                    <a href="@bookingUrl" class="bento-btn-action @(isFull ? "btn-full" : "btn-register")">
-                                        <span>@(isFull ? "Xem thời khóa biểu" : "Đăng ký tham gia ngay")</span>
+                                    <button type="button" class="bento-btn-action btn-full" disabled style="cursor: not-allowed; opacity: 0.65; pointer-events: none;">
+                                        <span>Lớp học đã hết chỗ</span>
+                                        <i class="bi bi-slash-circle"></i>
+                                    </button>
+                                }
+                                else if (isMember)
+                                {
+                                    <a href="@bookingUrl" class="bento-btn-action btn-register">
+                                        <span>Đăng ký tham gia ngay</span>
                                         <i class="bi bi-arrow-right"></i>
                                     </a>
                                 }
@@ -210,7 +217,7 @@
                                 }
                                 else
                                 {
-                                    <a href="#lop-nhom" data-auth-login class="bento-btn-action @(isFull ? "btn-full" : "btn-register")">
+                                    <a href="#lop-nhom" data-auth-login class="bento-btn-action btn-register">
                                         <span>Đăng nhập để đăng ký</span>
                                         <i class="bi bi-arrow-right"></i>
                                     </a>

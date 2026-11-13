@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <defs>
+    <linearGradient id="towelFabric" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#334155"/>
+      <stop offset="50%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="neonTrim" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ccff00"/>
+      <stop offset="100%" stop-color="#84cc16"/>
+    </linearGradient>
+    <filter id="gtShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="12" flood-color="#000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  <g filter="url(#gtShadow)">
+    <!-- Folded Gym Towel (Crisp 3D layered stack) -->
+    <!-- Bottom Layer Fold -->
+    <rect x="70" y="240" width="260" height="70" rx="16" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+    <path d="M70 275 L330 275" stroke="#1e293b" stroke-width="3"/>
+    
+    <!-- Middle Layer Fold -->
+    <rect x="60" y="170" width="280" height="75" rx="18" fill="url(#towelFabric)" stroke="#475569" stroke-width="2"/>
+    <path d="M60 205 L340 205" stroke="#334155" stroke-width="3"/>
+
+    <!-- Top Layer Fold (Main Body) -->
+    <rect x="50" y="95" width="300" height="85" rx="20" fill="url(#towelFabric)" stroke="#475569" stroke-width="2"/>
+
+    <!-- Microfiber Terry Cloth Waffle / Rib Texture Lines -->
+    <line x1="60" y1="120" x2="340" y2="120" stroke="#475569" stroke-width="1.5" stroke-dasharray="3 3"/>
+    <line x1="60" y1="140" x2="340" y2="140" stroke="#475569" stroke-width="1.5" stroke-dasharray="3 3"/>
+    <line x1="60" y1="160" x2="340" y2="160" stroke="#475569" stroke-width="1.5" stroke-dasharray="3 3"/>
+
+    <!-- Sport Neon Green Border Trim on Edge -->
+    <rect x="50" y="95" width="16" height="85" rx="8" fill="url(#neonTrim)"/>
+    <rect x="334" y="95" width="16" height="85" rx="8" fill="url(#neonTrim)"/>
+
+    <!-- Embroidered Brand Emblem -->
+    <g transform="translate(145, 115)">
+      <!-- Lightning Gym Icon -->
+      <polygon points="18,5 8,22 18,22 14,35 28,16 18,16" fill="#ccff00"/>
+      <!-- Brand Text -->
+      <text x="35" y="22" font-family="'Arial Black', sans-serif" font-weight="900" font-size="14" fill="#ffffff" letter-spacing="1.5">PULSE</text>
+      <text x="35" y="32" font-family="Arial, sans-serif" font-weight="800" font-size="7.5" fill="#ccff00" letter-spacing="2">GYM TOWEL</text>
+    </g>
+
+    <!-- Tag Ribbon -->
+    <rect x="130" y="325" width="140" height="26" rx="6" fill="#18181b" stroke="#334155" stroke-width="1.5"/>
+    <text x="200" y="342" text-anchor="middle" font-family="Arial, sans-serif" font-weight="800" font-size="9" fill="#94a3b8">MICROFIBER 40x80 CM</text>
+  </g>
+</svg>

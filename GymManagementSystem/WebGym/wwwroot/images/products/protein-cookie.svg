@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <defs>
+    <radialGradient id="cookieDough" cx="40%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#dfad73"/>
+      <stop offset="50%" stop-color="#c68c4a"/>
+      <stop offset="85%" stop-color="#9d6729"/>
+      <stop offset="100%" stop-color="#784815"/>
+    </radialGradient>
+    <radialGradient id="chocChip" cx="30%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#4a2c16"/>
+      <stop offset="70%" stop-color="#2a1608"/>
+      <stop offset="100%" stop-color="#120802"/>
+    </radialGradient>
+    <filter id="cShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="12" flood-color="#000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  <g filter="url(#cShadow)">
+    <!-- Cookie Outer Crust with Natural Organic Edge -->
+    <path d="M200 45 C270 42 345 105 352 180 C358 255 305 342 225 352 C150 360 55 315 48 230 C40 150 120 50 200 45 Z" fill="url(#cookieDough)" stroke="#784815" stroke-width="3"/>
+    
+    <!-- Surface Cracks & Texture -->
+    <path d="M120 110 Q145 130 135 155 Q160 170 180 160" stroke="#784815" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M240 100 Q260 125 250 145" stroke="#784815" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M260 210 Q285 240 270 275" stroke="#784815" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M140 240 Q170 260 190 290" stroke="#784815" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+    <!-- Chocolate Chunks & Chips -->
+    <!-- Large Chunks -->
+    <path d="M145 95 Q170 85 165 110 Q150 125 135 110 Z" fill="url(#chocChip)"/>
+    <path d="M225 105 Q255 100 250 125 Q235 140 215 125 Z" fill="url(#chocChip)"/>
+    <path d="M110 180 Q135 170 140 195 Q125 215 105 200 Z" fill="url(#chocChip)"/>
+    <path d="M265 170 Q295 165 290 195 Q270 215 255 195 Z" fill="url(#chocChip)"/>
+    <path d="M185 175 Q215 165 220 195 Q200 220 175 205 Z" fill="url(#chocChip)"/>
+    <path d="M150 260 Q180 255 175 285 Q150 305 135 285 Z" fill="url(#chocChip)"/>
+    <path d="M230 250 Q260 245 265 275 Q245 300 220 280 Z" fill="url(#chocChip)"/>
+    
+    <!-- Small Chips -->
+    <circle cx="105" cy="135" r="7" fill="url(#chocChip)"/>
+    <circle cx="280" cy="130" r="8" fill="url(#chocChip)"/>
+    <circle cx="310" cy="230" r="9" fill="url(#chocChip)"/>
+    <circle cx="95" cy="255" r="8" fill="url(#chocChip)"/>
+    <circle cx="200" cy="130" r="6" fill="url(#chocChip)"/>
+    <circle cx="205" cy="320" r="8" fill="url(#chocChip)"/>
+
+    <!-- Nutritional Badge Ribbon -->
+    <g transform="rotate(-12 200 200)">
+      <rect x="90" y="185" width="220" height="42" rx="8" fill="#1e293b" fill-opacity="0.9" stroke="#f59e0b" stroke-width="2"/>
+      <text x="200" y="206" text-anchor="middle" font-family="'Arial Black', sans-serif" font-weight="900" font-size="16" fill="#f59e0b" letter-spacing="1">38g PROTEIN</text>
+      <text x="200" y="220" text-anchor="middle" font-family="Arial, sans-serif" font-weight="800" font-size="9" fill="#ffffff" letter-spacing="2">BAKED COOKIE</text>
+    </g>
+  </g>
+</svg>

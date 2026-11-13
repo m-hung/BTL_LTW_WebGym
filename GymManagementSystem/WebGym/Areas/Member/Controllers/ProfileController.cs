@@ -48,6 +48,18 @@ namespace WebGym.Areas.Member.Controllers
             var cardCode = member.MemberCardCode;
             var qrCode = member.MemberQrData;
 
+            // Kiểm tra xem tài khoản này đã từng đo InBody thực tế chưa hay chỉ là tài khoản mới
+            bool hasRealMeasurements = member.ProgressRecords.Any() || 
+                                       (member.BodyFatPercentage.HasValue && member.BodyFatPercentage > 0) || 
+                                       (member.Chest.HasValue && member.Chest > 0);
+
+            // Nếu tài khoản mới chưa đo InBody và chỉ có giá trị mặc định lúc tạo (170cm, 65kg, 1500 kcal), hiển thị rỗng để PT kiểm tra
+            bool isOldDefaultProfile = !hasRealMeasurements && member.Height == 170 && member.Weight == 65 && member.BMR == 1500;
+
+            var displayHeight = isOldDefaultProfile ? null : member.Height;
+            var displayWeight = isOldDefaultProfile ? null : member.Weight;
+            var displayBMR = isOldDefaultProfile ? null : member.BMR;
+
             var dto = new MemberProfileDto
             {
                 Id = member.MemberId,
@@ -59,9 +71,9 @@ namespace WebGym.Areas.Member.Controllers
                 AvatarUrl = avatarUrl,
                 CardCode = cardCode,
                 QrCode = qrCode,
-                Height = member.Height,
-                Weight = member.Weight,
-                BMR = member.BMR,
+                Height = displayHeight,
+                Weight = displayWeight,
+                BMR = displayBMR,
                 BodyFatPercentage = member.BodyFatPercentage,
                 MuscleMass = member.MuscleMass,
                 Chest = member.Chest,
@@ -74,7 +86,7 @@ namespace WebGym.Areas.Member.Controllers
             };
 
             // Nếu chưa có cân nặng hoặc chiều cao (tài khoản mới/chưa đo InBody thực tế) thì không gửi bản ghi biểu đồ
-            var validProgress = (member.Weight > 0)
+            var validProgress = (hasRealMeasurements && displayWeight > 0)
                 ? member.ProgressRecords.OrderBy(p => p.RecordedDate).ToList()
                 : new List<WebGym.Models.Entities.Progress>();
 

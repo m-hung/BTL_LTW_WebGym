@@ -179,13 +179,18 @@ namespace WebGym.Controllers
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
 
-            // Khởi tạo hồ sơ Hội viên
+            // Khởi tạo hồ sơ Hội viên (Không gán chỉ số cơ thể ảo, tài khoản mới bắt đầu với null)
             _context.Members.Add(new Member
             {
                 UserId = newUser.UserId,
-                Height = 170,
-                Weight = 65,
-                BMR = 1500
+                Height = null,
+                Weight = null,
+                BMR = null,
+                BodyFatPercentage = null,
+                MuscleMass = null,
+                Chest = null,
+                Waist = null,
+                Hips = null
             });
 
             await _context.SaveChangesAsync();

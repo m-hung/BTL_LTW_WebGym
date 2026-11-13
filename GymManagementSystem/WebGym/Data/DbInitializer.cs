@@ -67,6 +67,74 @@ namespace WebGym.Data
                         context.SaveChanges();
                     }
                 }
+
+                // 3. Tự động đồng bộ các món hàng POS (Đồng bộ ảnh vector SVG sắc nét và tên sản phẩm mới)
+                var seededProducts = ProductSeeder.GetData();
+                var allDbProducts = context.Products.ToList();
+
+                foreach (var seeded in seededProducts)
+                {
+                    var existing = allDbProducts.FirstOrDefault(p => p.ProductId == seeded.ProductId)
+                                ?? allDbProducts.FirstOrDefault(p => p.ProductName == seeded.ProductName);
+
+                    if (existing != null)
+                    {
+                        // Cập nhật lại ImageUrl, Tên, Giá, Mô tả để đồng bộ 100% với file ảnh và thiết kế mới
+                        if (existing.ImageUrl != seeded.ImageUrl || existing.ProductName != seeded.ProductName)
+                        {
+                            existing.ProductName = seeded.ProductName;
+                            existing.ImageUrl = seeded.ImageUrl;
+                            existing.CategoryId = seeded.CategoryId;
+                            existing.Description = seeded.Description;
+                            existing.Price = seeded.Price;
+                        }
+                    }
+                    else
+                    {
+                        // Nếu chưa có trong DB thì thêm mới
+                        context.Products.Add(new Product
+                        {
+                            CategoryId = seeded.CategoryId,
+                            ProductName = seeded.ProductName,
+                            ImageUrl = seeded.ImageUrl,
+                            Price = seeded.Price,
+                            StockQuantity = seeded.StockQuantity,
+                            Description = seeded.Description,
+                            IsActive = seeded.IsActive,
+                            CreatedAt = DateTime.UtcNow
+                        });
+                    }
+                }
+                context.SaveChanges();
+
+                // 4. Đồng bộ ảnh chất lượng cao cho tất cả máy móc thiết bị
+                var equipmentsToUpdate = context.Equipments
+                    .Where(e => string.IsNullOrEmpty(e.ImageUrl) || e.ImageUrl.StartsWith("~/") || e.ImageUrl.Contains("default-equipment"))
+                    .ToList();
+                if (equipmentsToUpdate.Any())
+                {
+                    foreach (var eq in equipmentsToUpdate)
+                    {
+                        eq.ImageUrl = Equipment.ResolveImageUrl(null, eq.EquipmentName, eq.Area);
+                    }
+                    context.SaveChanges();
+                }
+
+                // 5. Khắc phục lỗi tài khoản mới bị gán sẵn chỉ số cơ thể mặc định ảo (170cm, 65kg, 1500 kcal)
+                var unmeasuredMembers = context.Members
+                    .Include(m => m.ProgressRecords)
+                    .Where(m => m.ProgressRecords.Count == 0 && m.Height == 170 && m.Weight == 65 && m.BMR == 1500 && (m.BodyFatPercentage == null || m.BodyFatPercentage == 0))
+                    .ToList();
+                if (unmeasuredMembers.Any())
+                {
+                    foreach (var m in unmeasuredMembers)
+                    {
+                        m.Height = null;
+                        m.Weight = null;
+                        m.BMR = null;
+                    }
+                    context.SaveChanges();
+                }
             }
             catch
             {

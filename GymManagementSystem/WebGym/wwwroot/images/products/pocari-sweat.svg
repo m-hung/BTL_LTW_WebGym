@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <defs>
+    <linearGradient id="pBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0288d1"/>
+      <stop offset="50%" stop-color="#0066b2"/>
+      <stop offset="100%" stop-color="#004b87"/>
+    </linearGradient>
+    <linearGradient id="pCap" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#b3e5fc"/>
+      <stop offset="50%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#81d4fa"/>
+    </linearGradient>
+    <linearGradient id="pLiquid" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#e1f5fe" stop-opacity="0.9"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#b3e5fc" stop-opacity="0.85"/>
+    </linearGradient>
+    <filter id="pShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="14" stdDeviation="10" flood-color="#000" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  <g filter="url(#pShadow)">
+    <!-- Cap -->
+    <rect x="175" y="42" width="50" height="26" rx="4" fill="url(#pCap)" stroke="#0288d1" stroke-width="1.5"/>
+    <line x1="183" y1="46" x2="183" y2="64" stroke="#81d4fa" stroke-width="2"/>
+    <line x1="193" y1="46" x2="193" y2="64" stroke="#81d4fa" stroke-width="2"/>
+    <line x1="203" y1="46" x2="203" y2="64" stroke="#81d4fa" stroke-width="2"/>
+    <line x1="213" y1="46" x2="213" y2="64" stroke="#81d4fa" stroke-width="2"/>
+    <rect x="170" y="68" width="60" height="10" rx="3" fill="#b3e5fc"/>
+    <!-- Bottle Neck -->
+    <path d="M172 78 L158 126 C158 126 142 142 142 165 L142 342 C142 355 152 365 165 365 L235 365 C248 365 258 355 258 342 L258 165 C258 142 242 126 242 126 L228 78 Z" fill="url(#pLiquid)" stroke="#0288d1" stroke-width="2"/>
+    <!-- Bottle Waist Ridges -->
+    <path d="M142 210 Q200 220 258 210" stroke="#81d4fa" stroke-width="2" fill="none"/>
+    <path d="M142 315 Q200 325 258 315" stroke="#81d4fa" stroke-width="2" fill="none"/>
+    <!-- Blue Label Wrap -->
+    <rect x="142" y="160" width="116" height="135" fill="url(#pBlue)"/>
+    <!-- White Wave Motif -->
+    <path d="M142 245 Q165 235 185 242 T235 240 Q248 245 258 242 L258 258 L142 258 Z" fill="#ffffff" fill-opacity="0.95"/>
+    <path d="M142 252 Q170 248 200 254 T258 250 L258 258 L142 258 Z" fill="#004b87"/>
+    <!-- Label Text -->
+    <text x="200" y="186" text-anchor="middle" font-family="'Arial Black', sans-serif" font-weight="900" font-size="14.5" fill="#ffffff" letter-spacing="1">POCARI</text>
+    <text x="200" y="204" text-anchor="middle" font-family="'Arial Black', sans-serif" font-weight="900" font-size="14.5" fill="#ffffff" letter-spacing="1">SWEAT</text>
+    <rect x="156" y="212" width="88" height="13" rx="3" fill="#ffffff"/>
+    <text x="200" y="222" text-anchor="middle" font-family="Arial, sans-serif" font-weight="800" font-size="7.5" fill="#0066b2" letter-spacing="0.5">ION SUPPLY DRINK</text>
+    <text x="200" y="278" text-anchor="middle" font-family="Arial, sans-serif" font-weight="800" font-size="9" fill="#ffffff">500 ml</text>
+    <!-- Condensation Drops -->
+    <circle cx="152" cy="140" r="3" fill="#ffffff" fill-opacity="0.8"/>
+    <circle cx="156" cy="148" r="2" fill="#ffffff" fill-opacity="0.8"/>
+    <circle cx="246" cy="145" r="3.5" fill="#ffffff" fill-opacity="0.8"/>
+    <circle cx="242" cy="330" r="3" fill="#0288d1" fill-opacity="0.4"/>
+  </g>
+</svg>

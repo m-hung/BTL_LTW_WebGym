@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <defs>
+    <linearGradient id="canBody" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1c1c1e"/>
+      <stop offset="25%" stop-color="#3a3a3c"/>
+      <stop offset="50%" stop-color="#545458"/>
+      <stop offset="75%" stop-color="#2c2c2e"/>
+      <stop offset="100%" stop-color="#121214"/>
+    </linearGradient>
+    <linearGradient id="canRim" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#8e8e93"/>
+      <stop offset="50%" stop-color="#f2f2f7"/>
+      <stop offset="100%" stop-color="#636366"/>
+    </linearGradient>
+    <linearGradient id="neonGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#b6ff2b"/>
+      <stop offset="50%" stop-color="#39ff14"/>
+      <stop offset="100%" stop-color="#28b400"/>
+    </linearGradient>
+    <filter id="mGlow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#39ff14" flood-opacity="0.6"/>
+      <feDropShadow dx="0" dy="14" stdDeviation="10" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <g filter="url(#mGlow)">
+    <!-- Top Rim -->
+    <ellipse cx="200" cy="55" rx="55" ry="12" fill="url(#canRim)" stroke="#3a3a3c" stroke-width="1.5"/>
+    <ellipse cx="200" cy="53" rx="46" ry="8" fill="#1c1c1e"/>
+    <!-- Pull Tab -->
+    <ellipse cx="200" cy="52" rx="14" ry="4" fill="#8e8e93"/>
+    <circle cx="200" cy="52" r="3" fill="#1c1c1e"/>
+    <!-- Taper Neck -->
+    <path d="M145 55 L140 75 L260 75 L255 55 Z" fill="url(#canRim)"/>
+    <!-- Main Cylinder Body -->
+    <rect x="140" y="75" width="120" height="265" rx="8" fill="url(#canBody)"/>
+    <!-- Bottom Rim -->
+    <path d="M142 336 L148 352 L252 352 L258 336 Z" fill="url(#canRim)"/>
+    <ellipse cx="200" cy="352" rx="52" ry="7" fill="#636366"/>
+
+    <!-- Monster Claw Logo (M) -->
+    <g fill="url(#neonGreen)">
+      <!-- Left Claw -->
+      <path d="M174 135 C176 148 168 178 171 210 C173 226 166 238 165 240 C168 238 174 220 178 200 C182 178 177 150 180 135 Z"/>
+      <!-- Center Claw (Longest) -->
+      <path d="M196 118 C203 138 193 175 198 215 C201 238 194 252 192 255 C197 250 206 230 206 205 C208 175 200 135 204 118 Z"/>
+      <!-- Right Claw -->
+      <path d="M222 138 C226 154 218 180 221 208 C223 222 219 235 217 238 C221 234 227 218 229 198 C232 174 227 150 230 138 Z"/>
+    </g>
+
+    <!-- Monster Typography -->
+    <text x="200" y="278" text-anchor="middle" font-family="'Arial Black', sans-serif" font-weight="900" font-size="13" fill="#ffffff" letter-spacing="3">MONSTER</text>
+    <text x="200" y="292" text-anchor="middle" font-family="Arial, sans-serif" font-weight="800" font-size="8.5" fill="#39ff14" letter-spacing="2">ENERGY</text>
+    
+    <!-- 0 Sugar Badge -->
+    <rect x="165" y="303" width="70" height="15" rx="3" fill="#39ff14" fill-opacity="0.2" stroke="#39ff14" stroke-width="1"/>
+    <text x="200" y="314" text-anchor="middle" font-family="Arial, sans-serif" font-weight="800" font-size="7.5" fill="#ffffff">ZERO SUGAR</text>
+  </g>
+</svg>

@@ -909,7 +909,17 @@ a.trainer{display:block}
   border: 1px solid #2d352d;
 }
 
-.bento-btn-action.btn-full:hover {
+.bento-btn-action.btn-full:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.12);
   color: #ffffff;
+}
+
+.bento-btn-action.btn-full:disabled,
+.bento-btn-action.btn-full[disabled] {
+  background: rgba(239, 68, 68, 0.1) !important;
+  color: #f87171 !important;
+  border: 1px solid rgba(239, 68, 68, 0.35) !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  opacity: 0.8 !important;
 }
